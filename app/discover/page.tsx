@@ -6,14 +6,14 @@ import { PopularCoursesSection } from "@/components/home/goal-cards";
 import { Footer } from "@/components/layout/footer";
 
 export default function DiscoverPage() {
-    return (
-        <main>
-            <DegreeFinderFlow />
-            <PopularCoursesSection />
-            <CareerExplorer />
-            <SalaryInsights />
-            <UniversityRankings />
-            <Footer />
-        </main>
-    );
+  return (
+    <main>
+      <DegreeFinderFlow />
+      {/* <PopularCoursesSection /> */}
+      {/* <CareerExplorer /> */}
+      {/* <SalaryInsights /> */}
+      {/* <UniversityRankings /> */}
+      <Footer />
+    </main>
+  );
 }

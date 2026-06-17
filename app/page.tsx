@@ -3,6 +3,9 @@ import { PopularCoursesSection } from "@/components/home/goal-cards";
 import CareerExplorer from "@/components/discovery/career-explorer";
 import SalaryInsights from "@/components/discovery/salary-insights";
 import UniversityRankings from "@/components/discovery/university-rankings";
+import ProgramsSection from "@/components/home/online-courses";
+import { Footer } from "@/components/layout/footer";
+import FAQ from "@/components/faq";
 // import DegreeCards from "@/components/home/degree-cards";
 // import SuccessStories from "@/components/home/success-stories";
 // import ScholarshipBanner from "@/components/home/scholarship-banner";
@@ -18,8 +21,11 @@ export default function HomePage() {
       {/* tempppp */}
 
       <CareerExplorer />
+      <ProgramsSection />
       <SalaryInsights />
       <UniversityRankings />
+      <FAQ />
+      <Footer />
 
       {/* _____________________ */}
 

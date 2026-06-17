@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { UNIVERSITY_COMPARISONS } from '@/data/comparisons';
-import Link from 'next/link';
+import React, { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { UNIVERSITY_COMPARISONS } from "@/data/comparisons";
+import Link from "next/link";
 
 export default function UniversitySlider() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -19,19 +19,24 @@ export default function UniversitySlider() {
 
   useEffect(() => {
     checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
   }, []);
 
-  const scroll = (dir: 'left' | 'right') => {
+  const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
     const firstCard = scrollRef.current.firstElementChild as HTMLElement | null;
     const gap = 24;
-    const step = firstCard ? firstCard.offsetWidth + gap : scrollRef.current.clientWidth;
+    const step = firstCard
+      ? firstCard.offsetWidth + gap
+      : scrollRef.current.clientWidth;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    let newScrollLeft = dir === 'left' ? scrollLeft - step : scrollLeft + step;
-    newScrollLeft = Math.max(0, Math.min(newScrollLeft, scrollWidth - clientWidth));
-    scrollRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+    let newScrollLeft = dir === "left" ? scrollLeft - step : scrollLeft + step;
+    newScrollLeft = Math.max(
+      0,
+      Math.min(newScrollLeft, scrollWidth - clientWidth),
+    );
+    scrollRef.current.scrollTo({ left: newScrollLeft, behavior: "smooth" });
     setTimeout(checkScroll, 350);
   };
 
@@ -47,7 +52,7 @@ export default function UniversitySlider() {
         {/* Left Arrow - hidden on mobile since swipe gesture handles navigation there */}
         {canScrollLeft && (
           <button
-            onClick={() => scroll('left')}
+            onClick={() => scroll("left")}
             className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg p-2 rounded-full hover:shadow-xl transition"
           >
             <ChevronLeft size={24} />
@@ -82,12 +87,16 @@ export default function UniversitySlider() {
               {/* Content Section */}
               <div className="p-4 flex flex-col flex-1">
                 {/* University Names */}
-                <div className="flex justify-between gap-2 mb-1">
+                <div className=" text-center">
                   <div className="flex-1">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2">{pair.a.name}</p>
+                    <p className="font-bold text-gray-900 text-sm line-clamp-2">
+                      {pair.a.name}
+                    </p>
                   </div>
                   <div className="flex-1 text-right">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2">{pair.b.name}</p>
+                    <p className="font-bold text-gray-900 text-sm line-clamp-2">
+                      {pair.b.name}
+                    </p>
                   </div>
                 </div>
 
@@ -164,7 +173,7 @@ export default function UniversitySlider() {
         {/* Right Arrow - hidden on mobile since swipe gesture handles navigation there */}
         {canScrollRight && (
           <button
-            onClick={() => scroll('right')}
+            onClick={() => scroll("right")}
             className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg p-2 rounded-full hover:shadow-xl transition"
           >
             <ChevronRight size={24} />
@@ -182,6 +191,6 @@ export default function UniversitySlider() {
           <ChevronRight size={20} />
         </a>
       </div>
-    </div >
+    </div>
   );
 }

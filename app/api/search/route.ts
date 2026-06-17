@@ -16,14 +16,14 @@ export async function GET(req: NextRequest) {
     if (!query) {
       return NextResponse.json(
         { error: "Query parameter 'q' is required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (query.length > 300) {
       return NextResponse.json(
         { error: "Query too long. Max 300 characters." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       console.error("OPENAI_API_KEY is not set.");
       return NextResponse.json(
         { error: "Service misconfigured." },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -64,11 +64,9 @@ export async function GET(req: NextRequest) {
         headers: {
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
         },
-      }
+      },
     );
-
   } catch (error: unknown) {
-
     // ── Typed OpenAI error handling ───────────────────────────────
     if (error instanceof OpenAI.APIError) {
       console.error(`OpenAI API error ${error.status}: ${error.message}`);
@@ -76,20 +74,20 @@ export async function GET(req: NextRequest) {
       if (error.status === 429) {
         return NextResponse.json(
           { error: "Rate limit reached. Please try again shortly." },
-          { status: 429 }
+          { status: 429 },
         );
       }
 
       return NextResponse.json(
         { error: "AI service error. Please try again." },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
     console.error("Unexpected search error:", error);
     return NextResponse.json(
       { error: "Internal server error." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

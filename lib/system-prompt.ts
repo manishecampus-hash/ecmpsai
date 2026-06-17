@@ -203,7 +203,6 @@
 // question1|question2|question3|question4
 // (4 natural follow-up questions the student might ask next)`;
 
-
 // /**
 //  * System prompt for the streaming chat endpoint.
 //  */
@@ -253,8 +252,6 @@
 //   - "Can I apply online?" → Explain that yes, all top private universities offer online admission. List the steps briefly.
 //   - "Fees?" → Give average fee range for popular online programs at private universities.
 //   - "Best college?" → List top 5 private universities for online degrees with fees.`;
-
-
 
 /**
  * eCampus AI — Deep System Prompts

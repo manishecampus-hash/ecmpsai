@@ -1,9 +1,7 @@
-// 
-// 
-// 
-// 
-
-
+//
+//
+//
+//
 
 "use client";
 
@@ -21,9 +19,9 @@ const navLinks = [
   { label: "Compare", href: "/compare" },
   { label: "Apply", href: "/apply" },
   { label: "Study", href: "/study" },
-  { label: "Alumni", href: "/alumni" },
-  { label: "Scholarship", href: "/search?q=scholarship" },
-  { label: "Jobs/internships", href: "/jobs/internships" },
+  // { label: "Alumni", href: "/alumni" },
+  // { label: "Scholarship", href: "/search?q=scholarship" },
+  // { label: "Jobs/internships", href: "/jobs/internships" },
 ];
 
 type Student = {
@@ -41,8 +39,12 @@ export function Navbar() {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
-        const res = await fetch(`${apiUrl}/menus/header`, { cache: "no-store" });
+        const apiUrl =
+          process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+          "http://localhost:5000";
+        const res = await fetch(`${apiUrl}/menus/header`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("Failed to fetch menu");
         const data = await res.json();
         if (data && Array.isArray(data.items)) {
@@ -86,16 +88,19 @@ export function Navbar() {
     return pathname === basePath || pathname.startsWith(basePath);
   };
 
-  const displayName = student?.name?.split(" ")[0] ?? student?.email?.split("@")[0];
+  const displayName =
+    student?.name?.split(" ")[0] ?? student?.email?.split("@")[0];
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
+            <Link
+              href="/"
+              className="flex items-center gap-2 flex-shrink-0 group"
+            >
               <div className="relative w-32 h-16 cursor-pointer">
                 <Image
                   src="/image/logo.png"
@@ -113,10 +118,11 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${isActive(link.href)
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
+                  className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                    isActive(link.href)
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -163,16 +169,20 @@ export function Navbar() {
                   </button>
                 </SheetTrigger>
 
-                <SheetContent side="right" className="bg-white border-l border-gray-200">
+                <SheetContent
+                  side="right"
+                  className="bg-white border-l border-gray-200"
+                >
                   <div className="mt-8 flex flex-col gap-2">
                     {links.map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
-                        className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive(link.href)
-                          ? "bg-gray-100 text-gray-900"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                          }`}
+                        className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                          isActive(link.href)
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        }`}
                       >
                         {link.label}
                       </Link>
@@ -216,7 +226,6 @@ export function Navbar() {
                 </SheetContent>
               </Sheet>
             </div>
-
           </div>
         </div>
       </header>

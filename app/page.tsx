@@ -22,8 +22,8 @@ export default function HomePage() {
 
       <CareerExplorer />
       <ProgramsSection />
-      <SalaryInsights />
-      <UniversityRankings />
+      {/* <SalaryInsights /> */}
+      {/* <UniversityRankings /> */}
       <FAQ />
       <Footer />
 

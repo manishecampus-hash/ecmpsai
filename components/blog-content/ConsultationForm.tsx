@@ -66,24 +66,22 @@ export function ConsultationForm() {
             e.preventDefault();
             setIsSubmitting(true);
 
-            setTimeout(() => {
-              setIsSubmitting(false);
-            }, 2000);
+            setTimeout(() => setIsSubmitting(false), 2000);
           }}
           style={{
             background: "#fff",
             borderRadius: "24px",
             overflow: "hidden",
             border: "1px solid #e5e7eb",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.06)",
           }}
         >
           {/* Header */}
           <div
             style={{
-              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              background: "#ffffff",
               padding: "28px 24px",
-              color: "#fff",
+              borderBottom: "1px solid #e5e7eb",
             }}
           >
             <div
@@ -91,12 +89,12 @@ export function ConsultationForm() {
                 width: "52px",
                 height: "52px",
                 borderRadius: "14px",
-                background: "rgba(255,255,255,0.15)",
+                background: "#f3f4f6",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: "16px",
-                fontSize: "24px",
+                fontSize: "22px",
               }}
             >
               🎓
@@ -105,9 +103,9 @@ export function ConsultationForm() {
             <h3
               style={{
                 margin: 0,
-                fontSize: "24px",
+                fontSize: "22px",
                 fontWeight: 700,
-                lineHeight: 1.2,
+                color: "#111827",
               }}
             >
               Get Free Consultation
@@ -117,7 +115,7 @@ export function ConsultationForm() {
               style={{
                 margin: "10px 0 0",
                 fontSize: "14px",
-                opacity: 0.9,
+                color: "#6b7280",
                 lineHeight: 1.5,
               }}
             >
@@ -137,11 +135,7 @@ export function ConsultationForm() {
           >
             {/* Benefits */}
             <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
               {[
                 "Personalized University Guidance",
@@ -158,25 +152,15 @@ export function ConsultationForm() {
                     color: "#374151",
                   }}
                 >
-                  <span style={{ color: "#22c55e" }}>✓</span>
+                  <span style={{ color: "#10b981" }}>✓</span>
                   {item}
                 </div>
               ))}
             </div>
 
             {/* Phone Input */}
-            <div
-              style={{
-                display: "flex",
-                gap: "5px",
-                alignItems: "stretch",
-              }}
-            >
-              <div
-                style={{
-                  position: "relative",
-                }}
-              >
+            <div style={{ display: "flex", gap: "5px", alignItems: "stretch" }}>
+              <div style={{ position: "relative" }}>
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
@@ -186,7 +170,6 @@ export function ConsultationForm() {
                     border: "1px solid #d1d5db",
                     background: "#f9fafb",
                     padding: "0 32px 0 12px",
-                    appearance: "none",
                     fontSize: "14px",
                     fontWeight: 500,
                     cursor: "pointer",
@@ -206,7 +189,6 @@ export function ConsultationForm() {
                     top: "50%",
                     transform: "translateY(-50%)",
                     color: "#6b7280",
-                    pointerEvents: "none",
                   }}
                 />
               </div>
@@ -225,10 +207,10 @@ export function ConsultationForm() {
                   borderRadius: "12px",
                   border: "1px solid #d1d5db",
                   background: "#f9fafb",
-                  //   padding: "0 16px",
                   fontSize: "15px",
                   outline: "none",
                   color: "#111827",
+                  padding: "0 14px",
                 }}
               />
             </div>
@@ -241,13 +223,11 @@ export function ConsultationForm() {
                 height: "54px",
                 border: "none",
                 borderRadius: "12px",
-                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                background: "#111827",
                 color: "#fff",
-                fontWeight: 700,
+                fontWeight: 600,
                 fontSize: "15px",
                 cursor: "pointer",
-                boxShadow: "0 10px 25px rgba(239,68,68,0.35)",
-                transition: "all 0.2s ease",
               }}
             >
               {isSubmitting ? "Submitting..." : "Get Free Consultation"}

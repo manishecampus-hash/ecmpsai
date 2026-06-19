@@ -19,6 +19,8 @@ const navLinks = [
   { label: "Compare", href: "/compare" },
   { label: "Apply", href: "/apply" },
   { label: "Study", href: "/study" },
+  { label: "contact us", href: "/contact-us" },
+
   // { label: "Alumni", href: "/alumni" },
   // { label: "Scholarship", href: "/search?q=scholarship" },
   // { label: "Jobs/internships", href: "/jobs/internships" },

@@ -195,8 +195,12 @@ export const blogs: Blog[] = [
     imageSrc: "/blogs/testblog.webp",
     excerpt:
       "Government jobs after Diploma in Civil Engineering offer stable careers with excellent benefits. Thousands of diplomas in civil engineering government jobs open every year in state and central departments Job portal",
+
     description: `Government jobs after Diploma in Civil Engineering offer stable careers with excellent benefits. Thousands of diplomas in civil engineering government jobs open every year in state and central departments Job portal. If you completed your civil engineering diploma, this guide shows exact steps to secure govt jobs after diploma civil engineering with salary details and preparation strategy.
-Many students think a degree is mandatory for government jobs. But government career options after diploma in civil engineering are actually plenty. From Junior Engineer government job diploma positions to Surveyor roles, opportunities exist in railways, PWD, municipalities, and PSUs. This article covers job opportunities after diploma in civil engineering, eligibility, exams, and salary and career growth in government jobs after diploma civil engineering.`,
+
+Many students think a degree is mandatory for government jobs. But government career options after diploma in civil engineering are actually plenty. From Junior Engineer government job diploma positions to Surveyor roles, opportunities exist in railways, PWD, municipalities, and PSUs. 
+
+This article covers job opportunities after diploma in civil engineering, eligibility, exams, and salary and career growth in government jobs after diploma civil engineering.`,
     author: "eCampus Team",
     authorBio:
       "The eCampus editorial team researches and curates guidance on Indian higher education, online degrees, and career growth for students across India.",
@@ -208,15 +212,51 @@ Many students think a degree is mandatory for government jobs. But government ca
     slug: "government-jobs-after-diploma-guide2026",
     tags: ["MBA", "Online Degree", "Affordable", "UGC"],
     headings: [
-      { id: "why", text: "Govt Jobs", level: 2 },
-      { id: "universities", text: "Top Universities", level: 2 },
-      { id: "eligibility", text: "Job Options", level: 2 },
-      { id: "placements", text: "Importance", level: 2 },
-      { id: "tips", text: "Top Roles", level: 2 },
-      { id: "eligibility-criteria", text: "Eligibility", level: 2 },
-      { id: "best-books", text: "Best Books", level: 2 },
-      { id: "faqs", text: "FAQs", level: 2 },
-      { id: "conclusion", text: "Conclusion", level: 2 },
+      {
+        id: "why",
+        text: "Government Jobs After Graduation & Diploma Overview",
+        level: 2,
+      },
+      {
+        id: "universities",
+        text: "Top Universities Offering Career Opportunities",
+        level: 2,
+      },
+      {
+        id: "eligibility",
+        text: "Job Options After Completing Your Course",
+        level: 2,
+      },
+      {
+        id: "placements",
+        text: "Importance of Government Jobs in Career Growth",
+        level: 2,
+      },
+      {
+        id: "tips",
+        text: "Top Government Job Roles You Can Apply For",
+        level: 2,
+      },
+      {
+        id: "eligibility-criteria",
+        text: "Eligibility Criteria and Requirements Explained",
+        level: 2,
+      },
+      {
+        id: "best-books",
+        text: "Best Books and Study Materials for Preparation",
+        level: 2,
+      },
+      {
+        id: "faqs",
+        text: "Frequently Asked Questions About Government Jobs",
+        level: 2,
+      },
+      {
+        id: "conclusion",
+        text: "Conclusion and Final Career Guidance",
+        level: 2,
+      },
     ],
     content: [
       {

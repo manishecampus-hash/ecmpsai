@@ -2,21 +2,18 @@
 
 import { Blog, ContentBlock } from "@/data/blog-data";
 
-// ─── Inline formatter (bold, italic, code) ────────────────────────────────────
 function inlineFormat(text: string) {
   return text
     .replace(
       /\*\*(.+?)\*\*/g,
-      '<strong style="color:var(--text-primary);font-weight:700">$1</strong>',
+      '<strong style="color:#111827;font-weight:700">$1</strong>',
     )
-    .replace(/\*(.+?)\*/g, "<em style='font-style:italic;'>$1</em>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
     .replace(
       /`(.+?)`/g,
-      '<code style="background:var(--bg-table-head);padding:3px 8px;border-radius:5px;font-size:0.9em;font-family:monospace;color:var(--accent);border:1px solid var(--border);">$1</code>',
+      '<code style="background:#f4f4f5;padding:3px 7px;border-radius:5px;font-size:0.9em;font-family:monospace;color:#ef233c;border:1px solid #e5e7eb;">$1</code>',
     );
 }
-
-// ─── Individual block renderers ───────────────────────────────────────────────
 
 function renderParagraph(
   block: Extract<ContentBlock, { type: "paragraph" }>,
@@ -25,13 +22,7 @@ function renderParagraph(
   return (
     <p
       key={key}
-      style={{
-        color: "var(--text-muted)",
-        lineHeight: 1.8,
-        marginBottom: "1rem",
-        fontSize: "1rem",
-        margin: "0 0 1rem",
-      }}
+      className="content-paragraph"
       dangerouslySetInnerHTML={{ __html: inlineFormat(block.text) }}
     />
   );
@@ -41,40 +32,11 @@ function renderHeading(
   block: Extract<ContentBlock, { type: "heading" }>,
   key: number,
 ) {
-  if (block.level === 2) {
-    return (
-      <h2
-        key={key}
-        id={block.id}
-        style={{
-          color: "var(--text-primary)",
-          fontSize: "1.6rem",
-          fontWeight: 700,
-          margin: "2.2rem 0 1rem",
-          scrollMarginTop: "100px",
-          lineHeight: 1.3,
-          letterSpacing: "-0.01em",
-        }}
-      >
-        {block.text}
-      </h2>
-    );
-  }
+  const Tag = block.level === 2 ? "h2" : "h3";
   return (
-    <h3
-      key={key}
-      id={block.id}
-      style={{
-        color: "var(--text-primary)",
-        fontSize: "1.2rem",
-        fontWeight: 700,
-        margin: "1.6rem 0 0.8rem",
-        scrollMarginTop: "100px",
-        lineHeight: 1.4,
-      }}
-    >
+    <Tag key={key} id={block.id} className={`content-heading h${block.level}`}>
       {block.text}
-    </h3>
+    </Tag>
   );
 }
 
@@ -84,24 +46,9 @@ function renderList(
 ) {
   const Tag = block.ordered ? "ol" : "ul";
   return (
-    <Tag
-      key={key}
-      style={{
-        margin: "1rem 0 1.2rem",
-        paddingLeft: "1.8rem",
-        listStyleType: block.ordered ? "decimal" : "disc",
-      }}
-    >
+    <Tag key={key} className="content-list">
       {block.items.map((item, i) => (
-        <li
-          key={i}
-          style={{
-            color: "var(--text-muted)",
-            marginBottom: "0.6rem",
-            lineHeight: 1.8,
-            fontSize: "1rem",
-          }}
-        >
+        <li key={i}>
           <span dangerouslySetInnerHTML={{ __html: inlineFormat(item) }} />
         </li>
       ))}
@@ -114,66 +61,20 @@ function renderTable(
   key: number,
 ) {
   return (
-    <div
-      key={key}
-      style={{
-        overflowX: "auto",
-        margin: "1.4rem 0 1.6rem",
-        borderRadius: "12px",
-        border: "1px solid var(--border)",
-        background: "var(--bg-page)",
-      }}
-    >
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: "0.95rem",
-        }}
-      >
+    <div key={key} className="table-scroll">
+      <table className="content-table">
         <thead>
-          <tr style={{ background: "var(--bg-surface)" }}>
-            {block.headers.map((h) => (
-              <th
-                key={h}
-                style={{
-                  padding: "14px 16px",
-                  textAlign: "left",
-                  fontWeight: 700,
-                  color: "var(--text-primary)",
-                  borderBottom: "2px solid var(--border)",
-                  whiteSpace: "nowrap",
-                  fontSize: "0.9rem",
-                }}
-              >
-                {h}
-              </th>
+          <tr>
+            {block.headers.map((header) => (
+              <th key={header}>{header}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {block.rows.map((row, ri) => (
-            <tr
-              key={ri}
-              style={{
-                background:
-                  ri % 2 === 0 ? "var(--bg-surface)" : "var(--bg-page)",
-              }}
-            >
-              {row.map((cell, ci) => (
-                <td
-                  key={ci}
-                  style={{
-                    padding: "13px 16px",
-                    color:
-                      ci === 0 ? "var(--text-primary)" : "var(--text-muted)",
-                    fontWeight: ci === 0 ? 600 : 400,
-                    borderBottom: "1px solid var(--border)",
-                    fontSize: "0.95rem",
-                  }}
-                >
-                  {cell}
-                </td>
+          {block.rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex}>{cell}</td>
               ))}
             </tr>
           ))}
@@ -183,64 +84,54 @@ function renderTable(
   );
 }
 
-const calloutStyles: Record<
-  string,
-  { bg: string; border: string; icon: string }
-> = {
-  tip: {
-    bg: "rgba(34,197,94,0.08)",
-    border: "rgba(34,197,94,0.3)",
-    icon: "💡",
-  },
-  warning: {
-    bg: "rgba(234,179,8,0.08)",
-    border: "rgba(234,179,8,0.3)",
-    icon: "⚠️",
-  },
-  info: {
-    bg: "rgba(59,130,246,0.08)",
-    border: "rgba(59,130,246,0.3)",
-    icon: "ℹ️",
-  },
+function renderImage(block: ContentBlock, key: number) {
+  if (!("src" in block) && !("imageSrc" in block) && !("url" in block)) {
+    return null;
+  }
+
+  const imageBlock = block as ContentBlock & {
+    src?: string;
+    imageSrc?: string;
+    url?: string;
+    alt?: string;
+    caption?: string;
+  };
+  const src = imageBlock.src ?? imageBlock.imageSrc ?? imageBlock.url;
+
+  if (!src) return null;
+
+  return (
+    <figure key={key} className="content-image">
+      <img src={src} alt={imageBlock.alt ?? ""} loading="lazy" />
+      {imageBlock.caption && <figcaption>{imageBlock.caption}</figcaption>}
+    </figure>
+  );
+}
+
+const calloutStyles: Record<string, { bg: string; border: string }> = {
+  tip: { bg: "#f4f4f5", border: "#111827" },
+  warning: { bg: "#fff7ed", border: "#f59e0b" },
+  info: { bg: "#f4f4f5", border: "#111827" },
 };
 
 function renderCallout(
   block: Extract<ContentBlock, { type: "callout" }>,
   key: number,
 ) {
-  const s = calloutStyles[block.variant] ?? calloutStyles.info;
+  const style = calloutStyles[block.variant] ?? calloutStyles.info;
+
   return (
-    <div
+    <aside
       key={key}
+      className="content-callout"
       style={{
-        background: s.bg,
-        border: `1.5px solid ${s.border}`,
-        borderRadius: "12px",
-        padding: "16px 18px",
-        margin: "1.4rem 0",
-        display: "flex",
-        gap: "12px",
-        alignItems: "flex-start",
-        lineHeight: 1.7,
-        fontSize: "0.95rem",
-        color: "var(--text-muted)",
+        background: style.bg,
+        borderLeftColor: style.border,
       }}
-    >
-      <span
-        style={{
-          fontSize: "1.1rem",
-          flexShrink: 0,
-          marginTop: "2px",
-        }}
-      >
-        {s.icon}
-      </span>
-      <span dangerouslySetInnerHTML={{ __html: inlineFormat(block.text) }} />
-    </div>
+      dangerouslySetInnerHTML={{ __html: inlineFormat(block.text) }}
+    />
   );
 }
-
-// ─── Main renderer ────────────────────────────────────────────────────────────
 
 function renderBlock(block: ContentBlock, key: number): React.ReactNode {
   switch (block.type) {
@@ -255,25 +146,186 @@ function renderBlock(block: ContentBlock, key: number): React.ReactNode {
     case "callout":
       return renderCallout(block, key);
     default:
-      return null;
+      return renderImage(block, key);
   }
 }
 
-// ─── Export ───────────────────────────────────────────────────────────────────
-
 export function BlogContent({ blog }: { blog: Blog }) {
   return (
-    <article
-      style={{
-        background: "var(--bg-surface)",
-        border: "1px solid var(--border)",
-        borderRadius: "14px",
-        padding: "32px 36px",
-      }}
-    >
-      <div style={{ maxWidth: "72ch", margin: "0 auto" }}>
-        {blog.content.map((block, i) => renderBlock(block, i))}
-      </div>
+    <article className="upgrad-content">
+      {blog.content.map((block, i) => renderBlock(block, i))}
+
+      <style>{`
+        .upgrad-content {
+          width: 100%;
+          max-width: 900px;
+          color: #111827;
+        }
+
+        .content-paragraph {
+          margin: 0 0 26px;
+          color: #111827;
+          font-size: 18px;
+          line-height: 1.75;
+          font-weight: 400;
+        }
+
+        .content-heading {
+          color: #000000;
+          font-weight: 600;
+          letter-spacing: 0;
+          scroll-margin-top: 110px;
+        }
+
+        .content-heading.h2 {
+          margin: 40px 0 16px;
+          font-size: 30px;
+          line-height: 1.25;
+        }
+
+        .content-heading.h3 {
+          margin: 30px 0 12px;
+          font-size: 22px;
+          line-height: 1.35;
+        }
+
+        .content-list {
+          margin: 0 0 34px;
+          padding-left: 28px;
+          color: #111827;
+        }
+
+        .content-list li {
+          margin-bottom: 10px;
+          font-size: 18px;
+          line-height: 1.7;
+        }
+
+        .table-scroll {
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          margin: 32px 0 40px;
+        }
+
+        .content-table {
+          width: 100%;
+          min-width: 760px;
+          border-collapse: collapse;
+          table-layout: fixed;
+          border: 1px solid #e5e7eb;
+          background: #ffffff;
+          font-size: 18px;
+          line-height: 1.3;
+        }
+
+        .content-table th,
+        .content-table td {
+          padding: 24px 20px;
+          text-align: left;
+          vertical-align: middle;
+          border-right: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+          color: #1f2937;
+          overflow-wrap: anywhere;
+        }
+
+        .content-table th {
+          background: #f7f7f8;
+          color: #1f2937;
+          font-weight: 600;
+        }
+
+        .content-table th:last-child,
+        .content-table td:last-child {
+          border-right: 0;
+        }
+
+        .content-table tbody tr:last-child td {
+          border-bottom: 0;
+        }
+
+        .content-callout {
+          margin: 34px 0;
+          padding: 22px 24px;
+          border-left: 2px solid;
+          color: #000000;
+          font-size: 18px;
+          line-height: 1.8;
+          font-style: italic;
+        }
+
+        .content-image {
+          width: 100%;
+          margin: 30px 0 34px;
+        }
+
+        .content-image img {
+          display: block;
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+        }
+
+        .content-image figcaption {
+          margin-top: 10px;
+          color: #6b7280;
+          text-align: center;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .content-callout a,
+        .content-paragraph a {
+          color: #3f73d8;
+          font-weight: 600;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+
+        @media (max-width: 1180px) {
+          .content-paragraph,
+          .content-callout {
+            font-size: 17px;
+          }
+
+          .content-table {
+            font-size: 17px;
+          }
+        }
+
+        @media (max-width: 720px) {
+          .content-paragraph,
+          .content-callout {
+            margin-bottom: 26px;
+            font-size: 16px;
+            line-height: 1.72;
+          }
+
+          .content-heading.h2 {
+            margin-top: 36px;
+            font-size: 28px;
+          }
+
+          .content-heading.h3 {
+            font-size: 22px;
+          }
+
+          .content-list li {
+            font-size: 16px;
+          }
+
+          .content-table {
+            min-width: 640px;
+            font-size: 16px;
+          }
+
+          .content-table th,
+          .content-table td {
+            padding: 16px 14px;
+          }
+        }
+      `}</style>
     </article>
   );
 }

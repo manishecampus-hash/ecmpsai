@@ -85,21 +85,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { notFound } from "next/navigation";
-import { Calendar, Clock3, User, ChevronRight, Eye } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
-import { AuthorCard } from "@/components/blog-content/AuthorCard";
 import { RelatedPosts } from "@/components/blog-content/RealetedPost";
 import { BlogContent } from "@/components/blog-content/blog-content";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
-import { ApplicationModal } from "@/components/application-modal";
 import { Footer } from "@/components/layout/footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+const pageMaxWidth = "1264px";
 
 export default async function BlogDetailsPage({
   params,
@@ -108,395 +108,318 @@ export default async function BlogDetailsPage({
 }) {
   const { slug } = await params;
   const blog = blogs.find((item) => item.slug === slug);
+
   if (!blog) notFound();
 
   return (
-    <main
-      className={`min-h-screen ${poppins.className}`}
-      style={{ background: "var(--bg-page)" }}
-    >
-      {/* ── BREADCRUMB ── */}
-      <div
-        style={{
-          borderBottom: "1px solid var(--border)",
-          background: "var(--bg-surface)",
-          paddingTop: "0px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "900px",
-            margin: "0 auto",
-            padding: "12px 16px",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            fontSize: "13px",
-            flexWrap: "wrap",
-          }}
-        >
-          <Link
-            href="/"
-            style={{ color: "var(--text-muted)", textDecoration: "none" }}
-          >
-            Home
-          </Link>
-          <ChevronRight
-            style={{
-              width: 14,
-              height: 14,
-              color: "var(--text-muted)",
-              flexShrink: 0,
-            }}
-          />
-          <Link
-            href="/blog"
-            style={{ color: "var(--text-muted)", textDecoration: "none" }}
-          >
-            Blog
-          </Link>
-          <ChevronRight
-            style={{
-              width: 14,
-              height: 14,
-              color: "var(--text-muted)",
-              flexShrink: 0,
-            }}
-          />
-          <span
-            style={{
-              color: "var(--text-primary)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "300px",
-              fontWeight: 500,
-            }}
-          >
-            {blog.title}
-          </span>
-        </div>
+    <main className={`upgrad-blog-page ${poppins.className}`}>
+      <div className="blog-container breadcrumb">
+        <Link href="/">Home</Link>
+        <ChevronRight className="breadcrumb-icon" />
+        <Link href="/blog">Blog</Link>
+        <ChevronRight className="breadcrumb-icon" />
+        <span>General</span>
+        <ChevronRight className="breadcrumb-icon" />
+        <strong>{blog.title}</strong>
       </div>
 
-      {/* ── HERO SECTION ── */}
-      <div
-        style={{
-          background: "var(--bg-surface)",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "900px",
-            margin: "0 auto",
-            padding: "24px 16px 40px",
-          }}
-        >
-          {/* Title & Meta */}
-          <h1
-            style={{
-              fontSize: "clamp(1.4rem, 5vw, 2.4rem)",
-              fontWeight: 700,
-              lineHeight: 1.2,
-              color: "var(--text-primary)",
-              letterSpacing: "-0.02em",
-              margin: "0 0 16px",
-              maxWidth: "800px",
-            }}
-          >
-            {blog.title}
-          </h1>
+      <section className="blog-container blog-shell">
+        <article className="blog-main">
+          <header className="blog-hero">
+            <h1>{blog.title}</h1>
 
-          {/* Meta Info Row */}
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "16px",
-              marginBottom: "20px",
-              fontSize: "13px",
-            }}
-          >
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                color: "var(--text-muted)",
-              }}
-            >
-              <Calendar style={{ width: 14, height: 14, flexShrink: 0 }} />
-              {blog.date}
-            </span>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                color: "var(--text-muted)",
-              }}
-            >
-              <Clock3 style={{ width: 14, height: 14, flexShrink: 0 }} />
-              {blog.readTime}
-            </span>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                color: "var(--text-muted)",
-              }}
-            >
-              <Eye style={{ width: 14, height: 14, flexShrink: 0 }} />
-              {blog.view}
-            </span>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                color: "var(--text-muted)",
-              }}
-            >
-              <User style={{ width: 14, height: 14, flexShrink: 0 }} />
-              {blog.author}
-            </span>
-          </div>
+            <div className="hero-meta-row">
+              <div className="hero-meta">
+                <Link href="#" className="author-link">
+                  By {blog.author}
+                </Link>
+                <p>
+                  Updated on {blog.date} | {blog.readTime} | {blog.view} views
+                </p>
+              </div>
 
-          {/* Share Buttons */}
-          <div style={{ marginBottom: "20px" }}>
-            <ShareSaveButtons />
-          </div>
-          <TableOfContents headings={blog.headings} />
-          {/* Description */}
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.7,
-              color: "var(--text-muted)",
-              maxWidth: "800px",
-              marginBottom: "20px",
-              fontWeight: 400,
-              whiteSpace: "pre-line",
-            }}
-          >
-            {blog.description}
-          </p>
-
-          {/* Tags */}
-          {/* {blog.tags && blog.tags.length > 0 && (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "6px",
-                marginTop: "16px",
-              }}
-            >
-              {blog.tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    padding: "4px 12px",
-                    borderRadius: "20px",
-                    background: "var(--bg-page)",
-                    border: "1px solid var(--border)",
-                    color: "var(--text-muted)",
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+              <div>
+                <ShareSaveButtons />
+              </div>
             </div>
-          )} */}
-        </div>
+          </header>
 
-        {/* ── HERO IMAGE ── */}
-        {blog.imageSrc && (
-          <div
-            style={{
-              maxWidth: "900px",
-              margin: "0 auto",
-              padding: "0 16px 32px",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                height: "clamp(220px, 50vw, 420px)",
-                borderRadius: "16px",
-                overflow: "hidden",
-                border: "1px solid var(--border)",
-              }}
-            >
+          <TableOfContents headings={blog.headings} />
+
+          <p className="blog-lead">{blog.description}</p>
+
+          {blog.imageSrc && (
+            <figure className="blog-feature-image">
               <Image
                 src={blog.imageSrc}
                 alt={blog.title}
-                fill
-                sizes="(max-width: 900px) 100vw, 900px"
+                width={900}
+                height={560}
+                sizes="(max-width: 980px) calc(100vw - 28px), 900px"
                 style={{
-                  objectFit: "cover",
-                  objectPosition: "center",
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  borderRadius: "8px",
                 }}
                 priority
               />
-            </div>
+            </figure>
+          )}
+
+          <BlogContent blog={blog} />
+
+          <div className="related-wrap">
+            <RelatedPosts posts={blogs} currentPostId={blog.id} />
           </div>
-        )}
-      </div>
+        </article>
 
-      {/* ── MAIN CONTENT AREA ── */}
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          padding: "40px 16px 60px",
-        }}
-      >
-        {/* Table of Contents */}
+        <aside className="blog-sidebar" aria-label="Consultation form">
+          <ConsultationForm />
+        </aside>
+      </section>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 300px",
-            gap: "40px",
-            alignItems: "start",
-          }}
-        >
-          {/* ── ARTICLE ── */}
-          <div style={{ minWidth: 0 }}>
-            <BlogContent blog={blog} />
-          </div>
+      <button className="back-top" aria-label="Back to top">
+        <span />
+        <span />
+      </button>
 
-          {/* ── SIDEBAR ── */}
-          <aside>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-                position: "sticky",
-                top: "100px",
-              }}
-            >
-              {/* Author Card */}
-              <AuthorCard
-                author={blog.author}
-                authorBio={blog.authorBio}
-                authorImage={blog.authorImage}
-              />
+      <Footer />
 
-              {/* CTA Box */}
-              <div
-                style={{
-                  borderRadius: "14px",
-                  padding: "20px",
-                  border: "1px solid var(--border)",
-                  background: "var(--bg-surface)",
-                }}
-              >
-                <h3
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "15px",
-                    color: "var(--text-primary)",
-                    margin: "0 0 10px",
-                  }}
-                >
-                  Ready to start?
-                </h3>
-                <p
-                  style={{
-                    fontSize: "13px",
-                    lineHeight: 1.6,
-                    color: "var(--text-muted)",
-                    margin: "0 0 16px",
-                  }}
-                >
-                  Explore top online universities and take the next step in your
-                  career.
-                </p>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
-                  <ApplicationModal
-                    trigger={
-                      <button
-                        style={{
-                          width: "100%",
-                          borderRadius: "10px",
-                          padding: "11px 14px",
-                          fontSize: "13px",
-                          fontWeight: 600,
-                          background: "var(--accent)",
-                          color: "#374151",
-                          border: "1px solid #d1d5db",
-                          cursor: "pointer",
-                          transition: "opacity 0.2s",
-                        }}
-                      >
-                        Apply Now
-                      </button>
-                    }
-                  />
-
-                  <Link
-                    href="/discovery"
-                    style={{
-                      width: "100%",
-                      textAlign: "center",
-                      borderRadius: "10px",
-                      padding: "11px 14px",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      background: "var(--accent)",
-                      color: "#fff",
-                      textDecoration: "none",
-                      transition: "opacity 0.2s",
-                      display: "block",
-                    }}
-                  >
-                    Explore Universities
-                  </Link>
-                </div>
-              </div>
-
-              {/* Consultation Form */}
-              <ConsultationForm />
-            </div>
-          </aside>
-        </div>
-
-        {/* ── RELATED POSTS ── */}
-        <div style={{ marginTop: "60px" }}>
-          <RelatedPosts posts={blogs} currentPostId={blog.id} />
-        </div>
-      </div>
-
-      {/* ── MOBILE RESPONSIVE STYLES ── */}
       <style>{`
-        @media (max-width: 768px) {
-          [style*="grid-template-columns: 1fr 300px"] {
-            grid-template-columns: 1fr !important;
+        .upgrad-blog-page {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #111827;
+        }
+
+        .blog-container {
+          width: min(${pageMaxWidth}, calc(100% - 40px));
+          margin: 0 auto;
+        }
+
+        .breadcrumb {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+          padding: 38px 0 30px;
+          font-size: 13px;
+          line-height: 1.4;
+          color: #111827;
+        }
+
+        .breadcrumb a {
+          color: #111827;
+          text-decoration: none;
+          flex-shrink: 0;
+        }
+
+        .breadcrumb strong {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-weight: 700;
+        }
+
+        .breadcrumb-icon {
+          width: 13px;
+          height: 13px;
+          color: #6b7280;
+          flex: 0 0 auto;
+        }
+
+        .blog-shell {
+          display: grid;
+          grid-template-columns: minmax(0, 868px) 352px;
+          gap: 46px;
+          align-items: start;
+          padding-bottom: 70px;
+        }
+
+        .blog-main {
+          min-width: 0;
+        }
+
+        .blog-hero h1 {
+          max-width: 900px;
+          margin: 0 0 34px;
+          color: #000000;
+          font-size: clamp(34px, 3.1vw, 46px);
+          line-height: 1.18;
+          font-weight: 600;
+          letter-spacing: 0;
+        }
+
+        .hero-meta-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+          margin-bottom: 42px;
+        }
+
+        .hero-meta {
+          min-width: 0;
+          font-size: 16px;
+          line-height: 1.5;
+        }
+
+        .author-link {
+          display: inline-block;
+          color: #111827;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+          margin-bottom: 2px;
+        }
+
+        .hero-meta p {
+          margin: 0;
+          color: #4b5563;
+        }
+
+        .share-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          flex: 0 0 auto;
+          color: #374151;
+          font-size: 16px;
+        }
+
+        .blog-lead {
+          margin: 30px 0 28px;
+          max-width: 900px;
+          color: #111827;
+          font-size: 18px;
+          line-height: 1.75;
+          font-weight: 400;
+          white-space: pre-line;
+        }
+
+        .blog-feature-image {
+          width: 100%;
+          max-width: 900px;
+          margin: 0 0 34px;
+        }
+
+        .blog-sidebar {
+          position: sticky;
+          top: 102px;
+          min-width: 0;
+        }
+
+        .related-wrap {
+          margin-top: 56px;
+        }
+
+        .back-top {
+          position: fixed;
+          left: 50px;
+          bottom: 48px;
+          width: 72px;
+          height: 72px;
+          display: none;
+          place-items: center;
+          border: 1px solid #f43f5e;
+          border-radius: 50%;
+          background: #ffffff;
+          box-shadow: 0 12px 34px rgba(17, 24, 39, 0.08);
+          cursor: pointer;
+        }
+
+        .back-top span {
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          border-left: 3px solid #ef233c;
+          border-top: 3px solid #ef233c;
+          transform: rotate(45deg);
+        }
+
+        .back-top span:first-child {
+          margin-top: 10px;
+        }
+
+        .back-top span:last-child {
+          margin-top: -6px;
+        }
+
+        @media (max-width: 1180px) {
+          .blog-shell {
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 32px;
           }
-          aside {
-            order: 2;
+
+          .blog-lead {
+            font-size: 17px;
           }
-          [role="article"] {
-            order: 1;
+        }
+
+        @media (max-width: 980px) {
+          .blog-shell {
+            grid-template-columns: 1fr;
+          }
+
+          .blog-sidebar {
+            position: static;
+            max-width: 420px;
+          }
+
+          .hero-meta-row {
+            align-items: flex-start;
+          }
+        }
+
+        @media (max-width: 720px) {
+          .blog-container {
+            width: min(100% - 28px, ${pageMaxWidth});
+          }
+
+          .breadcrumb {
+            padding: 22px 0 20px;
+            font-size: 12px;
+          }
+
+          .blog-hero h1 {
+            margin-bottom: 22px;
+            font-size: clamp(28px, 9vw, 38px);
+          }
+
+          .hero-meta-row {
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 28px;
+          }
+
+          .hero-meta,
+          .share-wrap {
+            font-size: 14px;
+          }
+
+          .blog-lead {
+            margin: 26px 0;
+            font-size: 16px;
+            line-height: 1.72;
+          }
+
+          .blog-sidebar {
+            max-width: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .breadcrumb strong {
+            max-width: 180px;
+          }
+
+          .share-wrap {
+            width: 100%;
+            justify-content: flex-start;
           }
         }
       `}</style>
-
-      <Footer />
     </main>
   );
 }

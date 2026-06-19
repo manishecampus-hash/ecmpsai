@@ -1,39 +1,52 @@
-import { ExternalLink } from 'lucide-react';
+import React from "react";
 
-interface HeroProps {
-    a: { name: string; image: string; website: string };
-    b: { name: string; image: string; website: string };
-}
+export default function HeroSection() {
+  return (
+    <div className="relative w-full overflow-hidden min-h-[600px] md:h-[500px]">
+      {/* Background Image */}
+      <img
+        src="/compare/home.png"
+        alt="University Comparison"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-export default function HeroSection({ a, b }: HeroProps) {
-    return (
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-            {/* Gradient Background Header */}
-            <div className="grid grid-cols-2 items-center bg-gradient-to-r from-indigo-50 to-emerald-50 p-8 md:p-12 relative">
+      {/* Light Overlay */}
+      <div className="absolute inset-0 bg-white/70" />
 
-                {/* University A */}
-                <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white">
-                        <img src={a.image} alt={a.name} className="w-full h-full object-cover" />
-                    </div>
-                    <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">{a.name}</h1>
-
-                </div>
-
-                {/* University B */}
-                <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white">
-                        <img src={b.image} alt={b.name} className="w-full h-full object-cover" />
-                    </div>
-                    <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">{b.name}</h1>
-
-                </div>
-
-                {/* VS Badge */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 text-white font-black text-lg px-6 py-3 rounded-full shadow-xl border-4 border-white z-10">
-                    VS
-                </div>
-            </div>
+      {/* Content Container */}
+      <div className="relative h-full flex flex-col md:flex-row justify-center md:justify-between items-center px-6 md:px-16 lg:px-24 py-12 gap-10 md:gap-4 z-10 text-black">
+        {/* Left Content */}
+        <div className="flex-1 w-full text-center md:text-left flex flex-col items-center md:items-start">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-4xl font-bold text-[#4a1472] leading-tight break-words">
+            Amity University
+          </h2>
+          <p className="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 leading-snug">
+            Inspiring Minds, Building Futures.
+          </p>
+          <p className="mt-3 text-sm md:text-base lg:text-lg text-gray-700 max-w-sm">
+            A legacy of academic excellence, innovation and leadership.
+          </p>
+          <button className="mt-8 px-6 py-3 md:px-8 md:py-3 bg-[#4a1472] text-white rounded-full font-bold hover:scale-105 transition-transform shrink-0">
+            Explore Amity
+          </button>
         </div>
-    );
+
+        {/* Right Content */}
+        <div className="flex-1 w-full text-center md:text-right flex flex-col items-center md:items-end">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-4xl font-bold text-[#4a1472] leading-tight break-words">
+            Manipal University
+          </h2>
+          <p className="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 leading-snug">
+            Inspiring Minds, Building Futures.
+          </p>
+          <p className="mt-3 text-sm md:text-base lg:text-lg text-gray-700 max-w-sm">
+            A legacy of academic excellence, innovation and leadership.
+          </p>
+          <button className="mt-8 px-6 py-3 md:px-8 md:py-3 bg-[#1f4a7b] text-white rounded-full font-bold hover:scale-105 transition-transform shrink-0">
+            Explore Manipal
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

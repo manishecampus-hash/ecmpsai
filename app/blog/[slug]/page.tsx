@@ -77,18 +77,21 @@
 //     );
 // }
 
+// ── Server Component — NO "use client" ──
 
 // ── Server Component — NO "use client" ──
 
+import Image from "next/image";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { notFound } from "next/navigation";
 import {
-    ArrowLeft,
-    Calendar,
-    Clock3,
-    User,
-    ChevronRight,
+  ArrowLeft,
+  Calendar,
+  Clock3,
+  User,
+  ChevronRight,
+  Eye,
 } from "lucide-react";
 import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
@@ -96,336 +99,428 @@ import { AuthorCard } from "@/components/blog-content/AuthorCard";
 import { RelatedPosts } from "@/components/blog-content/RealetedPost";
 import { BlogContent } from "@/components/blog-content/blog-content";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
+import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
 import { ApplicationModal } from "@/components/application-modal";
 import { Footer } from "@/components/layout/footer";
 
 // ── Module level — NOT inside the function ──
 const poppins = Poppins({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export default async function BlogDetailsPage({
-    params,
+  params,
 }: {
-    params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-    const { slug } = await params;
-    const blog = blogs.find((item) => item.slug === slug);
-    if (!blog) notFound();
+  const { slug } = await params;
+  const blog = blogs.find((item) => item.slug === slug);
+  if (!blog) notFound();
 
-    return (
-        <main
-            className={`min-h-screen ${poppins.className}`}
-            style={{ background: "var(--bg-page)", paddingTop: "80px" }}
+  return (
+    <main
+      className={`min-h-screen ${poppins.className}`}
+      style={{ background: "var(--bg-page)", paddingTop: "80px" }}
+    >
+      {/* ── BREADCRUMB ── */}
+      <div
+        style={{
+          borderBottom: "1px solid var(--border)",
+          background: "var(--bg-surface)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1280px",
+            margin: "0 auto",
+            padding: "10px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            fontSize: "13px",
+            flexWrap: "wrap",
+          }}
         >
-            {/* ── BREADCRUMB ── */}
-            <div
+          <Link
+            href="/"
+            style={{ color: "var(--text-muted)", textDecoration: "none" }}
+          >
+            Home
+          </Link>
+          <ChevronRight
+            style={{
+              width: 14,
+              height: 14,
+              color: "var(--text-muted)",
+              flexShrink: 0,
+            }}
+          />
+          <Link
+            href="/blog"
+            style={{ color: "var(--text-muted)", textDecoration: "none" }}
+          >
+            Blog
+          </Link>
+          <ChevronRight
+            style={{
+              width: 14,
+              height: 14,
+              color: "var(--text-muted)",
+              flexShrink: 0,
+            }}
+          />
+          <span
+            style={{
+              color: "var(--text-primary)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "200px",
+            }}
+          >
+            {blog.title}
+          </span>
+        </div>
+      </div>
+
+      {/* ── HERO ── */}
+      <div
+        style={{
+          borderBottom: "1px solid var(--border)",
+          background: "var(--bg-surface)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1280px",
+            margin: "0 auto",
+            padding: "32px 16px 40px",
+          }}
+        >
+          <Link
+            href="/blog"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "var(--accent)",
+              textDecoration: "none",
+              marginBottom: "24px",
+            }}
+          >
+            <ArrowLeft style={{ width: 16, height: 16 }} />
+            Back to all posts
+          </Link>
+
+          {/* ── TITLE + FORM GRID ── */}
+          <div
+            className="hero-title-form-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gap: "32px",
+              marginBottom: "28px",
+              alignItems: "start",
+            }}
+          >
+            {/* LEFT - Title, Meta, Description, Tags */}
+            <div style={{ minWidth: 0 }}>
+              {/* Meta row */}
+              <div
                 style={{
-                    borderBottom: "1px solid var(--border)",
-                    background: "var(--bg-surface)",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                  marginBottom: "16px",
                 }}
-            >
-                <div
-                    style={{
-                        maxWidth: "1280px",
-                        margin: "0 auto",
-                        padding: "10px 16px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "13px",
-                        flexWrap: "wrap",
-                    }}
+              >
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontSize: "13px",
+                    color: "var(--text-muted)",
+                  }}
                 >
-                    <Link
-                        href="/"
-                        style={{ color: "var(--text-muted)", textDecoration: "none" }}
-                    >
-                        Home
-                    </Link>
-                    <ChevronRight
-                        style={{ width: 14, height: 14, color: "var(--text-muted)", flexShrink: 0 }}
-                    />
-                    <Link
-                        href="/blog"
-                        style={{ color: "var(--text-muted)", textDecoration: "none" }}
-                    >
-                        Blog
-                    </Link>
-                    <ChevronRight
-                        style={{ width: 14, height: 14, color: "var(--text-muted)", flexShrink: 0 }}
-                    />
+                  <Calendar style={{ width: 14, height: 14 }} />
+                  {blog.date}
+                </span>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontSize: "13px",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <Clock3 style={{ width: 14, height: 14 }} />
+                  {blog.readTime}
+                </span>
+
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontSize: "13px",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <Eye style={{ width: 14, height: 14 }} />
+                  {blog.view}
+                </span>
+
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontSize: "13px",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <User style={{ width: 14, height: 14 }} />
+                  {blog.author}
+                </span>
+                <div className="-mt-6">
+                  <ShareSaveButtons />
+                </div>
+              </div>
+
+              <h1
+                style={{
+                  fontSize: "clamp(1.1rem, 4vw, 2.2rem)",
+                  fontWeight: 500,
+                  lineHeight: 1.25,
+                  color: "var(--text-primary)",
+                  letterSpacing: "-0.02em",
+                  maxWidth: "800px",
+                  margin: 0,
+                  fontFamily: "inherit",
+                }}
+              >
+                {blog.title}
+              </h1>
+
+              <p
+                style={{
+                  marginTop: "14px",
+                  fontSize: "clamp(0.9rem, 2vw, 1rem)",
+                  lineHeight: 1.7,
+                  color: "var(--text-muted)",
+                  maxWidth: "680px",
+                  fontWeight: 400,
+                }}
+              >
+                {blog.description}
+              </p>
+
+              {/* Tags */}
+              {blog.tags && blog.tags.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "6px",
+                    marginTop: "16px",
+                  }}
+                >
+                  {blog.tags.map((tag) => (
                     <span
-                        style={{
-                            color: "var(--text-primary)",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            maxWidth: "200px",
-                        }}
+                      key={tag}
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        padding: "3px 10px",
+                        borderRadius: "20px",
+                        background: "var(--bg-page)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text-muted)",
+                      }}
                     >
-                        {blog.title}
+                      {tag}
                     </span>
+                  ))}
                 </div>
+              )}
             </div>
 
-            {/* ── HERO ── */}
+            {/* RIGHT - Consultation Form */}
             <div
-                style={{
-                    borderBottom: "1px solid var(--border)",
-                    background: "var(--bg-surface)",
-                }}
+              className="hero-form-wrapper"
+              style={{ display: "none", justifyContent: "center" }}
             >
-                <div
-                    style={{
-                        maxWidth: "1280px",
-                        margin: "0 auto",
-                        padding: "32px 16px 40px",
-                    }}
-                >
-                    <Link
-                        href="/blog"
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            fontSize: "14px",
-                            fontWeight: 500,
-                            color: "var(--accent)",
-                            textDecoration: "none",
-                            marginBottom: "24px",
-                        }}
-                    >
-                        <ArrowLeft style={{ width: 16, height: 16 }} />
-                        Back to all posts
-                    </Link>
-
-                    {/* Meta row */}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "10px",
-                            marginBottom: "16px",
-                        }}
-                    >
-                        <span
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "5px",
-                                fontSize: "13px",
-                                color: "var(--text-muted)",
-                            }}
-                        >
-                            <Calendar style={{ width: 14, height: 14 }} />
-                            {blog.date}
-                        </span>
-                        <span
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "5px",
-                                fontSize: "13px",
-                                color: "var(--text-muted)",
-                            }}
-                        >
-                            <Clock3 style={{ width: 14, height: 14 }} />
-                            {blog.readTime}
-                        </span>
-                        <span
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "5px",
-                                fontSize: "13px",
-                                color: "var(--text-muted)",
-                            }}
-                        >
-                            <User style={{ width: 14, height: 14 }} />
-                            {blog.author}
-                        </span>
-                    </div>
-
-                    <h1
-                        style={{
-                            fontSize: "clamp(1.1rem, 4vw, 2.2rem)",
-                            fontWeight: 500,
-                            lineHeight: 1.25,
-                            color: "var(--text-primary)",
-                            letterSpacing: "-0.02em",
-                            maxWidth: "800px",
-                            margin: 0,
-                            fontFamily: "inherit",
-                        }}
-                    >
-                        {blog.title}
-                    </h1>
-
-                    <p
-                        style={{
-                            marginTop: "14px",
-                            fontSize: "clamp(0.9rem, 2vw, 1rem)",
-                            lineHeight: 1.7,
-                            color: "var(--text-muted)",
-                            maxWidth: "680px",
-                            fontWeight: 400,
-                        }}
-                    >
-                        {blog.description}
-                    </p>
-
-                    {/* Tags */}
-                    {blog.tags && blog.tags.length > 0 && (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: "6px",
-                                marginTop: "16px",
-                            }}
-                        >
-                            {blog.tags.map((tag) => (
-                                <span
-                                    key={tag}
-                                    style={{
-                                        fontSize: "12px",
-                                        fontWeight: 500,
-                                        padding: "3px 10px",
-                                        borderRadius: "20px",
-                                        background: "var(--bg-page)",
-                                        border: "1px solid var(--border)",
-                                        color: "var(--text-muted)",
-                                    }}
-                                >
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                    )}
-
-                    <ShareSaveButtons />
-                </div>
+              <ConsultationForm />
             </div>
+          </div>
 
-            {/* ── BODY ── */}
+          {/* ── HERO IMAGE ── */}
+          {blog.imageSrc && (
             <div
-                style={{
-                    maxWidth: "1280px",
-                    margin: "0 auto",
-                    padding: "40px 16px 60px",
-                }}
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "800px",
+                height: "clamp(220px, 40vw, 450px)",
+                borderRadius: "16px",
+                overflow: "hidden",
+                margin: "0 auto",
+                border: "1px solid var(--border)",
+              }}
             >
-                <div
-                    className="blog-body-grid"
-                    style={{
-                        display: "grid",
-                        gap: "32px",
-                        gridTemplateColumns: "1fr",
-                        gridTemplateAreas: '"article" "sidebar"',
-                    }}
-                >
-                    {/* LEFT TOC */}
-                    <aside className="blog-toc" style={{ display: "none" }}>
-                        <div style={{ position: "sticky", top: "100px" }}>
-                            <TableOfContents headings={blog.headings} />
-                        </div>
-                    </aside>
-
-                    {/* CENTER — Article */}
-                    <div style={{ gridArea: "article", minWidth: 0 }}>
-                        <BlogContent blog={blog} />
-                    </div>
-
-                    {/* RIGHT — Sidebar */}
-                    <aside style={{ gridArea: "sidebar" }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                            <AuthorCard
-                                author={blog.author}
-                                authorBio={blog.authorBio}
-                                authorImage={blog.authorImage}
-                            />
-
-                            {/* CTA */}
-                            <div
-                                style={{
-                                    borderRadius: "16px",
-                                    padding: "20px",
-                                    border: "1px solid var(--border)",
-                                    background: "var(--bg-surface)",
-                                }}
-                            >
-                                <h3
-                                    style={{
-                                        fontWeight: 700,
-                                        fontSize: "15px",
-                                        color: "var(--text-primary)",
-                                        margin: "0 0 8px",
-                                    }}
-                                >
-                                    Ready to start?
-                                </h3>
-                                <p
-                                    style={{
-                                        fontSize: "13px",
-                                        lineHeight: 1.6,
-                                        color: "var(--text-muted)",
-                                        margin: "0 0 16px",
-                                    }}
-                                >
-                                    Explore top online universities and take the next step in your career.
-                                </p>
-
-                                <ApplicationModal
-                                    trigger={
-                                        <button
-                                            style={{
-                                                display: "block",
-                                                width: "100%",
-                                                textAlign: "center",
-                                                borderRadius: "12px",
-                                                padding: "10px",
-                                                fontSize: "13px",
-                                                fontWeight: 600,
-                                                background: "var(--accent)",
-                                                color: "#374151",
-                                                border: "1px solid #d1d5db", // gray border
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            Apply Now
-                                        </button>
-                                    }
-                                />
-
-                                <Link
-                                    href="/discovery"
-                                    style={{
-                                        display: "block",
-                                        width: "100%",
-                                        textAlign: "center",
-                                        borderRadius: "12px",
-                                        padding: "10px",
-                                        fontSize: "13px",
-                                        fontWeight: 600,
-                                        background: "var(--accent)",
-                                        color: "#fff",
-                                        textDecoration: "none",
-                                    }}
-                                >
-                                    Explore Universities
-                                </Link>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-
-                <RelatedPosts posts={blogs} currentPostId={blog.id} />
+              <Image
+                src={blog.imageSrc}
+                alt={blog.title}
+                fill
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+                priority
+              />
             </div>
+          )}
+        </div>
 
-            <Footer />
-            <style>{`
+        {/* ── RESPONSIVE STYLES ── */}
+        <style>{`
+          @media (min-width: 1024px) {
+            .hero-title-form-grid {
+              grid-template-columns: 1fr 320px !important;
+            }
+            .hero-form-wrapper {
+              display: block !important;
+            }
+          }
+        `}</style>
+      </div>
+
+      {/* ── BODY ── */}
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "40px 16px 60px",
+        }}
+      >
+        <div
+          className="blog-body-grid"
+          style={{
+            display: "grid",
+            gap: "32px",
+            gridTemplateColumns: "1fr",
+            gridTemplateAreas: '"article" "sidebar"',
+          }}
+        >
+          {/* LEFT TOC */}
+          <aside className="blog-toc" style={{ display: "none" }}>
+            <div style={{ position: "sticky", top: "100px" }}>
+              <TableOfContents headings={blog.headings} />
+            </div>
+          </aside>
+
+          {/* CENTER — Article */}
+          <div style={{ gridArea: "article", minWidth: 0 }}>
+            <BlogContent blog={blog} />
+          </div>
+
+          {/* RIGHT — Sidebar */}
+          <aside style={{ gridArea: "sidebar" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+            >
+              <AuthorCard
+                author={blog.author}
+                authorBio={blog.authorBio}
+                authorImage={blog.authorImage}
+              />
+
+              {/* CTA */}
+              <div
+                style={{
+                  borderRadius: "16px",
+                  padding: "20px",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-surface)",
+                }}
+              >
+                <h3
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    color: "var(--text-primary)",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  Ready to start?
+                </h3>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    lineHeight: 1.6,
+                    color: "var(--text-muted)",
+                    margin: "0 0 16px",
+                  }}
+                >
+                  Explore top online universities and take the next step in your
+                  career.
+                </p>
+
+                <ApplicationModal
+                  trigger={
+                    <button
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        textAlign: "center",
+                        borderRadius: "12px",
+                        padding: "10px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        background: "var(--accent)",
+                        color: "#374151",
+                        border: "1px solid #d1d5db",
+                        cursor: "pointer",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Apply Now
+                    </button>
+                  }
+                />
+
+                <Link
+                  href="/discovery"
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
+                    borderRadius: "12px",
+                    padding: "10px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    background: "var(--accent)",
+                    color: "#fff",
+                    textDecoration: "none",
+                  }}
+                >
+                  Explore Universities
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <RelatedPosts posts={blogs} currentPostId={blog.id} />
+      </div>
+
+      <Footer />
+      <style>{`
         @media (min-width: 768px) {
           .blog-body-grid {
             grid-template-columns: 1fr 260px !important;
@@ -443,6 +538,6 @@ export default async function BlogDetailsPage({
           }
         }
       `}</style>
-        </main>
-    );
-} 
+    </main>
+  );
+}

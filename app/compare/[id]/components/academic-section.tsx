@@ -1,63 +1,213 @@
-import { BookOpen, GraduationCap, Award } from 'lucide-react';
+import React from "react";
+import { School, Users, Lightbulb, Globe, Target } from "lucide-react";
 
-interface AcademicProps {
-    a: { name: string; courses: string[]; affiliations: string[] };
-    b: { name: string; courses: string[]; affiliations: string[] };
-}
+export default function AcademicComparison() {
+  const rows = [
+    {
+      icon: "school",
+      label: "Programs Offered",
+      aVal: "200+",
+      aDesc: "Diverse programs",
+      bVal: "350+",
+      bDesc: "Industry-aligned",
+    },
+    {
+      icon: "users",
+      label: "Student to Faculty Ratio",
+      aVal: "15:1",
+      aDesc: "Ratio",
+      bVal: "12:1",
+      bDesc: "Ratio",
+    },
+    {
+      icon: "bulb",
+      label: "Learning Approach",
+      aVal: null,
+      aDesc: "Research-driven",
+      bVal: null,
+      bDesc: "Experiential",
+    },
+    {
+      icon: "world",
+      label: "Global Exposure",
+      aVal: null,
+      aDesc: "200+ universities",
+      bVal: null,
+      bDesc: "150+ institutions",
+    },
+    {
+      icon: "target",
+      label: "Teaching Focus",
+      aVal: null,
+      aDesc: "Academic excellence",
+      bVal: null,
+      bDesc: "Industry readiness",
+    },
+  ];
 
-export default function AcademicSection({ a, b }: AcademicProps) {
-    return (
-        <section className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">
-            <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-indigo-100 rounded-lg text-indigo-700">
-                    <BookOpen size={24} />
+  const iconMap = {
+    school: School,
+    users: Users,
+    bulb: Lightbulb,
+    world: Globe,
+    target: Target,
+  };
+  const iconBgMap = {
+    school: "#ede9fe",
+    users: "#dbeafe",
+    bulb: "#fef9c3",
+    world: "#dcfce7",
+    target: "#fee2e2",
+  };
+  const iconColorMap = {
+    school: "#7c3aed",
+    users: "#2563eb",
+    bulb: "#ca8a04",
+    world: "#16a34a",
+    target: "#dc2626",
+  };
+
+  return (
+    <div
+      style={{
+        borderRadius: 16,
+        padding: "32px 24px",
+        fontFamily: "sans-serif",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          fontSize: 22,
+          fontWeight: 700,
+          color: "#1a1a2e",
+          marginBottom: 28,
+        }}
+      >
+        Academic Comparison
+      </h2>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 220px 1fr",
+          background: "white",
+          borderRadius: 16,
+          overflow: "hidden",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
+        }}
+      >
+        {/* Headers */}
+        <div
+          style={{
+            background: "#6b21a8",
+            color: "white",
+            fontWeight: 700,
+            padding: "18px",
+            textAlign: "center",
+          }}
+        >
+          Amity University
+        </div>
+        <div
+          style={{
+            background: "#f8fafc",
+            padding: "18px",
+            textAlign: "center",
+            fontWeight: 700,
+            color: "#64748b",
+          }}
+        >
+          Features
+        </div>
+        <div
+          style={{
+            background: "#2563eb",
+            color: "white",
+            fontWeight: 700,
+            padding: "18px",
+            textAlign: "center",
+          }}
+        >
+          Manipal University
+        </div>
+
+        {rows.map((row, idx) => {
+          const Icon = iconMap[row.icon];
+          return (
+            <React.Fragment key={idx}>
+              {/* Left Cell */}
+              <div
+                style={{
+                  padding: "20px",
+                  textAlign: "center",
+                  borderBottom: "1px solid #f1f5f9",
+                }}
+              >
+                {row.aVal && (
+                  <div
+                    style={{ fontSize: 18, fontWeight: 700, color: "#5b21b6" }}
+                  >
+                    {row.aVal}
+                  </div>
+                )}
+                <div style={{ fontSize: 12, color: "#666" }}>{row.aDesc}</div>
+              </div>
+
+              {/* Middle Cell - Icon and Label in ROW */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  padding: "0 16px",
+                  borderBottom: "1px solid #f1f5f9",
+                  gap: "10px",
+                  background: "#fcfcfc",
+                }}
+              >
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: iconBgMap[row.icon],
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Icon size={16} color={iconColorMap[row.icon]} />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Academic Excellence</h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-                {/* University A Details */}
-                <div className="space-y-6">
-                    <h3 className="font-bold text-indigo-600 border-b pb-2">{a.name}</h3>
-                    <div>
-                        <p className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-1">
-                            <GraduationCap size={16} /> Popular Courses
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                            {a.courses.map((course) => (
-                                <span key={course} className="text-xs bg-gray-100 px-3 py-1 rounded-full">{course}</span>
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-1">
-                            <Award size={16} /> Affiliations
-                        </p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{a.affiliations.join(', ')}</p>
-                    </div>
+                <div
+                  style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}
+                >
+                  {row.label}
                 </div>
+              </div>
 
-                {/* University B Details */}
-                <div className="space-y-6 md:border-l md:pl-8">
-                    <h3 className="font-bold text-emerald-600 border-b pb-2">{b.name}</h3>
-                    <div>
-                        <p className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-1">
-                            <GraduationCap size={16} /> Popular Courses
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                            {b.courses.map((course) => (
-                                <span key={course} className="text-xs bg-gray-100 px-3 py-1 rounded-full">{course}</span>
-                            ))}
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-1">
-                            <Award size={16} /> Affiliations
-                        </p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{b.affiliations.join(', ')}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+              {/* Right Cell */}
+              <div
+                style={{
+                  padding: "20px",
+                  textAlign: "center",
+                  borderBottom: "1px solid #f1f5f9",
+                }}
+              >
+                {row.bVal && (
+                  <div
+                    style={{ fontSize: 18, fontWeight: 700, color: "#1d4ed8" }}
+                  >
+                    {row.bVal}
+                  </div>
+                )}
+                <div style={{ fontSize: 12, color: "#666" }}>{row.bDesc}</div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

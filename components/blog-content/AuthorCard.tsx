@@ -20,29 +20,6 @@ export function AuthorCard({ author, authorBio, authorImage }: Props) {
       style={{ background: "var(--bg-surface)", borderColor: "var(--border)" }}
     >
       <div className="flex items-center gap-3 mb-3">
-        <div
-          className="relative h-11 w-11 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
-          style={{ background: "var(--accent-soft)" }}
-        >
-          {authorImage ? (
-            <Image
-              src={authorImage}
-              alt={author}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <span
-              style={{
-                color: "var(--accent)",
-                fontWeight: 700,
-                fontSize: "0.9rem",
-              }}
-            >
-              {initials}
-            </span>
-          )}
-        </div>
         <div>
           <p
             style={{

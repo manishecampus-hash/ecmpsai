@@ -183,143 +183,6 @@ export function SignupModal({
           style={{ minHeight: "420px", maxHeight: "90vh" }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* ── LEFT PANEL ── */}
-          <div
-            className="hidden md:flex w-5/12 flex-col justify-between p-8 relative overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(145deg, #fff7f5 0%, #fde8e0 60%, #f9d0c4 100%)",
-            }}
-          >
-            {/* Floating badges */}
-            <div className="flex flex-col gap-3 z-10">
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 w-fit shadow-sm text-xs font-semibold text-gray-700">
-                <span className="text-indigo-500">🎓</span> University Explore
-              </div>
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 w-fit shadow-sm text-xs font-semibold text-gray-700">
-                <span className="text-green-500">📈</span> Career Growth
-              </div>
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 w-fit shadow-sm text-xs font-semibold text-gray-700">
-                <span className="text-yellow-500">🏅</span> Scholarships
-              </div>
-            </div>
-
-            {/* Illustration — rocket/student SVG */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-center">
-              <svg
-                viewBox="0 0 220 280"
-                className="w-52"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <ellipse cx="110" cy="180" rx="28" ry="70" fill="#e05c3a" />
-                <ellipse
-                  cx="110"
-                  cy="115"
-                  rx="28"
-                  ry="45"
-                  fill="#fff"
-                  stroke="#e05c3a"
-                  strokeWidth="2"
-                />
-                <path d="M82 120 Q110 60 138 120 Z" fill="#e05c3a" />
-                <circle
-                  cx="110"
-                  cy="130"
-                  r="14"
-                  fill="#c8e6fa"
-                  stroke="#e05c3a"
-                  strokeWidth="2"
-                />
-                <circle cx="110" cy="128" r="10" fill="#f5c6a0" />
-                <circle cx="106" cy="126" r="1.5" fill="#333" />
-                <circle cx="114" cy="126" r="1.5" fill="#333" />
-                <path
-                  d="M106 132 Q110 136 114 132"
-                  stroke="#c0725a"
-                  strokeWidth="1.2"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-                <rect
-                  x="101"
-                  y="116"
-                  width="18"
-                  height="3"
-                  rx="1"
-                  fill="#3730a3"
-                />
-                <polygon points="110,108 118,116 102,116" fill="#3730a3" />
-                <line
-                  x1="118"
-                  y1="116"
-                  x2="122"
-                  y2="119"
-                  stroke="#3730a3"
-                  strokeWidth="1.5"
-                />
-                <circle cx="122" cy="120" r="2" fill="#fbbf24" />
-                <path
-                  d="M82 175 Q60 185 65 210 Q80 200 82 185 Z"
-                  fill="#e05c3a"
-                  opacity="0.8"
-                />
-                <path
-                  d="M138 175 Q160 185 155 210 Q140 200 138 185 Z"
-                  fill="#e05c3a"
-                  opacity="0.8"
-                />
-                <ellipse
-                  cx="110"
-                  cy="252"
-                  rx="12"
-                  ry="18"
-                  fill="#fbbf24"
-                  opacity="0.9"
-                />
-                <ellipse
-                  cx="104"
-                  cy="256"
-                  rx="7"
-                  ry="14"
-                  fill="#f97316"
-                  opacity="0.8"
-                />
-                <ellipse
-                  cx="116"
-                  cy="256"
-                  rx="7"
-                  ry="14"
-                  fill="#f97316"
-                  opacity="0.8"
-                />
-                <ellipse
-                  cx="110"
-                  cy="260"
-                  rx="5"
-                  ry="10"
-                  fill="#fff"
-                  opacity="0.5"
-                />
-                <path
-                  d="M82 165 Q68 155 65 145"
-                  stroke="#f5c6a0"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <circle cx="64" cy="143" r="5" fill="#f5c6a0" />
-                <path
-                  d="M138 165 Q152 155 155 145"
-                  stroke="#f5c6a0"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <circle cx="156" cy="143" r="5" fill="#f5c6a0" />
-              </svg>
-            </div>
-          </div>
-
           {/* ── RIGHT PANEL ── */}
           <div className="flex-1 flex flex-col p-8 md:p-10 overflow-y-auto">
             {/* Top bar */}
@@ -365,9 +228,10 @@ export function SignupModal({
                 className="flex flex-col gap-5"
               >
                 {/* Phone row */}
-                <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-400 focus-within:bg-white transition">
+                {/* Phone row */}
+                <div className="w-full max-w-md mx-auto flex items-center border border-gray-200 overflow-hidden bg-gray-50 transition">
                   {/* Country picker */}
-                  <div className="relative flex items-center border-r border-gray-200 px-3 py-3 gap-1 cursor-pointer bg-gray-50">
+                  <div className="relative flex items-center border-r border-gray-200 px-3 py-3 gap-1 cursor-pointer ">
                     <span className="text-base">{selectedCountry.flag}</span>
                     <span className="text-sm font-medium text-gray-700">
                       {selectedCountry.code}
@@ -388,7 +252,7 @@ export function SignupModal({
                   {/* Number input */}
                   <input
                     type="tel"
-                    placeholder="Phone Number"
+                    placeholder="mobile Number"
                     value={phone}
                     onChange={(e) =>
                       setPhone(e.target.value.replace(/\D/g, ""))
@@ -413,7 +277,7 @@ export function SignupModal({
                     setStep("email");
                     setError("");
                   }}
-                  className="text-sm font-semibold text-indigo-600 underline underline-offset-2 hover:text-indigo-800 text-center transition"
+                  className="text-sm font-semibold underline underline-offset-2  text-center transition"
                 >
                   Sign up / Login with Email
                 </button>
@@ -422,7 +286,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading || phone.length < 7}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-full py-3 text-sm font-semibold transition-all mt-2"
+                  className="flex w-1/2 mx-auto items-center justify-center bg-gray-500 hover:bg-gray-600 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-full py-3 text-sm font-semibold transition-all mt-2"
                 >
                   {loading ? "Sending OTP..." : "Continue"}
                 </Button>
@@ -441,7 +305,7 @@ export function SignupModal({
                   }
                   maxLength={6}
                   required
-                  className="w-full px-4 py-3 text-center text-lg tracking-widest font-semibold border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-4 py-3 text-center text-lg tracking-widest font-semibold border border-gray-200 rounded-xl bg-gray-50 focus:outline-none  focus:bg-white transition placeholder-gray-400"
                 />
 
                 <button
@@ -496,7 +360,7 @@ export function SignupModal({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:bg-white transition placeholder-gray-400"
                 />
                 <Button
                   type="submit"
@@ -511,11 +375,11 @@ export function SignupModal({
             {/* Terms */}
             <p className="mt-6 text-xs text-gray-400 text-center leading-relaxed">
               By continuing, you agree to our{" "}
-              <a href="/terms" className="text-indigo-500 hover:underline">
+              <a href="/terms" className=" hover:underline">
                 Terms of Use
               </a>{" "}
               &amp;{" "}
-              <a href="/privacy" className="text-indigo-500 hover:underline">
+              <a href="/privacy" className=" hover:underline">
                 Privacy Policy
               </a>
             </p>

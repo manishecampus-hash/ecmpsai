@@ -2,11 +2,6 @@ import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 import { ECAMPUS_SEARCH_PROMPT } from "@/lib/system-prompt";
 
-// Reuse client across requests (important in Next.js edge/serverless)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -35,6 +30,11 @@ export async function GET(req: NextRequest) {
         { status: 503 },
       );
     }
+
+    // Instantiate client dynamically inside the request handler to avoid build crashes
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     // ── OpenAI call ───────────────────────────────────────────────
     const response = await openai.chat.completions.create({

@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { otpStore } from "@/lib/otp-store";
 
-const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
-const TWILIO_PHONE = process.env.TWILIO_PHONE;
-
 export async function POST(req: NextRequest) {
   try {
+    const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
+    const TWILIO_PHONE = process.env.TWILIO_PHONE;
     const { phone, email, name } = await req.json();
 
     if (!phone || !email) {

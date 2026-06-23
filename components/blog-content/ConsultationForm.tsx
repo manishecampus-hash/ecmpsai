@@ -20,8 +20,14 @@ export function ConsultationForm() {
       <button type="submit">Submit</button>
 
       <p>
-        By submitting, I accept the <a href="/terms-and-conditions">T&amp;C</a>{" "}
-        and <a href="/privacy-policy">Privacy Policy</a>
+        By submitting, I accept the{" "}
+        <a href="/terms-and-conditions" style={{ fontWeight: "normal" }}>
+          T&C
+        </a>{" "}
+        and{" "}
+        <a href="/privacy-policy" style={{ fontWeight: "normal" }}>
+          Privacy Policy
+        </a>
       </p>
 
       <style>{`

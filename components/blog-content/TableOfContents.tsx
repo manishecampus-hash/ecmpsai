@@ -5,9 +5,11 @@ import { ChevronDown } from "lucide-react";
 
 type Heading = { id: string; text?: string; label?: string; level: number };
 
+const PREVIEW_COUNT = 3;
+
 export function TableOfContents({ headings }: { headings: Heading[] }) {
   const [active, setActive] = useState<string>("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,132 +31,164 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
 
   const handleHeadingClick = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setIsOpen(false);
   };
+
+  const visibleHeadings = isExpanded
+    ? headings
+    : headings.slice(0, PREVIEW_COUNT);
+  const hasMore = headings.length > PREVIEW_COUNT;
 
   return (
     <div
       style={{
-        background: "var(--bg-surface)",
-        border: "1px solid var(--border)",
+        background: "#fff",
+        border: "1px solid #e5e7eb",
         borderRadius: "12px",
+        overflow: "hidden",
         margin: "2rem 0",
+        fontFamily: "inherit",
       }}
     >
-      {/* ── Header / Toggle ── */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
+      {/* ── Header ── */}
+      <div
         style={{
-          width: "100%",
-          padding: "16px 20px",
+          padding: "18px 24px 14px",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          gap: "12px",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-          color: "var(--text-primary)",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "var(--bg-page)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background =
-            "transparent";
+          gap: "10px",
+          borderBottom: "1px solid #f3f4f6",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span
-            style={{
-              fontSize: "1.1rem",
-              color: "var(--accent)",
-            }}
-          >
-            ≡
-          </span>
-          Table of Contents
-        </span>
-        <ChevronDown
-          size={18}
+        <span
           style={{
-            color: "var(--text-muted)",
-            transition: "transform 0.3s ease",
-            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-            flexShrink: 0,
-          }}
-        />
-      </button>
-
-      {/* ── Content ── */}
-      {isOpen && (
-        <div
-          style={{
-            borderTop: "1px solid var(--border)",
-            padding: "12px 20px",
-            maxHeight: "400px",
-            overflowY: "auto",
+            color: "#6b7280",
+            fontSize: "1.2rem",
+            lineHeight: 1,
+            fontWeight: 700,
           }}
         >
-          <ul
+          ≡
+        </span>
+        <span
+          style={{
+            fontSize: "1.05rem",
+            fontWeight: 700,
+            color: "#111827",
+          }}
+        >
+          Table of Contents
+        </span>
+      </div>
+
+      {/* ── Items ── */}
+      <ul style={{ listStyle: "none", padding: "10px 0 0", margin: 0 }}>
+        {visibleHeadings.map(({ id, text, label, level }) => {
+          const displayText = label ?? text ?? id;
+          const isActive = active === id;
+          return (
+            <li
+              key={id}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "10px",
+                padding: level === 3 ? "7px 24px 7px 44px" : "7px 24px",
+              }}
+            >
+              {/* bullet */}
+              <span
+                style={{
+                  flexShrink: 0,
+                  marginTop: "6px",
+                  width: "7px",
+                  height: "7px",
+                  borderRadius: "50%",
+                  background: isActive ? "#6b7280" : "#9ca3af",
+                  display: "inline-block",
+                }}
+              />
+              <button
+                onClick={() => handleHeadingClick(id)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: 0,
+                  fontSize: "0.93rem",
+                  lineHeight: 1.55,
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? "#111827" : "#374151",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color =
+                    "#6b7280";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.color = isActive
+                    ? "#111827"
+                    : "#374151";
+                }}
+              >
+                {displayText}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* ── Fade + View all / View less ── */}
+      {hasMore && (
+        <div style={{ position: "relative" }}>
+          {/* fade overlay when collapsed */}
+          {!isExpanded && (
+            <div
+              style={{
+                position: "absolute",
+                top: "-40px",
+                left: 0,
+                right: 0,
+                height: "40px",
+                background:
+                  "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.95))",
+                pointerEvents: "none",
+              }}
+            />
+          )}
+
+          <div
             style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "10px 24px 14px",
             }}
           >
-            {headings.map(({ id, text, label, level }) => {
-              const displayText = label ?? text ?? id;
-              return (
-                <li key={id} style={{ margin: 0 }}>
-                  <button
-                    onClick={() => handleHeadingClick(id)}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding:
-                        level === 3 ? "8px 12px 8px 28px" : "8px 12px 8px 12px",
-                      margin: 0,
-                      fontSize: "0.85rem",
-                      lineHeight: 1.5,
-                      color:
-                        active === id ? "var(--accent)" : "var(--text-muted)",
-                      fontWeight: active === id ? 600 : 400,
-                      background:
-                        active === id ? "var(--bg-page)" : "transparent",
-                      border: "none",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.background =
-                        "var(--bg-page)";
-                      if (active !== id) {
-                        (e.currentTarget as HTMLButtonElement).style.color =
-                          "var(--text-primary)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (active !== id) {
-                        (
-                          e.currentTarget as HTMLButtonElement
-                        ).style.background = "transparent";
-                        (e.currentTarget as HTMLButtonElement).style.color =
-                          "var(--text-muted)";
-                      }
-                    }}
-                  >
-                    {displayText}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                fontSize: "0.88rem",
+                fontWeight: 600,
+                color: "#6b7280",
+                padding: 0,
+              }}
+            >
+              {isExpanded ? "View less" : "View all"}
+              <ChevronDown
+                size={16}
+                style={{
+                  transition: "transform 0.25s ease",
+                  transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
+            </button>
+          </div>
         </div>
       )}
     </div>

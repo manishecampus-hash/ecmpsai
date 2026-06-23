@@ -144,7 +144,7 @@ export default function ProgramsSection() {
   return (
     <section
       style={{
-        background: "#000",
+        background: "#ffffff",
       }}
       className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
     >

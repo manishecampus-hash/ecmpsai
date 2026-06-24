@@ -151,9 +151,15 @@ function renderBlock(block: ContentBlock, key: number): React.ReactNode {
 }
 
 export function BlogContent({ blog }: { blog: Blog }) {
+  const isHtml = typeof blog.content === "string";
+
   return (
     <article className="upgrad-content">
-      {blog.content.map((block, i) => renderBlock(block, i))}
+      {isHtml ? (
+        <div dangerouslySetInnerHTML={{ __html: blog.content as string }} />
+      ) : (
+        (blog.content as ContentBlock[]).map((block, i) => renderBlock(block, i))
+      )}
 
       <style>{`
         .upgrad-content {
@@ -162,6 +168,7 @@ export function BlogContent({ blog }: { blog: Blog }) {
           color: #111827;
         }
 
+        .upgrad-content p,
         .content-paragraph {
           margin: 0 0 26px;
           color: #111827;
@@ -170,6 +177,8 @@ export function BlogContent({ blog }: { blog: Blog }) {
           font-weight: 400;
         }
 
+        .upgrad-content h2,
+        .upgrad-content h3,
         .content-heading {
           color: #000000;
           font-weight: 600;
@@ -177,48 +186,49 @@ export function BlogContent({ blog }: { blog: Blog }) {
           scroll-margin-top: 110px;
         }
 
+        .upgrad-content h2,
         .content-heading.h2 {
           margin: 40px 0 16px;
           font-size: 30px;
           line-height: 1.25;
         }
 
+        .upgrad-content h3,
         .content-heading.h3 {
           margin: 30px 0 12px;
           font-size: 22px;
           line-height: 1.35;
         }
 
+        .upgrad-content ul,
+        .upgrad-content ol,
         .content-list {
           margin: 0 0 34px;
           padding-left: 28px;
           color: #111827;
         }
 
+        .upgrad-content li,
         .content-list li {
           margin-bottom: 10px;
           font-size: 18px;
           line-height: 1.7;
         }
 
-        .table-scroll {
-          width: 100%;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          margin: 32px 0 40px;
-        }
-
+        .upgrad-content table,
         .content-table {
           width: 100%;
-          min-width: 760px;
           border-collapse: collapse;
           table-layout: fixed;
           border: 1px solid #e5e7eb;
           background: #ffffff;
           font-size: 18px;
           line-height: 1.3;
+          margin: 32px 0 40px;
         }
 
+        .upgrad-content th,
+        .upgrad-content td,
         .content-table th,
         .content-table td {
           padding: 24px 20px;
@@ -230,36 +240,45 @@ export function BlogContent({ blog }: { blog: Blog }) {
           overflow-wrap: anywhere;
         }
 
+        .upgrad-content th,
         .content-table th {
           background: #f7f7f8;
           color: #1f2937;
           font-weight: 600;
         }
 
+        .upgrad-content th:last-child,
+        .upgrad-content td:last-child,
         .content-table th:last-child,
         .content-table td:last-child {
           border-right: 0;
         }
 
+        .upgrad-content tbody tr:last-child td,
         .content-table tbody tr:last-child td {
           border-bottom: 0;
         }
 
+        .upgrad-content blockquote,
+        .upgrad-content aside,
         .content-callout {
           margin: 34px 0;
           padding: 22px 24px;
-          border-left: 2px solid;
+          border-left: 2px solid #111827;
           color: #000000;
           font-size: 18px;
           line-height: 1.8;
           font-style: italic;
+          background: #f4f4f5;
         }
 
+        .upgrad-content figure,
         .content-image {
           width: 100%;
           margin: 30px 0 34px;
         }
 
+        .upgrad-content figure img,
         .content-image img {
           display: block;
           width: 100%;
@@ -267,6 +286,7 @@ export function BlogContent({ blog }: { blog: Blog }) {
           border-radius: 8px;
         }
 
+        .upgrad-content figure figcaption,
         .content-image figcaption {
           margin-top: 10px;
           color: #6b7280;
@@ -275,6 +295,7 @@ export function BlogContent({ blog }: { blog: Blog }) {
           line-height: 1.5;
         }
 
+        .upgrad-content a,
         .content-callout a,
         .content-paragraph a {
           color: #3f73d8;
@@ -284,42 +305,55 @@ export function BlogContent({ blog }: { blog: Blog }) {
         }
 
         @media (max-width: 1180px) {
+          .upgrad-content p,
           .content-paragraph,
+          .upgrad-content blockquote,
+          .upgrad-content aside,
           .content-callout {
             font-size: 17px;
           }
 
+          .upgrad-content table,
           .content-table {
             font-size: 17px;
           }
         }
 
         @media (max-width: 720px) {
+          .upgrad-content p,
           .content-paragraph,
+          .upgrad-content blockquote,
+          .upgrad-content aside,
           .content-callout {
             margin-bottom: 26px;
             font-size: 16px;
             line-height: 1.72;
           }
 
+          .upgrad-content h2,
           .content-heading.h2 {
             margin-top: 36px;
             font-size: 28px;
           }
 
+          .upgrad-content h3,
           .content-heading.h3 {
             font-size: 22px;
           }
 
+          .upgrad-content li,
           .content-list li {
             font-size: 16px;
           }
 
+          .upgrad-content table,
           .content-table {
             min-width: 640px;
             font-size: 16px;
           }
 
+          .upgrad-content th,
+          .upgrad-content td,
           .content-table th,
           .content-table td {
             padding: 16px 14px;

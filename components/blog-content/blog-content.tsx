@@ -177,6 +177,7 @@ export function BlogContent({ blog }: { blog: Blog }) {
           font-weight: 400;
         }
 
+        .upgrad-content h1,
         .upgrad-content h2,
         .upgrad-content h3,
         .content-heading {
@@ -184,6 +185,12 @@ export function BlogContent({ blog }: { blog: Blog }) {
           font-weight: 600;
           letter-spacing: 0;
           scroll-margin-top: 110px;
+        }
+
+        .upgrad-content h1 {
+          margin: 48px 0 20px;
+          font-size: 36px;
+          line-height: 1.2;
         }
 
         .upgrad-content h2,

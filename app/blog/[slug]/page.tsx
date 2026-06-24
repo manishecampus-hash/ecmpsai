@@ -105,8 +105,8 @@ function parseHtmlContent(html: string) {
   const headings: { id: string; text: string; level: number }[] = [];
   let index = 0;
   
-  // Replace <h2> and <h3> tags and inject an id
-  const modifiedHtml = html.replace(/<(h[23])([^>]*)>([\s\S]*?)<\/h[23]>/gi, (match, tag, attrs, content) => {
+  // Replace <h1>, <h2> and <h3> tags and inject an id
+  const modifiedHtml = html.replace(/<(h[123])([^>]*)>([\s\S]*?)<\/h[123]>/gi, (match, tag, attrs, content) => {
     // Strip HTML tags from the content to get clean text
     const text = content.replace(/<\/?[^>]+(>|$)/g, "").trim();
     // Generate a unique-ish kebab-case ID
@@ -123,7 +123,8 @@ function parseHtmlContent(html: string) {
       id = `${id}-${index++}`; // ensure uniqueness
     }
     
-    const level = tag.toLowerCase() === "h2" ? 2 : 3;
+    const tagLower = tag.toLowerCase();
+    const level = tagLower === "h1" ? 1 : tagLower === "h2" ? 2 : 3;
     headings.push({ id, text, level });
     
     return `<${tag}${attrs} id="${id}">${content}</${tag}>`;

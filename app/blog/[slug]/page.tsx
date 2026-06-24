@@ -199,6 +199,9 @@ async function getBlogBySlug(slug: string) {
       
       const matched = dbBlogs.find((item: any) => normalize(item.url || "") === targetSlug);
       if (matched) {
+        if (matched.status === "inactive") {
+          return null; // treat inactive blogs as non-existent/not found
+        }
         return matched;
       }
     } else {
@@ -224,7 +227,8 @@ async function getRelatedBlogs() {
     if (res.ok) {
       const dbBlogs = await res.json();
       if (dbBlogs && dbBlogs.length > 0) {
-        return dbBlogs.map(mapDbBlogToBlog);
+        const activeBlogs = dbBlogs.filter((blog: any) => blog.status !== "inactive");
+        return activeBlogs.map(mapDbBlogToBlog);
       }
     }
   } catch (err) {

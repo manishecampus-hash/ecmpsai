@@ -49,6 +49,8 @@ function mapDbBlogToBlog(dbBlog: any) {
     tags: dbBlog.tags || [],
     headings: [],
     content: dbBlog.content || "",
+    inCarousel: dbBlog.inCarousel || false,
+    carouselOrder: typeof dbBlog.carouselOrder === "number" ? dbBlog.carouselOrder : 999,
   };
 }
 
@@ -61,7 +63,8 @@ async function getBlogs() {
     if (res.ok) {
       const dbBlogs = await res.json();
       if (dbBlogs && dbBlogs.length > 0) {
-        return dbBlogs.map(mapDbBlogToBlog);
+        const activeBlogs = dbBlogs.filter((blog: any) => blog.status !== "inactive");
+        return activeBlogs.map(mapDbBlogToBlog);
       }
     }
   } catch (err) {
@@ -72,12 +75,20 @@ async function getBlogs() {
 
 export default async function BlogPage() {
     const allBlogs = await getBlogs();
-    const featuredBlog = allBlogs.find((blog) => blog.featured) ?? allBlogs[0];
+    
+    // Filter and sort blogs configured for the slider/carousel in CMS
+    const sliderBlogs = allBlogs
+        .filter((blog) => blog.inCarousel)
+        .sort((a, b) => a.carouselOrder - b.carouselOrder);
+        
+    // Fallback to first 4 blogs if none are set in the slider carousel
+    const blogsToShow = sliderBlogs.length > 0 ? sliderBlogs : allBlogs.slice(0, 4);
+    const featuredBlog = blogsToShow[0] ?? allBlogs[0];
 
     return (
         <main className="min-h-screen bg-white text-gray-700">
             {/* Blog hero slider */}
-            <BlogHero blog={featuredBlog} blogs={allBlogs.slice(0, 4)} />
+            <BlogHero blog={featuredBlog} blogs={blogsToShow} />
 
             {/* Blog list receives full data so filtering and load more can work */}
             <BlogCategories blogs={allBlogs} />

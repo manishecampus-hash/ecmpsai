@@ -92,7 +92,12 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
                 display: "flex",
                 alignItems: "flex-start",
                 gap: "10px",
-                padding: level === 3 ? "7px 24px 7px 44px" : "7px 24px",
+                padding:
+                  level === 3
+                    ? "7px 24px 7px 48px"
+                    : level === 2
+                    ? "7px 24px 7px 36px"
+                    : "7px 24px",
               }}
             >
               {/* bullet */}

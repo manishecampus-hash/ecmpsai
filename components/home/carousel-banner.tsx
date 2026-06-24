@@ -3,27 +3,49 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
-const slides = [
+const staticSlides = [
   {
+    // <<<<<<< HEAD
     id: 1,
     desktop: "/banner/banner1test.png",
+    // =======
+    id: "static-1",
+    desktop: "/banner/banner1.svg",
+    // >>>>>>> 8dd6c88e07fc22c1599eb8f1e0afba8d0bca2fcd
     mobile: "/banner/mobile1.png",
+    slug: "",
+    title: "",
+    category: "",
+    isDynamic: false,
   },
   {
-    id: 2,
+    id: "static-2",
     desktop: "/banner/banner2.svg",
     mobile: "/banner/mobile2.webp",
+    slug: "",
+    title: "",
+    category: "",
+    isDynamic: false,
   },
   {
-    id: 3,
+    id: "static-3",
     desktop: "/banner/banner3.svg",
     mobile: "/banner/mobile3.png",
+    slug: "",
+    title: "",
+    category: "",
+    isDynamic: false,
   },
   {
-    id: 4,
+    id: "static-4",
     desktop: "/banner/banner4.svg",
     mobile: "/banner/mobile4.png",
+    slug: "",
+    title: "",
+    category: "",
+    isDynamic: false,
   },
 ];
 
@@ -31,15 +53,54 @@ const SWIPE_THRESHOLD = 50;
 const LOCK_AXIS_THRESHOLD = 10;
 
 export function CarouselBanner() {
+  const [slidesData, setSlidesData] = useState<any[]>(staticSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false); // ← NEW: prevent rapid clicks
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
   const touchDeltaX = useRef<number>(0);
   const isHorizontalSwipe = useRef<boolean | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  // ─── Fetch Dynamic Carousel Blogs ────────────────────────────
+  useEffect(() => {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+      "http://localhost:5000";
+    fetch(`${apiUrl}/blogs`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const dynamicCarousel = data
+            .filter((b: any) => b.inCarousel && b.status === "active")
+            .sort((a: any, b: any) => a.carouselOrder - b.carouselOrder)
+            .map((b: any, index: number) => ({
+              id: b.id || b._id || `dynamic-${index}`,
+              desktop: b.imageUrl || `/banner/banner${(index % 4) + 1}.svg`,
+              mobile: b.imageUrl || `/banner/mobile${(index % 4) + 1}.png`,
+              slug: `/blog/${(b.url || "").replace(/^\/+|\/+$/g, "")}`,
+              title: b.title || "",
+              category: b.category || "General",
+              isDynamic: true,
+            }));
+
+          if (dynamicCarousel.length > 0) {
+            setSlidesData(dynamicCarousel);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error(
+          "Failed to fetch dynamic carousel slides, using static fallback:",
+          err,
+        );
+      });
+  }, []);
 
   // ─── Navigate with transition lock ───────────────────────────
   const goTo = useCallback(
@@ -53,12 +114,14 @@ export function CarouselBanner() {
   );
 
   const nextSlide = useCallback(() => {
-    goTo((currentSlide + 1) % slides.length);
-  }, [currentSlide, goTo]);
+    if (slidesData.length === 0) return;
+    goTo((currentSlide + 1) % slidesData.length);
+  }, [currentSlide, goTo, slidesData.length]);
 
   const prevSlide = useCallback(() => {
-    goTo((currentSlide - 1 + slides.length) % slides.length);
-  }, [currentSlide, goTo]);
+    if (slidesData.length === 0) return;
+    goTo((currentSlide - 1 + slidesData.length) % slidesData.length);
+  }, [currentSlide, goTo, slidesData.length]);
 
   const goToSlide = (index: number) => {
     goTo(index);
@@ -67,12 +130,12 @@ export function CarouselBanner() {
 
   // ─── Autoplay ────────────────────────────────────────────────
   useEffect(() => {
-    if (!isAutoPlay) return;
+    if (!isAutoPlay || slidesData.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % slidesData.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [isAutoPlay]);
+  }, [isAutoPlay, slidesData.length]);
 
   // ─── Touch Handlers ──────────────────────────────────────────
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -117,44 +180,43 @@ export function CarouselBanner() {
     <>
       <style>{`
         /* ── OUTER CLIP ── */
-       /* ── OUTER CLIP ── */
-.cb-wrap {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: #ffffff;
-  
-  /* BALANCED HEIGHT: Taller than the previous thin version */
-  aspect-ratio: 16 / 6;  /* 3 was too thin, 6 is a good medium height */
-  max-height: 30vh;      /* Increased back to 30vh */
-  
-  border-radius: 12px;
-  user-select: none;
-  touch-action: pan-y;
-}
+        .cb-wrap {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          background: #ffffff;
+          
+          /* BALANCED HEIGHT: Taller than the previous thin version */
+          aspect-ratio: 16 / 6;
+          max-height: 30vh;
+          
+          border-radius: 12px;
+          user-select: none;
+          touch-action: pan-y;
+        }
 
-@media (min-width: 768px) {
-  .cb-wrap {
-    /* BALANCED HEIGHT: Adjusted for desktop */
-    aspect-ratio: 16 / 4; /* 2 was too thin, 4 is standard for desktop banners */
-    max-height: 40vh;     /* Increased to 40vh */
-    border-bottom: none;
-    touch-action: auto;
-  }
-}
+        @media (min-width: 768px) {
+          .cb-wrap {
+            /* BALANCED HEIGHT: Adjusted for desktop */
+            aspect-ratio: 16 / 4;
+            max-height: 40vh;
+            border-bottom: none;
+            touch-action: auto;
+          }
+        }
+        
         /* ── SLIDING STRIP ── */
-        /* All slides sit side-by-side in one wide row; we translate the strip */
         .cb-track {
           display: flex;
           width: 100%;
           height: 100%;
-          transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1); /* ← the magic */
+          transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1);
           will-change: transform;
         }
 
         /* ── EACH SLIDE ── */
         .cb-slide {
-          flex: 0 0 100%;          /* every slide takes exactly 100% width */
+          flex: 0 0 100%;
           width: 100%;
           height: 100%;
           position: relative;
@@ -173,6 +235,57 @@ export function CarouselBanner() {
           object-fit: cover;
           -webkit-touch-callout: none;
           pointer-events: none;
+        }
+
+        /* DYNAMIC OVERLAY styling */
+        .cb-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+          padding: 20px 24px;
+          color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          text-align: left;
+          z-index: 10;
+        }
+
+        .cb-category {
+          display: inline-block;
+          align-self: flex-start;
+          background: #E8281E;
+          color: #ffffff;
+          padding: 3px 8px;
+          border-radius: 4px;
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .cb-title {
+          font-size: 1.05rem;
+          font-weight: 700;
+          margin: 0;
+          line-height: 1.3;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+
+        @media (min-width: 768px) {
+          .cb-overlay {
+            padding: 32px 48px;
+          }
+          .cb-title {
+            font-size: 1.4rem;
+          }
         }
 
         /* ARROWS */
@@ -237,70 +350,112 @@ export function CarouselBanner() {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          {/*
-            KEY CHANGE: instead of stacking slides with position:absolute + opacity,
-            we use a flex row and translateX the whole strip.
-            translateX(-N * 100%) moves to the Nth slide.
-          */}
           <div
             className="cb-track"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {slides.map((s, i) => (
+            {slidesData.map((s, i) => (
               <div key={s.id} className="cb-slide">
-                <div className="img-mobile relative w-full h-full">
-                  <Image
-                    src={s.mobile}
-                    alt={`Mobile Banner ${s.id}`}
-                    fill
-                    priority={i === 0}
-                    className="banner-img"
-                    draggable={false}
-                  />
-                </div>
-                <div className="img-desktop relative w-full h-full">
-                  <Image
-                    src={s.desktop}
-                    alt={`Desktop Banner ${s.id}`}
-                    fill
-                    priority={i === 0}
-                    className="banner-img"
-                    draggable={false}
-                  />
-                </div>
+                {s.slug ? (
+                  <Link
+                    href={s.slug}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      position: "relative",
+                    }}
+                  >
+                    <div className="img-mobile relative w-full h-full">
+                      <Image
+                        src={s.mobile}
+                        alt={s.title || `Mobile Banner ${s.id}`}
+                        fill
+                        priority={i === 0}
+                        className="banner-img"
+                        draggable={false}
+                      />
+                    </div>
+                    <div className="img-desktop relative w-full h-full">
+                      <Image
+                        src={s.desktop}
+                        alt={s.title || `Desktop Banner ${s.id}`}
+                        fill
+                        priority={i === 0}
+                        className="banner-img"
+                        draggable={false}
+                      />
+                    </div>
+                    {s.isDynamic && (
+                      <div className="cb-overlay">
+                        <span className="cb-category">{s.category}</span>
+                        <h3 className="cb-title">{s.title}</h3>
+                      </div>
+                    )}
+                  </Link>
+                ) : (
+                  <>
+                    <div className="img-mobile relative w-full h-full">
+                      <Image
+                        src={s.mobile}
+                        alt={`Mobile Banner ${s.id}`}
+                        fill
+                        priority={i === 0}
+                        className="banner-img"
+                        draggable={false}
+                      />
+                    </div>
+                    <div className="img-desktop relative w-full h-full">
+                      <Image
+                        src={s.desktop}
+                        alt={`Desktop Banner ${s.id}`}
+                        fill
+                        priority={i === 0}
+                        className="banner-img"
+                        draggable={false}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
 
-          <button
-            className="cb-arrow left"
-            onClick={() => {
-              prevSlide();
-              setIsAutoPlay(false);
-            }}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            className="cb-arrow right"
-            onClick={() => {
-              nextSlide();
-              setIsAutoPlay(false);
-            }}
-          >
-            <ChevronRight size={16} />
-          </button>
+          {slidesData.length > 1 && (
+            <>
+              <button
+                className="cb-arrow left"
+                onClick={() => {
+                  prevSlide();
+                  setIsAutoPlay(false);
+                }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                className="cb-arrow right"
+                onClick={() => {
+                  nextSlide();
+                  setIsAutoPlay(false);
+                }}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </>
+          )}
         </div>
 
-        <div className="cb-dots">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              className={`cb-dot ${i === currentSlide ? "active" : ""}`}
-              onClick={() => goToSlide(i)}
-            />
-          ))}
-        </div>
+        {slidesData.length > 1 && (
+          <div className="cb-dots">
+            {slidesData.map((_, i) => (
+              <button
+                key={i}
+                className={`cb-dot ${i === currentSlide ? "active" : ""}`}
+                onClick={() => goToSlide(i)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

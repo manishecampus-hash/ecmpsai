@@ -101,15 +101,204 @@ const poppins = Poppins({
 
 const pageMaxWidth = "1264px";
 
+function parseHtmlContent(html: string) {
+  const headings: { id: string; text: string; level: number }[] = [];
+  let index = 0;
+  
+  // Replace <h1>, <h2> and <h3> tags and inject an id
+  const modifiedHtml = html.replace(/<(h[123])([^>]*)>([\s\S]*?)<\/h[123]>/gi, (match, tag, attrs, content) => {
+    // Strip HTML tags from the content to get clean text
+    const text = content.replace(/<\/?[^>]+(>|$)/g, "").trim();
+    // Generate a unique-ish kebab-case ID
+    let id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "") // remove non-alphanumeric except spaces and dashes
+      .replace(/\s+/g, "-")         // replace spaces with single dash
+      .replace(/-+/g, "-")          // replace multiple dashes with single dash
+      .replace(/^-+|-+$/g, "");     // trim dashes from start/end
+      
+    if (!id) {
+      id = `heading-${index++}`;
+    } else {
+      id = `${id}-${index++}`; // ensure uniqueness
+    }
+    
+    const tagLower = tag.toLowerCase();
+    const level = tagLower === "h1" ? 1 : tagLower === "h2" ? 2 : 3;
+    headings.push({ id, text, level });
+    
+    return `<${tag}${attrs} id="${id}">${content}</${tag}>`;
+  });
+  
+  return { html: modifiedHtml, headings };
+}
+
+function mapDbBlogToBlog(dbBlog: any) {
+  if (Array.isArray(dbBlog.content)) {
+    return dbBlog; // already a mock blog object
+  }
+
+  // Generate headings and process HTML
+  const { html, headings } = parseHtmlContent(dbBlog.content || "");
+
+  // Format date
+  let formattedDate = "Jun 8, 2026";
+  if (dbBlog.createdAt) {
+    try {
+      formattedDate = new Date(dbBlog.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch (e) {
+      formattedDate = dbBlog.createdAt;
+    }
+  }
+
+  // Calculate read time
+  const plainText = (dbBlog.content || "").replace(/<\/?[^>]+(>|$)/g, "");
+  const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+  const readTimeVal = Math.max(1, Math.ceil(wordCount / 200));
+  const readTime = `${readTimeVal} min read`;
+
+  // Fallback image
+  const imageSrc = dbBlog.imageUrl || "/blogs/top-career.png";
+
+  return {
+    id: dbBlog.id || dbBlog._id || String(Math.random()),
+    category: dbBlog.category || "General",
+    title: dbBlog.title || "",
+    imageSrc,
+    excerpt: dbBlog.excerpt || "",
+    description: dbBlog.excerpt || "", // use excerpt as description/lead paragraph
+    author: dbBlog.publisher || "eCampus Team",
+    authorBio: "The eCampus editorial team researches and curates guidance on Indian higher education, online degrees, and career growth for students across India.",
+    authorImage: "/images/authors/ecampus-team.png",
+    date: formattedDate,
+    readTime,
+    reads: dbBlog.view ? `${dbBlog.view} Reads` : "1.2K Reads",
+    view: dbBlog.view || "1.2K",
+    slug: dbBlog.url || "",
+    tags: dbBlog.tags || [],
+    headings,
+    content: html,
+  };
+}
+
+async function getBlogBySlug(slug: string) {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/blogs`, {
+      next: { revalidate: 10 },
+    });
+    if (res.ok) {
+      const dbBlogs = await res.json();
+      
+      const normalize = (s: string) => s.replace(/^\/+|\/+$/g, "").toLowerCase().trim();
+      const targetSlug = normalize(slug);
+      
+      const matched = dbBlogs.find((item: any) => normalize(item.url || "") === targetSlug);
+      if (matched) {
+        if (matched.status === "inactive") {
+          return null; // treat inactive blogs as non-existent/not found
+        }
+        return matched;
+      }
+    } else {
+      console.error(`Failed to fetch blogs from API: ${res.statusText}`);
+    }
+  } catch (err) {
+    console.error("Error fetching blog from API:", err);
+  }
+  
+  // Fallback to local mock data
+  const mockMatched = blogs.find(
+    (item) => item.slug.trim().toLowerCase() === slug.trim().toLowerCase()
+  );
+  return mockMatched || null;
+}
+
+async function getRelatedBlogs() {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/blogs`, {
+      next: { revalidate: 10 },
+    });
+    if (res.ok) {
+      const dbBlogs = await res.json();
+      if (dbBlogs && dbBlogs.length > 0) {
+        const activeBlogs = dbBlogs.filter((blog: any) => blog.status !== "inactive");
+        return activeBlogs.map(mapDbBlogToBlog);
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching related blogs:", err);
+  }
+  return blogs; // fallback to mock blogs
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const rawBlog = await getBlogBySlug(slug);
+  if (!rawBlog) {
+    return {
+      title: "Blog Not Found",
+    };
+  }
+
+  const blog = mapDbBlogToBlog(rawBlog);
+  const seo = rawBlog.seoSettings || {};
+  
+  const title = seo.title || blog.title;
+  const description = seo.description || blog.excerpt || blog.description;
+  const keywords = seo.tags || (blog.tags ? blog.tags.join(", ") : "");
+  
+  const indexing = seo.indexing !== false;
+  const crawl = seo.crawl !== false;
+
+  return {
+    title,
+    description,
+    keywords,
+    robots: {
+      index: indexing,
+      follow: crawl,
+    },
+    alternates: {
+      canonical: seo.rewriteUrl || `/blog/${slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      publishedTime: rawBlog.createdAt,
+      modifiedTime: rawBlog.updatedAt,
+      images: [
+        {
+          url: blog.imageSrc,
+        },
+      ],
+    },
+  };
+}
+
 export default async function BlogDetailsPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const blog = blogs.find((item) => item.slug === slug);
+  const rawBlog = await getBlogBySlug(slug);
 
-  if (!blog) notFound();
+  if (!rawBlog) notFound();
+
+  const blog = mapDbBlogToBlog(rawBlog);
+  const relatedPosts = await getRelatedBlogs();
+  const isDbBlog = typeof rawBlog.content === "string";
 
   return (
     <main className={`upgrad-blog-page ${poppins.className}`}>
@@ -146,31 +335,35 @@ export default async function BlogDetailsPage({
 
           <TableOfContents headings={blog.headings} />
 
-          <p className="blog-lead">{blog.description}</p>
+          {!isDbBlog && (
+            <>
+              <p className="blog-lead">{blog.description}</p>
 
-          {blog.imageSrc && (
-            <figure className="blog-feature-image">
-              <Image
-                src={blog.imageSrc}
-                alt={blog.title}
-                width={900}
-                height={560}
-                sizes="(max-width: 980px) calc(100vw - 28px), 900px"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  display: "block",
-                  borderRadius: "8px",
-                }}
-                priority
-              />
-            </figure>
+              {blog.imageSrc && (
+                <figure className="blog-feature-image">
+                  <Image
+                    src={blog.imageSrc}
+                    alt={blog.title}
+                    width={900}
+                    height={560}
+                    sizes="(max-width: 980px) calc(100vw - 28px), 900px"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      display: "block",
+                      borderRadius: "8px",
+                    }}
+                    priority
+                  />
+                </figure>
+              )}
+            </>
           )}
 
           <BlogContent blog={blog} />
 
           <div className="related-wrap">
-            <RelatedPosts posts={blogs} currentPostId={blog.id} />
+            <RelatedPosts posts={relatedPosts} currentPostId={blog.id} />
           </div>
         </article>
 

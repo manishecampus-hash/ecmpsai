@@ -1,55 +1,54 @@
 "use client";
 
-import { Handshake, ChevronDown, TrendingUp } from "lucide-react";
+import { Handshake, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import { Section } from "./ui/section";
 
 const faqs = [
   {
-    question: "Is an online degree or certification valid?",
+    question: "1. What is eCampusApp?",
     answer:
-      "Yes, any UGC-entitled or globally accredited online degree is completely valid and holds equivalent academic value to a regular on-campus program as per standard university regulations.",
+      "eCampusApp is a trusted online education platform that helps students and working professionals discover, compare, and apply to online degree, distance education, executive education, and certification programs from leading universities in India and abroad",
   },
   {
-    question: "Who is eligible to apply for these programs?",
+    question: "2. How do I choose the right course on eCampusApp?",
     answer:
-      "Eligibility criteria vary by course. Generally, undergraduate programs require a 10+2 passing certificate, while postgraduate or executive diplomas require a valid bachelor's degree from a recognized institution.",
+      "You can explore programs based on your career goals, budget, educational background, specialization, and preferred learning format. Our academic counselors can also help you select the most suitable program.",
   },
   {
-    question: "Can working professionals easily balance these courses?",
+    question: "3. Are the universities listed on eCampusApp recognized?",
     answer:
-      "Absolutely. The online curriculum is tailored for working professionals, corporate executives, and freshers, providing self-paced learning dashboards and flexible weekend schedules.",
+      "Yes. eCampusApp partners with recognized universities and institutions. Students can verify approvals such as UGC, AICTE, DEB, NAAC accreditation, and international accreditations based on the specific university and program.",
   },
   {
-    question: "What is the typical duration of the online programs?",
+    question: "4. Can working professionals pursue these programs?",
     answer:
-      "Undergraduate degrees generally span 3 years (6 semesters), postgraduate degrees take 2 years (4 semesters), and specialized professional certifications range from 3 to 12 months.",
+      "Absolutely. Most programs featured on eCampusApp are designed for working professionals and offer flexible schedules, live online classes, recorded lectures, weekend sessions, and self-paced learning options.",
   },
   {
-    question: "How are academic examinations conducted?",
+    question: "5. Does eCampusApp provide admission assistance?",
     answer:
-      "Most universities utilize online proctored examination setups, allowing you to take tests securely from home. A few courses may offer optional center-based evaluations depending on university guidelines.",
+      "Yes. Our team assists students throughout the admission process, including program selection, eligibility verification, application submission, document support, and enrollment guidance.",
   },
   {
-    question: "What career support or services do learners receive?",
+    question: "6. What types of programs are available on eCampusApp?",
     answer:
-      "Learners gain access to placement assistance modules, dedicated resume-building workshops, industry mentorship programs, mock interviews, and virtual career fairs with hiring partners.",
+      "eCampusApp offers a wide range of programs, including Online MBA, DBA, BBA, BCA, MCA, M.Com, Executive Education, Professional Certifications, Data Science, Artificial Intelligence, Digital Marketing, and other career-focused courses.",
+  },
+  {
+    question: "7. Can I compare multiple universities before applying?",
+    answer:
+      "Yes. eCampusApp allows students to compare universities, fees, curriculum, specializations, accreditations, learning formats, and career opportunities to make informed decisions",
   },
   {
     question:
-      "Can I pursue regular higher education after completing an online course?",
+      "8. Why should I choose eCampusApp for higher education guidance?",
     answer:
-      "Yes, since the degrees are fully recognized by statutory regulatory bodies, you can seamlessly apply for further on-campus programs, global universities, or government sector job examinations.",
-  },
-  {
-    question: "What kind of study materials and learning support are provided?",
-    answer:
-      "You receive full access to a state-of-the-art Learning Management System (LMS) containing recorded video lectures, live interactive doubt-solving sessions, e-books, and discussion forums.",
+      "eCampusApp simplifies the education journey by providing expert counseling, university comparisons, admission support, access to top institutions, and personalized guidance to help learners achieve their academic and professional goals.",
   },
 ];
 
 export default function FAQ() {
-  // All FAQs open by default
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     faqs.map((_, index) => index),
   );
@@ -61,23 +60,21 @@ export default function FAQ() {
   };
 
   return (
-    <Section className="w-full bg-white px-4 pt-12 pb-24 sm:px-6 lg:pb-32 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+    <Section className="w-full bg-white pt-12 pb-24 lg:pb-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-
-        <div className="mb-10 text-center">
-          <div className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-gray-600 text-xs font-semibold tracking-wide uppercase">
-            <TrendingUp size={11} />
+        <div className="mx-auto max-w-7xl text-center mb-10 font-[Inter]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
             FAQ
-          </div>
-
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Frequently Asked Questions{" "}
+          </span>
+          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+            Frequently Asked <span className="text-red-500">Questions</span>
           </h2>
         </div>
 
         {/* FAQ Accordion */}
-        <div className="mx-auto max-w-4xl space-y-4">
+        <div className="mx-auto max-w-7xl space-y-4">
           {faqs.map((faq, index) => {
             const isOpen = openIndexes.includes(index);
 

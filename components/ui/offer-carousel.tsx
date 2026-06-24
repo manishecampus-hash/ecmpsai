@@ -14,13 +14,7 @@ export interface Offer {
   videoSrc?: string;
 }
 
-const VideoModal = ({
-  src,
-  onClose,
-}: {
-  src: string;
-  onClose: () => void;
-}) => {
+const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
   React.useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

@@ -86,7 +86,7 @@ function ProgramDropdown({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-32px)] bg-white rounded-3xl border border-gray-200 shadow-2xl z-50 overflow-hidden">
+    <div className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-32px)] bg-white rounded-3xl border border-gray-200 shadow-2xl z-50 overflow-hidden ">
       <div className="flex max-h-[520px]">
         <aside className="w-72 border-r border-gray-100 py-3 flex-shrink-0 bg-gray-50/80 overflow-y-auto max-h-[520px] custom-scroll">
           {categories.map((cat) => {
@@ -98,7 +98,7 @@ function ProgramDropdown({ open, onClose }) {
                 onClick={() => setActiveCat(cat.id)}
                 className={`w-full flex items-center gap-3.5 px-4 py-3 text-left transition-all duration-100 border-r-2 ${
                   isActive
-                    ? "bg-red-50 border-red-500 text-red-600 font-semibold"
+                    ? "bg-black-50 border-black text-red-600 font-semibold"
                     : "border-transparent text-black hover:bg-white hover:text-gray-900"
                 }`}
               >
@@ -413,6 +413,39 @@ export function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* new menu bar icon */}
+
+            {/* <div className="flex items-center">
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="p-0"
+                aria-label="Menu"
+              >
+                {mobileOpen ? (
+                  <X className="w-6 h-6 text-gray-800" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-800" />
+                )}
+              </button>
+
+              <Link
+                href="/"
+                className="flex items-center flex-shrink-0 group ml-1"
+                onClick={closeAll}
+              >
+                <div className="relative w-32 h-16 cursor-pointer">
+                  <Image
+                    src="/image/logo.png"
+                    alt="Logo"
+                    fill
+                    className="object-contain  duration-300 group-hover:scale-105"
+                    priority
+                  />
+                </div>
+              </Link>
+            </div> */}
+            {/* ____________________________________________________- */}
+
             {/* Logo */}
             <Link
               href="/"
@@ -438,20 +471,18 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={(e) => toggle("program", e)}
-                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-400 text-[15px] font-medium text-gray-600 ${
-                    activeMenu === "program"
-                      ? "bg-gray-50 transition-colors"
-                      : floating
-                        ? "text-black hover:bg-gray-100"
-                        : "text-black hover:bg-white/70"
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[15px] font-medium transition-all duration-200 ${
+                    activeMenu !== "program"
+                      ? "bg-[#FFF5F5] text-red-600 border-[#FDE2E2]"
+                      : "bg-white text-gray-600 border-gray-300"
                   }`}
                 >
                   Programs
                   <ChevronDown
-                    size={16}
-                    strokeWidth={1.8}
-                    className={`transition-transform duration-200 ${
-                      activeMenu === "program" ? "rotate-180" : ""
+                    className={`w-4 h-4 ${
+                      activeMenu !== "program"
+                        ? "text-red-600"
+                        : "text-gray-600"
                     }`}
                   />
                 </button>

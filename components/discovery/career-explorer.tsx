@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Brain } from "lucide-react";
+import { ArrowRight, Brain, Handshake } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { careerExplorer } from "@/data/career-explorer";
@@ -8,16 +8,15 @@ import { careerExplorer } from "@/data/career-explorer";
 const CareerExplorer = () => {
   return (
     <section className="bg-gray-50 px-4 py-12 min-h-screen">
-      <div className="max-w-[1380px] mx-auto text-center">
-        <div className="mb-10 text-center">
-          <div className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-gray-600 text-xs font-semibold tracking-wide uppercase">
-            <Brain size={11} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 ">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
             Career
-          </div>
+          </span>
 
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            {" "}
-            Career Explorer
+          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+            Find Your Perfect <span className="text-red-500">Program</span>
           </h2>
         </div>
 

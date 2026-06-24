@@ -7,7 +7,7 @@ import Image from "next/image";
 const slides = [
   {
     id: 1,
-    desktop: "/banner/banner1.svg",
+    desktop: "/banner/banner1test.png",
     mobile: "/banner/mobile1.png",
   },
   {

@@ -13,14 +13,14 @@ export function PopularCoursesSection() {
     >
       <div className="mx-auto max-w-7xl">
         {/* Unified Center Header with Standard Preview Typography */}
-        <div className="mx-auto text-center mb-8 border-b border-slate-100 pb-6 max-w-3xl">
-          <div className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-gray-600 text-xs font-semibold tracking-wide uppercase">
-            <Sparkles size={11} />
-            Trending Courses
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Top Selling Courses{" "}
 
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            Trending Courses
+          </span>
+          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+            Most Popular <span className="text-red-500">Program</span>
           </h2>
         </div>
 

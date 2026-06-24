@@ -13,16 +13,15 @@ import {
   Clock,
   Users,
   Handshake,
-  TrendingUp,
 } from "lucide-react";
 import { programsData } from "./../../data/online-course";
 
 const courseTabs = [
-  { id: "free", label: "Free Courses" },
   { id: "all", label: "All Courses" },
-  { id: "pg", label: "PG Courses" },
-  { id: "ug", label: "UG Courses" },
-  { id: "specializations", label: "Specializations" },
+  { id: "engineering", label: "Engineering" },
+  { id: "management", label: "Management" },
+  { id: "degree", label: "Degree" },
+  { id: "globalandasync", label: "Global and Async" },
   { id: "certifications", label: "Certifications" },
 ];
 
@@ -56,7 +55,6 @@ function useScrollState(ref: React.RefObject<HTMLDivElement | null>) {
   return { canLeft, canRight };
 }
 
-// Tab arrows — small, transparent (mobile only)
 const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   background: "transparent",
   border: "none",
@@ -74,7 +72,6 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   height: 36,
 });
 
-// Carousel left arrow — rounded right side (matches OfferCarousel style)
 const leftArrowStyle = (visible: boolean): React.CSSProperties => ({
   position: "absolute",
   left: 0,
@@ -98,7 +95,6 @@ const leftArrowStyle = (visible: boolean): React.CSSProperties => ({
   height: 64,
 });
 
-// Carousel right arrow — rounded left side (matches OfferCarousel style)
 const rightArrowStyle = (visible: boolean): React.CSSProperties => ({
   position: "absolute",
   right: 0,
@@ -123,15 +119,25 @@ const rightArrowStyle = (visible: boolean): React.CSSProperties => ({
 });
 
 export default function ProgramsSection() {
-  const [activeTab, setActiveTab] = useState("free");
+  const [activeTab, setActiveTab] = useState("all"); // ← "free" se "all" fix kiya
   const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
 
   const filteredPrograms = useMemo(
     () =>
-      programsData.filter((p) => activeTab === "all" || p.tab === activeTab),
+      activeTab === "all"
+        ? programsData
+        : programsData.filter((p) => p.tab === activeTab),
     [activeTab],
   );
+
+  // Tab change hone par carousel reset karo
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setTimeout(() => {
+      carouselRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+    }, 50);
+  };
 
   const { canLeft: carLeft, canRight: carRight } = useScrollState(carouselRef);
   const { canLeft: tabLeft, canRight: tabRight } = useScrollState(tabsRef);
@@ -142,40 +148,34 @@ export default function ProgramsSection() {
     tabsRef.current?.scrollBy({ left: dir * 200, behavior: "smooth" });
 
   return (
-    <section
-      style={{
-        background: "#ffffff",
-      }}
-      className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
-    >
+    <section className="relative w-full py-10 bg-white">
       <style>{`
         .__ps::-webkit-scrollbar { display: none; }
         @media (min-width: 768px) { .__tabArrow { display: none !important; } }
         .__carArrow:hover { background: #333333 !important; }
       `}</style>
 
-      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 24px" }}>
-        {/* ── Header ── */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 font-[Inter]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            In-Demand Courses
+          </span>
 
-        <div className="mb-10 text-center">
-          <div className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-gray-600 text-xs font-semibold tracking-wide uppercase">
-            <TrendingUp size={11} />
-            Courses
-          </div>
-
-          <h2 className="text-3xl font-bold text-black mb-2">
-            Get started with a free course{" "}
+          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+            Find The Right <span className="text-red-500">Program</span>
           </h2>
         </div>
 
-        {/* ── Tabs Row ── */}
+        {/* Tabs Row */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             gap: "4px",
             marginBottom: "28px",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            borderBottom: "1px solid #e2e8f0",
           }}
         >
           <button
@@ -203,21 +203,21 @@ export default function ProgramsSection() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   style={{
                     background: "none",
                     border: "none",
                     cursor: "pointer",
                     padding: "0 0 12px",
                     fontSize: "14px",
-                    fontWeight: 500,
-                    color: isActive ? "#000" : "#000",
+                    fontWeight: isActive ? 700 : 500,
+                    color: isActive ? "#000" : "#64748b",
                     whiteSpace: "nowrap",
                     borderBottom: isActive
                       ? "2px solid #000"
                       : "2px solid transparent",
                     marginBottom: "-1px",
-                    transition: "color 0.2s",
+                    transition: "color 0.2s, font-weight 0.2s",
                   }}
                 >
                   {tab.label}
@@ -235,9 +235,8 @@ export default function ProgramsSection() {
           </button>
         </div>
 
-        {/* ── Carousel Row ── */}
+        {/* Carousel Row */}
         <div style={{ position: "relative" }}>
-          {/* Left arrow — OfferCarousel style */}
           <button
             className="__carArrow"
             onClick={() => scrollCarousel(-1)}
@@ -247,7 +246,6 @@ export default function ProgramsSection() {
             <ChevronLeft size={16} />
           </button>
 
-          {/* Card track — px-8 gives breathing room so arrows don't overlap cards */}
           <div
             ref={carouselRef}
             className="__ps"
@@ -257,8 +255,8 @@ export default function ProgramsSection() {
               overflowX: "auto",
               scrollbarWidth: "none",
               scrollSnapType: "x mandatory",
-              padding: "4px 32px 12px", // 32px left/right keeps cards away from arrows
-              alignItems: "stretch", // all cards in a row stretch to the tallest card's height
+              padding: "4px 32px 12px",
+              alignItems: "stretch",
             }}
           >
             {filteredPrograms.length === 0 ? (
@@ -266,14 +264,14 @@ export default function ProgramsSection() {
                 style={{
                   flex: "0 0 100%",
                   borderRadius: "12px",
-                  border: "1px dashed rgba(255,255,255,0.1)",
+                  border: "1px dashed #e2e8f0",
                   padding: "48px",
                   textAlign: "center",
                   color: "#94a3b8",
                   fontSize: "14px",
                 }}
               >
-                No programs found.
+                No programs found for this category.
               </div>
             ) : (
               filteredPrograms.map((program) => (
@@ -324,7 +322,6 @@ export default function ProgramsSection() {
                       }}
                       loading="lazy"
                     />
-                    {/* Ribbon */}
                     <div
                       style={{
                         position: "absolute",
@@ -344,7 +341,7 @@ export default function ProgramsSection() {
                     </div>
                   </div>
 
-                  {/* Body — flex:1 so it fills remaining height, pushing CTA to bottom */}
+                  {/* Body */}
                   <div
                     style={{
                       padding: "14px 14px 0",
@@ -353,7 +350,6 @@ export default function ProgramsSection() {
                       flex: 1,
                     }}
                   >
-                    {/* Title */}
                     <p
                       style={{
                         margin: "0 0 12px",
@@ -370,7 +366,6 @@ export default function ProgramsSection() {
                       {program.title}
                     </p>
 
-                    {/* Meta: learners + duration */}
                     <div
                       style={{
                         display: "flex",
@@ -475,7 +470,6 @@ export default function ProgramsSection() {
             )}
           </div>
 
-          {/* Right arrow — OfferCarousel style */}
           <button
             className="__carArrow"
             onClick={() => scrollCarousel(1)}

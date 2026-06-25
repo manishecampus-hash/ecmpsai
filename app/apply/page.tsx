@@ -3,7 +3,8 @@ import UniversitySection from "@/components/home/university-section";
 
 export const metadata = {
   title: "Apply Now — eCampus",
-  description: "Apply to top online universities through eCampus. Browse 100+ programs and get expert counselling.",
+  description:
+    "Apply to top online universities through eCampus. Browse 100+ programs and get expert counselling.",
 };
 
 export default function ApplyPage() {

@@ -49,7 +49,7 @@ function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center justify-between gap-5 border border-gray-100 rounded-2xl p-5 transition-all duration-150 hover:border-red-300 hover:bg-red-50"
+      className="flex items-center justify-between gap-5 border border-gray-100 rounded-2xl p-5 transition-all duration-150 hover:border-red-300 "
     >
       <div className="min-w-0">
         <p className="text-[11px] font-semibold uppercase tracking-widest mb-1.5 text-red-500">
@@ -65,7 +65,7 @@ function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
       </div>
       {image && (
         <div className="relative w-28 h-20 flex items-center justify-center flex-shrink-0">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-100 via-yellow-100 to-blue-100 blur-sm opacity-90" />
+          <div className="absolute inset-0 rounded-2xl via-yellow-100 to-blue-100 blur-sm opacity-90" />
           <div className="relative w-24 h-16 rounded-2xl bg-white/70 border border-white shadow-sm flex items-center justify-center">
             <img
               src={image}
@@ -86,7 +86,7 @@ function ProgramDropdown({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-32px)] bg-white rounded-3xl border border-gray-200 shadow-2xl z-50 overflow-hidden ">
+    <div className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-32px)] bg-white rounded-3xl border border-gray-200 shadow-2xl z-[999] overflow-hidden">
       <div className="flex max-h-[520px]">
         <aside className="w-72 border-r border-gray-100 py-3 flex-shrink-0 bg-gray-50/80 overflow-y-auto max-h-[520px] custom-scroll">
           {categories.map((cat) => {
@@ -120,7 +120,7 @@ function ProgramDropdown({ open, onClose }) {
             );
           })}
         </aside>
-        <div className="flex-1 p-6 overflow-y-auto max-h-[520px] custom-scroll">
+        <div className="flex-1 p-6 overflow-y-auto max-h-[520px] custom-scroll ">
           <div className="grid grid-cols-2 gap-4">
             {active.courses.map((c, i) => (
               <CourseCard key={i} {...c} onNavigate={onClose} />

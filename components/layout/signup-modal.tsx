@@ -171,53 +171,50 @@ export function SignupModal({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-50 bg-black/30" onClick={onClose} />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden flex"
-          style={{ minHeight: "420px", maxHeight: "90vh" }}
+          className="relative w-full max-w-sm bg-white rounded-3xl shadow-lg overflow-hidden"
+          style={{ minHeight: "auto" }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* ── RIGHT PANEL ── */}
-          <div className="flex-1 flex flex-col p-8 md:p-10 overflow-y-auto">
-            {/* Top bar */}
-            <div className="flex items-center justify-between mb-6">
-              {step !== "phone" ? (
-                <button
-                  onClick={handleBack}
-                  className="text-gray-500 hover:text-gray-800 transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-              ) : (
-                <div />
-              )}
+          <div className="flex flex-col p-6">
+            {/* Heading with close button */}
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-3">
+                {step !== "phone" && (
+                  <button
+                    onClick={handleBack}
+                    className="text-gray-600 hover:text-black transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                )}
+                <h2 className="text-lg font-semibold text-black">
+                  {step === "phone" && "Welcome"}
+                  {step === "otp" && "Enter OTP"}
+                  {step === "email" && "Create Account"}
+                </h2>
+              </div>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-700 transition-colors"
+                className="text-gray-600 hover:text-black transition-colors flex-shrink-0"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Heading */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">
-              Welcome! Sign up or Login
-            </h2>
-            <p className="text-sm text-gray-500 mb-8">
-              {step === "phone" && "Enter your phone number to get started"}
-              {step === "otp" && `Enter the OTP sent to ${fullPhone}`}
-              {step === "email" && "Continue with your email address"}
+            <p className="text-xs text-gray-600 mb-3">
+              {step === "phone" && "Enter your phone number"}
+              {step === "otp" && `OTP sent to ${fullPhone}`}
+              {step === "email" && "Complete your details"}
             </p>
 
             {/* Error */}
             {error && (
-              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">
+              <div className="mb-3 px-3 py-2 bg-white border border-gray-300 text-gray-900 text-xs rounded-xl">
                 {error}
               </div>
             )}
@@ -225,18 +222,17 @@ export function SignupModal({
             {step === "phone" && (
               <form
                 onSubmit={handlePhoneContinue}
-                className="flex flex-col gap-5"
+                className="flex flex-col gap-3"
               >
                 {/* Phone row */}
-                {/* Phone row */}
-                <div className="w-full max-w-md mx-auto flex items-center border border-gray-200 overflow-hidden bg-gray-50 transition">
+                <div className="flex items-center border border-gray-300 rounded-2xl">
                   {/* Country picker */}
-                  <div className="relative flex items-center border-r border-gray-200 px-3 py-3 gap-1 cursor-pointer ">
-                    <span className="text-base">{selectedCountry.flag}</span>
-                    <span className="text-sm font-medium text-gray-700">
+                  <div className="relative flex items-center border-r border-gray-300 px-2 py-2 gap-1 cursor-pointer">
+                    <span className="text-sm">{selectedCountry.flag}</span>
+                    <span className="text-xs font-medium text-black">
                       {selectedCountry.code}
                     </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                    <ChevronDown className="w-3 h-3 text-gray-600" />
                     <select
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
@@ -252,22 +248,22 @@ export function SignupModal({
                   {/* Number input */}
                   <input
                     type="tel"
-                    placeholder="mobile Number"
+                    placeholder="Mobile number"
                     value={phone}
                     onChange={(e) =>
                       setPhone(e.target.value.replace(/\D/g, ""))
                     }
                     maxLength={15}
                     required
-                    className="flex-1 px-4 py-3 text-sm bg-transparent outline-none placeholder-gray-400"
+                    className="flex-1 px-3 py-2 text-sm bg-white outline-none placeholder-gray-500"
                   />
                 </div>
 
                 {/* OR divider */}
-                <div className="flex items-center gap-3 text-gray-400 text-xs">
-                  <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex items-center gap-2 text-gray-600 text-xs">
+                  <div className="flex-1 h-px bg-gray-300" />
                   or
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className="flex-1 h-px bg-gray-300" />
                 </div>
 
                 {/* Switch to email */}
@@ -277,24 +273,24 @@ export function SignupModal({
                     setStep("email");
                     setError("");
                   }}
-                  className="text-sm font-semibold underline underline-offset-2  text-center transition"
+                  className="text-xs font-medium text-gray-700 hover:text-black text-center transition"
                 >
-                  Sign up / Login with Email
+                  Sign up with email
                 </button>
 
                 {/* Continue */}
                 <Button
                   type="submit"
                   disabled={loading || phone.length < 7}
-                  className="flex w-1/2 mx-auto items-center justify-center bg-gray-500 hover:bg-gray-600 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-full py-3 text-sm font-semibold transition-all mt-2"
+                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-2 rounded-2xl transition-all"
                 >
-                  {loading ? "Sending OTP..." : "Continue"}
+                  {loading ? "Sending..." : "Continue"}
                 </Button>
               </form>
             )}
 
             {step === "otp" && (
-              <form onSubmit={handleOtpVerify} className="flex flex-col gap-5">
+              <form onSubmit={handleOtpVerify} className="flex flex-col gap-3">
                 <input
                   type="text"
                   inputMode="numeric"
@@ -305,26 +301,26 @@ export function SignupModal({
                   }
                   maxLength={6}
                   required
-                  className="w-full px-4 py-3 text-center text-lg tracking-widest font-semibold border border-gray-200 rounded-xl bg-gray-50 focus:outline-none  focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-3 py-2 text-center text-sm tracking-widest font-semibold border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
 
                 <button
                   type="button"
                   onClick={handleResendOtp}
                   disabled={resendCooldown > 0 || loading}
-                  className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 disabled:text-gray-400 text-center transition"
+                  className="text-xs font-medium text-gray-700 hover:text-black disabled:text-gray-400 text-center transition"
                 >
                   {resendCooldown > 0
-                    ? `Resend OTP in ${resendCooldown}s`
+                    ? `Resend in ${resendCooldown}s`
                     : "Resend OTP"}
                 </button>
 
                 <Button
                   type="submit"
                   disabled={loading || otp.length !== 6}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-full py-3 text-sm font-semibold transition-all mt-2"
+                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-2 rounded-2xl transition-all"
                 >
-                  {loading ? "Verifying..." : "Verify & Continue"}
+                  {loading ? "Verifying..." : "Continue"}
                 </Button>
               </form>
             )}
@@ -332,27 +328,24 @@ export function SignupModal({
             {step === "email" && (
               <form
                 onSubmit={handleEmailContinue}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-3"
               >
-                {/* Name */}
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
-                {/* Email */}
                 <input
                   type="email"
                   placeholder="Email Address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
-                {/* Password */}
                 <input
                   type="password"
                   placeholder="Password (min. 8 characters)"
@@ -360,26 +353,26 @@ export function SignupModal({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:bg-white transition placeholder-gray-400"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-full py-3 text-sm font-semibold transition-all mt-1"
+                  className="w-full bg-black hover:bg-gray-800 text-white text-sm font-medium py-2 rounded-2xl transition-all"
                 >
-                  {loading ? "Creating account..." : "Continue"}
+                  {loading ? "Creating..." : "Continue"}
                 </Button>
               </form>
             )}
 
             {/* Terms */}
-            <p className="mt-6 text-xs text-gray-400 text-center leading-relaxed">
+            <p className="mt-4 text-xs text-gray-600 text-center leading-relaxed">
               By continuing, you agree to our{" "}
-              <a href="/terms" className=" hover:underline">
-                Terms of Use
+              <a href="/terms" className="hover:underline">
+                Terms
               </a>{" "}
-              &amp;{" "}
-              <a href="/privacy" className=" hover:underline">
+              &{" "}
+              <a href="/privacy" className="hover:underline">
                 Privacy Policy
               </a>
             </p>

@@ -208,11 +208,22 @@ export function BlogContent({ blog }: { blog: Blog }) {
         }
 
         .upgrad-content ul,
-        .upgrad-content ol,
         .content-list {
+          list-style-type: disc !important;
           margin: 0 0 34px;
           padding-left: 28px;
           color: #111827;
+        }
+
+        .upgrad-content ol {
+          list-style-type: decimal !important;
+          margin: 0 0 34px;
+          padding-left: 28px;
+          color: #111827;
+        }
+
+        ol.content-list {
+          list-style-type: decimal !important;
         }
 
         .upgrad-content li,

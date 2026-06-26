@@ -51,6 +51,8 @@ function mapDbBlogToBlog(dbBlog: any) {
     content: dbBlog.content || "",
     inCarousel: dbBlog.inCarousel || false,
     carouselOrder: typeof dbBlog.carouselOrder === "number" ? dbBlog.carouselOrder : 999,
+    updatedAt: dbBlog.updatedAt || "",
+    createdAt: dbBlog.createdAt || "",
   };
 }
 
@@ -76,13 +78,20 @@ async function getBlogs() {
 export default async function BlogPage() {
     const allBlogs = await getBlogs();
     
+    // Sort all blogs by updatedAt latest first (falling back to createdAt or mock date)
+    const sortedAllBlogs = [...allBlogs].sort((a, b) => {
+      const dateA = new Date(a.updatedAt || a.createdAt || (a as any).date || 0).getTime();
+      const dateB = new Date(b.updatedAt || b.createdAt || (b as any).date || 0).getTime();
+      return dateB - dateA;
+    });
+
     // Filter and sort blogs configured for the slider/carousel in CMS
     const sliderBlogs = allBlogs
         .filter((blog) => blog.inCarousel)
         .sort((a, b) => a.carouselOrder - b.carouselOrder);
         
     // Fallback to first 4 blogs if none are set in the slider carousel
-    const blogsToShow = sliderBlogs.length > 0 ? sliderBlogs : allBlogs.slice(0, 4);
+    const blogsToShow = sliderBlogs.length > 0 ? sliderBlogs : sortedAllBlogs.slice(0, 4);
     const featuredBlog = blogsToShow[0] ?? allBlogs[0];
 
     return (
@@ -91,7 +100,7 @@ export default async function BlogPage() {
             <BlogHero blog={featuredBlog} blogs={blogsToShow} />
 
             {/* Blog list receives full data so filtering and load more can work */}
-            <BlogCategories blogs={allBlogs} />
+            <BlogCategories blogs={sortedAllBlogs} />
             <RecommendedPrograms />
         </main>
     );

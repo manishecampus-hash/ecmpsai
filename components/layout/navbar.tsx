@@ -311,7 +311,7 @@ function MobileDrawer({
                     </Button>
                   </Link>
                   <Button
-                    className="w-24 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-black"
+                    className="  px-4 py-2.5 rounded-md text-[15px] font-medium transition-colors  text-gray-700 bg-white hover:bg-gray-50 "
                     onClick={() => {
                       onSignup();
                       onClose();
@@ -457,7 +457,7 @@ export function Navbar() {
                   src="/image/logo.png"
                   alt="Logo"
                   fill
-                  className="object-contain brightness-0 transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain  transition-transform duration-300 group-hover:scale-105"
                   priority
                 />
               </div>

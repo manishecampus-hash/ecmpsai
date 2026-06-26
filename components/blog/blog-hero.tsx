@@ -56,7 +56,7 @@ export default function BlogHero({
 
   return (
     <section className="mx-auto max-w-[1540px] px-6 py-10 lg:px-12">
-      <h1 className="mb-10 text-2xl font-bold tracking-tight text-gray-700 md:text-3xl">
+      <h1 className="mb-10 text-2xl font-bold tracking-tight text-gray-700 md:text-3xl text-center">
         eCampus Blogs
       </h1>
 

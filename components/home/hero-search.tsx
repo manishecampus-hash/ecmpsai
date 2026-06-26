@@ -151,9 +151,7 @@ export default function HeroSearch() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <Monitor size={18} />
-                <h3 className="font-semibold text-md">
-                  Get work done with Computer
-                </h3>
+                <h3 className="font-semibold text-md">Get work done with AI</h3>
               </div>
               <span className="bg-[#1f2937] text-white text-[9px] px-2 py-0.5 rounded-full font-medium ml-2">
                 NEW

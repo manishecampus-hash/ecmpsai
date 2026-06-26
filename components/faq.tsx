@@ -60,8 +60,8 @@ export default function FAQ() {
   };
 
   return (
-    <Section className="w-full bg-white pt-12 pb-24 lg:pb-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <Section className="w-full bg-white pt-12 pb-24 lg:pb-5">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-7xl text-center mb-10 font-[Inter]">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">

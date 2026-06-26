@@ -12,7 +12,7 @@ const staticSlides = [
     desktop: "/banner/banner1test.png",
     // =======
     id: "static-1",
-    desktop: "/banner/banner1.svg",
+    desktop: "/banner/test3.png",
     // >>>>>>> 8dd6c88e07fc22c1599eb8f1e0afba8d0bca2fcd
     mobile: "/banner/mobile1.png",
     slug: "",

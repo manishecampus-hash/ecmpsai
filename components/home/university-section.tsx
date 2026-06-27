@@ -89,7 +89,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Handshake, Search, X } from "lucide-react";
+import { Handshake, Search, X, MapPin, Globe } from "lucide-react";
 import { universities } from "@/data/universities";
 
 const DESKTOP_INITIAL_COUNT = 15;
@@ -104,6 +104,22 @@ const TYPE_FILTERS = [
   "Law",
 ];
 const MODE_FILTERS = ["All", "Online", "Hybrid", "On-campus"];
+
+// Icon map for location icons - LARGER SIZE
+const iconMap: Record<string, React.ReactNode> = {
+  MapPin: <MapPin className="w-4 h-4 shrink-0" />,
+  Globe: <Globe className="w-4 h-4 shrink-0" />,
+};
+
+// Region color mapping - LIGHT BACKGROUND WITH COLORED TEXT
+const regionBgColor: Record<string, string> = {
+  "North India": "bg-red-50 text-red-700 hover:bg-red-100",
+  "South India": "bg-green-50 text-green-700 hover:bg-green-100",
+  "West India": "bg-amber-50 text-amber-700 hover:bg-amber-100",
+  "North-East India": "bg-purple-50 text-purple-700 hover:bg-purple-100",
+  "Central India": "bg-orange-50 text-orange-700 hover:bg-orange-100",
+  International: "bg-blue-50 text-blue-700 hover:bg-blue-100",
+};
 
 export default function UniversitySection() {
   const [isMobile, setIsMobile] = useState(false);
@@ -226,37 +242,48 @@ export default function UniversitySection() {
         </p>
       </div>
 
-      {/* ── Grid (unchanged card design) ── */}
+      {/* ── Grid with Modern Pill Location ── */}
       {filtered.length === 0 ? (
         <p className="text-center text-sm text-gray-400 py-16">
           No universities match your search. Try different filters.
         </p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto">
-          {displayed.map((uni, index) => (
-            <Link
-              key={index}
-              href={`/universities/${uni.slug}`}
-              className="group flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all duration-300"
-            >
-              <div className="w-full h-14 flex items-center justify-center mb-2">
-                <div className="relative w-full h-full">
-                  <Image
-                    src={uni.image}
-                    alt={uni.name}
-                    fill
-                    className="object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
+          {displayed.map((uni, index) => {
+            const bgColor =
+              regionBgColor[uni.region] ||
+              "bg-gray-50 text-gray-700 hover:bg-gray-100";
+
+            return (
+              <Link
+                key={index}
+                href={`/universities/${uni.slug}`}
+                className="group flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-white hover:shadow-lg transition-all duration-300 hover:border-red-300"
+              >
+                <div className="w-full h-14 flex items-center justify-center mb-2">
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={uni.image}
+                      alt={uni.name}
+                      fill
+                      className="object-contain group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-[11px] sm:text-xs font-medium text-gray-800 text-center leading-snug line-clamp-2 min-h-[28px]">
-                {uni.name}
-              </h3>
-              <span className="mt-1 text-[9px] text-gray-400 uppercase tracking-wide">
-                {uni.location}
-              </span>
-            </Link>
-          ))}
+                <h3 className="text-[11px] sm:text-xs font-medium text-gray-800 text-center leading-snug line-clamp-2 min-h-[28px]">
+                  {uni.name}
+                </h3>
+
+                {/* ── MODERN PILL LOCATION BADGE ── */}
+                <div
+                  className={`mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-full font-semibold text-[9px] uppercase tracking-wide transition-all duration-300 group-hover:shadow-md ${bgColor}`}
+                >
+                  {iconMap[uni.locationIcon]}
+                  <span>{uni.location}</span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
 

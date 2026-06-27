@@ -15,7 +15,10 @@ const CareerExplorer = () => {
             Career
           </span>
 
-          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+          {/* <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+            Find Your Perfect <span className="text-red-500">Program</span>
+          </h2> */}
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Find Your Perfect <span className="text-red-500">Program</span>
           </h2>
         </div>

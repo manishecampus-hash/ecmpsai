@@ -28,7 +28,7 @@ export const mbaUniversities: University[] = [
   {
     id: "rushford",
     name: "Rushford Business School",
-    logoText: "RBS",
+    logo: "/doctorate/Rushford.svg",
     logoColor: "#1a3a6b",
     accreditations: ["AACSB", "EFMD", "QS Ranked", "Swiss Accredited"],
     reviews: 892,
@@ -47,7 +47,7 @@ export const mbaUniversities: University[] = [
   {
     id: "amity",
     name: "Amity University Online",
-    logoText: "AU",
+    logo: "/universities/Untitled design (3).png",
     logoColor: "#8B1A1A",
     accreditations: [
       "UGC-DEB",
@@ -161,7 +161,7 @@ function LogoAvatar({ uni }: { uni: University }) {
         src={uni.logo}
         alt={uni.name}
         onError={() => setImgError(true)}
-        className="w-16 h-16 object-contain rounded-lg"
+        className="w-25 h-25 object-contain rounded-lg"
       />
     );
   }

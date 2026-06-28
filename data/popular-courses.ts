@@ -54,7 +54,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "book-open",
     href: "/programs/rushford-dba",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    videoSrc: "https://www.youtube.com/embed/uhLyIkBATJs",
   },
   {
     id: 4,

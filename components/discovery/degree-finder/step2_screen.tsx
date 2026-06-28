@@ -129,12 +129,12 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
       <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-      <path d="M8 7h8M8 11h6" />
+      <path d="M8 7h8M8 11h6M8 15h4" />
     </svg>
   ),
   bcom: (
@@ -142,13 +142,13 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <rect x="2" y="7" width="20" height="14" rx="2" />
-      <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-      <line x1="12" y1="12" x2="12" y2="16" />
-      <line x1="10" y1="14" x2="14" y2="14" />
+      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+      <circle cx="12" cy="14" r="2" />
+      <path d="M9 14h.01M15 14h.01" />
     </svg>
   ),
   bba: (
@@ -156,13 +156,13 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <line x1="18" y1="20" x2="18" y2="10" />
-      <line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
-      <line x1="3" y1="20" x2="21" y2="20" />
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4" />
+      <line x1="9" y1="16" x2="9" y2="20" />
+      <line x1="15" y1="16" x2="15" y2="20" />
     </svg>
   ),
   bca: (
@@ -170,12 +170,12 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
       <path d="M8 21h8M12 17v4" />
-      <path d="M8 7l2 3-2 3M13 13h3" />
+      <path d="M7 9h10M7 13h4" />
     </svg>
   ),
   bsc: (
@@ -183,11 +183,13 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <path d="M6 2v6l-2 4 2 4v6h12v-6l2-4-2-4V2H6z" />
-      <path d="M6 8h12" />
+      <circle cx="7" cy="11" r="3" />
+      <circle cx="17" cy="11" r="3" />
+      <path d="M17 11v5a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-5" />
+      <line x1="12" y1="17" x2="12" y2="21" />
     </svg>
   ),
   ma: (
@@ -195,11 +197,12 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+      <path d="M12 11v6M9 14h6" />
     </svg>
   ),
   mcom: (
@@ -207,22 +210,27 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
       <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
       <polyline points="16 7 22 7 22 13" />
+      <path d="M7 17v3M12 17v3" />
     </svg>
   ),
   mba: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      className="w-5 h-5"
-    >
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+      <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
+      <text
+        x="12"
+        y="15"
+        textAnchor="middle"
+        fontSize="8"
+        fontWeight="bold"
+        fill="white"
+      >
+        MBA
+      </text>
     </svg>
   ),
   mca: (
@@ -230,11 +238,12 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
       <polyline points="16 18 22 12 16 6" />
       <polyline points="8 6 2 12 8 18" />
+      <line x1="12" y1="4" x2="12" y2="20" />
     </svg>
   ),
   msc: (
@@ -242,11 +251,11 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
       <circle cx="12" cy="12" r="3" />
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" />
+      <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24" />
     </svg>
   ),
   btech: (
@@ -254,12 +263,11 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-      <path d="M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" />
+      <path d="M9 3L3 7v10c0 5.55 4.03 10.74 9.5 12 5.47-1.26 9.5-6.45 9.5-12V7l-6-4" />
+      <path d="M12 11l3-2M12 11l-3-2M12 11v4" />
     </svg>
   ),
   be: (
@@ -267,11 +275,11 @@ const courseIcons: Record<string, React.ReactNode> = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       className="w-5 h-5"
     >
       <path d="M2 20h20M4 20V10l8-7 8 7v10" />
-      <path d="M10 20v-6h4v6" />
+      <path d="M10 20v-6h4v6M10 10h4v4h-4z" />
     </svg>
   ),
 };
@@ -281,29 +289,29 @@ const categoryColors: Record<
   { bg: string; icon: string; badge: string }
 > = {
   Humanities: {
-    bg: "bg-purple-50",
-    icon: "text-purple-600",
-    badge: "bg-purple-100 text-purple-700",
+    bg: "bg-red-50",
+    icon: "text-red-600",
+    badge: "bg-red-100 text-red-700",
   },
   Commerce: {
-    bg: "bg-green-50",
-    icon: "text-green-600",
-    badge: "bg-green-100 text-green-700",
-  },
-  Science: {
-    bg: "bg-cyan-50",
-    icon: "text-cyan-600",
-    badge: "bg-cyan-100 text-cyan-700",
-  },
-  Management: {
-    bg: "bg-blue-50",
-    icon: "text-blue-600",
-    badge: "bg-blue-100 text-blue-700",
-  },
-  "Computer Applications": {
     bg: "bg-orange-50",
     icon: "text-orange-600",
     badge: "bg-orange-100 text-orange-700",
+  },
+  Science: {
+    bg: "bg-rose-50",
+    icon: "text-rose-600",
+    badge: "bg-rose-100 text-rose-700",
+  },
+  Management: {
+    bg: "bg-red-50",
+    icon: "text-red-600",
+    badge: "bg-red-100 text-red-700",
+  },
+  "Computer Applications": {
+    bg: "bg-pink-50",
+    icon: "text-pink-600",
+    badge: "bg-pink-100 text-pink-700",
   },
   Engineering: {
     bg: "bg-red-50",
@@ -415,7 +423,7 @@ export default function Step2Screen({
             placeholder="Search programs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-100 text-sm"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 text-sm"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2">
             <svg
@@ -438,7 +446,7 @@ export default function Step2Screen({
           <select
             value={filterStream}
             onChange={(e) => setFilterStream(e.target.value)}
-            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
+            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 text-sm font-medium text-gray-700 cursor-pointer"
           >
             <option value="all">All Streams</option>
             <option value="humanities">Humanities</option>
@@ -450,7 +458,7 @@ export default function Step2Screen({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
+            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 text-sm font-medium text-gray-700 cursor-pointer"
           >
             <option value="popular">Popular</option>
             <option value="rating">Rating</option>
@@ -465,27 +473,27 @@ export default function Step2Screen({
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {filteredCourses.map((course) => {
           const colors = categoryColors[course.category] ?? {
-            bg: "bg-gray-50",
-            icon: "text-red",
-            badge: "bg-gray-100 text-gray-700",
+            bg: "bg-red-50",
+            icon: "text-red-600",
+            badge: "bg-red-100 text-red-700",
           };
           return (
             <button
               key={course.id}
               onClick={() => onCourseSelect(course.id)}
-              className="w-full p-3 sm:p-4 bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all text-left min-w-0"
+              className="w-full p-3 sm:p-4 bg-white rounded-xl border border-gray-200 hover:shadow-lg hover:border-red-300 hover:scale-105 transition-all text-left min-w-0 duration-200"
             >
               {/* Icon + Title + Duration */}
               <div className="flex items-start gap-2 mb-3">
                 <div
-                  className={`w-8 h-8 rounded-lg ${colors.bg} ${colors.icon} flex items-center justify-center flex-shrink-0`}
+                  className={`w-10 h-10 rounded-lg ${colors.bg} ${colors.icon} flex items-center justify-center flex-shrink-0 shadow-sm`}
                 >
                   {courseIcons[course.id] ?? (
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth={1.8}
+                      strokeWidth={2}
                       className="w-5 h-5"
                     >
                       <circle cx="12" cy="12" r="10" />

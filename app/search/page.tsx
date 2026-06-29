@@ -15,7 +15,6 @@ import {
   Copy,
   RefreshCw,
   Share2,
-  ChevronDown,
   BriefcaseBusiness,
   GraduationCap,
   Landmark,
@@ -43,11 +42,10 @@ const T = {
   green: "#34a853",
   red: "#d93025",
   redLight: "#fce8e6",
-  btnGray: "#3c4043", // dark gray for action buttons
+  btnGray: "#3c4043",
   btnGrayBg: "#f1f3f4",
 };
 
-// ── Chip icon map ─────────────────────────────────────────────
 const CHIP_ICONS = [
   TrendingUp,
   BookOpen,
@@ -57,10 +55,8 @@ const CHIP_ICONS = [
   Lightbulb,
 ];
 
-// ── Source SVG logos ──────────────────────────────────────────
 function SourceLogo({ domain }: { domain: string }) {
   const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-
   return (
     <div
       style={{
@@ -97,7 +93,7 @@ function SourceLogo({ domain }: { domain: string }) {
     </div>
   );
 }
-// ── Skeleton loader ───────────────────────────────────────────
+
 function Skeleton() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -120,7 +116,6 @@ function Skeleton() {
   );
 }
 
-// ── FormattedAnswer ───────────────────────────────────────────
 function FormattedAnswer({ text }: { text: string }) {
   const clean = text.replace(/FOLLOWUPS:.*$/s, "").trim();
   return (
@@ -227,7 +222,7 @@ function FormattedAnswer({ text }: { text: string }) {
                   width: "100%",
                   borderCollapse: "collapse",
                   fontSize: 13,
-                  minWidth: 420,
+                  minWidth: 320,
                 }}
               >
                 {children}
@@ -325,7 +320,6 @@ function FormattedAnswer({ text }: { text: string }) {
   );
 }
 
-// ── Source card ───────────────────────────────────────────────
 function SourceCard({ source }: { source: any }) {
   const [hov, setHov] = useState(false);
   return (
@@ -350,7 +344,7 @@ function SourceCard({ source }: { source: any }) {
         <div style={{ flexShrink: 0 }}>
           <SourceLogo domain={source.domain} />
         </div>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <p
             style={{
               fontSize: 13,
@@ -383,7 +377,6 @@ function SourceCard({ source }: { source: any }) {
   );
 }
 
-// ── Mock sources ──────────────────────────────────────────────
 function getSourcesForQuery(q: string) {
   const domains = [
     "shiksha.com",
@@ -400,7 +393,6 @@ function getSourcesForQuery(q: string) {
   }));
 }
 
-// ── Icon button (dark gray style) ────────────────────────────
 function IconBtn({
   icon: Icon,
   label,
@@ -436,7 +428,6 @@ function IconBtn({
   );
 }
 
-// ── Action button (dark gray, no border) ─────────────────────
 function ActionBtn({ icon: Icon, label, onClick, active, activeColor }: any) {
   const [hov, setHov] = useState(false);
   return (
@@ -465,7 +456,6 @@ function ActionBtn({ icon: Icon, label, onClick, active, activeColor }: any) {
   );
 }
 
-// ── Chip ──────────────────────────────────────────────────────
 function Chip({
   label,
   iconIndex,
@@ -502,7 +492,6 @@ function Chip({
   );
 }
 
-// ── Share modal ───────────────────────────────────────────────
 function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
 
@@ -555,6 +544,7 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        padding: "0 16px",
       }}
       onClick={onClose}
     >
@@ -563,12 +553,12 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
           background: "#fff",
           borderRadius: 16,
           padding: 24,
-          width: 340,
+          width: "100%",
+          maxWidth: 340,
           boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -592,8 +582,6 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
             <X size={16} />
           </button>
         </div>
-
-        {/* Social buttons */}
         <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
           {shareOptions.map((opt) => (
             <a
@@ -623,8 +611,6 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
             </a>
           ))}
         </div>
-
-        {/* Copy link */}
         <div
           style={{
             display: "flex",
@@ -677,13 +663,6 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
 
 // ── Core search page ──────────────────────────────────────────
 function SearchPage() {
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/");
-    }
-  };
   const searchParams = useSearchParams();
   const router = useRouter();
   const urlQuery = searchParams.get("q") ?? "";
@@ -698,10 +677,18 @@ function SearchPage() {
   const [sources, setSources] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
   const [showShare, setShowShare] = useState(false);
-
   const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
+
+  // ── Detect mobile ──
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 800);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     if (!urlQuery) return;
@@ -709,6 +696,11 @@ function SearchPage() {
     runQuery(urlQuery);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlQuery]);
+
+  const handleBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push("/");
+  };
 
   async function runQuery(q: string) {
     abortRef.current?.abort();
@@ -795,11 +787,7 @@ function SearchPage() {
   const handleRetry = () => {
     if (urlQuery) runQuery(urlQuery);
   };
-
-  const handleShare = () => {
-    setShowShare(true);
-  };
-
+  const handleShare = () => setShowShare(true);
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   const fallbackFaqs = [
@@ -835,9 +823,164 @@ function SearchPage() {
 
   const visibleFaqs = showAllFaqs ? dynamicFaqs : dynamicFaqs.slice(0, 3);
   const hasMoreFaqs = dynamicFaqs.length > 3;
+
+  // ── Sidebar / FAQ panel (shared between mobile & desktop) ──
+  const SidebarContent = (
+    <div
+      style={{
+        opacity: showSrc ? 1 : 0,
+        transform: showSrc ? "translateY(0)" : "translateY(14px)",
+        transition: "opacity 0.4s ease, transform 0.4s ease",
+      }}
+    >
+      {/* FAQ card */}
+      <div
+        style={{
+          background: T.surface,
+          border: `1px solid ${T.border}`,
+          borderRadius: 16,
+          padding: 16,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 12,
+          }}
+        >
+          <p
+            style={{
+              fontWeight: 600,
+              fontSize: 14,
+              color: T.textPrim,
+              margin: 0,
+            }}
+          >
+            Frequently Asked Questions
+          </p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {visibleFaqs.map((faq, index, arr) => (
+            <div
+              key={faq.q}
+              style={{
+                borderBottom:
+                  index === arr.length - 1 ? "none" : `1px solid ${T.border}`,
+                paddingBottom: index === arr.length - 1 ? 0 : 10,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => handleChip(faq.q)}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: T.textPrim,
+                  margin: "0 0 4px",
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  textAlign: "left",
+                  cursor: "pointer",
+                  width: "100%",
+                }}
+              >
+                {faq.q}
+              </button>
+              <p
+                style={{
+                  fontSize: 12,
+                  color: T.textSec,
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                {faq.a}
+              </p>
+            </div>
+          ))}
+        </div>
+        {hasMoreFaqs && (
+          <button
+            type="button"
+            onClick={() => setShowAllFaqs((prev) => !prev)}
+            style={{
+              marginTop: 14,
+              width: "100%",
+              border: `1px solid ${T.border}`,
+              background: T.surface,
+              color: T.blue,
+              borderRadius: 999,
+              padding: "8px 12px",
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            {showAllFaqs ? "See less" : "See more"}
+          </button>
+        )}
+      </div>
+
+      {/* CTA card */}
+      {isDone && (
+        <div
+          style={{
+            marginTop: 12,
+            background: "linear-gradient(135deg,#e8f0fe,#f0e6ff)",
+            border: "1px solid rgba(66,133,244,0.18)",
+            borderRadius: 16,
+            padding: 16,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: 8,
+            }}
+          >
+            <User size={14} color={T.blue} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: T.blue }}>
+              Save this answer
+            </span>
+          </div>
+          <p
+            style={{
+              fontSize: 12,
+              color: "#444",
+              margin: "0 0 12px",
+              lineHeight: 1.6,
+            }}
+          >
+            Sign up to bookmark answers, track your applications and get
+            personalised guidance.
+          </p>
+          <button
+            style={{
+              width: "100%",
+              padding: "9px",
+              borderRadius: 999,
+              background: "#3c4043",
+              color: "#fff",
+              border: "none",
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >
+            Create free account
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div style={{ minHeight: "100vh", background: T.bg, color: T.textPrim }}>
-      {/* ══ Share modal ══ */}
       {showShare && (
         <ShareModal url={shareUrl} onClose={() => setShowShare(false)} />
       )}
@@ -857,11 +1000,11 @@ function SearchPage() {
           style={{
             maxWidth: 1200,
             margin: "0 auto",
-            padding: "0 24px",
-            height: 62,
+            padding: isMobile ? "0 12px" : "0 24px",
+            height: isMobile ? 56 : 62,
             display: "flex",
             alignItems: "center",
-            gap: 16,
+            gap: isMobile ? 8 : 16,
           }}
         >
           <button
@@ -869,8 +1012,8 @@ function SearchPage() {
             onClick={handleBack}
             aria-label="Go back"
             style={{
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               borderRadius: "50%",
               border: `1px solid ${T.border}`,
               background: T.surface,
@@ -882,27 +1025,27 @@ function SearchPage() {
               flexShrink: 0,
             }}
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} />
           </button>
 
           <form
             onSubmit={handleSubmit}
             style={{
               flex: 1,
-              maxWidth: 700,
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              gap: 6,
               background: T.surface,
               border: `1.5px solid ${T.border}`,
               borderRadius: 999,
-              padding: "6px 8px 6px 16px",
+              padding: isMobile ? "5px 6px 5px 12px" : "6px 8px 6px 16px",
               transition: "border-color 0.2s",
+              minWidth: 0, // critical: prevents overflow in flex
             }}
             onFocus={(e) => (e.currentTarget.style.borderColor = T.blue)}
             onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
           >
-            <Search size={15} style={{ color: T.textHint, flexShrink: 0 }} />
+            <Search size={14} style={{ color: T.textHint, flexShrink: 0 }} />
             <input
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
@@ -912,8 +1055,9 @@ function SearchPage() {
                 border: "none",
                 outline: "none",
                 background: "transparent",
-                fontSize: 14,
+                fontSize: isMobile ? 13 : 14,
                 color: T.textPrim,
+                minWidth: 0, // critical: prevents input from overflowing
               }}
             />
             {inputVal && (
@@ -928,6 +1072,7 @@ function SearchPage() {
                   padding: 4,
                   display: "flex",
                   borderRadius: "50%",
+                  flexShrink: 0,
                 }}
               >
                 <X size={13} />
@@ -936,8 +1081,8 @@ function SearchPage() {
             <button
               type="submit"
               style={{
-                width: 34,
-                height: 34,
+                width: 32,
+                height: 32,
                 borderRadius: "50%",
                 background: "#3c4043",
                 border: "none",
@@ -948,7 +1093,7 @@ function SearchPage() {
                 flexShrink: 0,
               }}
             >
-              <ArrowUp size={15} color="#fff" />
+              <ArrowUp size={14} color="#fff" />
             </button>
           </form>
         </div>
@@ -959,23 +1104,24 @@ function SearchPage() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "36px 24px 100px",
-          display: "grid",
-          gridTemplateColumns: "1fr 308px",
-          gap: 32,
+          padding: isMobile ? "16px 12px 80px" : "36px 24px 100px",
+          display: isMobile ? "flex" : "grid",
+          flexDirection: isMobile ? "column" : undefined,
+          gridTemplateColumns: isMobile ? undefined : "1fr 308px",
+          gap: isMobile ? 16 : 32,
           alignItems: "start",
         }}
       >
-        {/* ════ LEFT ════ */}
-        <div>
+        {/* ════ LEFT / Main column ════ */}
+        <div style={{ minWidth: 0, width: "100%" }}>
           {/* ── AI Answer card ── */}
           <div
             style={{
               background: T.surface,
               border: `1px solid ${T.border}`,
               borderRadius: 18,
-              padding: "22px 26px",
-              marginBottom: 20,
+              padding: isMobile ? "16px 14px" : "22px 26px",
+              marginBottom: 16,
             }}
           >
             {/* Card header */}
@@ -984,7 +1130,8 @@ function SearchPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: 9,
-                marginBottom: 18,
+                marginBottom: 16,
+                flexWrap: "wrap",
               }}
             >
               <div
@@ -996,6 +1143,7 @@ function SearchPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexShrink: 0,
                 }}
               >
                 <Sparkles size={14} color="#fff" />
@@ -1072,6 +1220,7 @@ function SearchPage() {
                       borderTopColor: "transparent",
                       borderRadius: "50%",
                       animation: "spin 0.7s linear infinite",
+                      flexShrink: 0,
                     }}
                   />
                   Thinking…
@@ -1085,16 +1234,16 @@ function SearchPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 4,
+                  gap: isMobile ? 2 : 4,
                   flexWrap: "wrap",
-                  marginTop: 18,
-                  paddingTop: 14,
+                  marginTop: 16,
+                  paddingTop: 12,
                   borderTop: `1px solid ${T.border}`,
                 }}
               >
                 <IconBtn
                   icon={ThumbsUp}
-                  label="Helpful"
+                  label={isMobile ? "" : "Helpful"}
                   active={liked === true}
                   activeColor={T.blue}
                   activeBg={T.blueLight}
@@ -1102,7 +1251,7 @@ function SearchPage() {
                 />
                 <IconBtn
                   icon={ThumbsDown}
-                  label="Not helpful"
+                  label={isMobile ? "" : "Not helpful"}
                   active={liked === false}
                   activeColor={T.red}
                   activeBg={T.redLight}
@@ -1111,15 +1260,19 @@ function SearchPage() {
                 <div style={{ flex: 1 }} />
                 <ActionBtn
                   icon={copied ? Check : Copy}
-                  label={copied ? "Copied!" : "Copy"}
+                  label={isMobile ? "" : copied ? "Copied!" : "Copy"}
                   onClick={handleCopy}
                   active={copied}
                   activeColor={T.green}
                 />
-                <ActionBtn icon={Share2} label="Share" onClick={handleShare} />
+                <ActionBtn
+                  icon={Share2}
+                  label={isMobile ? "" : "Share"}
+                  onClick={handleShare}
+                />
                 <ActionBtn
                   icon={RefreshCw}
-                  label="Retry"
+                  label={isMobile ? "" : "Retry"}
                   onClick={handleRetry}
                 />
               </div>
@@ -1128,7 +1281,7 @@ function SearchPage() {
 
           {/* ── Follow-up chips ── */}
           {isDone && chips.length > 0 && (
-            <div style={{ marginBottom: 22 }}>
+            <div style={{ marginBottom: 16 }}>
               <p
                 style={{
                   fontSize: 11,
@@ -1154,6 +1307,9 @@ function SearchPage() {
             </div>
           )}
 
+          {/* ── FAQ panel: mobile only (inline) ── */}
+          {isMobile && SidebarContent}
+
           {/* ── Follow-up input ── */}
           {isDone && (
             <form
@@ -1177,6 +1333,7 @@ function SearchPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
+                marginTop: isMobile ? 16 : 0,
               }}
             >
               <Sparkles size={15} style={{ color: T.purple, flexShrink: 0 }} />
@@ -1188,8 +1345,9 @@ function SearchPage() {
                   border: "none",
                   outline: "none",
                   background: "transparent",
-                  fontSize: 14,
+                  fontSize: isMobile ? 13 : 14,
                   color: T.textPrim,
+                  minWidth: 0,
                 }}
               />
               <button
@@ -1204,6 +1362,7 @@ function SearchPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexShrink: 0,
                 }}
               >
                 <ArrowUp size={13} color={T.blue} />
@@ -1212,185 +1371,18 @@ function SearchPage() {
           )}
         </div>
 
-        {/* ════ RIGHT: FAQ / Sidebar ════ */}
-        <div
-          className="right-panel"
-          style={{
-            opacity: showSrc ? 1 : 0,
-            transform: showSrc ? "translateY(0)" : "translateY(14px)",
-            transition: "opacity 0.4s ease, transform 0.4s ease",
-          }}
-        >
-          {/* FAQ card */}
-          <div
-            style={{
-              background: T.surface,
-              border: `1px solid ${T.border}`,
-              borderRadius: 16,
-              padding: 16,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 12,
-              }}
-            >
-              <p
-                style={{
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: T.textPrim,
-                  margin: 0,
-                }}
-              >
-                Frequently Asked Questions
-              </p>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {visibleFaqs.map((faq, index, arr) => (
-                <div
-                  key={faq.q}
-                  style={{
-                    borderBottom:
-                      index === arr.length - 1
-                        ? "none"
-                        : `1px solid ${T.border}`,
-                    paddingBottom: index === arr.length - 1 ? 0 : 10,
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleChip(faq.q)}
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: T.textPrim,
-                      margin: "0 0 4px",
-                      background: "transparent",
-                      border: "none",
-                      padding: 0,
-                      textAlign: "left",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {faq.q}
-                  </button>
-
-                  <p
-                    style={{
-                      fontSize: 12,
-                      color: T.textSec,
-                      margin: 0,
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {faq.a}
-                  </p>
-                </div>
-              ))}
-            </div>
-            {hasMoreFaqs && (
-              <button
-                type="button"
-                onClick={() => setShowAllFaqs((prev) => !prev)}
-                style={{
-                  marginTop: 14,
-                  width: "100%",
-                  border: `1px solid ${T.border}`,
-                  background: T.surface,
-                  color: T.blue,
-                  borderRadius: 999,
-                  padding: "8px 12px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-              >
-                {showAllFaqs ? "See less" : "See more"}
-              </button>
-            )}
-          </div>
-          {/* CTA card */}
-          {isDone && (
-            <div
-              style={{
-                marginTop: 12,
-                background: "linear-gradient(135deg,#e8f0fe,#f0e6ff)",
-                border: "1px solid rgba(66,133,244,0.18)",
-                borderRadius: 16,
-                padding: 16,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 8,
-                }}
-              >
-                <User size={14} color={T.blue} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: T.blue }}>
-                  Save this answer
-                </span>
-              </div>
-              <p
-                style={{
-                  fontSize: 12,
-                  color: "#444",
-                  margin: "0 0 12px",
-                  lineHeight: 1.6,
-                }}
-              >
-                Sign up to bookmark answers, track your applications and get
-                personalised guidance.
-              </p>
-              <button
-                style={{
-                  width: "100%",
-                  padding: "9px",
-                  borderRadius: 999,
-                  background: "#3c4043",
-                  color: "#fff",
-                  border: "none",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                Create free account
-              </button>
-            </div>
-          )}
-        </div>
+        {/* ════ RIGHT: Desktop sidebar only ════ */}
+        {!isMobile && SidebarContent}
       </main>
 
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes spin   { to{transform:rotate(360deg)} }
-        @media(max-width:800px){
-          main { 
-            display: flex !important; 
-            flex-direction: column !important; 
-            padding: 16px 16px 100px !important; 
-          }
-          .right-panel { 
-            width: 100% !important; 
-            margin-top: 16px; 
-          }
-          header > div {
-            padding: 0 16px !important;
-          }
-        }
       `}</style>
     </div>
   );
 }
 
-// ── Suspense wrapper ──────────────────────────────────────────
 export default function SearchResultsPage() {
   return (
     <Suspense

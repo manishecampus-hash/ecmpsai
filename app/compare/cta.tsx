@@ -3,16 +3,18 @@ import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="w-full">
-      <div className="rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <section className="w-full px-4">
+      {/* mx-auto: Centers the div horizontally
+        max-w-5xl: Sets a maximum width (adjust to 4xl or 3xl for narrower)
+      */}
+      <div className="mx-auto max-w-5xl rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <div className="grid md:grid-cols-[320px_1fr] items-center">
           {/* Image Area */}
-          <div className="h-[220px] md:h-[180px] ">
-            {/* iamges */}
+          <div className="h-[220px] md:h-full">
             <img
               src="/compare/cta.png"
               alt="Compare Universities"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 

@@ -5,7 +5,6 @@ import OurOffices from "@/components/contact/OurOffices";
 import { Footer } from "@/components/layout/footer";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 
-/* ── Types ── */
 interface FormState {
   name: string;
   phone: string;
@@ -15,14 +14,6 @@ interface FormState {
   coupon: string;
 }
 
-interface ContactRowProps {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  isEmail?: boolean;
-}
-
-/* ── Main Component ── */
 const ContactUs: React.FC = () => {
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -33,22 +24,57 @@ const ContactUs: React.FC = () => {
     coupon: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ): void => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log("Form submitted:", form);
-    // wire up your API call here
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/form-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          course: form.course,
+          state: form.state,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        alert("Application submitted successfully! ✅");
+        setForm({
+          name: "",
+          phone: "",
+          email: "",
+          course: "",
+          state: "",
+          coupon: "",
+        });
+      } else {
+        alert(data.message || "Something went wrong ❌");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Network error. Please try again ❌");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
       <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* ── Header ── */}
         <p className="text-sm text-gray-400 mb-1">
           Big decisions need clarity.
         </p>
@@ -56,7 +82,6 @@ const ContactUs: React.FC = () => {
           Talk it through with us.
         </h1>
 
-        {/* ── Map + Form ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Map */}
           <div className="rounded-2xl overflow-hidden border border-gray-200 min-h-[360px]">
@@ -202,9 +227,16 @@ const ContactUs: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-black hover:bg-black text-white text-sm font-semibold py-2.5 rounded-xl transition-colors mb-2"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 bg-black hover:bg-black text-white text-sm font-semibold py-2.5 rounded-xl transition-colors mb-2 disabled:opacity-50"
               >
-                <SendIcon /> Submit enquiry
+                {isLoading ? (
+                  "Submitting..."
+                ) : (
+                  <>
+                    <SendIcon /> Submit enquiry
+                  </>
+                )}
               </button>
 
               <p className="text-xs text-gray-400 text-center leading-relaxed">
@@ -216,255 +248,11 @@ const ContactUs: React.FC = () => {
       </div>
       <OurOffices />
       <CTA />
-
       <Footer />
     </>
   );
 };
 
-/* ── Sub-components ── */
-const ContactRow: React.FC<ContactRowProps> = ({
-  icon,
-  label,
-  value,
-  isEmail = false,
-}) => (
-  <div className="flex items-start gap-2 text-left mb-2.5 w-full">
-    <span className="mt-0.5 shrink-0">{icon}</span>
-    <div>
-      <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
-        {label}
-      </p>
-      {isEmail ? (
-        <a
-          href={`mailto:${value}`}
-          className="text-xs text-blue-600 hover:underline leading-snug"
-        >
-          {value}
-        </a>
-      ) : (
-        <p className="text-xs text-gray-700 leading-snug">{value}</p>
-      )}
-    </div>
-  </div>
-);
-
-/* ── Inline SVG Icons ── */
-const PhoneIcon: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#534AB7"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-  </svg>
-);
-const MailIcon: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#993C1D"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-);
-const MapPinIcon: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#0F6E56"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-);
-const WhatsAppIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#3B6D11"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-  </svg>
-);
-const UserIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#185FA5"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
-const UserCheckIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#854F0B"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <polyline points="16 11 18 13 22 9" />
-  </svg>
-);
-const BuildingIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#534AB7"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="4" y="2" width="16" height="20" rx="2" />
-    <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01" />
-  </svg>
-);
-const BranchIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#0F6E56"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="6" y1="3" x2="6" y2="15" />
-    <circle cx="18" cy="6" r="3" />
-    <circle cx="6" cy="18" r="3" />
-    <path d="M18 9a9 9 0 0 1-9 9" />
-  </svg>
-);
-const GlobeIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#185FA5"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" />
-    <line x1="2" y1="12" x2="22" y2="12" />
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-  </svg>
-);
-const ClockIcon: React.FC = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-);
-const BriefcaseIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#534AB7"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="2" y="7" width="20" height="14" rx="2" />
-    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-  </svg>
-);
-const HeadsetIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#0F6E56"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5z" />
-    <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z" />
-  </svg>
-);
-const LinkedInIcon: React.FC = () => (
-  <svg
-    width="13"
-    height="13"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect x="2" y="9" width="4" height="12" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-const InstagramIcon: React.FC = () => (
-  <svg
-    width="13"
-    height="13"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
 const DiscountIcon: React.FC = () => (
   <svg
     width="11"
@@ -480,6 +268,7 @@ const DiscountIcon: React.FC = () => (
     <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
   </svg>
 );
+
 const ShieldIcon: React.FC = () => (
   <svg
     width="11"
@@ -494,6 +283,7 @@ const ShieldIcon: React.FC = () => (
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
+
 const ShieldCheckIcon: React.FC = () => (
   <svg
     width="18"
@@ -510,6 +300,7 @@ const ShieldCheckIcon: React.FC = () => (
     <polyline points="9 12 11 14 15 10" />
   </svg>
 );
+
 const SendIcon: React.FC = () => (
   <svg
     width="15"
@@ -525,6 +316,7 @@ const SendIcon: React.FC = () => (
     <polygon points="22 2 15 22 11 13 2 9 22 2" />
   </svg>
 );
+
 const LockIcon: React.FC = () => (
   <svg
     width="11"

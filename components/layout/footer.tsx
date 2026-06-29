@@ -306,14 +306,14 @@ export function Footer() {
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-7 px-4 py-8 sm:px-6 md:flex-row lg:px-8">
         <div className="flex flex-wrap justify-center gap-3 md:justify-start">
           {[
-            DIcons.X,
-            DIcons.Instagram,
-            DIcons.LinkedIn,
-            DIcons.Facebook,
-            DIcons.YouTube,
-          ].map((Icon, idx) => (
+            { Icon: DIcons.X, color: "text-sky-500" }, // X (Twitter)
+            { Icon: DIcons.Instagram, color: "text-pink-500" },
+            { Icon: DIcons.LinkedIn, color: "text-blue-600" },
+            { Icon: DIcons.Facebook, color: "text-blue-500" },
+            { Icon: DIcons.YouTube, color: "text-red-600" },
+          ].map(({ Icon, color }, idx) => (
             <Link key={idx} href="#" className={socialLinkClass}>
-              <Icon className="h-5 w-5" />
+              <Icon className={`h-5 w-5 ${color}`} />
             </Link>
           ))}
         </div>

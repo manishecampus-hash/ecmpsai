@@ -782,8 +782,6 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   pointerEvents: visible ? "auto" : "none",
   transition: "opacity 0.2s",
   flexShrink: 0,
-  width: 36,
-  height: 36,
 });
 
 const leftArrowStyle = (visible: boolean): React.CSSProperties => ({
@@ -897,7 +895,7 @@ export default function ProgramsSection() {
             In-Demand Courses
           </span>
 
-          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Find The Right <span className="text-red-500">Program</span>
           </h2>
         </div>
@@ -907,7 +905,7 @@ export default function ProgramsSection() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "4px",
+            gap: "0px",
             marginBottom: "28px",
             borderBottom: "1px solid #e2e8f0",
           }}
@@ -915,7 +913,14 @@ export default function ProgramsSection() {
           <button
             className="__tabArrow"
             onClick={() => scrollTabs(-1)}
-            style={tabArrowStyle(tabLeft)}
+            style={{
+              ...tabArrowStyle(tabLeft),
+              width: 20,
+              height: 20,
+              minWidth: 20,
+              padding: 0,
+              marginRight: "6px",
+            }}
             aria-label="Scroll tabs left"
           >
             <ChevronLeft size={16} />
@@ -931,6 +936,7 @@ export default function ProgramsSection() {
               overflowX: "auto",
               scrollbarWidth: "none",
               padding: "0 2px",
+              alignItems: "center",
             }}
           >
             {courseTabs.map((tab) => {
@@ -964,7 +970,14 @@ export default function ProgramsSection() {
           <button
             className="__tabArrow"
             onClick={() => scrollTabs(1)}
-            style={tabArrowStyle(tabRight)}
+            style={{
+              ...tabArrowStyle(tabRight),
+              width: 20,
+              height: 20,
+              minWidth: 20,
+              padding: 0,
+              marginLeft: "6px",
+            }}
             aria-label="Scroll tabs right"
           >
             <ChevronRight size={16} />

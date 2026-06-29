@@ -88,7 +88,6 @@ export default function HeroSearch() {
             </h1>
           )}
         </div>
-
         {/* Single Input Box */}
         <form onSubmit={handleSearch} className="w-full max-w-2xl mb-6">
           <div className="flex items-center px-5 py-3 rounded-full bg-white border border-gray-300">
@@ -116,7 +115,6 @@ export default function HeroSearch() {
             </button>
           </div>
         </form>
-
         {/* Suggestion Chips */}
         <div className="flex flex-wrap justify-center gap-3">
           {suggestionChips.map(({ label, icon: Icon, color }) => (
@@ -130,17 +128,16 @@ export default function HeroSearch() {
             </button>
           ))}
         </div>
-
         {/* Two Feature Cards */}
-        <div className="flex justify-center w-full mt-8 px-4 gap-4">
+        <div className="flex flex-col sm:flex-row justify-center w-full mt-8 px-4 gap-4">
           {/* Card 1 */}
           <Link href="/discover" className="block flex-1">
-            <div className="bg-[#0f766e] px-4 py-3 rounded-2xl text-left h-full min-h-[90px]">
+            <div className="bg-[#0f766e] px-4 py-3 rounded-2xl text-left min-h-[90px]">
               <div className="flex items-center gap-2 text-white">
                 <Search size={18} />
                 <h3 className="font-semibold text-md">Discover</h3>
               </div>
-              <p className="text-teal-50 text-xs mt-0.5">
+              <p className="text-teal-50 text-xs mt-1">
                 Get fast and accurate answers from the most trusted sources.
               </p>
             </div>
@@ -151,19 +148,19 @@ export default function HeroSearch() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <Monitor size={18} />
-                <h3 className="font-semibold text-md">
-                  Get work done with Computer
-                </h3>
+                <h3 className="font-semibold text-md">Get work done with AI</h3>
               </div>
-              <span className="bg-[#1f2937] text-white text-[9px] px-2 py-0.5 rounded-full font-medium ml-2">
+
+              <span className="bg-[#1f2937] text-white text-[9px] px-2 py-0.5 rounded-full font-medium">
                 NEW
               </span>
             </div>
-            <p className="text-gray-300 text-xs mt-0.5">
+
+            <p className="text-gray-300 text-xs mt-1">
               Hand off your projects to get polished.
             </p>
           </div>
-        </div>
+        </div>{" "}
       </div>
     </section>
   );

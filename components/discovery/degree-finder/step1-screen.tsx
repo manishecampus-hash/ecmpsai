@@ -7,49 +7,49 @@ const degreeTypes = [
     id: "all",
     label: "All Programs",
     description: "Explore all degrees and programs across streams.",
-    color: "purple",
+    color: "red",
   },
   {
     id: "ug",
     label: "UG Courses",
     description: "Discover undergraduate courses and degrees.",
-    color: "teal",
+    color: "red",
   },
   {
     id: "pg",
     label: "PG Courses",
     description: "Explore postgraduate courses and specializations.",
-    color: "green",
+    color: "red",
   },
   {
     id: "exec",
     label: "Executive Education",
     description: "Advance your leadership with executive programs.",
-    color: "orange",
+    color: "red",
   },
   {
     id: "phd",
     label: "Doctorate / Ph.D.",
     description: "Pursue advanced research and doctoral programs.",
-    color: "purple",
+    color: "red",
   },
   {
     id: "eng",
     label: "Engineering",
     description: "Find engineering programs across all specializations.",
-    color: "teal",
+    color: "red",
   },
   {
     id: "ai",
     label: "Gen AI / Agentic AI",
     description: "Explore cutting-edge AI and Gen AI programs.",
-    color: "green",
+    color: "red",
   },
   {
     id: "skill",
     label: "Skilling & Certificate",
     description: "Build new skills with short-term certificates and courses.",
-    color: "orange",
+    color: "red",
   },
 ];
 
@@ -57,11 +57,11 @@ const colorMap: Record<
   string,
   { bg: string; icon: string; line: string; arrow: string }
 > = {
-  purple: {
-    bg: "bg-violet-50",
-    icon: "text-violet-700",
-    line: "bg-violet-700",
-    arrow: "text-violet-700 border-violet-700",
+  red: {
+    bg: "bg-red-50",
+    icon: "text-red-500",
+    line: "bg-red-500",
+    arrow: "text-red-500 border-red-500",
   },
   teal: {
     bg: "bg-teal-50",
@@ -188,26 +188,13 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
-const ArrowIcon = () => (
-  <svg
-    width="11"
-    height="11"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path d="M2 6h8M6 2l4 4-4 4" />
-  </svg>
-);
-
 const footerItems = [
   {
     label: "Curated Programs",
     desc: "Handpicked programs from top universities",
     icon: (
       <svg
-        className="w-7 h-7 text-violet-600"
+        className="w-7 h-7 text-red-600"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -224,7 +211,7 @@ const footerItems = [
     desc: "Verified programs with high academic standards",
     icon: (
       <svg
-        className="w-7 h-7 text-violet-600"
+        className="w-7 h-7 text-red-600"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -240,7 +227,7 @@ const footerItems = [
     desc: "Programs for every stage of your career",
     icon: (
       <svg
-        className="w-7 h-7 text-violet-600"
+        className="w-7 h-7 text-red-600"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -260,12 +247,12 @@ interface Props {
 
 export default function Step1Screen({ onTypeSelect }: Props) {
   return (
-    <div className="bg-[#F0EEF8] py-5 px-4">
+    <div className="py-5 px-4">
       {/* Header */}
       <div className="text-center mb-5">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-200 bg-white text-red-700 text-xs font-bold tracking-widest uppercase mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-200 bg-white text-black text-xs font-bold tracking-widest uppercase mb-3">
           <svg
-            className="w-3 h-3"
+            className="w-3 h-3 text-red-500"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -275,13 +262,9 @@ export default function Step1Screen({ onTypeSelect }: Props) {
           </svg>
           Smart Degree Finder
         </div>
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
+        <h1 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
           Find the right program for you
         </h1>
-        <p className="text-gray-500 text-sm">
-          Explore programs across different categories and find the perfect
-          match for your goals.
-        </p>
       </div>
 
       {/* Cards Grid */}
@@ -292,36 +275,29 @@ export default function Step1Screen({ onTypeSelect }: Props) {
             <button
               key={d.id}
               onClick={() => onTypeSelect(d.id)}
-              className="bg-white rounded-xl border border-gray-200 p-4 text-left hover:border-indigo-400 hover:shadow-md transition-all group"
+              className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 text-center hover:border-red-400 hover:shadow-md transition-all group flex flex-col items-center"
             >
               {/* Icon */}
               <div
-                className={`w-11 h-11 rounded-xl ${c.bg} ${c.icon} flex items-center justify-center mb-3`}
+                className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl ${c.bg} ${c.icon} flex items-center justify-center mb-2 sm:mb-3`}
               >
                 {icons[d.id]}
               </div>
 
               {/* Title */}
-              <h3 className="text-sm font-bold text-gray-900 mb-1">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-1 leading-tight">
                 {d.label}
               </h3>
 
               {/* Colored underline */}
-              <div className={`h-[2px] w-6 rounded-full ${c.line} mb-2`} />
+              <div
+                className={`h-[2px] w-5 sm:w-6 rounded-full ${c.line} mb-1.5 sm:mb-2`}
+              />
 
-              {/* Description */}
-              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+              {/* Description — hidden on mobile to reduce height */}
+              <p className="hidden sm:block text-xs text-gray-400 leading-relaxed">
                 {d.description}
               </p>
-
-              {/* Arrow */}
-              <div className="flex justify-end">
-                <div
-                  className={`w-6 h-6 rounded-full border-2 ${c.arrow} flex items-center justify-center`}
-                >
-                  <ArrowIcon />
-                </div>
-              </div>
             </button>
           );
         })}
@@ -332,13 +308,15 @@ export default function Step1Screen({ onTypeSelect }: Props) {
         {footerItems.map((item) => (
           <div
             key={item.label}
-            className="flex flex-col items-center gap-1 px-8 text-center"
+            className="flex flex-col items-center gap-1 px-4 sm:px-8 text-center"
           >
             {item.icon}
             <span className="text-xs font-bold text-gray-900">
               {item.label}
             </span>
-            <span className="text-xs text-gray-400">{item.desc}</span>
+            <span className="hidden sm:block text-xs text-gray-400">
+              {item.desc}
+            </span>
           </div>
         ))}
       </div>

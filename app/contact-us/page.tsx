@@ -56,8 +56,6 @@ const ContactUs: React.FC = () => {
           Talk it through with us.
         </h1>
 
-        <OurOffices />
-
         {/* ── Map + Form ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Map */}
@@ -216,7 +214,7 @@ const ContactUs: React.FC = () => {
           </div>
         </div>
       </div>
-
+      <OurOffices />
       <CTA />
 
       <Footer />

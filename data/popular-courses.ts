@@ -16,7 +16,7 @@ export type Offer = {
 export const popularCourses: Offer[] = [
   {
     id: 1,
-    imageSrc: "/courses/iimkhr (1).png",
+    imageSrc: "/courses/iim.jpeg",
     imageAlt: "Business analysis and data visualization",
     tag: "Popular",
     title: "IIM K HR Analytics",
@@ -54,7 +54,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "book-open",
     href: "/programs/rushford-dba",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    videoSrc: "https://www.youtube.com/embed/uhLyIkBATJs",
   },
   {
     id: 4,
@@ -86,7 +86,8 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 6,
-    imageSrc: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc:
+      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -99,7 +100,8 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 7,
-    imageSrc: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc:
+      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -112,7 +114,8 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 8,
-    imageSrc: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc:
+      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -125,7 +128,8 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 9,
-    imageSrc: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc:
+      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -138,7 +142,8 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 10,
-    imageSrc: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc:
+      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",

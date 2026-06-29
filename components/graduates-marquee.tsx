@@ -134,7 +134,7 @@ export function GraduatesMarquee({
             <Handshake className="h-4 w-4 text-red-500" />
             Success Stories
           </span>
-          <h2 className="mt-4 text-4xl font-extrabold text-black">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             What Our Graduates <span className="text-red-500">Say</span>
           </h2>
         </div>

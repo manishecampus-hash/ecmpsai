@@ -9,7 +9,7 @@ export function PopularCoursesSection() {
   return (
     <section
       style={{}}
-      className=" bg-white relative w-full px-4 py-10 text-slate-100 sm:px-6"
+      className=" relative w-full px-4 py-10 text-slate-100 sm:px-6"
     >
       <div className="mx-auto max-w-7xl">
         {/* Unified Center Header with Standard Preview Typography */}
@@ -19,7 +19,7 @@ export function PopularCoursesSection() {
             <Handshake className="h-3.5 w-3.5 text-red-500" />
             Trending Courses
           </span>
-          <h2 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Most Popular <span className="text-red-500">Program</span>
           </h2>
         </div>

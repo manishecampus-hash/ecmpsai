@@ -26,7 +26,7 @@ const offices: OfficeCardProps[] = [
   },
   {
     city: "Aligarh",
-    tag: "Aligarh",
+    tag: "Hub Office",
     address:
       "Bankner Nadrai Gate, Opp. Khusi Restaurant, Gandhi Kunj, Kasganj, UP – 207123",
     imageUrl: "/contact/aligarh.png",
@@ -40,7 +40,7 @@ const getTagStyle = (tag?: string) => {
       return "bg-gradient-to-r from-yellow-400 to-orange-500 text-black border-yellow-300 shadow-lg shadow-yellow-500/40 font-bold";
     case "Global Office":
       return "bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-500/40 font-semibold";
-    case "Aligarh":
+    case "Hub Office":
       return "bg-gray-800 text-white border-gray-500 shadow-md font-medium";
     default:
       return "bg-white/20 text-white border-white/30";
@@ -49,10 +49,12 @@ const getTagStyle = (tag?: string) => {
 
 const OurOffices: React.FC = () => {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-12">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Offices</h2>
+    <section className="max-w-6xl mx-auto px-6 py-20">
+      <h2 className="text-4xl font-bold text-gray-900 mb-20 text-center">
+        Our Offices
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         {offices.map((office) => (
           <OfficeCard key={office.city} {...office} />
         ))}
@@ -68,26 +70,25 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
   tag,
 }) => {
   return (
-    <div className="relative rounded-2xl overflow-hidden h-80 group border border-gray-200 shadow-lg">
-      {/* IMAGE */}
-      <Image
-        src={imageUrl}
-        alt={city}
-        fill
-        unoptimized
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-      />
+    <div className="relative rounded-3xl bg-white border border-gray-100 shadow-xl p-8 pt-20 transition-all hover:shadow-2xl">
+      {/* 🟢 CIRCLE IMAGE (POP-OUT EFFECT) */}
+      <div className="absolute -top-12 left-8 z-10">
+        <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-2xl">
+          <Image
+            src={imageUrl}
+            alt={city}
+            fill
+            unoptimized
+            className="object-cover"
+          />
+        </div>
+      </div>
 
-      {/* DARK OVERLAY */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-
-      {/* 🔥 STRONG TAG */}
+      {/* STRONG TAG */}
       {tag && (
-        <div className="absolute top-4 left-4 z-20">
+        <div className="absolute top-6 right-6 z-20">
           <span
-            className={`text-xs px-4 py-1.5 rounded-full border ${getTagStyle(
-              tag,
-            )}`}
+            className={`text-xs px-4 py-1.5 rounded-full border ${getTagStyle(tag)}`}
           >
             {tag === "Headquarters" && "🔥 "}
             {tag === "Global Office" && "🌍 "}
@@ -97,28 +98,13 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
         </div>
       )}
 
-      {/* PIN */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
-        <PinIcon />
-      </div>
-
-      {/* TEXT */}
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 text-center">
-        <h3 className="text-white text-xl font-bold">{city}</h3>
-        <p className="text-white/80 text-xs mt-1">{address}</p>
+      {/* TEXT CONTENT */}
+      <div className="space-y-3">
+        <h3 className="text-2xl font-extrabold text-gray-900">{city}</h3>
+        <p className="text-gray-500 text-sm leading-relaxed">{address}</p>
       </div>
     </div>
   );
 };
-
-const PinIcon: React.FC = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24">
-    <path
-      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-      fill="#ffffff"
-    />
-    <circle cx="12" cy="9" r="2.5" fill="#000" />
-  </svg>
-);
 
 export default OurOffices;

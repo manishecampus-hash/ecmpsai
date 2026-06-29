@@ -317,31 +317,36 @@ export function Footer() {
             </Link>
           ))}
         </div>
-
-        <div className="flex flex-col items-center gap-3 sm:flex-row">
+        <div className="flex flex-row items-center gap-2">
+          {/* Toll Free Button */}
           <a
             href="tel:18001216201"
-            className={`${contactLinkClass} min-w-[165px] hover:border-red-500/70`}
+            className={`${contactLinkClass} flex items-center gap-2 !rounded-full !border-2 border-red-500 px-5 py-2.5 min-w-[160px] hover:bg-red-500/10 relative overflow-visible`}
           >
-            <span className="absolute -top-2 left-3 rounded bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+            <span className="absolute -top-2 left-3 rounded-full bg-red-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
               Toll Free
             </span>
+
             <Phone className="h-4 w-4 shrink-0 text-red-500" />
+
             <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-white">
               1800-121-6201
             </span>
           </a>
 
+          {/* WhatsApp Button */}
           <a
             href="https://wa.me/919355907564"
             target="_blank"
             rel="noopener noreferrer"
-            className={`${contactLinkClass} min-w-[155px] hover:border-green-500/70`}
+            className={`${contactLinkClass} flex items-center gap-2 !rounded-full !border-2 border-green-500 px-5 py-2.5 min-w-[150px] hover:bg-green-500/10 relative overflow-visible`}
           >
-            <span className="absolute -top-2 left-3 rounded bg-green-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+            <span className="absolute -top-2 left-3 rounded-full bg-green-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
               WhatsApp
             </span>
+
             <MessageCircle className="h-4 w-4 shrink-0 text-green-500" />
+
             <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-white">
               93559 07564
             </span>

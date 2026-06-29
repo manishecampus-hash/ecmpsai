@@ -11,6 +11,10 @@ import {
   ChevronRight,
   Clock,
   X,
+  Search,
+  Scale,
+  CheckCircle,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
@@ -311,7 +315,7 @@ function MobileDrawer({
                     </Button>
                   </Link>
                   <Button
-                    className="w-24 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-black"
+                    className="  px-4 py-2.5 rounded-md text-[15px] font-medium transition-colors  text-gray-700 bg-white hover:bg-gray-50 "
                     onClick={() => {
                       onSignup();
                       onClose();
@@ -392,6 +396,9 @@ export function Navbar() {
     setMobileOpen(false);
   };
 
+  // Bottom nav links - first 4 items only
+  const bottomNavLinks = navLinks.slice(0, 4);
+
   return (
     <>
       <style>{`
@@ -413,39 +420,6 @@ export function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* new menu bar icon */}
-
-            {/* <div className="flex items-center">
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="p-0"
-                aria-label="Menu"
-              >
-                {mobileOpen ? (
-                  <X className="w-6 h-6 text-gray-800" />
-                ) : (
-                  <Menu className="w-6 h-6 text-gray-800" />
-                )}
-              </button>
-
-              <Link
-                href="/"
-                className="flex items-center flex-shrink-0 group ml-1"
-                onClick={closeAll}
-              >
-                <div className="relative w-32 h-16 cursor-pointer">
-                  <Image
-                    src="/image/logo.png"
-                    alt="Logo"
-                    fill
-                    className="object-contain  duration-300 group-hover:scale-105"
-                    priority
-                  />
-                </div>
-              </Link>
-            </div> */}
-            {/* ____________________________________________________- */}
-
             {/* Logo */}
             <Link
               href="/"
@@ -457,7 +431,7 @@ export function Navbar() {
                   src="/image/logo.png"
                   alt="Logo"
                   fill
-                  className="object-contain brightness-0 transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain  transition-transform duration-300 group-hover:scale-105"
                   priority
                 />
               </div>
@@ -540,7 +514,7 @@ export function Navbar() {
                 </div>
               )}
 
-              {/* ✅ FIXED: Single hamburger button — no Sheet, just toggles MobileDrawer */}
+              {/* Hamburger button */}
               <button
                 className="md:hidden p-2 text-gray-800"
                 onClick={() => setMobileOpen((prev) => !prev)}
@@ -557,7 +531,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* ✅ FIXED: Single mobile drawer — replaces both Sheet + MobileMenu */}
+      {/* Mobile Drawer */}
       <MobileDrawer
         open={mobileOpen}
         onClose={closeAll}
@@ -567,6 +541,70 @@ export function Navbar() {
         onSignup={() => setShowSignupModal(true)}
         pathname={pathname}
       />
+
+      {/* ✅ Bottom Navigation Bar - Modern Design */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 md:hidden">
+        <div className="flex items-center justify-around h-16 sm:h-20">
+          {bottomNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={closeAll}
+              className={`flex-1 flex flex-col items-center justify-center gap-2 py-3 transition-all duration-300 group ${
+                isActive(link.href) ? "bg-red-50" : "hover:bg-gray-50"
+              }`}
+            >
+              {link.href === "/discover" && (
+                <Search
+                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                    isActive(link.href)
+                      ? "text-red-600 scale-110"
+                      : "text-gray-600 group-hover:text-gray-800 scale-100"
+                  }`}
+                  strokeWidth={2}
+                />
+              )}
+              {link.href === "/compare" && (
+                <Scale
+                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                    isActive(link.href)
+                      ? "text-red-600 scale-110"
+                      : "text-gray-600 group-hover:text-gray-800 scale-100"
+                  }`}
+                  strokeWidth={2}
+                />
+              )}
+              {link.href === "/apply" && (
+                <CheckCircle
+                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                    isActive(link.href)
+                      ? "text-red-600 scale-110"
+                      : "text-gray-600 group-hover:text-gray-800 scale-100"
+                  }`}
+                  strokeWidth={2}
+                />
+              )}
+              {link.href === "/study" && (
+                <BookOpen
+                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                    isActive(link.href)
+                      ? "text-red-600 scale-110"
+                      : "text-gray-600 group-hover:text-gray-800 scale-100"
+                  }`}
+                  strokeWidth={2}
+                />
+              )}
+              <span
+                className={`text-[10px] sm:text-xs font-semibold transition-colors duration-300 ${
+                  isActive(link.href) ? "text-red-600" : "text-gray-600"
+                }`}
+              >
+                {link.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Signup Modal */}
       <SignupModal

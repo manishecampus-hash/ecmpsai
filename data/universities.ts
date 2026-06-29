@@ -5,6 +5,7 @@ export interface University {
   location: string;
   region: string;
   image: string;
+  locationIcon: string; // lucide icon name
 }
 
 export const universities: University[] = [
@@ -15,6 +16,7 @@ export const universities: University[] = [
     location: "Noida",
     region: "North India",
     image: "/universities/Untitled design (3).png",
+    locationIcon: "MapPin",
   },
   {
     slug: "jain-university-online",
@@ -23,6 +25,7 @@ export const universities: University[] = [
     location: "Bengaluru",
     region: "South India",
     image: "/universities/jain.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "online-manipal-university",
@@ -31,6 +34,7 @@ export const universities: University[] = [
     location: "Manipal",
     region: "South India",
     image: "/universities/onlinemanipal.webp",
+    locationIcon: "MapPin",
   },
   {
     slug: "mangalayatan-university-online",
@@ -39,6 +43,7 @@ export const universities: University[] = [
     location: "Noida",
     region: "North India",
     image: "/universities/MU.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "sikkim-manipal-university-online",
@@ -47,6 +52,7 @@ export const universities: University[] = [
     location: "Sikkim",
     region: "North-East India",
     image: "/universities/SMU.webp",
+    locationIcon: "MapPin",
   },
   {
     slug: "manipal-university-jaipur-online",
@@ -55,6 +61,7 @@ export const universities: University[] = [
     location: "Jaipur",
     region: "North India",
     image: "/universities/manipal.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "andhra-university-online",
@@ -63,6 +70,7 @@ export const universities: University[] = [
     location: "Visakhapatnam",
     region: "South India",
     image: "/universities/andhra.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "dy-patil-vidyapeeth-online",
@@ -71,6 +79,7 @@ export const universities: University[] = [
     location: "Pune",
     region: "West India",
     image: "/universities/dy-patil.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "sharda-university-online",
@@ -79,6 +88,7 @@ export const universities: University[] = [
     location: "Noida",
     region: "North India",
     image: "/universities/sharda.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "gla-university-online",
@@ -87,6 +97,7 @@ export const universities: University[] = [
     location: "Mathura",
     region: "North India",
     image: "/universities/gla.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "chandigarh-university-online",
@@ -95,6 +106,7 @@ export const universities: University[] = [
     location: "Chandigarh",
     region: "North India",
     image: "/universities/cu.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "uttaranchal-university-online",
@@ -103,6 +115,7 @@ export const universities: University[] = [
     location: "Dehradun",
     region: "North India",
     image: "/universities/utranchal.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "shoolini-university-online",
@@ -111,6 +124,7 @@ export const universities: University[] = [
     location: "Bajhol",
     region: "North India",
     image: "/universities/shoolini.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "galgotias-university-online",
@@ -119,6 +133,7 @@ export const universities: University[] = [
     location: "Noida",
     region: "North India",
     image: "/universities/galgotias.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "mats-university-online",
@@ -127,6 +142,7 @@ export const universities: University[] = [
     location: "Raipur",
     region: "Central India",
     image: "/universities/mats.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "rushford-business-school",
@@ -135,6 +151,7 @@ export const universities: University[] = [
     location: "Switzerland",
     region: "International",
     image: "/universities/rushford.png",
+    locationIcon: "Globe",
   },
   {
     slug: "edgewood-university",
@@ -143,6 +160,7 @@ export const universities: University[] = [
     location: "Madison",
     region: "International",
     image: "/universities/edgewood.png",
+    locationIcon: "Globe",
   },
   {
     slug: "esgci",
@@ -151,6 +169,7 @@ export const universities: University[] = [
     location: "France",
     region: "International",
     image: "/universities/esgci.png",
+    locationIcon: "Globe",
   },
   {
     slug: "ssbm",
@@ -159,6 +178,7 @@ export const universities: University[] = [
     location: "Switzerland",
     region: "International",
     image: "/universities/ssbm.png",
+    locationIcon: "Globe",
   },
   {
     slug: "golden-gate-university",
@@ -167,6 +187,7 @@ export const universities: University[] = [
     location: "California",
     region: "International",
     image: "/universities/ggu.png",
+    locationIcon: "Globe",
   },
   {
     slug: "iec-university-wilp",
@@ -175,6 +196,7 @@ export const universities: University[] = [
     location: "Solan",
     region: "North India",
     image: "/universities/iec.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "hrit-university-wilp",
@@ -183,6 +205,7 @@ export const universities: University[] = [
     location: "Ghaziabad",
     region: "North India",
     image: "/universities/hrit.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "bits-pilani-wilp",
@@ -191,6 +214,7 @@ export const universities: University[] = [
     location: "Rajasthan",
     region: "North India",
     image: "/universities/bits.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "niilm-university-wilp",
@@ -199,6 +223,7 @@ export const universities: University[] = [
     location: "Haryana",
     region: "North India",
     image: "/universities/niilm.png",
+    locationIcon: "MapPin",
   },
   {
     slug: "sanskriti-university-wilp",
@@ -207,5 +232,6 @@ export const universities: University[] = [
     location: "Mathura",
     region: "North India",
     image: "/universities/sanskriti.png",
+    locationIcon: "MapPin",
   },
 ];

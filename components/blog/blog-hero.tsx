@@ -117,9 +117,20 @@ export default function BlogHero({
 
                   <div className="flex items-center justify-between border-t border-gray-100 pt-7">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-700">
-                        {sliderBlog.author.charAt(0)}
-                      </div>
+                      {sliderBlog.authorImage ? (
+                        <div className="relative h-12 w-12 overflow-hidden rounded-full">
+                          <NextImage
+                            src={sliderBlog.authorImage}
+                            alt={sliderBlog.author}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-700">
+                          {sliderBlog.author.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <p className="font-bold text-gray-700">
                           {sliderBlog.author}

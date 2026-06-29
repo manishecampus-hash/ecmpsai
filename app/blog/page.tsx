@@ -40,7 +40,7 @@ function mapDbBlogToBlog(dbBlog: any) {
     description: dbBlog.excerpt || "", // use excerpt as description/lead paragraph
     author: dbBlog.publisher || "eCampus Team",
     authorBio: "The eCampus editorial team researches and curates guidance on Indian higher education, online degrees, and career growth for students across India.",
-    authorImage: "/images/authors/ecampus-team.png",
+    authorImage: dbBlog.publisherImage || "",
     date: formattedDate,
     readTime,
     reads: dbBlog.view ? `${dbBlog.view} Reads` : "1.2K Reads",

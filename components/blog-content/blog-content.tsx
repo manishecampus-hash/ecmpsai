@@ -304,6 +304,27 @@ export function BlogContent({ blog }: { blog: Blog }) {
           border-radius: 8px;
         }
 
+        .upgrad-content img {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin: 30px auto;
+        }
+
+        .upgrad-content a.editor-image-link {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          margin: 30px auto;
+          text-decoration: none !important;
+        }
+
+        .upgrad-content a.editor-image-link img {
+          margin: 0;
+        }
+
         .upgrad-content figure figcaption,
         .content-image figcaption {
           margin-top: 10px;

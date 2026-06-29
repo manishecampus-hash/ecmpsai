@@ -33,7 +33,11 @@ export type Blog = {
   tags: string[];
   headings: Heading[];
   content: ContentBlock[];
-  view: string;
+  view?: string;
+  inCarousel?: boolean;
+  carouselOrder?: number;
+  updatedAt?: string;
+  createdAt?: string;
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────

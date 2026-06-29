@@ -43,8 +43,8 @@ function mapDbBlogToBlog(dbBlog: any) {
     authorImage: dbBlog.publisherImage || "",
     date: formattedDate,
     readTime,
-    reads: dbBlog.view ? `${dbBlog.view} Reads` : "1.2K Reads",
-    view: dbBlog.view || "1.2K",
+    reads: typeof dbBlog.view === "number" ? `${dbBlog.view} Reads` : "0 Reads",
+    view: typeof dbBlog.view === "number" ? String(dbBlog.view) : "0",
     slug: dbBlog.url || "",
     tags: dbBlog.tags || [],
     headings: [],
@@ -88,7 +88,7 @@ export default async function BlogPage() {
     // Filter and sort blogs configured for the slider/carousel in CMS
     const sliderBlogs = allBlogs
         .filter((blog) => blog.inCarousel)
-        .sort((a, b) => a.carouselOrder - b.carouselOrder);
+        .sort((a, b) => (a.carouselOrder || 999) - (b.carouselOrder || 999));
         
     // Fallback to first 4 blogs if none are set in the slider carousel
     const blogsToShow = sliderBlogs.length > 0 ? sliderBlogs : sortedAllBlogs.slice(0, 4);

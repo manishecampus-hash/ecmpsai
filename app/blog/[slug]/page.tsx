@@ -93,6 +93,7 @@ import { BlogContent } from "@/components/blog-content/blog-content";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
 import { Footer } from "@/components/layout/footer";
+import { BlogViewCounter } from "@/components/blog-content/BlogViewCounter";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -176,8 +177,8 @@ function mapDbBlogToBlog(dbBlog: any) {
     authorImage: dbBlog.publisherImage || "",
     date: formattedDate,
     readTime,
-    reads: dbBlog.view ? `${dbBlog.view} Reads` : "1.2K Reads",
-    view: dbBlog.view || "1.2K",
+    reads: typeof dbBlog.view === "number" ? `${dbBlog.view} Reads` : "0 Reads",
+    view: typeof dbBlog.view === "number" ? String(dbBlog.view) : "0",
     slug: dbBlog.url || "",
     tags: dbBlog.tags || [],
     headings,
@@ -302,6 +303,7 @@ export default async function BlogDetailsPage({
 
   return (
     <main className={`upgrad-blog-page ${poppins.className}`}>
+      <BlogViewCounter blogId={blog.id} />
       <div className="blog-container breadcrumb">
         <Link href="/">Home</Link>
         <ChevronRight className="breadcrumb-icon" />

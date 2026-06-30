@@ -8,6 +8,11 @@ import {
   Users,
   TrendingUp,
   Globe,
+  CreditCard,
+  Shield,
+  Building2,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
 
 type TabKey =
@@ -41,6 +46,51 @@ const overviewCards = [
     label: "International Alliances",
     icon: <Globe className="h-5 w-5 text-slate-500" />,
     iconBg: "bg-slate-100",
+  },
+];
+
+const feeCards = [
+  {
+    label: "Total Program Fee",
+    value: "₹1,75,000",
+    subtext: "(inclusive of Taxes)",
+    icon: <CreditCard className="h-6 w-6 text-red-500" />,
+    iconBg: "bg-red-50",
+  },
+  {
+    label: "Flexible Payment",
+    description: "Easy EMIs & installment options available",
+    icon: <CreditCard className="h-6 w-6 text-orange-500" />,
+    iconBg: "bg-orange-50",
+  },
+  {
+    label: "No Hidden Charges",
+    description: "Transparent fee structure with complete clarity",
+    icon: <Shield className="h-6 w-6 text-emerald-500" />,
+    iconBg: "bg-emerald-50",
+  },
+];
+
+const eligibilityCards = [
+  {
+    label: "Academic Qualification",
+    description:
+      "Bachelor's degree (10+2+3) from a recognised university in any discipline.",
+    icon: <Building2 className="h-6 w-6 text-red-500" />,
+    iconBg: "bg-red-50",
+  },
+  {
+    label: "Work Experience",
+    description: "Minimum one year of work experience preferred.",
+    icon: <Briefcase className="h-6 w-6 text-red-500" />,
+    iconBg: "bg-red-50",
+  },
+  {
+    label: "Diploma Holders",
+    description:
+      "Diploma holders with relevant professional experience may also apply.",
+    icon: <GraduationCap className="h-6 w-6 text-red-500" />,
+    iconBg: "bg-red-50",
   },
 ];
 
@@ -78,7 +128,7 @@ const tabContent: Record<
     subtext:
       "The programme is intended for professionals who wish to strengthen analytical thinking within HR, people strategy, and organisational decision-making.",
     list: [
-      "Bachelor’s degree (10+2+3) from a recognised university",
+      "Bachelor's degree (10+2+3) from a recognised university",
       "Diploma holders with relevant professional experience may also apply",
       "Minimum one year of work experience preferred",
       "Suitable for HR, operations, consulting, and business professionals",
@@ -140,7 +190,7 @@ export default function AboutProgram() {
         {/* Main layout */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
           {/* Sidebar */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 lg:sticky lg:top-24 lg:h-fit">
             <div className="flex flex-col gap-2 rounded-3xl border border-slate-100 bg-white p-2">
               {tabs.map((tab) => {
                 const active = activeTab === tab;
@@ -176,6 +226,11 @@ export default function AboutProgram() {
                 key={activeTab}
                 className="animate-in fade-in slide-in-from-right-4 duration-300 w-full flex flex-col items-center"
               >
+                {activeTab === "Eligibility" && (
+                  <span className="text-xs font-bold text-red-600 tracking-widest uppercase mb-3">
+                    Eligibility
+                  </span>
+                )}
                 <h3
                   className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl"
                   dangerouslySetInnerHTML={{
@@ -192,7 +247,11 @@ export default function AboutProgram() {
                   className={`mt-6 grid grid-cols-1 gap-4 mx-auto w-full ${
                     activeTab === "Program Overview"
                       ? "sm:grid-cols-2 max-w-md"
-                      : "sm:grid-cols-2 max-w-2xl"
+                      : activeTab === "Program Fee"
+                        ? "sm:grid-cols-3 max-w-4xl"
+                        : activeTab === "Eligibility"
+                          ? "sm:grid-cols-3 max-w-4xl"
+                          : "sm:grid-cols-2 max-w-2xl"
                   }`}
                 >
                   {activeTab === "Program Overview"
@@ -214,19 +273,79 @@ export default function AboutProgram() {
                           </div>
                         </div>
                       ))
-                    : currentContent.list.map((item) => (
-                        <div
-                          key={item}
-                          className="flex flex-col items-center text-center gap-2 rounded-2xl bg-white px-4 py-4 shadow-sm w-full"
-                        >
-                          <div className="rounded-full border border-red-100 bg-red-50 p-1">
-                            <CheckCircle2 className="h-4 w-4 text-red-500" />
+                    : activeTab === "Program Fee"
+                      ? feeCards.map((card, idx) => (
+                          <div
+                            key={idx}
+                            className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm w-full hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div
+                                className={`rounded-lg p-2 ${card.iconBg} flex-shrink-0`}
+                              >
+                                {card.icon}
+                              </div>
+                              <div className="text-left flex-1">
+                                <h4 className="font-semibold text-slate-900 text-sm">
+                                  {card.label}
+                                </h4>
+                                {card.value && (
+                                  <div className="mt-2">
+                                    <div className="text-xl font-bold text-slate-900">
+                                      {card.value}
+                                    </div>
+                                    {card.subtext && (
+                                      <div className="text-xs text-slate-500 mt-1">
+                                        {card.subtext}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                                {card.description && (
+                                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                                    {card.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-sm font-medium leading-relaxed text-slate-700">
-                            {item}
-                          </span>
-                        </div>
-                      ))}
+                        ))
+                      : activeTab === "Eligibility"
+                        ? eligibilityCards.map((card, idx) => (
+                            <div
+                              key={idx}
+                              className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm w-full hover:shadow-md transition-shadow"
+                            >
+                              <div className="flex flex-col items-center text-center gap-3">
+                                <div
+                                  className={`rounded-lg p-2 ${card.iconBg} flex-shrink-0`}
+                                >
+                                  {card.icon}
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold text-slate-900 text-sm">
+                                    {card.label}
+                                  </h4>
+                                  <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                                    {card.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        : currentContent.list.map((item) => (
+                            <div
+                              key={item}
+                              className="flex flex-col items-center text-center gap-2 rounded-2xl bg-white px-4 py-4 shadow-sm w-full"
+                            >
+                              <div className="rounded-full border border-red-100 bg-red-50 p-1">
+                                <CheckCircle2 className="h-4 w-4 text-red-500" />
+                              </div>
+                              <span className="text-sm font-medium leading-relaxed text-slate-700">
+                                {item}
+                              </span>
+                            </div>
+                          ))}
                 </div>
               </div>
             </div>

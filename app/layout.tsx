@@ -13,9 +13,17 @@ export const metadata: Metadata = {
   title: "eCampus — Your Career Starts Here",
   description:
     "AI-powered education discovery for Indian Gen Z. Find your perfect degree, compare universities, and get personalised career guidance in seconds.",
+
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+
   openGraph: {
     images: [{ url: "" }],
   },
+
   twitter: {
     card: "summary_large_image",
     images: [{ url: "" }],

@@ -6,24 +6,24 @@ import { Section } from "./ui/section";
 
 const faqs = [
   {
-    question: "1. What is eCampusEdu?",
+    question: "1. What is eCampus Edu?",
     answer:
       "eCampusEdu is a trusted online education platform that helps students and working professionals discover, compare, and apply to online degree, distance education, executive education, and certification programs from leading universities in India and abroad",
   },
   {
-    question: "2. How do I choose the right course on eCampusEdu?",
+    question: "2. How do I choose the right course on eCampus Edu?",
     answer:
       "You can explore programs based on your career goals, budget, educational background, specialization, and preferred learning format. Our academic counselors can also help you select the most suitable program.",
   },
   {
-    question: "3. Are the universities listed on eCampusEdu recognized?",
+    question: "3. Are the universities listed on eCampus Edu recognized?",
     answer:
       "Yes. eCampusEdu partners with recognized universities and institutions. Students can verify approvals such as UGC, AICTE, DEB, NAAC accreditation, and international accreditations based on the specific university and program.",
   },
   {
     question: "4. Can working professionals pursue these programs?",
     answer:
-      "Absolutely. Most programs featured on eCampusEdu are designed for working professionals and offer flexible schedules, live online classes, recorded lectures, weekend sessions, and self-paced learning options.",
+      "Absolutely. Most programs featured on eCampus Edu are designed for working professionals and offer flexible schedules, live online classes, recorded lectures, weekend sessions, and self-paced learning options.",
   },
   {
     question: "5. Does eCampusEdu provide admission assistance?",
@@ -31,7 +31,7 @@ const faqs = [
       "Yes. Our team assists students throughout the admission process, including program selection, eligibility verification, application submission, document support, and enrollment guidance.",
   },
   {
-    question: "6. What types of programs are available on eCampusEdu?",
+    question: "6. What types of programs are available on eCampus Edu?",
     answer:
       "eCampusEdu offers a wide range of programs, including Online MBA, DBA, BBA, BCA, MCA, M.Com, Executive Education, Professional Certifications, Data Science, Artificial Intelligence, Digital Marketing, and other career-focused courses.",
   },
@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     question:
-      "8. Why should I choose eCampusEdu for higher education guidance?",
+      "8. Why should I choose eCampus Edu for higher education guidance?",
     answer:
       "eCampusEdu simplifies the education journey by providing expert counseling, university comparisons, admission support, access to top institutions, and personalized guidance to help learners achieve their academic and professional goals.",
   },

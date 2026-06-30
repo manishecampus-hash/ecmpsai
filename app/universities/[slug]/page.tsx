@@ -13,6 +13,7 @@ import ApprovalsSection from "@/components/universities/approvals";
 import PlacementPartners from "@/components/universities/placement-partners";
 // import { Footer } from "@/components/footer";
 import TestimonialsSection from "@/components/universities/testimonials";
+import { Footer } from "@/components/layout/footer";
 // import WhyOnline from "@/components/universities/why-online";
 
 interface UniversityPageProps {
@@ -46,7 +47,8 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       {/* <CoursesSection university={university} /> */}
 
       <FAQSection university={university} />
-      {/* <Footer /> */}
+
+      <Footer />
     </main>
   );
 }

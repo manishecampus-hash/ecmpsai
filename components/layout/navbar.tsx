@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
 import { categories } from "@/data/header-menu";
+import BottomNav from "../BottomNav";
 
 type Student = {
   name?: string;
@@ -543,69 +544,7 @@ export function Navbar() {
       />
 
       {/* ✅ Bottom Navigation Bar - Modern Design */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 md:hidden">
-        <div className="flex items-center justify-around h-16 sm:h-20">
-          {bottomNavLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={closeAll}
-              className={`flex-1 flex flex-col items-center justify-center gap-2 py-3 transition-all duration-300 group ${
-                isActive(link.href) ? "bg-red-50" : "hover:bg-gray-50"
-              }`}
-            >
-              {link.href === "/discover" && (
-                <Search
-                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
-                    isActive(link.href)
-                      ? "text-red-600 scale-110"
-                      : "text-gray-600 group-hover:text-gray-800 scale-100"
-                  }`}
-                  strokeWidth={2}
-                />
-              )}
-              {link.href === "/compare" && (
-                <Scale
-                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
-                    isActive(link.href)
-                      ? "text-red-600 scale-110"
-                      : "text-gray-600 group-hover:text-gray-800 scale-100"
-                  }`}
-                  strokeWidth={2}
-                />
-              )}
-              {link.href === "/apply" && (
-                <CheckCircle
-                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
-                    isActive(link.href)
-                      ? "text-red-600 scale-110"
-                      : "text-gray-600 group-hover:text-gray-800 scale-100"
-                  }`}
-                  strokeWidth={2}
-                />
-              )}
-              {link.href === "/study" && (
-                <BookOpen
-                  className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
-                    isActive(link.href)
-                      ? "text-red-600 scale-110"
-                      : "text-gray-600 group-hover:text-gray-800 scale-100"
-                  }`}
-                  strokeWidth={2}
-                />
-              )}
-              <span
-                className={`text-[10px] sm:text-xs font-semibold transition-colors duration-300 ${
-                  isActive(link.href) ? "text-red-600" : "text-gray-600"
-                }`}
-              >
-                {link.label}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
+      <BottomNav />
       {/* Signup Modal */}
       <SignupModal
         isOpen={showSignupModal}

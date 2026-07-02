@@ -121,12 +121,33 @@ const regionBgColor: Record<string, string> = {
   International: "bg-blue-50 text-blue-700 hover:bg-blue-100",
 };
 
+function getRegionFromLocation(loc: string): string {
+  const l = (loc || "").toLowerCase();
+  if (l.includes("bengaluru") || l.includes("bangalore") || l.includes("karnataka") || l.includes("andhra") || l.includes("visakhapatnam") || l.includes("south")) {
+    return "South India";
+  }
+  if (l.includes("pune") || l.includes("mumbai") || l.includes("maharashtra") || l.includes("gujarat") || l.includes("west")) {
+    return "West India";
+  }
+  if (l.includes("raipur") || l.includes("central") || l.includes("chhattisgarh") || l.includes("madhya pradesh")) {
+    return "Central India";
+  }
+  if (l.includes("switzerland") || l.includes("france") || l.includes("international") || l.includes("california")) {
+    return "International";
+  }
+  if (l.includes("sikkim") || l.includes("north-east")) {
+    return "North-East India";
+  }
+  return "North India";
+}
+
 export default function UniversitySection() {
   const [isMobile, setIsMobile] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState("All");
   const [activeMode, setActiveMode] = useState("All");
+  const [uniList, setUniList] = useState<any[]>([]);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
@@ -136,6 +157,47 @@ export default function UniversitySection() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    fetch(`${apiUrl}/universities`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((u: any) => {
+            let slug = "";
+            if (u.seoSettings?.rewriteUrl) {
+              slug = u.seoSettings.rewriteUrl.split("/").pop() || "";
+            }
+            if (!slug) {
+              slug = u.name.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+            }
+
+            const region = getRegionFromLocation(u.location);
+            const locationIcon = region === "International" ? "Globe" : "MapPin";
+
+            return {
+              id: u.id,
+              name: u.name,
+              image: u.logoUrl || "/placeholder-uni.png",
+              location: u.location,
+              region,
+              locationIcon,
+              slug,
+              type: "Engineering", // fallback filter
+              mode: "On-campus" // fallback filter
+            };
+          });
+          setUniList(mapped);
+        } else {
+          setUniList(universities);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch universities from backend:", err);
+        setUniList(universities);
+      });
+  }, []);
+
   // Reset pagination on any filter change
   useEffect(() => {
     setShowAll(false);
@@ -143,7 +205,7 @@ export default function UniversitySection() {
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return universities.filter((u) => {
+    return uniList.filter((u) => {
       const matchSearch =
         !q ||
         u.name.toLowerCase().includes(q) ||
@@ -152,7 +214,7 @@ export default function UniversitySection() {
       const matchMode = activeMode === "All" || (u as any).mode === activeMode;
       return matchSearch && matchType && matchMode;
     });
-  }, [query, activeType, activeMode]);
+  }, [uniList, query, activeType, activeMode]);
 
   const initialCount = isMobile ? MOBILE_INITIAL_COUNT : DESKTOP_INITIAL_COUNT;
   const displayed = showAll ? filtered : filtered.slice(0, initialCount);

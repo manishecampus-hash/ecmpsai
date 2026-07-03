@@ -224,7 +224,15 @@ export interface Offer {
   videoSrc?: string;
 }
 
+// Detect direct video file (CDN mp4/webm) vs YouTube/embed URL
+const isDirectVideoFile = (src?: string) => {
+  if (!src) return false;
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
+};
+
 const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
+  const isDirect = isDirectVideoFile(src);
+
   React.useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -242,12 +250,22 @@ const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
         className="relative w-full max-w-3xl mx-4 aspect-video rounded-xl overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <iframe
-          src={src}
-          className="w-full h-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+        {isDirect ? (
+          <video
+            src={src}
+            className="w-full h-full object-contain bg-black"
+            autoPlay
+            controls
+            playsInline
+          />
+        ) : (
+          <iframe
+            src={src}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        )}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full p-1.5 transition-colors"
@@ -271,10 +289,12 @@ const OfferCard = ({
 }) => {
   const rank = index + 1;
   const [hovered, setHovered] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const directVideo = isDirectVideoFile(offer.videoSrc);
 
-  // Build the autoplay src only when hovered, to avoid loading iframes for all cards
+  // Build the autoplay src only when hovered, for YouTube/iframe embeds only
   const autoplaySrc = React.useMemo(() => {
-    if (!offer.videoSrc) return null;
+    if (!offer.videoSrc || directVideo) return null;
     try {
       const url = new URL(offer.videoSrc);
       url.searchParams.set("autoplay", "1");
@@ -287,14 +307,36 @@ const OfferCard = ({
     } catch {
       return offer.videoSrc;
     }
-  }, [offer.videoSrc]);
+  }, [offer.videoSrc, directVideo]);
+
+  // Play/pause the native <video> instantly on hover (already preloaded, no fetch delay)
+  React.useEffect(() => {
+    if (!directVideo) return;
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    if (hovered) {
+      // play() returns a promise; ignore autoplay-blocked rejections
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    } else {
+      vid.pause();
+      vid.currentTime = 0;
+    }
+  }, [hovered, directVideo]);
 
   const cardInner = (
     <>
       {/* Rank number */}
       <span
         className="absolute bottom-0 left-2 z-10 text-[65px] sm:text-[85px] lg:text-[100px] font-black select-none pointer-events-none"
-        style={{ WebkitTextStroke: "2px white", WebkitTextFillColor: "#111" }}
+        style={{
+          WebkitTextStroke: "2px white",
+          WebkitTextFillColor: "#111",
+          paintOrder: "stroke fill",
+        }}
       >
         {rank}
       </span>
@@ -327,18 +369,25 @@ const OfferCard = ({
           <span>No Image</span>
         </div>
 
-        {/*        
-        {offer.videoSrc && hovered && autoplaySrc && (
-          <iframe
-            src={autoplaySrc}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            title={offer.imageAlt}
+        {/* Native <video> for CDN mp4 files — always mounted so it preloads in the
+            background; play/pause is toggled instantly on hover with no fetch delay. */}
+        {directVideo && (
+          <video
+            ref={videoRef}
+            src={offer.videoSrc}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-opacity duration-300 pointer-events-none",
+              hovered ? "opacity-100" : "opacity-0",
+            )}
           />
-        )} */}
+        )}
 
-        {/* Hover video preview — covers full card without black bars */}
-        {offer.videoSrc && hovered && autoplaySrc && (
+        {/* Hover video preview for YouTube/iframe embeds only — covers full card */}
+        {!directVideo && offer.videoSrc && hovered && autoplaySrc && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <iframe
               src={autoplaySrc}

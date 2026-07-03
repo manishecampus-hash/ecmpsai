@@ -67,7 +67,10 @@ export default function FAQSection({ university }: FAQSectionProps) {
         FAQ SECTION
         Maintains structural padding and clean slate aesthetics
        ============================================================ */
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section
+      id="faq"
+      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+    >
       {/* FAQ Grid Wrapper layout split */}
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
         {/* LEFT COLUMN: Structural Visual Prompt Header (Span 4) */}

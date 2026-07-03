@@ -14,6 +14,12 @@ import PlacementPartners from "@/components/universities/placement-partners";
 // import { Footer } from "@/components/footer";
 import TestimonialsSection from "@/components/universities/testimonials";
 import { Footer } from "@/components/layout/footer";
+import SubHeader from "@/components/universities/sub-header";
+import LoanSection from "@/components/universities/loan-section";
+// ✅ correct
+import AdmissionProcessSection from "@/components/universities/process-section";
+import LearningEnvironmentSection from "@/components/universities/environment-section";
+
 // import WhyOnline from "@/components/universities/why-online";
 
 interface UniversityPageProps {
@@ -33,12 +39,17 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
 
   return (
     <main className="min-h-screen bg-white">
+      <SubHeader />
       <HeroSection university={university} />
+
       {/* <OverviewSection university={university} /> */}
       <AboutProgram university={university} />
       <ProgramsSection university={university} />
+      <AdmissionProcessSection />
       <TopSpecializations university={university} />
+      <LoanSection />
       <ApprovalsSection university={university} />
+      <LearningEnvironmentSection />
       <PlacementPartners university={university} />
       <TestimonialsSection university={university} />
 

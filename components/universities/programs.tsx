@@ -104,7 +104,7 @@ export default function ProgramsSection() {
   }, [activeTab, activeCategory]);
 
   return (
-    <section className="bg-white px-4 py-10 sm:px-6 lg:px-8">
+    <section id="programs" className="bg-white px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">

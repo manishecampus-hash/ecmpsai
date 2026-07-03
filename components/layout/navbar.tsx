@@ -269,20 +269,27 @@ function MobileDrawer({
               Navigation
             </p>
 
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={onClose}
-                className={`block px-4 py-2.5 rounded-full text-[15px] font-medium transition-colors ${
-                  isActive(link.href)
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks
+              .filter(
+                (link) =>
+                  !["/discover", "/compare", "/apply", "/study"].includes(
+                    link.href,
+                  ),
+              )
+              .map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={onClose}
+                  className={`block px-4 py-2.5 rounded-full text-[15px] font-medium transition-colors ${
+                    isActive(link.href)
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
 
             {/* Auth section */}
             <div className="mt-4 border-t border-gray-200 pt-4">

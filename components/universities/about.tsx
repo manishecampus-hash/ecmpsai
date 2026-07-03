@@ -171,7 +171,10 @@ export default function AboutProgram() {
   const currentContent = useMemo(() => tabContent[activeTab], [activeTab]);
 
   return (
-    <section className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+    <section
+      id="overview"
+      className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+    >
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mx-auto mb-12 max-w-3xl text-center">

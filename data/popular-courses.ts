@@ -26,7 +26,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "bar-chart",
     href: "/programs/iim-k-hr-analytics",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    videoSrc: "https://ecampus-admin-ui.b-cdn.net/homepage/0627(2).mp4",
   },
   {
     id: 2,
@@ -86,8 +86,7 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 6,
-    imageSrc:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc: "/courses/birchwood.png",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -97,6 +96,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "cpu",
     href: "/programs/iimk-ai",
+    videoSrc: "https://ecampus-admin-ui.b-cdn.net/homepage/0627(2).mp4",
   },
   {
     id: 7,

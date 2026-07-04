@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Handshake,
   IndianRupee,
   Star,
 } from "lucide-react";
@@ -105,19 +106,17 @@ export default function ProgramsSection() {
 
   return (
     <section id="programs" className="bg-white px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-7 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
-            Discover Career-Ready{" "}
-            <span className="text-red-500">Online Programs</span>
-          </h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            Career Ready
+          </span>
 
-          <Link
-            href="#"
-            className="inline-flex items-center justify-center rounded-xl bg-red-500 px-6 py-3 text-sm font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600"
-          >
-            Explore All Programs
-          </Link>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            Discover Career-Ready
+            <span className="text-red-500"> Online Programs</span>
+          </h2>
         </div>
 
         <div className="mb-6 flex flex-wrap gap-7">

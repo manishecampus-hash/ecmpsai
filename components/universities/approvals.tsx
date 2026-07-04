@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   Crown,
   Landmark,
+  ShieldCheck,
   Sparkles,
   Trophy,
 } from "lucide-react";
@@ -13,7 +14,7 @@ interface RecognitionItem {
   label: string;
   description: string;
   ribbon?: string;
-  icon: React.ElementType;
+  icon: React.ElementType | string; // component for lucide icons, string (path) for images
 }
 
 const recognitionData: RecognitionItem[] = [
@@ -21,14 +22,14 @@ const recognitionData: RecognitionItem[] = [
     id: "naac",
     label: "NAAC A+",
     description: "Rajasthan's 1st NAAC A+ Accredited University",
-    icon: Award,
+    icon: "/approvals/NIRF-2.jpg.webp",
   },
   {
     id: "qs",
     label: "QS Ranking",
     description: "Amongst South Asia's Top Universities (2026)",
     ribbon: "Rank 195",
-    icon: Trophy,
+    icon: "/approvals/NAAC-A-3.jpg.webp",
   },
   {
     id: "ugc",
@@ -62,23 +63,24 @@ export default function ApprovalsSection() {
   return (
     <section
       id="approvals"
-      className="bg-white px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
+      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="mx-auto mb-10 max-w-3xl text-center">
-          <h2 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <ShieldCheck className="h-3.5 w-3.5 text-red-500" />
+            Accreditation
+          </span>
+
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Recognition & <span className="text-red-500">Approvals</span>
           </h2>
-
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-            Explore key accreditations, rankings, and academic recognitions for
-            online degree programs.
-          </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {recognitionData.map((item) => {
-            const Icon = item.icon;
+            const isImage = typeof item.icon === "string";
+            const Icon = !isImage ? (item.icon as React.ElementType) : null;
 
             return (
               <article
@@ -96,9 +98,19 @@ export default function ApprovalsSection() {
                 )}
 
                 <div className="mt-3 flex h-32 w-full items-center justify-center rounded-2xl bg-white shadow-sm">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-                    <Icon className="h-10 w-10" />
-                  </div>
+                  {isImage ? (
+                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-white">
+                      <img
+                        src={item.icon as string}
+                        alt={item.label}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+                      {Icon && <Icon className="h-10 w-10" />}
+                    </div>
+                  )}
                 </div>
 
                 <h3 className="mt-6 text-base font-black text-gray-900">

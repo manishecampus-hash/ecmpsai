@@ -1,8 +1,9 @@
 "use client";
 
+import { Users } from "lucide-react";
 import { useState } from "react";
 
-interface LearningEnvironmentSectionProps {
+interface EnvironmentSection {
   university?: {
     name?: string;
   };
@@ -51,7 +52,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function LearningEnvironmentSection({
   university,
-}: LearningEnvironmentSectionProps) {
+}: EnvironmentSection) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   let cumulativePercent = 0;
@@ -59,22 +60,18 @@ export default function LearningEnvironmentSection({
   return (
     <section
       id="learning-environment"
-      className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
     >
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <span className="mb-4 inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-semibold text-red-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <Users className="h-3.5 w-3.5 text-red-500" />
             Peer Network
           </span>
-          <h2 className="text-3xl font-bold uppercase tracking-tight text-slate-800 sm:text-4xl lg:text-4xl">
-            Your Learning Environment
+
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            Your Learning <span className="text-red-500">Environment</span>
           </h2>
-          <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-base">
-            Learners{university?.name ? ` at ${university.name}` : ""} come from
-            varied industries, contributing practical insights and strong
-            professional experience.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-8">

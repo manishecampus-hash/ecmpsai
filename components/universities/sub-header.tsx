@@ -17,9 +17,13 @@ const NAV_ITEMS: NavItem[] = [
   { id: "faq", label: "FAQs" },
 ];
 
+// How far (in px) the user needs to scroll before the sub-header appears.
+const SHOW_AFTER_SCROLL = 320;
+
 export default function SubHeader() {
   const [activeId, setActiveId] = useState<string>(NAV_ITEMS[0].id);
   const [isSticky, setIsSticky] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -52,6 +56,7 @@ export default function SubHeader() {
 
     const handleScroll = () => {
       setIsSticky(window.scrollY > 40);
+      setIsVisible(window.scrollY > SHOW_AFTER_SCROLL);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
@@ -99,13 +104,15 @@ export default function SubHeader() {
 
   return (
     <div
-      className={`sticky top-0 z-[60] w-full border-b border-slate-100 bg-white/95 backdrop-blur transition-shadow pointer-events-auto ${
-        isSticky ? "shadow-sm" : ""
-      }`}
+      className={`sticky top-0 z-[60] w-full border-b border-slate-100 bg-white/95 backdrop-blur transition-all duration-300 ${
+        isVisible
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-4 opacity-0"
+      } ${isSticky ? "shadow-sm" : ""}`}
     >
       <div
         ref={navRef}
-        className="relative z-[60] mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="relative z-[60] mx-auto flex max-w-7xl justify-center gap-1 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         {NAV_ITEMS.map((item) => {
           const isActive = item.id === activeId;

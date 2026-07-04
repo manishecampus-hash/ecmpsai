@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -26,6 +26,73 @@ interface HeroSectionProps {
     programs?: string;
     campuses?: string;
   };
+}
+
+// Parses a string like "50,000+" into { prefix: "", number: 50000, suffix: "+" }
+function parseStatValue(value: string) {
+  const match = value.match(/^([^\d]*)([\d,]+)(.*)$/);
+  if (!match) {
+    return { prefix: "", number: 0, suffix: value, hasNumber: false };
+  }
+  const [, prefix, numStr, suffix] = match;
+  const number = parseInt(numStr.replace(/,/g, ""), 10);
+  return { prefix, number, suffix, hasNumber: true };
+}
+
+function formatWithCommas(num: number) {
+  return num.toLocaleString("en-US");
+}
+
+// Animates a count from 0 up to the target number once triggered
+function useCountUp(target: number, shouldStart: boolean, duration = 1500) {
+  const [value, setValue] = useState(0);
+  const frameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!shouldStart) return;
+
+    const startTime = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * target));
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [shouldStart, target, duration]);
+
+  return value;
+}
+
+function AnimatedStatValue({
+  value,
+  isVisible,
+}: {
+  value: string;
+  isVisible: boolean;
+}) {
+  const { prefix, number, suffix, hasNumber } = parseStatValue(value);
+  const animatedNumber = useCountUp(number, isVisible);
+
+  if (!hasNumber) return <>{value}</>;
+
+  return (
+    <>
+      {prefix}
+      {formatWithCommas(animatedNumber)}
+      {suffix}
+    </>
+  );
 }
 
 export default function UniversityHeroWithStats({
@@ -82,10 +149,32 @@ export default function UniversityHeroWithStats({
     },
   ];
 
+  // Trigger count-up animation once the stats section scrolls into view
+  const statsSectionRef = useRef<HTMLElement | null>(null);
+  const [statsVisible, setStatsVisible] = useState(false);
+
+  useEffect(() => {
+    const node = statsSectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pb-14 lg:pb-16">
+      <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
             <defs>
@@ -187,23 +276,29 @@ export default function UniversityHeroWithStats({
       </section>
 
       {/* Stats Section */}
-      <section className="bg-white py-12 sm:py-16 lg:py-20">
+      <section
+        ref={statsSectionRef}
+        className="bg-white pt-2 pb-6 sm:pt-3 sm:pb-8 lg:pt-4 lg:pb-10"
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
             {statsData.map((stat, idx) => {
               const IconComponent = stat.icon;
               return (
                 <div
                   key={idx}
-                  className="flex flex-col items-center gap-3 rounded-2xl bg-slate-50 p-4 sm:p-6 lg:p-8"
+                  className="flex flex-col items-center gap-2 rounded-xl bg-slate-50 p-3 sm:p-4 lg:p-5"
                 >
-                  <div className="rounded-xl bg-red-50 p-3 text-red-500">
-                    <IconComponent className="h-6 w-6 sm:h-8 sm:w-8" />
+                  <div className="rounded-lg bg-red-50 p-2 text-red-500">
+                    <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <p className="text-lg sm:text-2xl font-black text-red-500 text-center">
-                    {stat.value}
+                  <p className="text-base sm:text-xl font-black text-red-500 text-center tabular-nums">
+                    <AnimatedStatValue
+                      value={stat.value}
+                      isVisible={statsVisible}
+                    />
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium text-center">
+                  <p className="text-[11px] sm:text-xs text-gray-600 font-medium text-center">
                     {stat.label}
                   </p>
                 </div>

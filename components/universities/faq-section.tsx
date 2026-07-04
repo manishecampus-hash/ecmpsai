@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   MessageSquare,
+  CircleHelp,
 } from "lucide-react";
 
 interface FAQItem {
@@ -75,16 +76,13 @@ export default function FAQSection({ university }: FAQSectionProps) {
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
         {/* LEFT COLUMN: Structural Visual Prompt Header (Span 4) */}
         <div className="lg:col-span-4 lg:sticky lg:top-8">
-          <span className="mb-3 inline-block rounded-full bg-red-50 px-4 py-1 text-sm font-semibold text-red-600 sm:mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <CircleHelp className="h-3.5 w-3.5 text-red-500" />
             Support Desk
           </span>
-          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl">
             Frequently Asked <span className="text-red-500">Questions</span>
           </h2>
-          <p className="mt-3 text-base text-gray-600">
-            Find answers to common queries regarding admissions, infrastructure,
-            and certifications for {universityName}.
-          </p>
 
           {/* Helpful Support Context Info Card */}
           <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">

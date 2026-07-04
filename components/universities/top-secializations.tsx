@@ -10,6 +10,7 @@ import {
   IndianRupee,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
 } from "lucide-react";
 
 interface SpecializationRow {
@@ -173,20 +174,18 @@ export default function TopSpecializations() {
        ============================================================ */
     <section
       id="specializations"
-      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="mx-auto max-w-7xl px-4 pt-3 pb-12 sm:px-6 sm:pt-4 sm:pb-16 lg:px-8 lg:pt-6 lg:pb-20"
     >
-      {/* Centered Descriptive Copy Context Header */}
-      <div className="mx-auto max-w-4xl text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-          Top <span className="text-red-500">Specializations</span>
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]"> */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+          <GraduationCap className="h-3.5 w-3.5 text-red-500" />
+          In-Demand Specializations
+        </span>
+
+        <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          Discover Your <span className="text-red-500">Specialization</span>
         </h2>
-        <p className="mt-4 text-sm text-gray-600 leading-relaxed sm:text-base">
-          Designed for <strong>flexibility</strong>, online degree programs
-          support both academic and professional growth. Students can easily
-          select courses aligned with their career goals and study from
-          anywhere. The learning platform ensures a supportive and engaging
-          experience focused on real-world success.
-        </p>
       </div>
 
       {/* Floating Action Filter Row Bar */}

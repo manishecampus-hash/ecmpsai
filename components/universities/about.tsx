@@ -13,6 +13,9 @@ import {
   Building2,
   Briefcase,
   GraduationCap,
+  Handshake,
+  Info,
+  CircleHelp,
 } from "lucide-react";
 
 type TabKey =
@@ -173,21 +176,19 @@ export default function AboutProgram() {
   return (
     <section
       id="overview"
-      className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+      className="bg-white px-4 pt-8 pb-14 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12 lg:pb-20"
     >
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <span className="mb-4 inline-flex rounded-full bg-red-50 px-4 py-1 text-sm font-semibold text-red-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <CircleHelp className="h-3.5 w-3.5 text-red-500" />
             About
           </span>
-          <h2 className="text-3xl font-bold uppercase tracking-tight text-slate-800 sm:text-4xl lg:text-4xl">
-            About IIM K HR Analytics Course
+
+          <h2 className="mt-1.5 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            About IIM K HR Analytics{" "}
+            <span className="text-red-500">Course</span>
           </h2>
-          <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-base">
-            Empowering HR professionals with data-driven insights and strategic
-            decision-making capabilities.
-          </p>
         </div>
 
         {/* Main layout */}

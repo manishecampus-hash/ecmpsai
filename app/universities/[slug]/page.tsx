@@ -18,7 +18,10 @@ import SubHeader from "@/components/universities/sub-header";
 import LoanSection from "@/components/universities/loan-section";
 // ✅ correct
 import AdmissionProcessSection from "@/components/universities/process-section";
+
 import LearningEnvironmentSection from "@/components/universities/environment-section";
+import EligibilityFeesSection from "@/components/universities/eligibility-fees-section";
+import ExaminationPatternSection from "@/components/universities/examination-pattern-section";
 
 // import WhyOnline from "@/components/universities/why-online";
 
@@ -46,8 +49,10 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <AboutProgram university={university} />
       <ProgramsSection university={university} />
       <AdmissionProcessSection />
+      <EligibilityFeesSection />
       <TopSpecializations university={university} />
       <LoanSection />
+      <ExaminationPatternSection />
       <ApprovalsSection university={university} />
       <LearningEnvironmentSection />
       <PlacementPartners university={university} />

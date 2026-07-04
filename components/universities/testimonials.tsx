@@ -1,5 +1,6 @@
 "use client";
 
+import { MessageSquareQuote } from "lucide-react";
 import React from "react";
 
 interface TestimonialCard {
@@ -60,16 +61,16 @@ export default function TestimonialsSection() {
       id="testimonials"
       className="bg-white px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h2 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
+            Student Reviews
+          </span>
+
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Student <span className="text-red-500">Testimonials</span>
           </h2>
-
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Hear from learners who advanced their education through flexible
-            online programs.
-          </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

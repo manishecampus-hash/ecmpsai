@@ -20,7 +20,7 @@ const SAMPLE_COURSES: Course[] = [
     feeMin: 120000,
     feeMax: 280000,
     rating: 4.2,
-    category: "Humanities",
+    category: "Arts",
   },
   {
     id: "bcom",
@@ -65,7 +65,7 @@ const SAMPLE_COURSES: Course[] = [
     feeMin: 100000,
     feeMax: 250000,
     rating: 4.1,
-    category: "Humanities",
+    category: "Arts",
   },
   {
     id: "mcom",
@@ -288,7 +288,7 @@ const categoryColors: Record<
   string,
   { bg: string; icon: string; badge: string }
 > = {
-  Humanities: {
+  Arts: {
     bg: "bg-red-50",
     icon: "text-red-600",
     badge: "bg-red-100 text-red-700",
@@ -415,19 +415,19 @@ export default function Step2Screen({
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="mb-8 flex flex-col gap-3">
-        <div className="relative w-full">
+      {/* Search and Filters - single compact row */}
+      <div className="mb-8 flex flex-row items-center gap-2 flex-wrap sm:flex-nowrap">
+        <div className="relative flex-1 min-w-[140px] sm:max-w-[220px]">
           <input
             type="text"
-            placeholder="Search programs..."
+            placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 text-sm"
+            className="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 text-xs"
           />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2">
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2">
             <svg
-              className="w-4 h-4 text-gray-400"
+              className="w-3.5 h-3.5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -442,31 +442,29 @@ export default function Step2Screen({
           </span>
         </div>
 
-        <div className="flex gap-2 w-full">
-          <select
-            value={filterStream}
-            onChange={(e) => setFilterStream(e.target.value)}
-            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 text-sm font-medium text-gray-700 cursor-pointer"
-          >
-            <option value="all">All Streams</option>
-            <option value="humanities">Humanities</option>
-            <option value="commerce">Commerce</option>
-            <option value="science">Science</option>
-            <option value="management">Management</option>
-          </select>
+        <select
+          value={filterStream}
+          onChange={(e) => setFilterStream(e.target.value)}
+          className="flex-shrink-0 w-auto px-2 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 text-xs font-medium text-gray-700 cursor-pointer"
+        >
+          <option value="all">All Streams</option>
+          <option value="arts">Arts</option>
+          <option value="commerce">Commerce</option>
+          <option value="science">Science</option>
+          <option value="management">Management</option>
+        </select>
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="flex-1 min-w-0 px-3 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-red-400 text-sm font-medium text-gray-700 cursor-pointer"
-          >
-            <option value="popular">Popular</option>
-            <option value="rating">Rating</option>
-            <option value="fees-low">Fees: Low</option>
-            <option value="fees-high">Fees: High</option>
-            <option value="duration">Duration</option>
-          </select>
-        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="flex-shrink-0 w-auto px-2 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 text-xs font-medium text-gray-700 cursor-pointer"
+        >
+          <option value="popular">Popular</option>
+          <option value="rating">Rating</option>
+          <option value="fees-low">Fees: Low</option>
+          <option value="fees-high">Fees: High</option>
+          <option value="duration">Duration</option>
+        </select>
       </div>
 
       {/* Course Cards Grid */}
@@ -481,10 +479,10 @@ export default function Step2Screen({
             <button
               key={course.id}
               onClick={() => onCourseSelect(course.id)}
-              className="w-full p-3 sm:p-4 bg-white rounded-xl border border-gray-200 hover:shadow-lg hover:border-red-300 hover:scale-105 transition-all text-left min-w-0 duration-200"
+              className="w-full p-3 bg-white rounded-xl border border-gray-200 hover:shadow-lg hover:border-red-300 hover:scale-105 transition-all text-left min-w-0 duration-200"
             >
               {/* Icon + Title + Duration */}
-              <div className="flex items-start gap-2 mb-3">
+              <div className="flex items-start gap-2 mb-2">
                 <div
                   className={`w-10 h-10 rounded-lg ${colors.bg} ${colors.icon} flex items-center justify-center flex-shrink-0 shadow-sm`}
                 >
@@ -501,9 +499,16 @@ export default function Step2Screen({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
-                    {course.title}
-                  </h3>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
+                      {course.title}
+                    </h3>
+                    <span
+                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full inline-block truncate max-w-[90px] ${colors.badge}`}
+                    >
+                      {course.category}
+                    </span>
+                  </div>
                   <p className="text-xs text-gray-500 mt-0.5 leading-tight">
                     {course.duration}
                   </p>
@@ -511,7 +516,7 @@ export default function Step2Screen({
               </div>
 
               {/* Fee and Rating Row */}
-              <div className="flex items-start justify-between gap-1 mb-3 pb-3 border-b border-gray-100">
+              <div className="flex items-start justify-between gap-1">
                 <div className="min-w-0">
                   <div className="text-xs text-gray-500 font-medium">Fees</div>
                   <div className="text-xs sm:text-sm font-semibold text-gray-900 leading-tight">
@@ -531,13 +536,6 @@ export default function Step2Screen({
                   </div>
                 </div>
               </div>
-
-              {/* Category Badge */}
-              <span
-                className={`text-xs font-semibold px-2 py-0.5 rounded-full inline-block truncate max-w-full ${colors.badge}`}
-              >
-                {course.category}
-              </span>
             </button>
           );
         })}

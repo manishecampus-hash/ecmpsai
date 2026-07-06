@@ -1332,6 +1332,7 @@ import {
   Users,
   Handshake,
   CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 
 // Real data with actual content
@@ -1676,11 +1677,11 @@ export default function ProgramsSection() {
         .__cardOverlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.92) 55%, rgba(15,23,42,0.97) 100%);
+          background: linear-gradient(160deg, #0b1178 0%, #0a0f5e 55%, #080b46 100%);
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          padding: 12px 14px;
+          padding: 14px 14px 16px;
           opacity: 0;
           transform: translateY(100%);
           transition: opacity 0.35s ease, transform 0.35s ease;
@@ -1692,10 +1693,10 @@ export default function ProgramsSection() {
           pointer-events: auto;
         }
         .__overlayText {
-          color: #e2e8f0;
+          color: #cbd2ff;
           font-size: 11px;
           line-height: 1.5;
-          margin: 0 0 8px;
+          margin: 0 0 10px;
           opacity: 0;
           transform: translateY(6px);
           transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
@@ -1708,16 +1709,59 @@ export default function ProgramsSection() {
           opacity: 1;
           transform: translateY(0);
         }
+        .__overlayInfoRow {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          margin-bottom: 10px;
+          opacity: 0;
+          transform: translateY(6px);
+          transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+        }
+        .__imgWrap:hover .__overlayInfoRow {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .__overlayInfoItem {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .__overlayIconCircle {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .__overlayLabel {
+          font-size: 9.5px;
+          color: #9aa3ff;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+          margin: 0;
+        }
+        .__overlayValue {
+          font-size: 12px;
+          color: #ffffff;
+          font-weight: 700;
+          margin: 0;
+        }
         .__overlayList {
           list-style: none;
-          margin: 0;
+          margin: 0 0 12px;
           padding: 0;
           display: flex;
           flex-direction: column;
           gap: 4px;
           opacity: 0;
           transform: translateY(6px);
-          transition: opacity 0.3s ease 0.12s, transform 0.3s ease 0.12s;
+          transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
         }
         .__imgWrap:hover .__overlayList {
           opacity: 1;
@@ -1730,6 +1774,30 @@ export default function ProgramsSection() {
           font-size: 10.5px;
           font-weight: 600;
           color: #f8fafc;
+        }
+        .__overlayBtn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          background: #ffffff;
+          color: #0b1178;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 8px 14px;
+          border-radius: 8px;
+          text-decoration: none;
+          width: fit-content;
+          opacity: 0;
+          transform: translateY(6px);
+          transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, background 0.2s;
+        }
+        .__imgWrap:hover .__overlayBtn {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .__overlayBtn:hover {
+          background: #eef1ff;
         }
       `}</style>
 
@@ -1746,14 +1814,15 @@ export default function ProgramsSection() {
           </h2>
         </div>
 
-        {/* Tabs Row */}
+        {/* Tabs Row + Mode Toggle (same line) */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "0px",
+            gap: "16px",
             marginBottom: "28px",
             borderBottom: "1px solid #e2e8f0",
+            flexWrap: "wrap",
           }}
         >
           <button
@@ -1783,6 +1852,7 @@ export default function ProgramsSection() {
               scrollbarWidth: "none",
               padding: "0 2px",
               alignItems: "center",
+              minWidth: 0,
             }}
           >
             {courseTabs.map((tab) => {
@@ -1828,59 +1898,60 @@ export default function ProgramsSection() {
           >
             <ChevronRight size={16} />
           </button>
-        </div>
 
-        {/* Mode Toggle */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            marginBottom: "20px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#475569",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Mode:
-          </span>
+          {/* Mode Toggle - now inline with tabs */}
           <div
             style={{
               display: "flex",
-              gap: "6px",
+              alignItems: "center",
+              gap: "8px",
+              paddingBottom: "12px",
+              flexShrink: 0,
             }}
           >
-            {modeTabs.map((mode) => {
-              const isActive = activeMode === mode.id;
-              return (
-                <button
-                  key={mode.id}
-                  onClick={() => handleModeChange(mode.id)}
-                  style={{
-                    background: isActive ? "#ff3b4f" : "#f8fafc",
-                    border: isActive
-                      ? "1.5px solid #ff3b4f"
-                      : "1.5px solid #e2e8f0",
-                    borderRadius: "20px",
-                    padding: "5px 16px",
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    color: isActive ? "#fff" : "#475569",
-                    cursor: "pointer",
-                    transition:
-                      "background 0.2s, border-color 0.2s, color 0.2s",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {mode.label}
-                </button>
-              );
-            })}
+            <span
+              style={{
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#475569",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Mode:
+            </span>
+            <div
+              style={{
+                display: "flex",
+                gap: "6px",
+              }}
+            >
+              {modeTabs.map((mode) => {
+                const isActive = activeMode === mode.id;
+                return (
+                  <button
+                    key={mode.id}
+                    onClick={() => handleModeChange(mode.id)}
+                    style={{
+                      background: isActive ? "#ff3b4f" : "#f8fafc",
+                      border: isActive
+                        ? "1.5px solid #ff3b4f"
+                        : "1.5px solid #e2e8f0",
+                      borderRadius: "20px",
+                      padding: "5px 16px",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: isActive ? "#fff" : "#475569",
+                      cursor: "pointer",
+                      transition:
+                        "background 0.2s, border-color 0.2s, color 0.2s",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {mode.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -2000,17 +2071,44 @@ export default function ProgramsSection() {
                       {program.mode === "online" ? "🟢 Online" : "🟡 Offline"}
                     </div>
 
-                    {/* Hover overlay - image size same, extra details show here */}
+                    {/* Hover overlay - navy card style with icon rows */}
                     <div className="__cardOverlay">
                       <p className="__overlayText">{program.description}</p>
+
+                      <div className="__overlayInfoRow">
+                        <div className="__overlayInfoItem">
+                          <div className="__overlayIconCircle">
+                            <Users size={12} color="#c7d2fe" />
+                          </div>
+                          <div>
+                            <p className="__overlayLabel">Students</p>
+                            <p className="__overlayValue">{program.learners}</p>
+                          </div>
+                        </div>
+                        <div className="__overlayInfoItem">
+                          <div className="__overlayIconCircle">
+                            <Clock size={12} color="#c7d2fe" />
+                          </div>
+                          <div>
+                            <p className="__overlayLabel">Duration</p>
+                            <p className="__overlayValue">{program.duration}</p>
+                          </div>
+                        </div>
+                      </div>
+
                       <ul className="__overlayList">
-                        {program.highlights.map((h, i) => (
+                        {program.highlights.slice(0, 2).map((h, i) => (
                           <li key={i}>
                             <CheckCircle2 size={11} color="#4ade80" />
                             {h}
                           </li>
                         ))}
                       </ul>
+
+                      <a href={program.slug} className="__overlayBtn">
+                        Know More
+                        <ArrowRight size={13} />
+                      </a>
                     </div>
                   </div>
 

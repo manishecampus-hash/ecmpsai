@@ -253,13 +253,6 @@ function QuizStepScreen({
 
   return (
     <div>
-      <button
-        onClick={onBack}
-        className="mb-5 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors"
-      >
-        ← Back
-      </button>
-
       <AnswerPills
         answers={answers}
         selectedTypeData={selectedTypeData}
@@ -489,7 +482,7 @@ function ResultsScreen({
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <p className="text-sm font-semibold text-gray-800 mt-2 mb-3 px-3 py-2 inline-block rounded-full bg-gradient-to-r from-violet-50 to-white border border-violet-100 shadow-sm tracking-wide">
+        <p className="text-sm font-semibold text-gray-800 mt-2 mb-3 px-3 py-2 inline-block  to-white  tracking-wide">
           Hi,{" "}
           <span className="text-violet-600 font-bold">{leadData?.name}</span> 👋
         </p>

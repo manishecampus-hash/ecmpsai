@@ -194,7 +194,8 @@ const GraduateTile = ({
   <div
     className="__gradTile"
     style={{
-      height: tall ? 320 : 220,
+      // Increased heights to properly fit tall WhatsApp screenshot images
+      height: tall ? 620 : 480,
       borderRadius: 10,
       overflow: "hidden",
       position: "relative",
@@ -210,8 +211,10 @@ const GraduateTile = ({
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          // "contain" keeps the full WhatsApp screenshot visible without cropping
+          objectFit: "contain",
           objectPosition: "top center",
+          background: "#0b0f19",
         }}
       />
     ) : (
@@ -323,10 +326,10 @@ export function GraduatesMarquee({
           to { transform: translateY(0); }
         }
         .graduate-loop-up {
-          animation: graduateLoopUp 22s linear infinite;
+          animation: graduateLoopUp 32s linear infinite;
         }
         .graduate-loop-down {
-          animation: graduateLoopDown 24s linear infinite;
+          animation: graduateLoopDown 34s linear infinite;
         }
         .graduate-loop-up:hover,
         .graduate-loop-down:hover {
@@ -341,7 +344,7 @@ export function GraduatesMarquee({
           transition: transform 0.5s ease, filter 0.4s ease;
         }
         .__gradTile:hover .__gradImg {
-          transform: scale(1.08);
+          transform: scale(1.04);
           filter: brightness(0.55);
         }
         .__gradDefault {
@@ -415,7 +418,8 @@ export function GraduatesMarquee({
         <div
           style={{
             position: "relative",
-            height: 700,
+            // Increased container height to accommodate taller tiles
+            height: 1000,
             overflow: "hidden",
           }}
         >

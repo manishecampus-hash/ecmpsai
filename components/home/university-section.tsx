@@ -89,7 +89,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Handshake, Search, X, MapPin, Globe } from "lucide-react";
+import { Handshake, Search, X, MapPin, Globe, ChevronDown } from "lucide-react";
 import { universities } from "@/data/universities";
 
 const DESKTOP_INITIAL_COUNT = 15;
@@ -103,7 +103,6 @@ const TYPE_FILTERS = [
   "Medicine",
   "Law",
 ];
-const MODE_FILTERS = ["All", "Online", "Hybrid", "On-campus"];
 
 // Icon map for location icons - LARGER SIZE
 const iconMap: Record<string, React.ReactNode> = {
@@ -123,16 +122,39 @@ const regionBgColor: Record<string, string> = {
 
 function getRegionFromLocation(loc: string): string {
   const l = (loc || "").toLowerCase();
-  if (l.includes("bengaluru") || l.includes("bangalore") || l.includes("karnataka") || l.includes("andhra") || l.includes("visakhapatnam") || l.includes("south")) {
+  if (
+    l.includes("bengaluru") ||
+    l.includes("bangalore") ||
+    l.includes("karnataka") ||
+    l.includes("andhra") ||
+    l.includes("visakhapatnam") ||
+    l.includes("south")
+  ) {
     return "South India";
   }
-  if (l.includes("pune") || l.includes("mumbai") || l.includes("maharashtra") || l.includes("gujarat") || l.includes("west")) {
+  if (
+    l.includes("pune") ||
+    l.includes("mumbai") ||
+    l.includes("maharashtra") ||
+    l.includes("gujarat") ||
+    l.includes("west")
+  ) {
     return "West India";
   }
-  if (l.includes("raipur") || l.includes("central") || l.includes("chhattisgarh") || l.includes("madhya pradesh")) {
+  if (
+    l.includes("raipur") ||
+    l.includes("central") ||
+    l.includes("chhattisgarh") ||
+    l.includes("madhya pradesh")
+  ) {
     return "Central India";
   }
-  if (l.includes("switzerland") || l.includes("france") || l.includes("international") || l.includes("california")) {
+  if (
+    l.includes("switzerland") ||
+    l.includes("france") ||
+    l.includes("international") ||
+    l.includes("california")
+  ) {
     return "International";
   }
   if (l.includes("sikkim") || l.includes("north-east")) {
@@ -146,7 +168,6 @@ export default function UniversitySection() {
   const [showAll, setShowAll] = useState(false);
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState("All");
-  const [activeMode, setActiveMode] = useState("All");
   const [uniList, setUniList] = useState<any[]>([]);
 
   useEffect(() => {
@@ -158,7 +179,9 @@ export default function UniversitySection() {
   }, []);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+      "http://localhost:5000";
     fetch(`${apiUrl}/universities`)
       .then((res) => res.json())
       .then((data) => {
@@ -169,11 +192,17 @@ export default function UniversitySection() {
               slug = u.seoSettings.rewriteUrl.split("/").pop() || "";
             }
             if (!slug) {
-              slug = u.name.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+              slug = u.name
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, "")
+                .replace(/[\s_-]+/g, "-")
+                .replace(/^-+|-+$/g, "");
             }
 
             const region = getRegionFromLocation(u.location);
-            const locationIcon = region === "International" ? "Globe" : "MapPin";
+            const locationIcon =
+              region === "International" ? "Globe" : "MapPin";
 
             return {
               id: u.id,
@@ -184,7 +213,6 @@ export default function UniversitySection() {
               locationIcon,
               slug,
               type: "Engineering", // fallback filter
-              mode: "On-campus" // fallback filter
             };
           });
           setUniList(mapped);
@@ -201,7 +229,7 @@ export default function UniversitySection() {
   // Reset pagination on any filter change
   useEffect(() => {
     setShowAll(false);
-  }, [query, activeType, activeMode]);
+  }, [query, activeType]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -211,10 +239,9 @@ export default function UniversitySection() {
         u.name.toLowerCase().includes(q) ||
         (u.location ?? "").toLowerCase().includes(q);
       const matchType = activeType === "All" || (u as any).type === activeType;
-      const matchMode = activeMode === "All" || (u as any).mode === activeMode;
-      return matchSearch && matchType && matchMode;
+      return matchSearch && matchType;
     });
-  }, [uniList, query, activeType, activeMode]);
+  }, [uniList, query, activeType]);
 
   const initialCount = isMobile ? MOBILE_INITIAL_COUNT : DESKTOP_INITIAL_COUNT;
   const displayed = showAll ? filtered : filtered.slice(0, initialCount);
@@ -233,68 +260,10 @@ export default function UniversitySection() {
         <div className="h-1 w-12 bg-red-600 mx-auto mt-3 rounded-full" />
       </div>
 
-      {/* ── Search + Filters ── */}
+      {/* ── Search + Filter Row ── */}
       <div className="max-w-6xl mx-auto mb-6 space-y-3">
-        {/* Search bar */}
-        <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3.5 py-2.5 bg-white focus-within:border-red-500 transition-colors duration-200">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search universities or locations…"
-            aria-label="Search universities"
-            className="flex-1 text-sm text-gray-800 placeholder-gray-400 bg-transparent outline-none min-w-0"
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-              className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Type pills */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0">
-            Type:
-          </span>
-          {TYPE_FILTERS.map((t) => (
-            <button
-              key={t}
-              onClick={() => setActiveType(t)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold border transition-all duration-150 ${
-                activeType === t
-                  ? "bg-red-600 border-red-600 text-white"
-                  : "bg-white border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-600"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-
-        {/* Mode pills */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0">
-            Mode:
-          </span>
-          {MODE_FILTERS.map((m) => (
-            <button
-              key={m}
-              onClick={() => setActiveMode(m)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold border transition-all duration-150 ${
-                activeMode === m
-                  ? "bg-red-600 border-red-600 text-white"
-                  : "bg-white border-gray-200 text-gray-500 hover:border-red-300 hover:text-red-600"
-              }`}
-            >
-              {m}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Search bar - fixed compact width, no more awkward stretch */}
         </div>
 
         {/* Result count */}

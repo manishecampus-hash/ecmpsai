@@ -12,7 +12,7 @@ export const DEFAULT_GRADUATES: GraduateTestimonialT[] = [
   {
     initials: "SC",
     avatarColor: "#ef4444",
-    avatarSrc: "/graduates/feedback1.png",
+    avatarSrc: "/graduates/feedbacknew1.png",
     name: "Sarah Chen",
     role: "MBA, Jul'25",
     rating: 5,
@@ -30,7 +30,7 @@ export const DEFAULT_GRADUATES: GraduateTestimonialT[] = [
   {
     initials: "PS",
     avatarColor: "#dc2626",
-    avatarSrc: "/graduates/priyanshu-mishra.webp",
+    avatarSrc: "/graduates/f3.png",
     name: "Priyanshu Mishra",
     role: "MBA, Jul'25",
     rating: 5,
@@ -39,7 +39,7 @@ export const DEFAULT_GRADUATES: GraduateTestimonialT[] = [
   {
     initials: "JW",
     avatarColor: "#64748b",
-    avatarSrc: "/graduates/james-wilson.webp",
+    avatarSrc: "/graduates/f4.png",
     name: "James Wilson",
     role: "MBA, May'25",
     rating: 4,

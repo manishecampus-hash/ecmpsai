@@ -511,10 +511,9 @@ export const mbaUniversities: University[] = [
   {
     id: "rushford",
     name: "Rushford Business School",
-    logo: "/doctorate/Rushford.svg",
-    logoColor: "#1a3a6b",
-    heroImage:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
+    // logo: "/doctorate/Rushford.svg",
+    // logoColor: "#1a3a6b",
+    heroImage: "/descoverresult/testimg.png",
     location: "Zurich, Switzerland",
     accreditations: ["AACSB", "EFMD", "QS Ranked", "Swiss Accredited"],
     reviews: 892,
@@ -552,7 +551,7 @@ export const mbaUniversities: University[] = [
   {
     id: "amity",
     name: "Amity University",
-    logoText: "AU",
+    // logoText: "AU",
     logoColor: "#8B1A1A",
     heroImage:
       "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&h=400&fit=crop",
@@ -737,30 +736,6 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-// ── Logo Avatar ───────────────────────────────────────────────────────────────
-
-function LogoAvatar({ uni }: { uni: University }) {
-  const [imgError, setImgError] = useState(false);
-  if (uni.logo && !imgError) {
-    return (
-      <img
-        src={uni.logo}
-        alt={uni.name}
-        onError={() => setImgError(true)}
-        className="w-14 h-14 object-contain rounded-lg"
-      />
-    );
-  }
-  return (
-    <div
-      className="w-14 h-14 rounded-lg flex items-center justify-center font-extrabold text-white text-xs tracking-tight"
-      style={{ backgroundColor: uni.logoColor ?? "#334155" }}
-    >
-      {uni.logoText ?? uni.name.slice(0, 2).toUpperCase()}
-    </div>
-  );
-}
-
 // ── Main Card ─────────────────────────────────────────────────────────────────
 
 function UniversityCard({
@@ -782,7 +757,7 @@ function UniversityCard({
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all overflow-hidden">
       {/* ── 3-Column Grid Layout (Fully Responsive) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr_140px] lg:grid-cols-[220px_1fr_200px] gap-2 sm:gap-3 lg:gap-4 p-2 sm:p-3 lg:p-4">
-        {/* ── LEFT: Hero Image + Logo ── */}
+        {/* ── LEFT: Hero Image ── */}
         <div className="relative">
           {uni.heroImage && !imgError && (
             <img
@@ -800,17 +775,10 @@ function UniversityCard({
                 </span>
               </div>
             ))}
-
-          {/* ── Logo Badge (Overlaid) ── */}
-          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-            <div className="bg-white rounded-lg p-1 sm:p-1.5 shadow-md">
-              <LogoAvatar uni={uni} />
-            </div>
-          </div>
         </div>
 
         {/* ── MIDDLE: Main Content ── */}
-        <div className="space-y-1 sm:space-y-1.5 lg:space-y-2">
+        <div className="flex flex-col">
           {/* University Name */}
           <div>
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
@@ -822,7 +790,7 @@ function UniversityCard({
               {uni.accreditations.slice(0, 4).map((acc, i) => (
                 <span
                   key={i}
-                  className="px-2.5 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-700 border border-gray-300 rounded-lg"
+                  className="px-2.5 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-700 bg-gray-100 rounded-full"
                 >
                   {acc}
                 </span>
@@ -832,20 +800,23 @@ function UniversityCard({
 
           {/* Features Grid (3 columns) */}
           {uni.features && uni.features.length > 0 && (
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mt-3 sm:mt-4">
               {uni.features.map((feature, i) => (
-                <div key={i} className="text-center">
+                <div
+                  key={i}
+                  className="flex items-center gap-1.5 sm:gap-2 bg-white border border-gray-200 rounded-xl shadow-sm px-1.5 sm:px-2 py-2.5 sm:py-3"
+                >
                   <div
-                    className="w-9 sm:w-10 lg:w-11 h-9 sm:h-10 lg:h-11 rounded-full flex items-center justify-center mx-auto mb-1 sm:mb-1.5 text-sm sm:text-base lg:text-lg"
+                    className="w-9 sm:w-10 lg:w-11 h-9 sm:h-10 lg:h-11 rounded-full flex items-center justify-center shrink-0 text-sm sm:text-base lg:text-lg"
                     style={{ backgroundColor: `${feature.iconColor}20` }}
                   >
                     {feature.icon}
                   </div>
-                  <p className="text-xs sm:text-sm lg:text-sm font-semibold text-gray-900 leading-tight">
-                    {feature.title}
-                  </p>
-                  <p className="text-[9px] sm:text-xs lg:text-xs text-gray-500 leading-tight mt-0.5">
-                    {feature.subtitle}
+                  <p className="min-w-0 flex-1 text-left text-[10px] sm:text-xs lg:text-xs leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    <span className="font-semibold text-gray-900">
+                      {feature.title}
+                    </span>{" "}
+                    <span className="text-gray-500">{feature.subtitle}</span>
                   </p>
                 </div>
               ))}
@@ -853,15 +824,28 @@ function UniversityCard({
           )}
 
           {/* Location + Students + Know More (1 LINE - NO WRAP) */}
-          <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 flex-nowrap overflow-hidden">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-nowrap overflow-hidden mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-gray-200">
             {uni.location && (
-              <div className="flex items-center gap-0.5 shrink-0 min-w-fit">
+              <div className="flex items-center gap-1 shrink-0 min-w-fit">
                 <svg
                   className="w-3 h-3 text-gray-600 shrink-0"
-                  fill="currentColor"
+                  fill="none"
                   viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"
+                  />
+                  <circle
+                    cx="12"
+                    cy="11"
+                    r="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 <span className="text-xs sm:text-xs lg:text-sm font-medium text-gray-700 whitespace-nowrap">
                   {uni.location}
@@ -869,8 +853,12 @@ function UniversityCard({
               </div>
             )}
 
+            {uni.location && uni.students && (
+              <span className="h-3 w-px bg-gray-300 shrink-0" />
+            )}
+
             {uni.students && (
-              <div className="flex items-center gap-0.5 shrink-0 min-w-fit">
+              <div className="flex items-center gap-1 shrink-0 min-w-fit">
                 <svg
                   className="w-3 h-3 text-gray-600 shrink-0"
                   fill="none"
@@ -890,7 +878,9 @@ function UniversityCard({
               </div>
             )}
 
-            <button className="flex items-center gap-0.5 text-xs sm:text-xs lg:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors shrink-0 min-w-fit">
+            {uni.students && <span className="h-3 w-px bg-gray-300 shrink-0" />}
+
+            <button className="flex items-center gap-1 text-xs sm:text-xs lg:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors shrink-0 min-w-fit">
               <svg
                 className="w-3 h-3 shrink-0"
                 fill="none"
@@ -915,14 +905,14 @@ function UniversityCard({
 
         {/* ── RIGHT: Rating + Fee + Actions (Responsive) ── */}
         <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4">
-          {/* Rating + Fee Row (1 line on mobile) */}
-          <div className="flex items-start gap-2 sm:gap-3 lg:gap-4">
+          {/* Rating + Fee (Stacked - Fee below Rating) */}
+          <div className="flex flex-col gap-2 sm:gap-3">
             {/* Rating Section */}
             <div className="space-y-0.5 sm:space-y-1">
               <p className="text-[10px] sm:text-xs text-gray-500 font-medium">
                 {uni.reviews.toLocaleString()} Reviews
               </p>
-              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-none">
+              <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 leading-none">
                 {uni.rating.toFixed(1)}
               </p>
               <div className="flex items-center gap-0.5">
@@ -943,15 +933,15 @@ function UniversityCard({
             </div>
 
             {/* Fee Section */}
-            <div className="space-y-0.5 sm:space-y-1">
+            <div className="space-y-0.5 sm:space-y-1 bg-gray-50 rounded-xl shadow-sm px-2.5 sm:px-3 py-1.5 sm:py-2">
               <p className="text-[10px] sm:text-xs text-gray-500 font-medium">
                 Fees
               </p>
-              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
-                ₹{(uni.feePerSem / 1000).toFixed(0)}K
-              </p>
-              <p className="text-[9px] sm:text-[10px] text-gray-500">
-                /Semester
+              <p className="text-lg sm:text-xl lg:text-2xl font-medium text-gray-900 leading-tight">
+                ₹{(uni.feePerSem / 1000).toFixed(0)}K{" "}
+                <span className="text-[9px] sm:text-[10px] font-normal text-gray-500">
+                  /Semester
+                </span>
               </p>
             </div>
           </div>
@@ -960,7 +950,7 @@ function UniversityCard({
           <button
             onClick={() => onSelect(uni.id)}
             className="w-full text-white font-bold py-1.5 sm:py-2 sm:py-2.5 px-2.5 sm:px-3 sm:px-4 rounded-lg flex items-center justify-center gap-1.5 sm:gap-2 transition-all hover:opacity-90 text-xs sm:text-sm"
-            style={{ backgroundColor: uni.buttonColor || "#DC2626" }}
+            style={{ backgroundColor: "#DC2626" }}
           >
             View Details
             <svg
@@ -1010,12 +1000,12 @@ function UniversityCard({
           </label>
 
           {/* Talk to Experts */}
-          <button
+          {/* <button
             onClick={() => onExpertClick?.(uni.id)}
             className="text-xs font-semibold text-blue-600 hover:underline mt-auto pt-1 sm:pt-2 text-center"
           >
             {uni.expertLabel || "Talk to our experts"}
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

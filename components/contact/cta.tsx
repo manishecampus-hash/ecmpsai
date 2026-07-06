@@ -11,7 +11,7 @@ export default function CTA() {
           {/* Image Section */}
           <div className="flex items-center justify-center p-4 md:p-6">
             <img
-              src="/contact/newcontectus.png"
+              src="/contact/contactusnew.png"
               alt="Contact Us"
               className="w-full max-w-sm md:max-w-md h-auto object-contain"
             />

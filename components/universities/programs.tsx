@@ -105,21 +105,25 @@ export default function ProgramsSection() {
   }, [activeTab, activeCategory]);
 
   return (
-    <section id="programs" className="bg-white px-4 py-10 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+    <section
+      id="programs"
+      className="bg-white px-4 py-8 sm:px-6 sm:py-10 lg:px-8"
+    >
+      <div className="mx-auto max-w-7xl text-center font-[Inter]">
+        <div className="mx-auto mb-8 max-w-7xl text-center sm:mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-900 sm:text-xs">
             <Handshake className="h-3.5 w-3.5 text-red-500" />
             Career Ready
           </span>
 
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Discover Career-Ready
             <span className="text-red-500"> Online Programs</span>
           </h2>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-7">
+        {/* Tabs: horizontally scrollable on mobile so they never wrap/overflow */}
+        <div className="mb-6 -mx-4 flex gap-5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:gap-7 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {courseTabs.map((tab) => {
             const isActive = activeTab === tab.id;
 
@@ -128,7 +132,7 @@ export default function ProgramsSection() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`text-base font-semibold transition ${
+                className={`shrink-0 whitespace-nowrap text-sm font-semibold transition sm:text-base ${
                   isActive
                     ? "border-b-2 border-red-500 text-red-500"
                     : "text-slate-500 hover:text-red-500"
@@ -143,26 +147,26 @@ export default function ProgramsSection() {
         <div className="relative">
           <button
             type="button"
-            className="absolute -left-5 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-red-500 shadow-md transition hover:border-red-200 hover:bg-red-50 lg:flex"
+            className="absolute -left-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-red-500 shadow-md transition hover:border-red-200 hover:bg-red-50 sm:-left-4 sm:flex md:h-11 md:w-11 lg:-left-5"
             aria-label="Previous programs"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
           </button>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredPrograms.map((program) => (
               <article
                 key={program.id}
                 className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-3 shadow-[0_8px_28px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:border-red-100 hover:shadow-[0_14px_38px_rgba(239,68,68,0.14)]"
               >
-                <div className="absolute left-5 top-0 z-20">
-                  <div className="relative bg-red-500 px-7 py-1 text-sm font-black text-white shadow-sm">
+                <div className="absolute left-4 top-0 z-20 sm:left-5">
+                  <div className="relative bg-red-500 px-5 py-1 text-xs font-black text-white shadow-sm sm:px-7 sm:text-sm">
                     {program.ribbon}
                     <span className="absolute right-[-14px] top-0 h-0 w-0 border-b-[16px] border-l-[14px] border-t-[16px] border-b-transparent border-l-red-500 border-t-transparent" />
                   </div>
                 </div>
 
-                <div className="relative h-56 overflow-hidden rounded-2xl border-2 border-red-100 bg-slate-100">
+                <div className="relative h-44 overflow-hidden rounded-2xl border-2 border-red-100 bg-slate-100 sm:h-52 lg:h-56">
                   <img
                     src={program.image}
                     alt={program.title}
@@ -171,27 +175,27 @@ export default function ProgramsSection() {
                   />
 
                   {program.partner && (
-                    <div className="absolute bottom-0 right-0 rounded-tl-2xl bg-white px-4 py-3 shadow-md ring-1 ring-slate-100">
-                      <p className="text-[10px] font-medium text-slate-500">
+                    <div className="absolute bottom-0 right-0 rounded-tl-2xl bg-white px-3 py-2 shadow-md ring-1 ring-slate-100 sm:px-4 sm:py-3">
+                      <p className="text-[9px] font-medium text-slate-500 sm:text-[10px]">
                         In Collaboration with
                       </p>
-                      <p className="mt-1 text-xs font-black text-red-500">
+                      <p className="mt-1 text-[11px] font-black text-red-500 sm:text-xs">
                         {program.partner}
                       </p>
                     </div>
                   )}
 
-                  <div className="absolute left-3 top-12 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-red-500 shadow">
-                    <Star className="h-5 w-5 fill-red-500 text-red-500" />
+                  <div className="absolute left-3 top-11 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-red-500 shadow sm:top-12 sm:h-10 sm:w-10">
+                    <Star className="h-4 w-4 fill-red-500 text-red-500 sm:h-5 sm:w-5" />
                   </div>
                 </div>
 
-                <div className="px-2 pb-1 pt-4">
-                  <h3 className="min-h-[58px] text-xl font-black leading-tight text-gray-900">
+                <div className="px-1 pb-1 pt-4 sm:px-2">
+                  <h3 className="min-h-[54px] text-lg font-black leading-tight text-gray-900 sm:min-h-[58px] sm:text-xl">
                     {program.title}
                   </h3>
 
-                  <div className="mt-5 flex items-center gap-5 text-sm font-medium text-slate-500">
+                  <div className="mt-4 flex flex-wrap items-center gap-3 text-sm font-medium text-slate-500 sm:mt-5 sm:gap-5">
                     <div className="flex items-center gap-2">
                       <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-50 text-red-500">
                         <Clock className="h-3.5 w-3.5" />
@@ -209,7 +213,7 @@ export default function ProgramsSection() {
 
                   <Link
                     href={program.slug}
-                    className="mt-4 flex w-full items-center justify-center rounded-xl bg-red-500 px-5 py-3 text-base font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600"
+                    className="mt-4 flex w-full items-center justify-center rounded-xl bg-red-500 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600 sm:py-3 sm:text-base"
                   >
                     Get Brochure
                   </Link>
@@ -220,15 +224,15 @@ export default function ProgramsSection() {
 
           <button
             type="button"
-            className="absolute -right-5 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-red-500 shadow-md transition hover:border-red-200 hover:bg-red-50 lg:flex"
+            className="absolute -right-3 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-red-500 shadow-md transition hover:border-red-200 hover:bg-red-50 sm:-right-4 sm:flex md:h-11 md:w-11 lg:-right-5"
             aria-label="Next programs"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
           </button>
         </div>
 
         {filteredPrograms.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+          <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center sm:p-10">
             <p className="font-bold text-slate-500">
               No programs found in this category.
             </p>

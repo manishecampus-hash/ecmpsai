@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CTA from "./cta";
+import UniversitySlider from "@/components/compare/page";
 
 const COURSES = [
   { label: "MBA", value: "mba" },
@@ -115,6 +116,7 @@ export default function ComparePage() {
 
   return (
     <>
+      <UniversitySlider />
       <main
         style={{
           fontFamily: "'Segoe UI',sans-serif",

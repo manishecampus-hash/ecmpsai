@@ -377,27 +377,6 @@ export default function Step2Screen({
   return (
     <div className="w-full min-w-0 overflow-x-hidden">
       {/* Back Button */}
-      <div className="flex items-center mb-6">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            className="w-4 h-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span className="font-medium text-sm">Back</span>
-        </button>
-      </div>
 
       {/* Title Section */}
       <div className="mb-8 flex items-start justify-between gap-6">

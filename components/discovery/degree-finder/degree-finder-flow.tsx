@@ -10,7 +10,6 @@ import {
 import CourseDetails from "./../../discovery/degree-finder/course-details";
 import Step1Screen from "./step1-screen";
 import Step2Screen from "./step2_screen";
-// (apka correct path adjust karna)
 import UniversityResultsList, {
   mbaUniversities,
 } from "@/components/discovery/degree-finder/university-result-card";
@@ -39,43 +38,59 @@ const STEP_INDEX: Record<string, number> = {
   detail: 6,
 };
 
-function StepIndicator({ flowStep }: { flowStep: string }) {
+function StepIndicator({
+  flowStep,
+  onStepClick,
+}: {
+  flowStep: string;
+  onStepClick?: (stepId: string) => void;
+}) {
   const current = STEP_INDEX[flowStep] ?? 0;
   if (flowStep === "step1") return null;
 
   return (
     <div className="flex items-center justify-center gap-1 mb-10 flex-wrap">
-      {STEPS.map((step, idx) => (
-        <React.Fragment key={step.id}>
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs transition-all ${
-                idx < current
-                  ? "bg-emerald-500 text-white"
-                  : idx === current
-                    ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
-                    : "bg-gray-100 text-gray-400"
-              }`}
-            >
-              {idx < current ? "✓" : idx + 1}
+      {STEPS.map((step, idx) => {
+        const isCompleted = idx < current;
+        const isActive = idx === current;
+        const isClickable = isCompleted && !!onStepClick;
+
+        return (
+          <React.Fragment key={step.id}>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                type="button"
+                disabled={!isClickable}
+                onClick={() => isClickable && onStepClick?.(step.id)}
+                aria-label={`Go to ${step.label}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs transition-all ${
+                  isCompleted
+                    ? "bg-emerald-500 text-white hover:scale-110 cursor-pointer"
+                    : isActive
+                      ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {isCompleted ? "✓" : idx + 1}
+              </button>
+              <span
+                className={`text-[10px] font-medium hidden sm:block ${
+                  idx <= current ? "text-gray-700" : "text-gray-400"
+                }`}
+              >
+                {step.label}
+              </span>
             </div>
-            <span
-              className={`text-[10px] font-medium hidden sm:block ${
-                idx <= current ? "text-gray-700" : "text-gray-400"
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          {idx < STEPS.length - 1 && (
-            <div
-              className={`h-0.5 w-5 mx-0.5 mb-3 transition-colors ${
-                idx < current ? "bg-emerald-400" : "bg-gray-200"
-              }`}
-            />
-          )}
-        </React.Fragment>
-      ))}
+            {idx < STEPS.length - 1 && (
+              <div
+                className={`h-0.5 w-5 mx-0.5 mb-3 transition-colors ${
+                  idx < current ? "bg-emerald-400" : "bg-gray-200"
+                }`}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -126,101 +141,6 @@ function AnswerPills({
     </div>
   );
 }
-
-// ── Step 1: Degree Category ───────────────────────────────────────────────────
-
-// function Step1Screen({ onTypeSelect }: { onTypeSelect: (id: string) => void }) {
-//   return (
-//     <div>
-//       <div className="text-center mb-10">
-//         <div className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-gray-600 text-xs font-semibold tracking-wide uppercase">
-//           <Sparkles size={11} />
-//           Smart Degree Finder
-//         </div>
-//         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-//           Find the right program for you
-//         </h1>
-//       </div>
-//       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-//         {degreeTypes.map((d) => (
-//           <button
-//             key={d.id}
-//             onClick={() => onTypeSelect(d.id)}
-//             className="p-5 bg-white rounded-2xl border-2 border-gray-100 hover:border-emerald-400 hover:shadow-md transition-all text-center group"
-//           >
-//             <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200">
-//               {d.emoji}
-//             </div>
-//             <div className="text-sm font-semibold text-gray-800">{d.label}</div>
-//           </button>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-// ── Step 2: Course Selection ──────────────────────────────────────────────────
-
-// function Step2Screen({
-//   courses,
-//   selectedTypeData,
-//   onCourseSelect,
-//   onBack,
-// }: {
-//   courses: any[];
-//   selectedTypeData?: { label: string; emoji: string };
-//   onCourseSelect: (id: string) => void;
-//   onBack: () => void;
-// }) {
-//   return (
-//     <div>
-//       <button
-//         onClick={onBack}
-//         className="mb-5 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors"
-//       >
-//         ← Back
-//       </button>
-//       <div className="text-center mb-8">
-//         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-//           Choose a course in {selectedTypeData?.label ?? "this category"}
-//         </h2>
-//         <p className="text-sm text-gray-400">
-//           {courses.length} program{courses.length !== 1 ? "s" : ""} available
-//         </p>
-//       </div>
-//       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-//         {courses.map((course) => (
-//           <button
-//             key={course.id}
-//             onClick={() => onCourseSelect(course.id)}
-//             className="p-5 bg-white rounded-2xl border-2 border-gray-100 hover:border-emerald-400 hover:shadow-sm transition-all text-center group relative"
-//           >
-//             {course.scholarships?.length > 0 && (
-//               <div className="absolute top-2 right-2 text-xs">🏅</div>
-//             )}
-//             <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-150">
-//               {course.emoji}
-//             </div>
-//             <div className="text-sm font-semibold text-gray-800 mb-1">
-//               {course.title}
-//             </div>
-//             {course.feeMin !== undefined && (
-//               <div className="text-xs text-emerald-600 font-medium">
-//                 ₹{(course.feeMin / 100000).toFixed(1)}L+
-//               </div>
-//             )}
-//             {course.avgSalaryMin !== undefined && (
-//               <div className="text-xs text-gray-400 mt-0.5">
-//                 {(course.avgSalaryMin / 100000).toFixed(0)}–
-//                 {(course.avgSalaryMax / 100000).toFixed(0)} LPA
-//               </div>
-//             )}
-//           </button>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
 
 // ── Steps 3–6: Quiz Question ──────────────────────────────────────────────────
 
@@ -401,13 +321,6 @@ function LeadCaptureScreen({
 
   return (
     <div className="max-w-md mx-auto">
-      <button
-        onClick={onBack}
-        className="mb-5 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors"
-      >
-        ← Back
-      </button>
-
       <div className="text-center mb-8">
         <div className="mb-4 text-4xl">🎓</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Almost there!</h2>
@@ -459,13 +372,6 @@ function ResultsScreen({
 }) {
   return (
     <div>
-      <button
-        onClick={onBack}
-        className="mb-5 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors"
-      >
-        ← Edit answers
-      </button>
-
       <div className="text-center mb-10">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
           Smart Degree Finder
@@ -536,6 +442,7 @@ function ResultsScreen({
 export default function DegreeFinderFlow() {
   const {
     flowStep,
+    setFlowStep, // 👈 hook se ye ab export ho raha hoga (Step 1 dekho)
     selectedType,
     selectedCourse,
     categoryCoursess,
@@ -561,6 +468,21 @@ export default function DegreeFinderFlow() {
 
   const showLeadGate = flowStep === "results" && leadStep === "quiz";
 
+  // Agar results pe hain lekin lead form abhi khula hai, to indicator step6 pe dikhao
+  const effectiveFlowStep = showLeadGate ? "step6" : flowStep;
+  const currentIdx = STEP_INDEX[effectiveFlowStep] ?? 0;
+
+  const goToStep = (targetStepId: string) => {
+    const targetIdx = STEP_INDEX[targetStepId] ?? 0;
+    if (targetIdx >= currentIdx) return; // sirf peeche (completed) jaa sakte hain
+
+    // agar results/lead-gate se peeche jaa rahe hain to lead flow reset karo
+    if (flowStep === "results") {
+      setLeadStep("quiz");
+    }
+    setFlowStep(targetStepId);
+  };
+
   const handleLeadSubmit = (data: LeadData) => {
     setLeadData(data);
     setLeadStep("results");
@@ -580,7 +502,7 @@ export default function DegreeFinderFlow() {
   return (
     <div className="min-h-[auto] bg-gray-50 py-4 px-4">
       <div className="max-w-5xl mx-auto">
-        <StepIndicator flowStep={flowStep} />
+        <StepIndicator flowStep={effectiveFlowStep} onStepClick={goToStep} />
 
         {flowStep === "step1" && (
           <Step1Screen onTypeSelect={handleTypeSelect} />

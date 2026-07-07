@@ -1651,11 +1651,12 @@ export default function ProgramsSection() {
   };
 
   return (
-    <section className="relative w-full py-10 bg-white">
+    <section className="bg-gray-50 px-4 pt-4 pb-12 sm:pt-6 sm:pb-12 min-h-screen -mt-8 sm:-mt-12 relative z-10">
       <style>{`
         .__ps::-webkit-scrollbar { display: none; }
         @media (min-width: 768px) { .__tabArrow { display: none !important; } }
         .__carArrow:hover { background: #333333 !important; }
+        @media (max-width: 640px) { .__modeToggle { display: none !important; } }
 
         /* ---- Image hover overlay (details on hover) ---- */
         .__imgWrap {
@@ -1899,8 +1900,9 @@ export default function ProgramsSection() {
             <ChevronRight size={16} />
           </button>
 
-          {/* Mode Toggle - now inline with tabs */}
+          {/* Mode Toggle - now inline with tabs, hidden on small/mobile devices */}
           <div
+            className="__modeToggle"
             style={{
               display: "flex",
               alignItems: "center",

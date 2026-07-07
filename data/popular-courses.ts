@@ -26,7 +26,8 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "bar-chart",
     href: "/programs/iim-k-hr-analytics",
-    videoSrc: "https://ecampus-admin-ui.b-cdn.net/homepage/0627(2).mp4",
+    videoSrc:
+      "https://ecampus-admin-ui.b-cdn.net/homepage/IIM%20NAGPUR%20%20(1).mp4",
   },
   {
     id: 2,

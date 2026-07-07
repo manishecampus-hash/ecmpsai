@@ -9,7 +9,6 @@ export interface LeadData {
 
 export default function LeadCaptureScreen({
   onSubmit,
-  onBack,
 }: {
   onSubmit: (data: LeadData) => void;
   onBack: () => void;
@@ -66,12 +65,6 @@ export default function LeadCaptureScreen({
 
   return (
     <div className="max-w-md mx-auto">
-      <button
-        onClick={onBack}
-        className="mb-5 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors"
-      >
-        ← Back
-      </button>
       <div className="text-center mb-8">
         <div className="mb-4 text-4xl">🎓</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Almost there!</h2>

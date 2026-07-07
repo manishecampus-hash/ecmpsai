@@ -2,7 +2,7 @@ export interface ComparisonItem {
   id: string;
   name: string;
   short: string;
-  fee: string;
+  university: string;
   courses: string[];
   image: string;
   location: string;
@@ -31,7 +31,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "amity",
       name: "MBA",
       short: "AMITY",
-      fee: "Amity",
+      university: "Amity",
       courses: ["BBA", "MBA", "B.Tech", "Law", "Commerce", "Arts"],
       image: "/compare/amity-vs-mn.png",
 
@@ -51,9 +51,9 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     },
     b: {
       id: "manipal-jaipur",
-      name: "",
+      name: "MBA",
       short: "MUJ",
-      fee: "manipal",
+      university: "manipal",
       courses: [
         "Engineering",
         "Commerce",
@@ -65,7 +65,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       image: "/compare/manipal.png",
       location: "Jaipur, Rajasthan",
       established: 2016,
-      ranking: "NIRF Rank: ",
+      ranking: "Not Ranked",
       affiliations: ["NAAC Accredited", "AICTE Approved", "UGC Recognized"],
       highlights: [
         "Part of Manipal Academy of Higher Education",
@@ -86,7 +86,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "rushford",
       name: "BBA",
       short: "RBS",
-      fee: "₹12L - 20L",
+      university: "Rushford",
       courses: ["MBA", "Executive MBA", "PGDM", "Diploma", "Certification"],
       image:
         "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=400&fit=crop",
@@ -113,7 +113,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "chandigarh-online",
       name: "BBA",
       short: "CU",
-      fee: "₹2L - 5L",
+      university: "CU",
       courses: ["BCA", "MBA", "B.Tech", "MCA", "B.Com", "MA", "Diploma"],
       image:
         "https://images.unsplash.com/photo-1516534775068-bb57ad17166b?w=500&h=400&fit=crop",
@@ -140,7 +140,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "gla-online",
       name: "BCA",
       short: "GLA",
-      fee: "₹2.5L - 6L",
+      university: "GLA",
       courses: ["MBA", "MCA", "B.Tech", "BCA", "Diploma", "Certificate"],
       image:
         "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=400&fit=crop",
@@ -163,7 +163,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "amity-online",
       name: "BCA",
       short: "AMITY",
-      fee: "₹5L - 12L",
+      university: "Amity",
       courses: [
         "MBA",
         "M.Tech",
@@ -197,7 +197,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "manipal-full",
       name: "DBA",
       short: "MANIPAL",
-      fee: "₹7L - 14L",
+      university: "Manipal",
       courses: ["B.Tech", "MBA", "Medicine", "Law", "Engineering", "Commerce"],
       image:
         "https://images.unsplash.com/photo-1441239372925-51cff79fb247?w=500&h=400&fit=crop",
@@ -220,7 +220,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "rushford-full",
       name: "DBA",
       short: "RUSH",
-      fee: "₹15L - 25L",
+      university: "Rushford",
       courses: ["MBA", "Executive MBA", "PGDM", "Doctorate", "Short Courses"],
       image:
         "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
@@ -274,15 +274,6 @@ export function searchUniversities(query: string): ComparisonItem[] {
         course.toLowerCase().includes(lowercaseQuery),
       ),
   );
-}
-
-export function filterByFeeRange(min: number, max: number): ComparisonItem[] {
-  return getAllUniversities().filter((uni) => {
-    const fees = uni.fee
-      .split(" - ")
-      .map((f) => parseInt(f.replace(/₹|L/g, "")));
-    return fees[0] >= min && fees[1] <= max;
-  });
 }
 
 export function filterByCourse(course: string): ComparisonItem[] {

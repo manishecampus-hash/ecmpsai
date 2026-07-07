@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { UNIVERSITY_COMPARISONS } from "@/data/comparisons";
 import Link from "next/link";
 
@@ -86,36 +86,33 @@ export default function UniversitySlider() {
 
               {/* Content Section */}
               <div className="p-4 flex flex-col flex-1">
-                {/* University Names */}
-                <div className=" text-center">
-                  <div className="flex-1">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2">
-                      {pair.a.name}
-                    </p>
-                  </div>
-                  <div className="flex-1 text-right">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2">
-                      {pair.b.name}
-                    </p>
-                  </div>
+                {/* Course Badge (e.g. MBA) */}
+                <div className="text-center mb-3">
+                  <p className="font-bold text-gray-900 text-lg">
+                    {pair.a.name}
+                  </p>
                 </div>
 
-                {/* Fees */}
-                <div className="flex justify-between text-xs text-gray-600 mb-3 pb-2 border-b border-gray-200">
-                  <p className="font-semibold">{pair.a.fee}</p>
-                  <p className="font-semibold">{pair.b.fee}</p>
+                {/* University Names */}
+                <div className="flex justify-between items-start mb-2 pb-2 border-b border-gray-200">
+                  <p className="font-bold text-gray-900 text-sm text-left w-[48%] line-clamp-2">
+                    {pair.a.university}
+                  </p>
+                  <p className="font-bold text-gray-900 text-sm text-right w-[48%] line-clamp-2">
+                    {pair.b.university}
+                  </p>
                 </div>
 
                 {/* Location */}
-                <div className="flex justify-between text-xs text-gray-500 mb-2 pb-2 border-b border-gray-100">
-                  <p className="line-clamp-1">{pair.a.location}</p>
-                  <p className="line-clamp-1">{pair.b.location}</p>
-                </div>
-
-                {/* Ranking */}
-                <div className="flex justify-between text-xs text-gray-600 mb-2 pb-2 border-b border-gray-100">
-                  <p className="font-medium">{pair.a.ranking}</p>
-                  <p className="font-medium">{pair.b.ranking}</p>
+                <div className="flex justify-between gap-2 text-xs text-gray-500 mb-3 pb-2 border-b border-gray-100">
+                  <p className="flex items-center gap-1 min-w-0 w-[48%]">
+                    <MapPin size={12} className="shrink-0" />
+                    <span className="truncate">{pair.a.location}</span>
+                  </p>
+                  <p className="flex items-center gap-1 min-w-0 w-[48%] justify-end">
+                    <MapPin size={12} className="shrink-0" />
+                    <span className="truncate">{pair.b.location}</span>
+                  </p>
                 </div>
 
                 {/* Course Tags */}
@@ -137,26 +134,6 @@ export default function UniversitySlider() {
                     </span>
                   ))}
                 </div>
-
-                {/* Highlights */}
-                {/* <div className="mb-3 text-xs space-y-1">
-                  <div className="text-gray-700">
-                    {pair.a.highlights.slice(0, 1).map((h, i) => (
-                      <p key={i} className="flex items-start gap-2">
-                        <span className="text-indigo-600 font-bold">•</span>
-                        <span className="line-clamp-1">{h}</span>
-                      </p>
-                    ))}
-                  </div>
-                  <div className="text-gray-700">
-                    {pair.b.highlights.slice(0, 1).map((h, i) => (
-                      <p key={i} className="flex items-start gap-2">
-                        <span className="text-emerald-600 font-bold">•</span>
-                        <span className="line-clamp-1">{h}</span>
-                      </p>
-                    ))}
-                  </div>
-                </div> */}
 
                 {/* CTA Button */}
                 <Link

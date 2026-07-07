@@ -553,8 +553,7 @@ export const mbaUniversities: University[] = [
     name: "Amity University",
     // logoText: "AU",
     logoColor: "#8B1A1A",
-    heroImage:
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&h=400&fit=crop",
+    heroImage: "/descoverresult/2.png",
     location: "Noida, India",
     accreditations: ["UGC-DEB", "AICTE", "QS Ranked"],
     reviews: 1755,
@@ -752,14 +751,17 @@ function UniversityCard({
   onExpertClick?: (id: string) => void;
 }) {
   const [imgError, setImgError] = useState(false);
+  const showFallback = !uni.heroImage || imgError;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all overflow-hidden">
       {/* ── 3-Column Grid Layout (Fully Responsive) ── */}
+      {/* order-* classes lock the mobile stacking sequence: Image -> Content -> Actions.
+          sm:order-none resets to natural grid column order on tablet/desktop. */}
       <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr_140px] lg:grid-cols-[220px_1fr_200px] gap-2 sm:gap-3 lg:gap-4 p-2 sm:p-3 lg:p-4">
         {/* ── LEFT: Hero Image ── */}
-        <div className="relative">
-          {uni.heroImage && !imgError && (
+        <div className="relative order-1 sm:order-none">
+          {!showFallback && uni.heroImage && (
             <img
               src={uni.heroImage}
               alt={uni.name}
@@ -767,18 +769,15 @@ function UniversityCard({
               className="w-full h-40 sm:h-48 lg:h-56 rounded-xl sm:rounded-2xl object-cover"
             />
           )}
-          {!uni.heroImage ||
-            (imgError && (
-              <div className="w-full h-40 sm:h-48 lg:h-56 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                <span className="text-gray-400 text-xs sm:text-sm">
-                  No image
-                </span>
-              </div>
-            ))}
+          {showFallback && (
+            <div className="w-full h-40 sm:h-48 lg:h-56 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <span className="text-gray-400 text-xs sm:text-sm">No image</span>
+            </div>
+          )}
         </div>
 
         {/* ── MIDDLE: Main Content ── */}
-        <div className="flex flex-col">
+        <div className="flex flex-col order-2 sm:order-none">
           {/* University Name */}
           <div>
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
@@ -823,8 +822,8 @@ function UniversityCard({
             </div>
           )}
 
-          {/* Location + Students + Know More (1 LINE - NO WRAP) */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-nowrap overflow-hidden mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-gray-200">
+          {/* Location + Students + Know More (wraps gracefully on very narrow screens) */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-wrap sm:flex-nowrap sm:overflow-hidden mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-gray-200">
             {uni.location && (
               <div className="flex items-center gap-1 shrink-0 min-w-fit">
                 <svg
@@ -854,7 +853,7 @@ function UniversityCard({
             )}
 
             {uni.location && uni.students && (
-              <span className="h-3 w-px bg-gray-300 shrink-0" />
+              <span className="h-3 w-px bg-gray-300 shrink-0 hidden sm:inline-block" />
             )}
 
             {uni.students && (
@@ -878,7 +877,9 @@ function UniversityCard({
               </div>
             )}
 
-            {uni.students && <span className="h-3 w-px bg-gray-300 shrink-0" />}
+            {uni.students && (
+              <span className="h-3 w-px bg-gray-300 shrink-0 hidden sm:inline-block" />
+            )}
 
             <button className="flex items-center gap-1 text-xs sm:text-xs lg:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors shrink-0 min-w-fit">
               <svg
@@ -904,11 +905,11 @@ function UniversityCard({
         </div>
 
         {/* ── RIGHT: Rating + Fee + Actions (Responsive) ── */}
-        <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4">
+        <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 order-3 sm:order-none">
           {/* Rating + Fee (Stacked - Fee below Rating) */}
-          <div className="flex flex-col gap-2 sm:gap-3">
+          <div className="flex flex-row sm:flex-col gap-2 sm:gap-3">
             {/* Rating Section */}
-            <div className="space-y-0.5 sm:space-y-1">
+            <div className="flex-1 sm:flex-none space-y-0.5 sm:space-y-1">
               <p className="text-[10px] sm:text-xs text-gray-500 font-medium">
                 {uni.reviews.toLocaleString()} Reviews
               </p>
@@ -933,7 +934,7 @@ function UniversityCard({
             </div>
 
             {/* Fee Section */}
-            <div className="space-y-0.5 sm:space-y-1 bg-gray-50 rounded-xl shadow-sm px-2.5 sm:px-3 py-1.5 sm:py-2">
+            <div className="flex-1 sm:flex-none space-y-0.5 sm:space-y-1 bg-gray-50 rounded-xl shadow-sm px-2.5 sm:px-3 py-1.5 sm:py-2">
               <p className="text-[10px] sm:text-xs text-gray-500 font-medium">
                 Fees
               </p>
@@ -945,7 +946,6 @@ function UniversityCard({
               </p>
             </div>
           </div>
-
           {/* View Details Button */}
           <button
             onClick={() => onSelect(uni.id)}

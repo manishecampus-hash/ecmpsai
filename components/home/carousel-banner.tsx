@@ -472,8 +472,8 @@ import Link from "next/link";
 const staticSlides = [
   {
     id: "static-1",
-    desktop: "/banner/test3.png",
-    mobile: "/banner/mobile1.png",
+    desktop: "/banner/desktop1.png",
+    mobile: "/banner/desktop1.png",
     slug: "",
     title: "",
     category: "",
@@ -481,8 +481,8 @@ const staticSlides = [
   },
   {
     id: "static-2",
-    desktop: "/banner/banner2.svg",
-    mobile: "/banner/mobile2.webp",
+    desktop: "/banner/desktop2.png",
+    mobile: "/banner/mobile2.png",
     slug: "",
     title: "",
     category: "",
@@ -490,7 +490,7 @@ const staticSlides = [
   },
   {
     id: "static-3",
-    desktop: "/banner/banner3.svg",
+    desktop: "/banner/desktop3.png",
     mobile: "/banner/mobile3.png",
     slug: "",
     title: "",
@@ -499,7 +499,7 @@ const staticSlides = [
   },
   {
     id: "static-4",
-    desktop: "/banner/banner4.svg",
+    desktop: "/banner/desktop4.png",
     mobile: "/banner/mobile4.png",
     slug: "",
     title: "",
@@ -526,43 +526,6 @@ export function CarouselBanner() {
   const isDragging = useRef<boolean>(false);
   const mouseStartX = useRef<number>(0);
   const mouseDeltaX = useRef<number>(0);
-
-  useEffect(() => {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
-      "http://localhost:5000";
-    fetch(`${apiUrl}/blogs`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const dynamicCarousel = data
-            .filter((b: any) => b.inCarousel && b.status === "active")
-            .sort((a: any, b: any) => a.carouselOrder - b.carouselOrder)
-            .map((b: any, index: number) => ({
-              id: b.id || b._id || `dynamic-${index}`,
-              desktop: b.imageUrl || `/banner/banner${(index % 4) + 1}.svg`,
-              mobile: b.imageUrl || `/banner/mobile${(index % 4) + 1}.png`,
-              slug: `/blog/${(b.url || "").replace(/^\/+|\/+$/g, "")}`,
-              title: b.title || "",
-              category: b.category || "General",
-              isDynamic: true,
-            }));
-
-          if (dynamicCarousel.length > 0) {
-            setSlidesData(dynamicCarousel);
-          }
-        }
-      })
-      .catch((err) => {
-        console.error(
-          "Failed to fetch dynamic carousel slides, using static fallback:",
-          err,
-        );
-      });
-  }, []);
 
   const goTo = useCallback(
     (index: number) => {

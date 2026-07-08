@@ -12,6 +12,8 @@ import UniversitySection from "@/components/programs/bcom/university-section";
 import BComSubHeader from "@/components/programs/bcom/bcom-sub-header";
 import { KeyHighlights } from "@/components/programs/bcom/key-highlight";
 import BComSpecializations from "@/components/programs/bcom/bcom-specializations";
+import { Footer } from "@/components/layout/footer";
+import BComSyllabus from "@/components/programs/bcom/bcom-syllabus";
 
 export default function BComPage() {
   return (
@@ -50,6 +52,8 @@ export default function BComPage() {
           <BComEligibilityFees />
         </div>
 
+        <BComSyllabus />
+
         {/* If program-fees is a separate section in sub-nav, 
             ensure BComEligibilityFees component handles the anchor internally 
             or use this wrapper: */}
@@ -79,7 +83,7 @@ export default function BComPage() {
         </div>
       </main>
 
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

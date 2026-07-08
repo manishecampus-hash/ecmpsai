@@ -8,20 +8,20 @@ export function FooterCta() {
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Image */}
-          <div className="flex w-full shrink-0 items-center justify-center md:w-64 md:self-stretch">
-            <div className="relative h-[170px] w-full sm:h-[200px] md:h-full md:min-h-[160px]">
+          <div className="flex w-full shrink-0 justify-center md:w-64 md:items-center md:self-stretch">
+            <div className="relative aspect-[4/3] w-2/3 max-w-[220px] sm:w-1/2 md:aspect-auto md:h-full md:w-full md:min-h-[160px]">
               <Image
                 src="/cta/cta.png"
                 alt="CTA"
                 fill
                 priority
-                className="object-contain object-center p-0 md:object-left md:p-6"
+                className="object-contain object-bottom md:object-left md:p-6"
               />
             </div>
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col items-center gap-6 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-0 md:py-10 md:pr-8">
+          <div className="flex flex-1 flex-col items-center gap-4 px-4 pb-8 pt-0 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
             {/* Text */}
             <div className="text-center md:text-left">
               <h2 className="text-xl font-bold leading-tight text-slate-800 sm:text-2xl lg:text-4xl">

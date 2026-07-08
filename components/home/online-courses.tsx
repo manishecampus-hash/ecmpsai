@@ -1831,11 +1831,13 @@ export default function ProgramsSection() {
             onClick={() => scrollTabs(-1)}
             style={{
               ...tabArrowStyle(tabLeft),
-              width: 20,
+              width: tabLeft ? 20 : 0,
               height: 20,
-              minWidth: 20,
+              minWidth: tabLeft ? 20 : 0,
               padding: 0,
-              marginRight: "6px",
+              marginRight: tabLeft ? "6px" : 0,
+              overflow: "hidden",
+              transition: "opacity 0.2s, width 0.2s, margin 0.2s",
             }}
             aria-label="Scroll tabs left"
           >
@@ -1889,11 +1891,13 @@ export default function ProgramsSection() {
             onClick={() => scrollTabs(1)}
             style={{
               ...tabArrowStyle(tabRight),
-              width: 20,
+              width: tabRight ? 20 : 0,
               height: 20,
-              minWidth: 20,
+              minWidth: tabRight ? 20 : 0,
               padding: 0,
-              marginLeft: "6px",
+              marginLeft: tabRight ? "6px" : 0,
+              overflow: "hidden",
+              transition: "opacity 0.2s, width 0.2s, margin 0.2s",
             }}
             aria-label="Scroll tabs right"
           >

@@ -167,7 +167,7 @@
 "use client";
 
 import { Handshake, Star, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DEFAULT_GRADUATES, GraduateTestimonialT } from "@/data/graduates";
 
 const StarRating = ({ rating }: { rating: number }) => (
@@ -248,10 +248,10 @@ const GraduateTile = ({
     {/* Hover overlay (desktop) - same tile size, extra testimonial content */}
     <div className="__gradOverlay">
       <p className="__gradQuote">
-        “
+        "
         {graduate.testimonial ??
           "This program completely transformed my career path and gave me the confidence to grow."}
-        ”
+        "
       </p>
       <div className="__gradOverlayFooter">
         <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "#fff" }}>
@@ -294,6 +294,122 @@ const ImageColumn = ({
   </div>
 );
 
+// ---- Mobile horizontal slider ----
+const MobileGraduateSlider = ({
+  graduates,
+  onOpen,
+}: {
+  graduates: GraduateTestimonialT[];
+  onOpen: (g: GraduateTestimonialT) => void;
+}) => {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const isInteractingRef = useRef(false);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const slideWidth = el.firstElementChild
+      ? (el.firstElementChild as HTMLElement).getBoundingClientRect().width + 14 // gap
+      : el.clientWidth;
+    const index = Math.round(el.scrollLeft / slideWidth);
+    setActiveIndex(Math.min(graduates.length - 1, Math.max(0, index)));
+  };
+
+  const scrollToIndex = (index: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const slideEl = el.children[index] as HTMLElement | undefined;
+    if (slideEl) {
+      el.scrollTo({ left: slideEl.offsetLeft - 16, behavior: "smooth" });
+    }
+  };
+
+  // Auto-advance every few seconds, looping back to the start at the end
+  useEffect(() => {
+    if (graduates.length <= 1) return;
+
+    const interval = setInterval(() => {
+      if (isInteractingRef.current) return;
+      setActiveIndex((prev) => {
+        const next = (prev + 1) % graduates.length;
+        scrollToIndex(next);
+        return next;
+      });
+    }, 3200);
+
+    return () => clearInterval(interval);
+  }, [graduates.length]);
+
+  // Pause auto-advance while the user is touching/dragging, resume shortly after
+  const pauseAutoplay = () => {
+    isInteractingRef.current = true;
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+  };
+
+  const resumeAutoplaySoon = () => {
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    resumeTimeoutRef.current = setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 4000);
+  };
+
+  return (
+    <div className="__gradSliderWrap">
+      <div
+        className="__gradSliderTrack"
+        ref={trackRef}
+        onScroll={handleScroll}
+        onTouchStart={pauseAutoplay}
+        onTouchEnd={resumeAutoplaySoon}
+        onPointerDown={pauseAutoplay}
+        onPointerUp={resumeAutoplaySoon}
+        style={{
+          display: "flex",
+          gap: 24,
+          overflowX: "auto",
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          padding: "4px 40px 12px 40px",
+          margin: "0 -16px",
+          boxSizing: "border-box",
+          scrollbarWidth: "none",
+        }}
+      >
+        {graduates.map((graduate, index) => (
+          <div
+            className="__gradSlide"
+            key={`${graduate.name}-slide-${index}`}
+            style={{
+              flex: "0 0 calc(100% - 80px)",
+              boxSizing: "border-box",
+              scrollSnapAlign: "start",
+            }}
+          >
+            <GraduateTile graduate={graduate} onOpen={onOpen} />
+          </div>
+        ))}
+      </div>
+
+      <div className="__gradDots">
+        {graduates.map((_, index) => (
+          <button
+            key={index}
+            aria-label={`Go to testimonial ${index + 1}`}
+            className={`__gradDot ${index === activeIndex ? "__gradDotActive" : ""}`}
+            onClick={() => {
+              pauseAutoplay();
+              scrollToIndex(index);
+              resumeAutoplaySoon();
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Full-size lightbox modal shown on tile click
 const GraduateModal = ({
   graduate,
@@ -302,21 +418,32 @@ const GraduateModal = ({
   graduate: GraduateTestimonialT;
   onClose: () => void;
 }) => {
+  const [entered, setEntered] = useState(false);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+    // trigger the zoom-in transition on the next frame after mount
+    const raf = requestAnimationFrame(() => setEntered(true));
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      cancelAnimationFrame(raf);
     };
   }, [onClose]);
 
   return (
-    <div className="__gradModalBackdrop" onClick={onClose}>
-      <div className="__gradModalContent" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`__gradModalBackdrop ${entered ? "__gradModalBackdropShow" : ""}`}
+      onClick={onClose}
+    >
+      <div
+        className={`__gradModalContent ${entered ? "__gradModalContentShow" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           className="__gradModalClose"
           onClick={onClose}
@@ -351,10 +478,10 @@ const GraduateModal = ({
           </p>
           <StarRating rating={graduate.rating} />
           <p className="__gradModalQuote">
-            “
+            "
             {graduate.testimonial ??
               "This program completely transformed my career path and gave me the confidence to grow."}
-            ”
+            "
           </p>
         </div>
       </div>
@@ -376,7 +503,7 @@ export function GraduatesMarquee({
   return (
     <section
       style={{ background: "white" }}
-      className="relative w-full pt-0 pb-10 text-white -mt-24 sm:-mt-36 z-10"
+      className="relative w-full pt-0 pb-10 text-white -mt-56 sm:-mt-48 md:-mt-36 z-10"
     >
       <style>{`
         @keyframes graduateLoopUp {
@@ -402,11 +529,12 @@ export function GraduatesMarquee({
           overflow: hidden;
         }
 
-        /* ---- Grid + container (responsive) ---- */
+        /* ---- Grid + container (desktop/tablet only, md and up) ---- */
         .__gradGridWrap {
           position: relative;
           height: 1000px;
           overflow: hidden;
+          display: none;
         }
         .__gradGrid {
           display: grid;
@@ -415,23 +543,12 @@ export function GraduatesMarquee({
           height: 100%;
         }
 
-        @media (max-width: 900px) {
-          .__gradGridWrap { height: 780px; }
+        @media (min-width: 768px) {
+          .__gradGridWrap { display: block; height: 780px; }
         }
 
-        @media (max-width: 640px) {
-          .__gradGridWrap { height: 640px; }
-          .__gradGrid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-          }
-        }
-
-        @media (max-width: 420px) {
-          .__gradGridWrap { height: 560px; }
-          .__gradGrid {
-            grid-template-columns: 1fr;
-          }
+        @media (min-width: 1024px) {
+          .__gradGridWrap { height: 1000px; }
         }
 
         /* ---- Tile sizing (responsive) ---- */
@@ -451,16 +568,6 @@ export function GraduatesMarquee({
         @media (max-width: 900px) {
           .__gradTile { height: 360px; }
           .__gradTileTall { height: 460px; }
-        }
-
-        @media (max-width: 640px) {
-          .__gradTile { height: 300px; }
-          .__gradTileTall { height: 380px; }
-        }
-
-        @media (max-width: 420px) {
-          .__gradTile { height: 320px; }
-          .__gradTileTall { height: 400px; }
         }
 
         .__gradImg {
@@ -536,6 +643,65 @@ export function GraduatesMarquee({
           .__gradOverlay { display: none; }
         }
 
+        /* ---- Mobile slider (below md) ---- */
+        .__gradSliderWrap {
+          display: block;
+          padding-top: 4px;
+        }
+
+        @media (min-width: 768px) {
+          .__gradSliderWrap { display: none; }
+        }
+
+        .__gradSliderTrack {
+          display: flex;
+          gap: 24px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          padding: 4px 32px 12px;
+          margin: 0 -16px;
+          box-sizing: border-box;
+          scrollbar-width: none;
+        }
+        .__gradSliderTrack::-webkit-scrollbar {
+          display: none;
+        }
+
+        .__gradSlide {
+          flex: 0 0 calc(100% - 64px);
+          box-sizing: border-box;
+          scroll-snap-align: start;
+        }
+        @media (max-width: 420px) {
+          .__gradSlide { flex-basis: calc(100% - 56px); }
+        }
+
+        .__gradSlide .__gradTile {
+          height: 380px;
+        }
+
+        .__gradDots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 4px;
+        }
+        .__gradDot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(0,0,0,0.2);
+          padding: 0;
+          cursor: pointer;
+          transition: background 0.25s ease, transform 0.25s ease;
+        }
+        .__gradDotActive {
+          background: #ef4444;
+          transform: scale(1.25);
+        }
+
         /* ---- Full-size click modal ---- */
         .__gradModalBackdrop {
           position: fixed;
@@ -546,6 +712,11 @@ export function GraduatesMarquee({
           align-items: center;
           justify-content: center;
           padding: 20px;
+          opacity: 0;
+          transition: opacity 0.28s ease;
+        }
+        .__gradModalBackdropShow {
+          opacity: 1;
         }
         .__gradModalContent {
           position: relative;
@@ -558,6 +729,13 @@ export function GraduatesMarquee({
           border: 1px solid rgba(255,255,255,0.12);
           display: flex;
           flex-direction: column;
+          transform: scale(0.85);
+          opacity: 0;
+          transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+        }
+        .__gradModalContentShow {
+          transform: scale(1);
+          opacity: 1;
         }
         .__gradModalClose {
           position: absolute;
@@ -577,9 +755,18 @@ export function GraduatesMarquee({
         }
         .__gradModalImg {
           width: 100%;
+          height: 60vh;
           max-height: 65vh;
-          object-fit: contain;
+          object-fit: cover;
+          object-position: top center;
           background: #0b0f19;
+        }
+
+        @media (max-width: 640px) {
+          .__gradModalImg {
+            height: 68vh;
+            max-height: 68vh;
+          }
         }
         .__gradModalInitials {
           height: 220px;
@@ -607,7 +794,7 @@ export function GraduatesMarquee({
       `}</style>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-14 text-center">
+        <div className="mb-8 sm:mb-14 text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase text-black border border-gray-200">
             <Handshake className="h-4 w-4 text-red-500" />
             Success Stories
@@ -617,6 +804,7 @@ export function GraduatesMarquee({
           </h2>
         </div>
 
+        {/* Desktop / tablet: animated column grid */}
         <div className="__gradGridWrap">
           <div className="__gradGrid">
             <ImageColumn items={firstColumn} onOpen={setSelected} />
@@ -629,6 +817,9 @@ export function GraduatesMarquee({
             <ImageColumn items={thirdColumn} offset={24} onOpen={setSelected} />
           </div>
         </div>
+
+        {/* Mobile: swipeable slider */}
+        <MobileGraduateSlider graduates={graduates} onOpen={setSelected} />
       </div>
 
       {selected && (

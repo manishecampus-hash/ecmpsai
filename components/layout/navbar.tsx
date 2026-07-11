@@ -594,7 +594,7 @@ type Student = {
 const navLinks = [
   { label: "Discover", href: "/discover" },
   { label: "Compare", href: "/compare" },
-  { label: "Apply", href: "/apply" },
+  { label: "Universities", href: "/universities" },
   { label: "Study", href: "/study" },
   { label: "Contact Us", href: "/contact-us" },
 ];
@@ -649,7 +649,15 @@ function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
   );
 }
 
-function ProgramDropdown({ open, onClose }) {
+function ProgramDropdown({
+  open,
+  onClose,
+  dropdownRef,
+}: {
+  open: boolean;
+  onClose: () => void;
+  dropdownRef: React.RefObject<HTMLDivElement>;
+}) {
   const [activeCat, setActiveCat] = useState(categories[0].id);
   const [mobileStep, setMobileStep] = useState<"list" | "detail">("list");
   const active = categories.find((c) => c.id === activeCat) || categories[0];
@@ -667,7 +675,10 @@ function ProgramDropdown({ open, onClose }) {
   };
 
   return (
-    <div className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-16px)] sm:max-w-[calc(100vw-32px)] bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-2xl z-[999] overflow-hidden">
+    <div
+      ref={dropdownRef}
+      className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-16px)] sm:max-w-[calc(100vw-32px)] bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-2xl z-[999] overflow-hidden"
+    >
       <div className="flex flex-col md:flex-row max-h-[80vh] md:max-h-[520px]">
         {/* ===== Sidebar: category list ===== */}
         {/* Desktop: always visible. Mobile: only visible when mobileStep === "list" */}
@@ -793,9 +804,6 @@ function MobileDrawer({
         <div className="flex-1 overflow-y-auto custom-scroll">
           <div className="px-4 pt-4 pb-6 space-y-1.5">
             {/* Navigation section */}
-            <p className="text-[12px] font-semibold uppercase tracking-widest text-gray-400 px-2 pt-1 mb-2">
-              Navigation
-            </p>
 
             {navLinks
               .filter(
@@ -876,6 +884,18 @@ export function Navbar() {
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  // FIX: split the single shared ref into three separate refs so outside-click
+  // detection can correctly check the desktop trigger, the mobile trigger, and
+  // the dropdown panel independently. Previously both the <nav> and the
+  // ProgramDropdown wrapper used the SAME `dropdownRef`, so the later-rendered
+  // element (the dropdown wrapper) silently overwrote `dropdownRef.current`,
+  // meaning the Programs button was never recognized as "inside" the ref.
+  // That caused the mousedown handler to immediately close the menu, and then
+  // the click handler right after would toggle it open again — so the dropdown
+  // would flicker instead of closing properly.
+  const desktopTriggerRef = useRef<HTMLDivElement>(null);
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -886,9 +906,19 @@ export function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      const clickedInsideDesktopTrigger =
+        desktopTriggerRef.current && desktopTriggerRef.current.contains(target);
+      const clickedInsideMobileTrigger =
+        mobileTriggerRef.current && mobileTriggerRef.current.contains(target);
+      const clickedInsideDropdown =
+        dropdownRef.current && dropdownRef.current.contains(target);
+
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !clickedInsideDesktopTrigger &&
+        !clickedInsideMobileTrigger &&
+        !clickedInsideDropdown
       ) {
         setActiveMenu(null);
       }
@@ -991,7 +1021,7 @@ export function Navbar() {
             {/* Desktop Navigation */}
             <nav
               className="hidden md:flex items-center gap-1"
-              ref={dropdownRef}
+              ref={desktopTriggerRef}
             >
               <button
                 onClick={(e) => toggle("program", e)}
@@ -1003,7 +1033,9 @@ export function Navbar() {
               >
                 Programs
                 <ChevronDown
-                  className={`w-4 h-4 ${
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    activeMenu === "program" ? "rotate-180" : "rotate-0"
+                  } ${
                     activeMenu !== "program" ? "text-red-600" : "text-gray-600"
                   }`}
                 />
@@ -1059,6 +1091,7 @@ export function Navbar() {
 
               {/* Mobile Programs button - direct button, same style as desktop */}
               <button
+                ref={mobileTriggerRef}
                 onClick={(e) => toggle("program", e)}
                 className={`md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 ${
                   activeMenu !== "program"
@@ -1068,7 +1101,9 @@ export function Navbar() {
               >
                 Programs
                 <ChevronDown
-                  className={`w-3.5 h-3.5 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    activeMenu === "program" ? "rotate-180" : "rotate-0"
+                  } ${
                     activeMenu !== "program" ? "text-red-600" : "text-gray-600"
                   }`}
                 />
@@ -1082,9 +1117,11 @@ export function Navbar() {
       </header>
 
       {/* Program dropdown - shared between desktop button and mobile button */}
-      <div ref={dropdownRef}>
-        <ProgramDropdown open={activeMenu === "program"} onClose={closeAll} />
-      </div>
+      <ProgramDropdown
+        open={activeMenu === "program"}
+        onClose={closeAll}
+        dropdownRef={dropdownRef}
+      />
 
       {/* Mobile Drawer */}
       <MobileDrawer

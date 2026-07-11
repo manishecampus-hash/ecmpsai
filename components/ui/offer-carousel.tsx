@@ -342,7 +342,7 @@ const OfferCard = ({
       </span>
 
       {/* Media container */}
-      <div className="ml-6 h-full w-full overflow-hidden rounded-xl shadow-md relative">
+      <div className="ml-4 h-full w-full overflow-hidden rounded-xl shadow-md relative">
         {/* Thumbnail image — always rendered */}
         <img
           src={offer.imageSrc}
@@ -499,10 +499,10 @@ export const OfferCarousel = ({
           className={cn(
             "flex gap-4 overflow-x-auto py-6 scroll-smooth",
             showLeft && showRight
-              ? "px-7 md:mx-10 md:px-0"
+              ? "px-0 md:mx-10 md:px-0"
               : showLeft
-                ? "pl-7 pr-4 md:mx-10 md:px-0"
-                : "pl-4 pr-7 md:mx-10 md:px-0",
+                ? "pl-0 pr-2 md:mx-10 md:px-0"
+                : "pl-0 pr-7 md:mx-10 md:px-0",
           )}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >

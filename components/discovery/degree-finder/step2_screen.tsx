@@ -1,18 +1,29 @@
 "use client";
 
 import React from "react";
+import {
+  Search,
+  LayoutGrid,
+  ArrowUpDown,
+  ChevronDown,
+  ArrowLeftRight,
+  GraduationCap,
+  Sprout,
+  BookOpen,
+  Briefcase,
+  BarChart3,
+  Laptop,
+  Microscope,
+  FileText,
+  PieChart,
+  Bot,
+  FlaskConical,
+  Settings,
+  Building2,
+  Star,
+} from "lucide-react";
 
-interface Course {
-  id: string;
-  title: string;
-  duration: string;
-  feeMin: number;
-  feeMax: number;
-  rating: number;
-  category: string;
-}
-
-const SAMPLE_COURSES: Course[] = [
+const SAMPLE_COURSES = [
   {
     id: "ba",
     title: "BA",
@@ -20,7 +31,7 @@ const SAMPLE_COURSES: Course[] = [
     feeMin: 120000,
     feeMax: 280000,
     rating: 4.2,
-    category: "Arts",
+    category: "Humanities",
   },
   {
     id: "bcom",
@@ -65,7 +76,7 @@ const SAMPLE_COURSES: Course[] = [
     feeMin: 100000,
     feeMax: 250000,
     rating: 4.1,
-    category: "Arts",
+    category: "Humanities",
   },
   {
     id: "mcom",
@@ -123,248 +134,36 @@ const SAMPLE_COURSES: Course[] = [
   },
 ];
 
-const courseIcons: Record<string, React.ReactNode> = {
-  ba: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-      <path d="M8 7h8M8 11h6M8 15h4" />
-    </svg>
-  ),
-  bcom: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-      <circle cx="12" cy="14" r="2" />
-      <path d="M9 14h.01M15 14h.01" />
-    </svg>
-  ),
-  bba: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4" />
-      <line x1="9" y1="16" x2="9" y2="20" />
-      <line x1="15" y1="16" x2="15" y2="20" />
-    </svg>
-  ),
-  bca: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-      <path d="M8 21h8M12 17v4" />
-      <path d="M7 9h10M7 13h4" />
-    </svg>
-  ),
-  bsc: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <circle cx="7" cy="11" r="3" />
-      <circle cx="17" cy="11" r="3" />
-      <path d="M17 11v5a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-5" />
-      <line x1="12" y1="17" x2="12" y2="21" />
-    </svg>
-  ),
-  ma: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-      <path d="M12 11v6M9 14h6" />
-    </svg>
-  ),
-  mcom: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-      <polyline points="16 7 22 7 22 13" />
-      <path d="M7 17v3M12 17v3" />
-    </svg>
-  ),
-  mba: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
-      <text
-        x="12"
-        y="15"
-        textAnchor="middle"
-        fontSize="8"
-        fontWeight="bold"
-        fill="white"
-      >
-        MBA
-      </text>
-    </svg>
-  ),
-  mca: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <polyline points="16 18 22 12 16 6" />
-      <polyline points="8 6 2 12 8 18" />
-      <line x1="12" y1="4" x2="12" y2="20" />
-    </svg>
-  ),
-  msc: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24" />
-    </svg>
-  ),
-  btech: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <path d="M9 3L3 7v10c0 5.55 4.03 10.74 9.5 12 5.47-1.26 9.5-6.45 9.5-12V7l-6-4" />
-      <path d="M12 11l3-2M12 11l-3-2M12 11v4" />
-    </svg>
-  ),
-  be: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      className="w-5 h-5"
-    >
-      <path d="M2 20h20M4 20V10l8-7 8 7v10" />
-      <path d="M10 20v-6h4v6M10 10h4v4h-4z" />
-    </svg>
-  ),
+// Per-course icon + colored badge, matched to the reference design
+const courseVisuals = {
+  ba: { Icon: BookOpen, bg: "bg-violet-50", icon: "text-re" },
+  bcom: { Icon: Briefcase, bg: "bg-emerald-50", icon: "text-red" },
+  bba: { Icon: BarChart3, bg: "bg-blue-50", icon: "text-blue-600" },
+  bca: { Icon: Laptop, bg: "bg-orange-50", icon: "text-orange-600" },
+  bsc: { Icon: Microscope, bg: "bg-blue-50", icon: "text-blue-600" },
+  ma: { Icon: GraduationCap, bg: "bg-violet-50", icon: "text-violet-600" },
+  mcom: { Icon: FileText, bg: "bg-emerald-50", icon: "text-emerald-600" },
+  mba: { Icon: PieChart, bg: "bg-violet-50", icon: "text-violet-600" },
+  mca: { Icon: Bot, bg: "bg-orange-50", icon: "text-orange-600" },
+  msc: { Icon: FlaskConical, bg: "bg-emerald-50", icon: "text-emerald-600" },
+  btech: { Icon: Settings, bg: "bg-red-50", icon: "text-red-600" },
+  be: { Icon: Building2, bg: "bg-blue-50", icon: "text-blue-600" },
 };
 
-const categoryColors: Record<
-  string,
-  { bg: string; icon: string; badge: string }
-> = {
-  Arts: {
-    bg: "bg-red-50",
-    icon: "text-red-600",
-    badge: "bg-red-100 text-red-700",
-  },
-  Commerce: {
-    bg: "bg-orange-50",
-    icon: "text-orange-600",
-    badge: "bg-orange-100 text-orange-700",
-  },
-  Science: {
-    bg: "bg-rose-50",
-    icon: "text-rose-600",
-    badge: "bg-rose-100 text-rose-700",
-  },
-  Management: {
-    bg: "bg-red-50",
-    icon: "text-red-600",
-    badge: "bg-red-100 text-red-700",
-  },
-  "Computer Applications": {
-    bg: "bg-pink-50",
-    icon: "text-pink-600",
-    badge: "bg-pink-100 text-pink-700",
-  },
-  Engineering: {
-    bg: "bg-red-50",
-    icon: "text-red-600",
-    badge: "bg-red-100 text-red-700",
-  },
+const categoryBadge = {
+  Humanities: "bg-violet-100 text-violet-700",
+  Commerce: "bg-emerald-100 text-emerald-700",
+  Management: "bg-blue-100 text-blue-700",
+  "Computer Applications": "bg-orange-100 text-orange-700",
+  Science: "bg-emerald-100 text-emerald-700",
+  Engineering: "bg-red-100 text-red-700",
 };
-
-const StarIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="w-3 h-3 text-amber-400"
-  >
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
-
-const GraduationIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.8}
-    className="w-6 h-6 text-gray-400 flex-shrink-0"
-  >
-    <path d="M22 10l-10-5L2 10l10 5 10-5z" />
-    <path d="M6 12v5c0 2.21 2.69 4 6 4s6-1.79 6-4v-5" />
-  </svg>
-);
-
-const CompareIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.8}
-    className="w-6 h-6 text-gray-400 flex-shrink-0"
-  >
-    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-  </svg>
-);
 
 export default function Step2Screen({
   courses = SAMPLE_COURSES,
   selectedTypeData,
-  onCourseSelect,
-  onBack,
-}: {
-  courses?: Course[];
-  selectedTypeData?: { label: string };
-  onCourseSelect: (id: string) => void;
-  onBack: () => void;
+  onCourseSelect = () => {},
+  onBack = () => {},
 }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [sortBy, setSortBy] = React.useState("popular");
@@ -375,9 +174,7 @@ export default function Step2Screen({
   );
 
   return (
-    <div className="w-full min-w-0 overflow-x-hidden">
-      {/* Back Button */}
-
+    <div className="w-full min-w-0 overflow-x-hidden bg-white">
       {/* Title Section */}
       <div className="mb-8 flex items-start justify-between gap-6">
         <div className="flex-1 min-w-0">
@@ -389,153 +186,171 @@ export default function Step2Screen({
             goals.
           </p>
         </div>
-        <div className="hidden lg:flex">
-          <GraduationIcon />
+        <div className="hidden lg:flex relative w-28 h-28 flex-shrink-0 items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-violet-50" />
+          <GraduationCap
+            className="w-12 h-12 text-gray-800 relative z-10"
+            strokeWidth={1.6}
+          />
+          <Sprout
+            className="w-6 h-6 text-emerald-500 absolute bottom-3 left-3 z-10"
+            strokeWidth={1.8}
+          />
         </div>
       </div>
 
-      {/* Search and Filters - single compact row */}
-      <div className="mb-8 flex flex-row items-center gap-2 flex-wrap sm:flex-nowrap">
-        <div className="relative flex-1 min-w-[140px] sm:max-w-[220px]">
+      {/* Search and Filters */}
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="relative flex-1 sm:max-w-xs">
+          <Search
+            className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"
+            strokeWidth={2}
+          />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search programs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 text-xs"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-100 text-sm"
           />
-          <span className="absolute right-2.5 top-1/2 -translate-y-1/2">
-            <svg
-              className="w-3.5 h-3.5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </span>
         </div>
 
-        <select
-          value={filterStream}
-          onChange={(e) => setFilterStream(e.target.value)}
-          className="flex-shrink-0 w-auto px-2 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 text-xs font-medium text-gray-700 cursor-pointer"
-        >
-          <option value="all">All Streams</option>
-          <option value="arts">Arts</option>
-          <option value="commerce">Commerce</option>
-          <option value="science">Science</option>
-          <option value="management">Management</option>
-        </select>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <select
+              value={filterStream}
+              onChange={(e) => setFilterStream(e.target.value)}
+              className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
+            >
+              <option value="all">All Streams</option>
+              <option value="humanities">Humanities</option>
+              <option value="commerce">Commerce</option>
+              <option value="science">Science</option>
+              <option value="management">Management</option>
+            </select>
+            <LayoutGrid
+              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              strokeWidth={2}
+            />
+            <ChevronDown
+              className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              strokeWidth={2}
+            />
+          </div>
 
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="flex-shrink-0 w-auto px-2 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-red-400 text-xs font-medium text-gray-700 cursor-pointer"
-        >
-          <option value="popular">Popular</option>
-          <option value="rating">Rating</option>
-          <option value="fees-low">Fees: Low</option>
-          <option value="fees-high">Fees: High</option>
-          <option value="duration">Duration</option>
-        </select>
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
+            >
+              <option value="popular">Sort by: Popular</option>
+              <option value="rating">Sort by: Rating</option>
+              <option value="fees-low">Sort by: Fees Low</option>
+              <option value="fees-high">Sort by: Fees High</option>
+              <option value="duration">Sort by: Duration</option>
+            </select>
+            <ArrowUpDown
+              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              strokeWidth={2}
+            />
+            <ChevronDown
+              className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              strokeWidth={2}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Course Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {filteredCourses.map((course) => {
-          const colors = categoryColors[course.category] ?? {
-            bg: "bg-red-50",
-            icon: "text-red-600",
-            badge: "bg-red-100 text-red-700",
+          const visual = courseVisuals[course.id] ?? {
+            Icon: BookOpen,
+            bg: "bg-gray-50",
+            icon: "text-gray-600",
           };
+          const Icon = visual.Icon;
+          const badgeClass =
+            categoryBadge[course.category] ?? "bg-gray-100 text-gray-700";
           return (
             <button
               key={course.id}
               onClick={() => onCourseSelect(course.id)}
-              className="w-full p-3 bg-white rounded-xl border border-gray-200 hover:shadow-lg hover:border-red-300 hover:scale-105 transition-all text-left min-w-0 duration-200"
+              className="w-full p-4 bg-white rounded-2xl border border-gray-200 hover:shadow-md hover:border-red-400 transition-all text-left min-w-0 duration-200"
             >
-              {/* Icon + Title + Duration */}
-              <div className="flex items-start gap-2 mb-2">
+              <div className="flex items-start gap-3 mb-4">
                 <div
-                  className={`w-10 h-10 rounded-lg ${colors.bg} ${colors.icon} flex items-center justify-center flex-shrink-0 shadow-sm`}
+                  className={`w-12 h-12 rounded-2xl ${visual.bg} ${visual.icon} flex items-center justify-center flex-shrink-0`}
                 >
-                  {courseIcons[course.id] ?? (
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      className="w-5 h-5"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
-                  )}
+                  <Icon className="w-6 h-6" strokeWidth={1.8} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
-                      {course.title}
-                    </h3>
-                    <span
-                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full inline-block truncate max-w-[90px] ${colors.badge}`}
-                    >
-                      {course.category}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-tight">
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
+                    {course.title}
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.5 leading-tight">
                     {course.duration}
                   </p>
                 </div>
               </div>
 
-              {/* Fee and Rating Row */}
-              <div className="flex items-start justify-between gap-1">
+              <div className="flex items-end justify-between gap-1 mb-3">
                 <div className="min-w-0">
-                  <div className="text-xs text-gray-500 font-medium">Fees</div>
-                  <div className="text-xs sm:text-sm font-semibold text-gray-900 leading-tight">
-                    ₹{(course.feeMin / 100000).toFixed(1)}–
-                    {(course.feeMax / 100000).toFixed(1)}L
+                  <div className="text-xs text-gray-400 font-medium">Fees</div>
+                  <div className="text-sm font-semibold text-gray-900 leading-tight">
+                    ₹{(course.feeMin / 100000).toFixed(1)} –{" "}
+                    {(course.feeMax / 100000).toFixed(1)} Lakh
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <div className="flex items-center gap-0.5 justify-end">
-                    <StarIcon />
-                    <span className="text-xs sm:text-sm font-semibold text-gray-900">
-                      {course.rating}
+                  <div className="flex items-center gap-1 justify-end">
+                    <Star
+                      className="w-3.5 h-3.5 text-amber-400"
+                      strokeWidth={0}
+                      fill="currentColor"
+                    />
+                    <span className="text-sm font-semibold text-gray-900">
+                      {course.rating}/5
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500 font-medium">
+                  <div className="text-xs text-gray-400 font-medium">
                     Rating
                   </div>
                 </div>
               </div>
+
+              <span
+                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full inline-block ${badgeClass}`}
+              >
+                {course.category}
+              </span>
             </button>
           );
         })}
       </div>
 
       {/* Footer Info */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 border-t border-gray-200">
-        <div className="flex items-center gap-3 text-sm text-gray-700">
-          <GraduationIcon />
+      {/* Footer Info */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+        <div className="flex items-center gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-2xl px-5 py-3 w-full sm:w-auto">
+          <div className="w-9 h-9 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+            <GraduationCap className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <div>
             <strong className="block">
               {filteredCourses.length} programs available
             </strong>
-            <span className="text-gray-500 text-xs">Across 6 streams</span>
+            <span className="text-gray-400 text-xs">Across 6 streams</span>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-sm text-gray-700">
-          <CompareIcon />
+        <div className="flex items-center gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-2xl px-5 py-3 w-full sm:w-auto">
+          <div className="w-9 h-9 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+            <ArrowLeftRight className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <div>
             <strong className="block">Compare up to 3 programs</strong>
-            <span className="text-gray-500 text-xs">
+            <span className="text-gray-400 text-xs">
               Select programs to compare
             </span>
           </div>

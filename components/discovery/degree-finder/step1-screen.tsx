@@ -53,10 +53,7 @@ const degreeTypes = [
   },
 ];
 
-const colorMap: Record<
-  string,
-  { bg: string; icon: string; line: string; arrow: string }
-> = {
+const colorMap = {
   red: {
     bg: "bg-red-50",
     icon: "text-red-500",
@@ -83,7 +80,7 @@ const colorMap: Record<
   },
 };
 
-const icons: Record<string, React.ReactNode> = {
+const icons = {
   all: (
     <svg
       viewBox="0 0 24 24"
@@ -222,30 +219,9 @@ const footerItems = [
       </svg>
     ),
   },
-  {
-    label: "For Every Goal",
-    desc: "Programs for every stage of your career",
-    icon: (
-      <svg
-        className="w-7 h-7 text-red-600"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <circle cx="8" cy="8" r="5" />
-        <circle cx="16" cy="16" r="5" />
-        <path d="M8 13v3M11 8h3" />
-      </svg>
-    ),
-  },
 ];
 
-interface Props {
-  onTypeSelect: (id: string) => void;
-}
-
-export default function Step1Screen({ onTypeSelect }: Props) {
+export default function Step1Screen({ onTypeSelect }) {
   return (
     <div className="py-5 px-4">
       {/* Header */}
@@ -304,19 +280,22 @@ export default function Step1Screen({ onTypeSelect }: Props) {
       </div>
 
       {/* Footer trust bar */}
-      <div className="flex justify-center divide-x divide-gray-200 border-t border-gray-200 pt-4 max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-4 pt-6">
         {footerItems.map((item) => (
           <div
             key={item.label}
-            className="flex flex-col items-center gap-1 px-4 sm:px-8 text-center"
+            className="flex items-center justify-center text-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm hover:shadow-md hover:border-red-200 transition-all duration-300 w-full sm:w-auto sm:min-w-[260px]"
           >
-            {item.icon}
-            <span className="text-xs font-bold text-gray-900">
-              {item.label}
-            </span>
-            <span className="hidden sm:block text-xs text-gray-400">
-              {item.desc}
-            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 text-lg flex-shrink-0">
+              {item.icon}
+            </div>
+
+            <div className="min-w-0">
+              <h4 className="text-sm font-semibold text-gray-900">
+                {item.label}
+              </h4>
+              <p className="text-xs text-gray-500 truncate">{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>

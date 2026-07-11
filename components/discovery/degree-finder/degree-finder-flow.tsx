@@ -24,7 +24,6 @@ const STEPS = [
   { id: "step4", label: "Package" },
   { id: "step5", label: "Qualification" },
   { id: "step6", label: "Scholarship" },
-  { id: "results", label: "Results" },
 ];
 
 const STEP_INDEX: Record<string, number> = {
@@ -34,8 +33,8 @@ const STEP_INDEX: Record<string, number> = {
   step4: 3,
   step5: 4,
   step6: 5,
-  results: 6,
-  detail: 6,
+  results: 5,
+  detail: 5,
 };
 
 function StepIndicator({

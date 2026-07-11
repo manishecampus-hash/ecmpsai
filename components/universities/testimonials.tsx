@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquareQuote } from "lucide-react";
+import { MessageSquareQuote, Quote } from "lucide-react";
 import React from "react";
 
 interface TestimonialCard {
@@ -19,7 +19,7 @@ const testimonials: TestimonialCard[] = [
     program: "MBA",
     university: "MUJ",
     image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=700&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
     quote:
       "After pursuing my BBA through distance education a few years ago, I was looking for the right university to pursue my online MBA and enrolled in Manipal University Jaipur. The weekend classes were very convenient, and the curriculum is easy to understand. I completely made use of free access to paid learning resources.",
   },
@@ -29,7 +29,7 @@ const testimonials: TestimonialCard[] = [
     program: "BCA",
     university: "Amity Online",
     image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=700&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
     quote:
       "The online learning experience helped me balance my studies with work. The classes were structured well, faculty support was quick, and the learning platform made it simple to revise lectures and complete assignments on time.",
   },
@@ -39,7 +39,7 @@ const testimonials: TestimonialCard[] = [
     program: "MBA",
     university: "Amity Online",
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
     quote:
       "I wanted a program that could improve my management skills without leaving my job. The online MBA gave me the flexibility I needed, and the course content was practical enough to apply directly in my workplace.",
   },
@@ -49,7 +49,7 @@ const testimonials: TestimonialCard[] = [
     program: "MCA",
     university: "Online University",
     image:
-      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=700&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&auto=format&fit=crop&q=80",
     quote:
       "The MCA program helped me strengthen my technical knowledge and confidence. Recorded lectures, doubt sessions, and project-based learning made the entire journey smooth and career-focused.",
   },
@@ -59,53 +59,50 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="bg-white px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
+      className="bg-slate-50 px-4 py-16 sm:px-6 lg:px-8 font-sans"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-800 uppercase tracking-wider shadow-sm">
             <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
             Student Reviews
           </span>
-
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Student <span className="text-red-500">Testimonials</span>
           </h2>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Testimonials Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((testimonial) => (
             <article
               key={testimonial.id}
-              className="overflow-hidden rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-red-100 hover:shadow-[0_14px_36px_rgba(239,68,68,0.12)]"
+              className="relative flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300"
             >
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="h-44 w-full rounded-md object-cover"
-                loading="lazy"
-              />
-
-              <p className="mt-4 line-clamp-3 text-base font-medium leading-relaxed text-gray-800">
-                {testimonial.quote}
-              </p>
-
-              <button
-                type="button"
-                className="mt-2 text-base font-black text-gray-900 underline decoration-2 underline-offset-2 transition hover:text-red-500"
-              >
-                Read More
-              </button>
-
-              <div className="mt-5">
-                <h3 className="font-serif text-base font-black text-gray-900">
-                  {testimonial.name}
-                </h3>
-
-                <p className="mt-2 text-sm font-semibold text-slate-600">
-                  {testimonial.program} <span className="text-gray-900">•</span>{" "}
-                  {testimonial.university}
+              <div>
+                <Quote className="h-6 w-6 text-slate-200 mb-4" />
+                <p className="text-sm leading-relaxed text-slate-600">
+                  "{testimonial.quote}"
                 </p>
+              </div>
+
+              {/* Profile Footer */}
+              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-3">
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  className="h-10 w-10 rounded-full object-cover border border-slate-100"
+                  loading="lazy"
+                />
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-sm text-slate-900 truncate">
+                    {testimonial.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 truncate mt-0.5">
+                    {testimonial.program} &bull; {testimonial.university}
+                  </p>
+                </div>
               </div>
             </article>
           ))}

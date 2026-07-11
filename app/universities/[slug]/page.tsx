@@ -22,6 +22,7 @@ import AdmissionProcessSection from "@/components/universities/process-section";
 import LearningEnvironmentSection from "@/components/universities/environment-section";
 import EligibilityFeesSection from "@/components/universities/eligibility-fees-section";
 import ExaminationPatternSection from "@/components/universities/examination-pattern-section";
+import ApSection from "@/components/universities/aproveltest";
 
 // import WhyOnline from "@/components/universities/why-online";
 
@@ -53,9 +54,10 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <TopSpecializations university={university} />
       <LoanSection />
       <ExaminationPatternSection />
+      <ApSection />
       <ApprovalsSection university={university} />
       <LearningEnvironmentSection />
-      <PlacementPartners university={university} />
+      {/* <PlacementPartners university={university} /> */}
       <TestimonialsSection university={university} />
 
       {/* <WhyOnline university={university} /> */}

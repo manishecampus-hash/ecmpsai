@@ -60,7 +60,7 @@ export default function FAQ() {
   };
 
   return (
-    <Section className="w-full bg-white pt-12 pb-13 lg:pb-5">
+    <Section className="w-full bg-white pt-3 pb-13 lg:pb-5">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-7xl text-center mb-10 font-[Inter]">

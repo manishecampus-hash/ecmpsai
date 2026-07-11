@@ -242,7 +242,6 @@ import {
   Filter,
   X,
   ArrowUpDown,
-  Heart,
   Share2,
   Zap,
   Clock,
@@ -402,8 +401,6 @@ export default function LmsAccessPage() {
   const [expandedUniversity, setExpandedUniversity] = useState<string | null>(
     null,
   );
-  const [savedUniversities, setSavedUniversities] = useState<string[]>([]);
-
   const filteredAndSorted = useMemo(() => {
     let result = universities.filter((uni) => {
       const matchesSearch =
@@ -443,14 +440,6 @@ export default function LmsAccessPage() {
     });
   };
 
-  const handleSaveUniversity = (universityId: string) => {
-    setSavedUniversities((prev) =>
-      prev.includes(universityId)
-        ? prev.filter((id) => id !== universityId)
-        : [...prev, universityId],
-    );
-  };
-
   const comparedUniversities = universities.filter((uni) =>
     selectedForCompare.includes(uni.id),
   );
@@ -481,30 +470,28 @@ export default function LmsAccessPage() {
       </section>
 
       {/* Filters & Sort Section */}
-      <section className="px-4 py-6 md:py-8 border-y border-gray-200 bg-white sticky top-0 z-40">
+      <section className="px-4 py-3 md:py-4 border-y border-gray-200 bg-white sticky top-0 z-40">
         <div className="mx-auto w-full max-w-5xl">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Filter className="h-5 w-5 text-gray-600" />
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="text-sm font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1"
-              >
-                Filters ({filterCategory !== "all" ? 1 : 0})
-                <ChevronRight
-                  className={`h-4 w-4 transition-transform ${showFilters ? "rotate-90" : ""}`}
-                />
-              </button>
-            </div>
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-700 hover:text-gray-900 flex-shrink-0"
+            >
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+              Filters ({filterCategory !== "all" ? 1 : 0})
+              <ChevronRight
+                className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform ${showFilters ? "rotate-90" : ""}`}
+              />
+            </button>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
-              <span className="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="hidden sm:inline text-sm text-gray-600 font-medium whitespace-nowrap">
                 Sort by:
               </span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortType)}
-                className="text-xs sm:text-sm px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none cursor-pointer"
+                className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none cursor-pointer max-w-[140px] sm:max-w-none"
               >
                 <option value="rating">⭐ Highest Rated</option>
                 <option value="popular">📈 Most Popular</option>
@@ -516,7 +503,7 @@ export default function LmsAccessPage() {
             {selectedForCompare.length > 0 && (
               <button
                 onClick={() => setCompareMode(!compareMode)}
-                className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-colors text-sm"
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-semibold rounded-lg hover:bg-red-100 transition-colors text-sm flex-shrink-0"
               >
                 Compare ({selectedForCompare.length})
               </button>
@@ -525,7 +512,7 @@ export default function LmsAccessPage() {
 
           {/* Filter Chips */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-3 pt-3 border-t border-gray-200">
               <div className="flex flex-wrap gap-2">
                 {[
                   { value: "all", label: "All Categories" },
@@ -539,7 +526,7 @@ export default function LmsAccessPage() {
                     onClick={() =>
                       setFilterCategory(cat.value as FilterCategory)
                     }
-                    className={`px-3 py-2 text-xs sm:text-sm rounded-lg font-medium transition-all ${
+                    className={`px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg font-medium transition-all ${
                       filterCategory === cat.value
                         ? "bg-red-600 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -686,23 +673,6 @@ export default function LmsAccessPage() {
                         />
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
-                        <button
-                          onClick={() => handleSaveUniversity(university.id)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            savedUniversities.includes(university.id)
-                              ? "bg-red-50 text-red-600"
-                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                          }`}
-                        >
-                          <Heart
-                            className="h-5 w-5"
-                            fill={
-                              savedUniversities.includes(university.id)
-                                ? "currentColor"
-                                : "none"
-                            }
-                          />
-                        </button>
                         <button className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                           <Share2 className="h-5 w-5" />
                         </button>

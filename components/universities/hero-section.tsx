@@ -13,6 +13,7 @@ import {
   Clock,
   Headphones,
 } from "lucide-react";
+import PlacementPartners from "./placement-partners";
 
 interface HeroSectionProps {
   university?: {
@@ -174,7 +175,7 @@ export default function UniversityHeroWithStats({
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
+      <section className="relative overflow-hidden border-b  -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
             <defs>
@@ -198,14 +199,6 @@ export default function UniversityHeroWithStats({
         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="space-y-6">
-              <Link
-                href="/"
-                className="inline-flex items-center text-sm font-bold text-slate-500 transition-colors hover:text-red-500"
-              >
-                <ChevronLeft className="mr-1 h-4 w-4 stroke-[2.5]" />
-                Back to Universities
-              </Link>
-
               <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-xs font-extrabold text-red-600 uppercase tracking-wider">
                 <Sparkles className="h-3.5 w-3.5" />
                 UGC Entrusted Degree
@@ -248,7 +241,7 @@ export default function UniversityHeroWithStats({
                 />
 
                 {/* Feature Cards Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-3 bg-gradient-to-t from-black/40 to-transparent p-4 sm:p-6">
+                <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-3 bg-gradient-to-t from-black/40 to-transparent p-4 sm:p-6 ">
                   {featureCards.map((card, idx) => {
                     const IconComponent = card.icon;
                     return (
@@ -276,37 +269,7 @@ export default function UniversityHeroWithStats({
       </section>
 
       {/* Stats Section */}
-      <section
-        ref={statsSectionRef}
-        className="bg-white pt-2 pb-6 sm:pt-3 sm:pb-8 lg:pt-4 lg:pb-10"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
-            {statsData.map((stat, idx) => {
-              const IconComponent = stat.icon;
-              return (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center gap-2 rounded-xl bg-slate-50 p-3 sm:p-4 lg:p-5"
-                >
-                  <div className="rounded-lg bg-red-50 p-2 text-red-500">
-                    <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <p className="text-base sm:text-xl font-black text-red-500 text-center tabular-nums">
-                    <AnimatedStatValue
-                      value={stat.value}
-                      isVisible={statsVisible}
-                    />
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-gray-600 font-medium text-center">
-                    {stat.label}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <PlacementPartners />
     </>
   );
 }

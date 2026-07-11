@@ -25,33 +25,6 @@ type TabKey =
   | "Who is this Program for"
   | "Program Fee";
 
-const overviewCards = [
-  {
-    value: "#3 Top Tier",
-    label: "NIRF Management Rank",
-    icon: <Award className="h-5 w-5 text-red-500" />,
-    iconBg: "bg-red-50",
-  },
-  {
-    value: "10,000+",
-    label: "Global Active Alumni",
-    icon: <Users className="h-5 w-5 text-blue-500" />,
-    iconBg: "bg-blue-50",
-  },
-  {
-    value: "₹43.9 LPA",
-    label: "Highest Salary CTC",
-    icon: <TrendingUp className="h-5 w-5 text-orange-500" />,
-    iconBg: "bg-orange-50",
-  },
-  {
-    value: "40+ Countries",
-    label: "International Alliances",
-    icon: <Globe className="h-5 w-5 text-slate-500" />,
-    iconBg: "bg-slate-100",
-  },
-];
-
 const feeCards = [
   {
     label: "Total Program Fee",
@@ -259,24 +232,7 @@ export default function AboutProgram() {
                   }`}
                 >
                   {activeTab === "Program Overview"
-                    ? overviewCards.map((card, idx) => (
-                        <div
-                          key={idx}
-                          className="flex flex-col items-center text-center gap-3 rounded-2xl border border-slate-150/60 bg-white p-4 shadow-sm w-full"
-                        >
-                          <div className={`rounded-xl p-2 ${card.iconBg}`}>
-                            {card.icon}
-                          </div>
-                          <div>
-                            <div className="text-lg font-extrabold text-slate-900 tracking-tight">
-                              {card.value}
-                            </div>
-                            <div className="text-xs font-semibold text-slate-400 mt-0.5 leading-tight">
-                              {card.label}
-                            </div>
-                          </div>
-                        </div>
-                      ))
+                    ? null
                     : activeTab === "Program Fee"
                       ? feeCards.map((card, idx) => (
                           <div

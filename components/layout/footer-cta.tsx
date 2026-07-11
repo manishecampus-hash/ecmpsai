@@ -4,12 +4,12 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export function FooterCta() {
   return (
-    <div className="absolute inset-x-0 -top-56 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-40 md:-top-32 lg:-top-24">
+    <div className="absolute inset-x-0 -top-44 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-32 md:-top-20 lg:-top-12">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Image */}
           <div className="flex w-full shrink-0 justify-center md:w-64 md:items-center md:self-stretch">
-            <div className="relative aspect-[4/3] w-2/3 max-w-[220px] sm:w-1/2 md:aspect-auto md:h-full md:w-full md:min-h-[160px]">
+            <div className="relative aspect-[16/9] w-1/2 max-w-[130px] sm:aspect-[4/3] sm:w-1/2 sm:max-w-[220px] md:aspect-auto md:h-full md:w-full md:min-h-[160px]">
               <Image
                 src="/cta/cta.png"
                 alt="CTA"
@@ -21,16 +21,16 @@ export function FooterCta() {
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col items-center gap-4 px-4 pb-8 pt-0 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
+          <div className="flex flex-1 flex-col items-center gap-1.5 px-4 pb-3 pt-0 sm:gap-4 sm:pb-8 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
             {/* Text */}
             <div className="text-center md:text-left">
-              <h2 className="text-xl font-bold leading-tight text-slate-800 sm:text-2xl lg:text-4xl">
+              <h2 className="text-lg font-bold leading-tight text-slate-800 sm:text-2xl lg:text-4xl">
                 Ready to Start Your
                 <br className="hidden md:block" />
                 Global Academic Journey?
               </h2>
 
-              <div className="mt-4 flex flex-wrap justify-center gap-3 md:justify-start">
+              <div className="mt-1.5 flex flex-wrap justify-center gap-3 sm:mt-4 md:justify-start">
                 {[
                   "Globally Accredited",
                   "Flexible Online",
@@ -48,10 +48,10 @@ export function FooterCta() {
             </div>
 
             {/* Button */}
-            <div className="flex shrink-0 flex-col items-center gap-2">
+            <div className="flex shrink-0 flex-col items-center gap-1 sm:gap-2">
               <Link
                 href="/apply"
-                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-6 py-2 text-sm font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:py-3"
               >
                 <span
                   className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"

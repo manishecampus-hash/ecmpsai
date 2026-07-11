@@ -45,7 +45,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Scale, CheckCircle, BookOpen } from "lucide-react";
+import { Search, Scale, CheckCircle, BookOpen, Sparkles } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -58,6 +58,8 @@ export default function BottomNav() {
     { href: "/apply", label: "Apply", icon: CheckCircle },
     { href: "/study", label: "Study", icon: BookOpen },
   ];
+
+  const aiLink = { href: "/ai", label: "AI Call", icon: Sparkles };
 
   const isActive = (href: string) => pathname === href;
 
@@ -79,54 +81,94 @@ export default function BottomNav() {
     };
   }, []);
 
+  const aiActive = isActive(aiLink.href);
+  const AiIcon = aiLink.icon;
+
   return (
-    <div
-      className={`fixed bottom-2 left-3 right-3 z-50 md:hidden transition-all duration-300 ${
-        isVisible ? "translate-y-0" : "translate-y-24"
-      }`}
-    >
-      {/* Compact iPhone Style Navbar */}
-      <div className="flex items-center justify-around rounded-[22px] border border-gray-200/70 bg-white/95 px-2 py-1 shadow-xl backdrop-blur-xl">
-        {bottomNavLinks.map((link) => {
-          const Icon = link.icon;
-          const active = isActive(link.href);
+    <>
+      {/* Full width white background layer */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 h-20 bg-white md:hidden" />
 
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-1 transition-all duration-300 ${
-                active ? "bg-red-50" : "hover:bg-gray-100 active:scale-95"
-              }`}
-            >
-              {/* Icon */}
-              <div
-                className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-300 ${
-                  active
-                    ? "bg-[#FF3B30] text-white shadow-md shadow-[#FF3B30]/30"
-                    : "text-gray-500"
+      <div
+        className={`fixed bottom-2 left-3 right-3 z-50 flex items-center gap-2 md:hidden transition-all duration-300 ${
+          isVisible ? "translate-y-0" : "translate-y-24"
+        }`}
+      >
+        {/* Main Navbar */}
+        <div className="flex flex-1 items-center justify-around rounded-[22px] border border-gray-200 bg-white px-1.5 py-1 shadow-xl">
+          {bottomNavLinks.map((link) => {
+            const Icon = link.icon;
+            const active = isActive(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-1 transition-all duration-300 ${
+                  active ? "bg-red-50" : "hover:bg-gray-100 active:scale-95"
                 }`}
               >
-                <Icon
-                  className={`h-4 w-4 transition-all duration-300 ${
-                    active ? "scale-110" : ""
+                {/* Icon */}
+                <div
+                  className={`flex h-7 w-7 items-center justify-centertransition-all duration-300 ${
+                    active
+                      ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
+                      : "text-black"
                   }`}
-                  strokeWidth={2.3}
-                />
-              </div>
+                >
+                  <Icon
+                    className={`h-4 w-4 transition-all duration-300 ${
+                      active ? "scale-110" : ""
+                    }`}
+                    strokeWidth={2.3}
+                  />
+                </div>
 
-              {/* Label */}
-              <span
-                className={`text-[8px] font-semibold transition-colors duration-300 ${
-                  active ? "text-[#FF3B30]" : "text-gray-500"
-                }`}
-              >
-                {link.label}
-              </span>
-            </Link>
-          );
-        })}
+                {/* Label */}
+                <span
+                  className={`text-[7.5px] font-semibold leading-none transition-colors duration-300 ${
+                    active ? "text-[#ef4444]" : "text-black"
+                  }`}
+                >
+                  {link.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Separate AI Tab */}
+        <Link
+          href={aiLink.href}
+          className={`flex w-16 flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-[22px] border py-1 shadow-xl transition-all duration-300 ${
+            aiActive
+              ? "border-[#ef4444] bg-[#ef4444]/5"
+              : "border-gray-200 bg-white active:scale-95"
+          }`}
+        >
+          <div
+            className={`flex h-7 w-7 items-center justify-center rounded-xl transition-all duration-300 ${
+              aiActive
+                ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
+                : "bg-black text-white"
+            }`}
+          >
+            <AiIcon
+              className={`h-4 w-4 transition-all duration-300 ${
+                aiActive ? "scale-110" : ""
+              }`}
+              strokeWidth={2.3}
+            />
+          </div>
+          <span
+            className={`text-[7.5px] font-semibold leading-none transition-colors duration-300 ${
+              aiActive ? "text-[#ef4444]" : "text-black"
+            }`}
+          >
+            {aiLink.label}
+          </span>
+        </Link>
       </div>
-    </div>
+    </>
   );
 }

@@ -90,7 +90,7 @@ export default function HeroSearch() {
         </div>
         {/* Single Input Box */}
         <form onSubmit={handleSearch} className="w-full max-w-2xl mb-6">
-          <div className="flex items-center px-5 py-3 rounded-full bg-white border border-gray-300">
+          <div className="flex items-center h-10 md:h-12 px-4 md:px-5 rounded-full bg-white border border-gray-300">
             <input
               type="text"
               value={query}
@@ -98,8 +98,7 @@ export default function HeroSearch() {
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               placeholder={placeholders[placeholderIndex]}
-              className="flex-1 bg-transparent border-none outline-none focus:ring-0 px-2 py-1 text-[16px] text-gray-800 placeholder:text-gray-400"
-              // Inline style se direct override
+              className="flex-1 h-full bg-transparent border-none outline-none focus:ring-0 px-2 text-sm md:text-base text-gray-800 placeholder:text-gray-400"
               style={{
                 backgroundColor: "transparent",
                 boxShadow: "none",
@@ -121,7 +120,7 @@ export default function HeroSearch() {
             <button
               key={label}
               onClick={() => search(label)}
-              className="h-10 px-5 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-[14px] font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all"
+              className="h-8 px-5 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-[10px] font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all"
             >
               <Icon size={14} style={{ color }} />
               <span>{label}</span>

@@ -38,9 +38,9 @@ export default function PlacementPartners() {
        ============================================================ */
     <section
       id="placements"
-      className="bg-white border-y border-slate-100 py-10 overflow-hidden"
+      className="bg-white border-y border-slate-100 py-14 overflow-hidden"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
           Our Elite Hiring Network
@@ -52,10 +52,10 @@ export default function PlacementPartners() {
       </div>
 
       {/* Infinite loop flex track wrapper container */}
-      <div className="relative w-full flex items-center overflow-hidden py-2 select-none">
+      <div className="relative w-full flex items-center overflow-hidden py-1 select-none">
         {/* Left & Right gradient masking over components context elements */}
-        <div className="pointer-events-none absolute left-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute right-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute left-0 z-10 h-full w-44 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute right-0 z-10 h-full w-44 bg-gradient-to-l from-white to-transparent" />
 
         {/* ALIGNMENT FIX: 
             1. Changed 'justify-around' to 'justify-start' so tracking is linear.
@@ -64,7 +64,7 @@ export default function PlacementPartners() {
           {doublePartners.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
-              className="flex items-center justify-center px-8 py-3.5 min-w-[170px] h-[54px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
+              className="flex items-center justify-center px-8 py-4 min-w-[170px] h-[72px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
             >
               <span className={`text-base select-none ${partner.color}`}>
                 {partner.name}

@@ -121,35 +121,33 @@ export const quizQuestions: QuizQuestion[] = [
       {
         id: "under-3l",
         label: "Under ₹3 LPA",
-        emoji: "📊",
         min: 0,
         max: 300000,
       },
       {
         id: "3l-6l",
         label: "₹3 – ₹6 LPA",
-        emoji: "📈",
         min: 300000,
         max: 600000,
       },
       {
         id: "6l-10l",
         label: "₹6 – ₹10 LPA",
-        emoji: "🚀",
+
         min: 600000,
         max: 1000000,
       },
       {
         id: "10l-20l",
         label: "₹10 – ₹20 LPA",
-        emoji: "🌟",
+
         min: 1000000,
         max: 2000000,
       },
       {
         id: "above-20l",
         label: "Above ₹20 LPA",
-        emoji: "🏆",
+
         min: 2000000,
         max: Infinity,
       },

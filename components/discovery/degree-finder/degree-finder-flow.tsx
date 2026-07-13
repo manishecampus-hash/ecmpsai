@@ -179,7 +179,7 @@ function QuizStepScreen({
         upToStep={stepIdx}
       />
 
-      <div className="text-center mb-8">
+      <div className="text-center mb-2">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{q.question}</h2>
         <p className="text-sm text-gray-400">{q.subtitle}</p>
       </div>
@@ -441,7 +441,7 @@ function ResultsScreen({
 export default function DegreeFinderFlow() {
   const {
     flowStep,
-    setFlowStep, // 👈 hook se ye ab export ho raha hoga (Step 1 dekho)
+    setFlowStep,
     selectedType,
     selectedCourse,
     categoryCoursess,
@@ -467,15 +467,13 @@ export default function DegreeFinderFlow() {
 
   const showLeadGate = flowStep === "results" && leadStep === "quiz";
 
-  // Agar results pe hain lekin lead form abhi khula hai, to indicator step6 pe dikhao
   const effectiveFlowStep = showLeadGate ? "step6" : flowStep;
   const currentIdx = STEP_INDEX[effectiveFlowStep] ?? 0;
 
   const goToStep = (targetStepId: string) => {
     const targetIdx = STEP_INDEX[targetStepId] ?? 0;
-    if (targetIdx >= currentIdx) return; // sirf peeche (completed) jaa sakte hain
+    if (targetIdx >= currentIdx) return;
 
-    // agar results/lead-gate se peeche jaa rahe hain to lead flow reset karo
     if (flowStep === "results") {
       setLeadStep("quiz");
     }

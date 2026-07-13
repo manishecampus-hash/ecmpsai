@@ -619,7 +619,7 @@ function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center justify-between gap-5 border border-gray-100 rounded-2xl p-5 transition-all duration-150 hover:border-red-300 "
+      className="flex items-center justify-between gap-5 border border-gray-100 rounded-2xl p-5 transition-all duration-150 hover:border-red-300 hover:-translate-y-1 hover:shadow-md"
     >
       <div className="min-w-0">
         <p className="text-[11px] font-semibold uppercase tracking-widest mb-1.5 text-red-500">
@@ -634,7 +634,7 @@ function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
         </span>
       </div>
       {image && (
-        <div className="relative w-28 h-20 flex items-center justify-center flex-shrink-0">
+        <div className="relative w-20 h-16 flex items-center justify-center flex-shrink-0">
           <div className="absolute inset-0 rounded-2xl via-yellow-100 to-blue-100 blur-sm opacity-90" />
           <div className="relative w-24 h-16 rounded-2xl bg-white/70 border border-white shadow-sm flex items-center justify-center">
             <img
@@ -694,10 +694,10 @@ function ProgramDropdown({
                 key={cat.id}
                 onMouseEnter={() => setActiveCat(cat.id)}
                 onClick={() => handleCategoryClick(cat.id)}
-                className={`w-full flex items-center gap-3.5 px-4 py-3 text-left transition-all duration-100 border-b md:border-b-0 border-gray-50 md:border-r-2 ${
+                className={`w-[95%] mx-auto flex items-center gap-3.5 px-4 py-3 text-left rounded-xl transition-all duration-150 ${
                   isActive
-                    ? "bg-black-50 border-black text-red-600 font-semibold"
-                    : "border-transparent text-black hover:bg-white hover:text-gray-900"
+                    ? "bg-[#fde9eb] text-red-700 font-semibold"
+                    : "text-black hover:bg-[#fde9eb]/60 hover:text-red-600"
                 }`}
               >
                 <GrayIcon

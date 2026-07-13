@@ -11,7 +11,7 @@ import {
 export const categories = [
   {
     id: "iim",
-    label: "IIM Certification Courses",
+    label: "IIM Certification",
     Icon: FileBadge,
     courses: [
       {
@@ -180,12 +180,15 @@ export const categories = [
         name: "Digital Marketing & AI Course",
         duration: "6 Months",
         href: "/programs/offline-certification/digital-marketing-ai",
+        image:
+          "/offlinecertification/Learn-Digital-Marketing-with-Generative-AI-Tools.jpg",
       },
       {
         tag: "Certification",
         name: "Ecommerce Business Course",
         duration: "4 Months",
         href: "/programs/offline-certification/ecommerce-business",
+        image: "/offlinecertification/business.jpg",
       },
     ],
   },
@@ -198,31 +201,37 @@ export const categories = [
         tag: "Executive",
         name: "1 Year MBA from O.P. Jindal Global University",
         duration: "12 Months",
+        image: "/1yearprogram/OPJ.svg",
       },
       {
         tag: "Executive",
         name: "1 Year M.Sc from O.P. Jindal Global University",
         duration: "12 Months",
+        image: "/1yearprogram/OPJ.svg",
       },
       {
         tag: "Executive",
         name: "1.5 Year MBA From Liverpool Business School",
         duration: "12 Months",
+        image: "/1yearprogram/LiverpoolBusinessSchool.svg",
       },
       {
         tag: "Executive",
         name: "1 Year MBA from Golden Gate University",
         duration: "12 Months",
+        image: "/1yearprogram/GGU.webp",
       },
       {
         tag: "Executive",
         name: "1 Year MBA From Edgewood University",
         duration: "12 Months",
+        image: "/1yearprogram/EdgewoodUnisvgFINAL-3.png",
       },
       {
         tag: "Executive",
         name: "1 Year MBA in Business & Law from O.P. Jindal Global University",
         duration: "13 Months",
+        image: "/1yearprogram/OPJ.svg",
       },
     ],
   },
@@ -235,6 +244,7 @@ export const categories = [
         tag: "University",
         name: "Amity University",
         duration: "Multiple",
+        image: "/programuniversity/1-2.png",
       },
       {
         tag: "University",

@@ -132,8 +132,7 @@ const CareerExplorer = () => {
                 className="absolute inset-0 flex flex-col justify-between gap-2 p-3 sm:p-4 rounded-2xl
                            bg-[#1b1464]/95 opacity-0 translate-y-1
                            pointer-events-none
-                           group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto
-                           transition-all duration-300 ease-out"
+                          "
               >
                 <div className="flex flex-col gap-1.5 sm:gap-2">
                   <h3 className="font-bold leading-tight text-white text-[13px] sm:text-base line-clamp-2">

@@ -2,27 +2,27 @@ import React from "react";
 import { Handshake } from "lucide-react";
 
 const yearOne = [
-  ["BCOM101", "Financial Accounting", "6 Credits"],
-  ["BCOM102", "Business Organisation", "6 Credits"],
-  ["BCOM103", "Business Economics", "6 Credits"],
-  ["BCOM104", "Business Communication", "6 Credits"],
-  ["BCOM105", "Principles of Management", "6 Credits"],
+  ["DBA101", "Advanced Research Methods", "6 Credits"],
+  ["DBA102", "Organizational Theory & Behavior", "6 Credits"],
+  ["DBA103", "Strategic Leadership", "6 Credits"],
+  ["DBA104", "Quantitative Analysis for Business", "6 Credits"],
+  ["DBA105", "Academic Writing & Doctoral Seminar", "6 Credits"],
 ];
 
 const yearTwo = [
-  ["BCOM201", "Corporate Accounting", "6 Credits"],
-  ["BCOM202", "Business Law", "6 Credits"],
-  ["BCOM203", "Cost Accounting", "6 Credits"],
-  ["BCOM204", "Income Tax Law", "6 Credits"],
-  ["BCOM205", "Company Law", "6 Credits"],
+  ["DBA201", "Applied Statistics & Data Analysis", "6 Credits"],
+  ["DBA202", "Corporate Finance Theory", "6 Credits"],
+  ["DBA203", "Global Business Strategy", "6 Credits"],
+  ["DBA204", "Qualitative Research Methods", "6 Credits"],
+  ["DBA205", "Ethics in Business Research", "6 Credits"],
 ];
 
 const yearThree = [
-  ["BCOM301", "Auditing", "6 Credits"],
-  ["BCOM302", "Financial Management", "6 Credits"],
-  ["BCOM303", "Management Accounting", "6 Credits"],
-  ["BCOM304", "GST & Indirect Tax", "6 Credits"],
-  ["BCOM305", "Project Work / Elective", "6 Credits"],
+  ["DBA301", "Comprehensive Examination Preparation", "6 Credits"],
+  ["DBA302", "Dissertation Proposal Defense", "6 Credits"],
+  ["DBA303", "Dissertation Research & Data Collection", "6 Credits"],
+  ["DBA304", "Dissertation Writing", "6 Credits"],
+  ["DBA305", "Final Dissertation Defense / Doctoral Capstone", "6 Credits"],
 ];
 
 function CurriculumTable({ title, rows }: { title: string; rows: string[][] }) {
@@ -77,14 +77,17 @@ function CurriculumTable({ title, rows }: { title: string; rows: string[][] }) {
   );
 }
 
-export default function BComCurriculum() {
+export default function GGUDoctorateCurriculum() {
   return (
-    <section className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
+    <section
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-8 max-w-3xl border-b border-slate-100 pb-6 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
             <Handshake className="h-3.5 w-3.5 text-red-500" />
-            B.Com Program
+            DBA Program
           </span>
 
           <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
@@ -94,28 +97,29 @@ export default function BComCurriculum() {
 
         <div className="mt-8 space-y-4 text-sm leading-relaxed text-black">
           <p>
-            The <strong>Online B.Com program</strong> moves through three
-            academic years, with each year building stronger foundations in
-            commerce, accounting, taxation, finance, and business management.
+            The <strong>Golden Gate University Online DBA</strong> moves through
+            three academic years, with each year building deeper capability in
+            research, strategy, finance, and doctoral-level business
+            scholarship.
           </p>
 
           <p>
-            <strong>Year 1</strong> builds the foundation. Students explore core
-            subjects such as financial accounting, business organisation,
-            economics, communication, and management principles.
+            <strong>Year 1</strong> builds the research foundation. Students
+            explore advanced research methods, organizational theory, strategic
+            leadership, quantitative analysis, and academic writing.
           </p>
 
           <p>
-            <strong>Year 2</strong> goes deeper into applied commerce subjects
-            including corporate accounting, business law, cost accounting,
-            income tax, and company law.
+            <strong>Year 2</strong> goes deeper into applied doctoral study
+            including applied statistics, corporate finance theory, global
+            business strategy, qualitative research methods, and research
+            ethics.
           </p>
 
           <p>
-            <strong>Year 3</strong> focuses on advanced commerce and
-            professional skills through auditing, financial management,
-            management accounting, GST, indirect taxation, and project-based
-            learning.
+            <strong>Year 3</strong> focuses on the dissertation journey through
+            comprehensive examinations, proposal defense, original research, and
+            the final dissertation defense.
           </p>
         </div>
 

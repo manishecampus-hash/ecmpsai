@@ -22,22 +22,23 @@ const feeOptions = [
   {
     icon: Building2,
     title: "Corporate Sponsorship",
-    desc: "Get your company to sponsor with B2B invoicing support",
+    desc: "Get your employer to sponsor with B2B invoicing and reimbursement support",
   },
   {
     icon: GraduationCap,
     title: "Scholarship Available",
-    desc: "Merit & need-based scholarships up to Rs.40,000 available",
+    desc: "Merit & need-based scholarships up to Rs.75,000 available",
   },
 ];
 
-export default function FeeSection() {
+export default function GGUDoctorateFeeSection() {
   return (
     <section
       id="fee"
       style={{
         background:
           "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
+        fontFamily: "'Inter', sans-serif",
       }}
       className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
     >
@@ -55,8 +56,8 @@ export default function FeeSection() {
           </div>
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
-            Flexible payment options to make quality online education more
-            accessible for students and working professionals.
+            Flexible payment options to make a Golden Gate University DBA more
+            accessible for working executives and senior professionals.
           </p>
         </div>
 
@@ -73,11 +74,11 @@ export default function FeeSection() {
               </div>
 
               <div className="mb-2 text-4xl font-extrabold text-red-500 sm:text-5xl">
-                Rs.2,00,000
+                Rs.3,50,000
               </div>
 
               <div className="mb-6 text-sm text-slate-400 sm:text-base">
-                Online B.Com Program - 3 Year Degree
+                Online DBA Program - Golden Gate University
               </div>
 
               {/* EMI Box */}
@@ -89,7 +90,7 @@ export default function FeeSection() {
 
                 <div className="text-sm leading-6 text-slate-300 sm:text-base">
                   Starting from{" "}
-                  <span className="font-bold text-white">Rs.8,500/month</span>{" "}
+                  <span className="font-bold text-white">Rs.9,750/month</span>{" "}
                   with flexible payment tenure.
                 </div>
               </div>

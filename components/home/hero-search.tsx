@@ -131,12 +131,12 @@ export default function HeroSearch() {
         <div className="flex flex-col sm:flex-row justify-center w-full mt-8 px-4 gap-4">
           {/* Card 1 */}
           <Link href="/discover" className="block flex-1">
-            <div className="bg-[#0f766e] px-4 py-3 rounded-2xl text-left min-h-[90px]">
-              <div className="flex items-center gap-2 text-white">
+            <div className="bg-[#FFF5F5] px-4 py-3 rounded-2xl text-left min-h-[90px]">
+              <div className="flex items-center gap-2 text-black">
                 <Search size={18} />
                 <h3 className="font-semibold text-md">Discover</h3>
               </div>
-              <p className="text-teal-50 text-xs mt-1">
+              <p className="text-black text-xs mt-1">
                 Get fast and accurate answers from the most trusted sources.
               </p>
             </div>

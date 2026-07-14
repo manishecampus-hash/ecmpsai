@@ -4,29 +4,32 @@ import React, { useState } from "react";
 import { ChevronDown, CheckCircle2 } from "lucide-react";
 
 const benefits = [
-  "Future-ready commerce education with flexible online learning",
-  "Build strong knowledge in accounting, finance, and business management",
-  "Designed for students, freshers, and working professionals",
-  "Supports career growth in banking, taxation, finance, and management",
+  "Future-ready doctoral education with flexible online learning",
+  "Build advanced expertise in strategy, leadership, and applied research",
+  "Designed for working executives and senior professionals",
+  "Supports career growth into C-suite, consulting, and academia",
 ];
 
-export default function ReadMore() {
+export default function GguReadMore() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="border-b border-slate-100 bg-white px-4 py-10 sm:px-6 lg:px-8">
+    <section
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="border-b border-slate-100 bg-white px-4 py-10 sm:px-6 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-              Benefits of Choosing an Online B.Com{" "}
+              Benefits of Choosing an Online DBA{" "}
               <span className="text-red-500">Program?</span>
             </h2>
 
             <p className="mt-4 text-base leading-relaxed text-slate-600">
-              Gain practical commerce and business knowledge through a flexible
-              online B.Com program focused on accounting, finance, taxation,
-              banking, auditing, and industry-relevant skills.
+              Gain advanced strategic and research capabilities through a
+              flexible online DBA program from Golden Gate University, focused
+              on leadership, finance, marketing, and applied business research.
             </p>
           </div>
 
@@ -49,17 +52,17 @@ export default function ReadMore() {
             {open && (
               <div className="mt-5 space-y-4 border-l-2 border-red-200 pl-5 text-sm leading-7 text-gray-700 sm:text-base">
                 <p>
-                  Online B.Com programs offer the flexibility to learn from
-                  anywhere while providing access to digital lectures,
-                  assignments, study materials, and academic support throughout
-                  the course.
+                  The Online DBA offers the flexibility to learn from anywhere
+                  while providing access to live and recorded sessions, faculty
+                  mentorship, and a peer cohort of fellow executives throughout
+                  the program.
                 </p>
 
                 <p>
-                  The program helps learners develop practical knowledge in
-                  accounting, finance, taxation, banking, auditing, and business
-                  operations while preparing for corporate careers and higher
-                  education opportunities.
+                  It helps learners develop advanced capabilities in strategic
+                  leadership, corporate finance, organizational research, and
+                  applied business decision-making while preparing for senior
+                  executive, consulting, and academic careers.
                 </p>
               </div>
             )}

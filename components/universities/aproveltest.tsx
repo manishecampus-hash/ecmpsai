@@ -93,17 +93,16 @@ export default function ApSection() {
                   ${index % 2 !== 0 ? "md:border-l-0" : ""}
                 `}
               >
-                {/* Visual Square Icon / Logo */}
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 border border-slate-200/50 p-2 text-slate-700">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 border border-slate-200/50 p-0.5 text-slate-700">
                   {isImage ? (
                     <img
                       src={item.icon as string}
                       alt={item.label}
-                      className="h-full w-full object-contain mix-blend-multiply"
+                      className="scale-150 object-contain mix-blend-multiply"
                     />
                   ) : (
                     IconComponent && (
-                      <IconComponent className="h-6 w-6 text-slate-800" />
+                      <IconComponent className="h-14 w-6 text-slate-800" />
                     )
                   )}
                 </div>

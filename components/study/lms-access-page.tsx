@@ -398,9 +398,6 @@ export default function LmsAccessPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
-  const [expandedUniversity, setExpandedUniversity] = useState<string | null>(
-    null,
-  );
   const filteredAndSorted = useMemo(() => {
     let result = universities.filter((uni) => {
       const matchesSearch =
@@ -456,16 +453,6 @@ export default function LmsAccessPage() {
           </div>
 
           {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto mb-8 md:mb-12">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="search"
-              placeholder="Search universities, courses..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 sm:h-14 pl-12 pr-4 rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg focus:ring-2 focus:ring-red-500 focus:border-0 outline-none transition-all text-sm sm:text-base"
-            />
-          </div>
         </div>
       </section>
 
@@ -484,20 +471,15 @@ export default function LmsAccessPage() {
               />
             </button>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-              <span className="hidden sm:inline text-sm text-gray-600 font-medium whitespace-nowrap">
-                Sort by:
-              </span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortType)}
-                className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none cursor-pointer max-w-[140px] sm:max-w-none"
-              >
-                <option value="rating">⭐ Highest Rated</option>
-                <option value="popular">📈 Most Popular</option>
-                <option value="fees-low">💰 Budget First</option>
-                <option value="fees-high">💎 Premium First</option>
-              </select>
+            <div className="relative flex-1 max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="search"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 pl-9 pr-3 text-xs sm:text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none"
+              />
             </div>
 
             {selectedForCompare.length > 0 && (
@@ -705,57 +687,6 @@ export default function LmsAccessPage() {
                         {university.popularFeature}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Features Section */}
-                  <div className="px-6 md:px-8 py-6 border-b border-gray-100 flex-grow">
-                    <div className="mb-4 flex items-center justify-between">
-                      <h4 className="font-bold text-gray-900 text-sm">
-                        Key Features
-                      </h4>
-                      <button
-                        onClick={() =>
-                          setExpandedUniversity(
-                            expandedUniversity === university.id
-                              ? null
-                              : university.id,
-                          )
-                        }
-                        className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1"
-                      >
-                        {expandedUniversity === university.id ? "Less" : "More"}
-                        <ChevronRight
-                          className={`h-3.5 w-3.5 transition-transform ${
-                            expandedUniversity === university.id
-                              ? "rotate-90"
-                              : ""
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    <ul className="grid grid-cols-2 gap-2 mb-4">
-                      {(expandedUniversity === university.id
-                        ? university.features
-                        : university.features.slice(0, 2)
-                      ).map((feature) => (
-                        <li
-                          key={feature.label}
-                          className="flex items-start gap-2 text-xs sm:text-sm text-gray-700"
-                        >
-                          <feature.icon className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
-                          <span>{feature.label}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {expandedUniversity === university.id && (
-                      <div className="mt-4 pt-4 border-t border-gray-100 bg-blue-50 p-3 rounded-lg">
-                        <p className="text-xs sm:text-sm text-blue-900 font-medium">
-                          ✓ All features available with verified access
-                        </p>
-                      </div>
-                    )}
                   </div>
 
                   {/* Deals Section */}

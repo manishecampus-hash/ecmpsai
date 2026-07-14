@@ -14,7 +14,7 @@ import { universities } from "@/data/universities";
 
 const CARDS_PER_PAGE = 3;
 
-export default function UniversitySection() {
+export default function DoctorateUniversitySection() {
   const [page, setPage] = useState(0);
 
   const universityPages = useMemo(() => {
@@ -39,21 +39,24 @@ export default function UniversitySection() {
   };
 
   return (
-    <section className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
+    <section
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-red-600">
-            Top Online Universities
+            Top Doctorate Universities
           </span>
 
           <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
             Compare Universities for{" "}
-            <span className="text-red-500">Online B.Com</span>
+            <span className="text-red-500">Online DBA</span>
           </h2>
 
           <p className="mx-auto mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-500">
-            Shortlist trusted universities based on location, course portfolio,
-            and online learning flexibility.
+            Shortlist AACSB-accredited universities based on location,
+            specialization portfolio, and online learning flexibility.
           </p>
         </div>
 
@@ -109,7 +112,7 @@ export default function UniversitySection() {
                       <div className="rounded-2xl bg-slate-50 p-3 text-center">
                         <GraduationCap className="mx-auto mb-1 h-4 w-4 text-red-500" />
                         <p className="text-[11px] font-bold text-slate-500">
-                          Courses
+                          Programs
                         </p>
                         <p className="mt-0.5 text-xs font-black text-slate-900">
                           {university.courses}
@@ -129,7 +132,7 @@ export default function UniversitySection() {
 
                     <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
                       <UsersRound className="h-4 w-4 shrink-0" />
-                      <span>Trusted by 50,000+ Students</span>
+                      <span>Trusted by 5,000+ Executives</span>
                     </div>
 
                     <button

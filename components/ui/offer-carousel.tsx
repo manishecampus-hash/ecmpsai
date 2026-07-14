@@ -262,6 +262,7 @@ const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
           <iframe
             src={src}
             className="w-full h-full"
+            referrerPolicy="strict-origin-when-cross-origin"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />

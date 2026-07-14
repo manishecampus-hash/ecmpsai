@@ -38,6 +38,7 @@ const programsData = [
       "Live coding labs",
       "100% placement support",
     ],
+    deadline: "Applications close 25 Aug",
   },
   {
     id: 2,
@@ -58,6 +59,7 @@ const programsData = [
       "1:1 mentor sessions",
       "Certificate on completion",
     ],
+    deadline: "Applications close 10 Aug",
   },
   {
     id: 3,
@@ -74,6 +76,7 @@ const programsData = [
     description:
       "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
     highlights: ["Case-study driven", "Global faculty", "Campus placements"],
+    deadline: "Applications close 5 Sep",
   },
   {
     id: 4,
@@ -94,6 +97,7 @@ const programsData = [
       "Live campaign practice",
       "Google certification prep",
     ],
+    deadline: "Applications close 18 Aug",
   },
   {
     id: 5,
@@ -114,6 +118,7 @@ const programsData = [
       "Solution architect prep",
       "Cloud project portfolio",
     ],
+    deadline: "Applications close 1 Sep",
   },
   {
     id: 6,
@@ -134,6 +139,7 @@ const programsData = [
       "International faculty",
       "Dual credential option",
     ],
+    deadline: "Applications close 15 Sep",
   },
   {
     id: 7,
@@ -154,6 +160,7 @@ const programsData = [
       "ML model deployment",
       "Capstone project",
     ],
+    deadline: "Applications close 22 Aug",
   },
   {
     id: 8,
@@ -174,6 +181,7 @@ const programsData = [
       "Case-based learning",
       "Beginner friendly",
     ],
+    deadline: "Applications close 8 Aug",
   },
 ];
 
@@ -424,7 +432,7 @@ export default function ProgramsSection() {
           background: linear-gradient(160deg, #0b1178 0%, #0a0f5e 55%, #080b46 100%);
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
+          justify-content: flex-start;
           padding: 16px;
           opacity: 0;
           transform: translateY(100%);
@@ -436,6 +444,27 @@ export default function ProgramsSection() {
           opacity: 1;
           transform: translateY(0);
           pointer-events: auto;
+        }
+        .__overlayDeadline {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: rgba(255,255,255,0.1);
+          border: 1px solid rgba(255,255,255,0.18);
+          color: #ffd166;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 4px 9px;
+          border-radius: 20px;
+          margin: 0 0 10px;
+          width: fit-content;
+          opacity: 0;
+          transform: translateY(6px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .__card:hover .__overlayDeadline {
+          opacity: 1;
+          transform: translateY(0);
         }
         .__overlayTitle {
           margin: 0 0 8px;
@@ -798,12 +827,10 @@ export default function ProgramsSection() {
                   onMouseEnter={(e) => {
                     e.currentTarget.style.boxShadow =
                       "0 8px 32px rgba(0,0,0,0.14)";
-                    e.currentTarget.style.transform = "translateY(-3px)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.boxShadow =
                       "0 2px 12px rgba(0,0,0,0.08)";
-                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
                   {/* Image */}
@@ -989,6 +1016,10 @@ export default function ProgramsSection() {
 
                   {/* Full-card hover overlay - navy card style with icon rows */}
                   <div className="__cardOverlay">
+                    <span className="__overlayDeadline">
+                      <Clock size={10} color="#ffd166" />
+                      {program.deadline}
+                    </span>
                     <p className="__overlayTitle">{program.title}</p>
                     <p className="__overlayText">{program.description}</p>
 

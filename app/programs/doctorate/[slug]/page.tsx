@@ -3,10 +3,7 @@ import BComCareers from "@/components/programs/bcom/bcom-careers";
 import BComCurriculum from "@/components/programs/bcom/bcom-curriculum";
 import BComEligibilityFees from "@/components/programs/bcom/bcom-eligibility-fees";
 import BComFAQ from "@/components/programs/bcom/bcom-faq";
-
-import ReadMore from "@/components/programs/bcom/read-more";
 import TestimonialsSection from "@/components/programs/bcom/testimonials-section";
-import UniversitySection from "@/components/programs/bcom/university-section";
 import BComSubHeader from "@/components/programs/bcom/bcom-sub-header";
 import { Footer } from "@/components/layout/footer";
 import GGUDoctorateHero from "@/components/programs/ggu/ggu-hero";
@@ -14,6 +11,11 @@ import GGUDoctorateOverview from "@/components/programs/ggu/ggu-overview";
 import GGUDoctorateSpecializations from "@/components/programs/ggu/ggu-specializations";
 import { KeyHighlights } from "@/components/programs/ggu/ggu-key-highlight";
 import GGUDoctorateSyllabus from "@/components/programs/ggu/ggu-syllabus";
+import GguUniversitySection from "@/components/programs/ggu/ggu-university-section";
+import GguReadMore from "@/components/programs/ggu/read-more";
+import GGUDoctorateCurriculum from "@/components/programs/ggu/ggu-curriculum";
+import GGUDoctorateFeeSection from "@/components/programs/ggu/ggu-eligibility-fees";
+import GGUDoctorateCareers from "@/components/programs/ggu/ggu-careers";
 
 export default function GguPage() {
   return (
@@ -37,18 +39,18 @@ export default function GguPage() {
 
         {/* 3. University Info */}
         <div id="university-section">
-          <UniversitySection />
-          <ReadMore />
+          <GguUniversitySection />
+          <GguReadMore />
         </div>
 
         {/* 4. Curriculum */}
         <div id="subject-syllabus">
-          <BComCurriculum />
+          <GGUDoctorateCurriculum />
         </div>
 
         {/* 5. Eligibility & Fees */}
         <div id="eligibility-duration">
-          <BComEligibilityFees />
+          <GGUDoctorateFeeSection />
         </div>
 
         <GGUDoctorateSyllabus />
@@ -70,7 +72,7 @@ export default function GguPage() {
 
         {/* 8. Career */}
         <div id="career-scope">
-          <BComCareers />
+          <GGUDoctorateCareers />
         </div>
 
         {/* Testimonials */}

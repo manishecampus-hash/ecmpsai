@@ -3,12 +3,10 @@
 import React from "react";
 import {
   Search,
-  LayoutGrid,
-  ArrowUpDown,
   ChevronDown,
+  ArrowLeft,
   ArrowLeftRight,
   GraduationCap,
-  Sprout,
   BookOpen,
   Briefcase,
   BarChart3,
@@ -134,30 +132,57 @@ const SAMPLE_COURSES = [
   },
 ];
 
-// Per-course icon + colored badge, matched to the reference design
-const courseVisuals = {
-  ba: { Icon: BookOpen, bg: "bg-violet-50", icon: "text-re" },
-  bcom: { Icon: Briefcase, bg: "bg-emerald-50", icon: "text-red" },
-  bba: { Icon: BarChart3, bg: "bg-blue-50", icon: "text-blue-600" },
-  bca: { Icon: Laptop, bg: "bg-orange-50", icon: "text-orange-600" },
-  bsc: { Icon: Microscope, bg: "bg-blue-50", icon: "text-blue-600" },
-  ma: { Icon: GraduationCap, bg: "bg-violet-50", icon: "text-violet-600" },
-  mcom: { Icon: FileText, bg: "bg-emerald-50", icon: "text-emerald-600" },
-  mba: { Icon: PieChart, bg: "bg-violet-50", icon: "text-violet-600" },
-  mca: { Icon: Bot, bg: "bg-orange-50", icon: "text-orange-600" },
-  msc: { Icon: FlaskConical, bg: "bg-emerald-50", icon: "text-emerald-600" },
-  btech: { Icon: Settings, bg: "bg-red-50", icon: "text-red-600" },
-  be: { Icon: Building2, bg: "bg-blue-50", icon: "text-blue-600" },
+// Icon per program — kept semantic to the degree itself
+const COURSE_ICONS = {
+  ba: BookOpen,
+  bcom: Briefcase,
+  bba: BarChart3,
+  bca: Laptop,
+  bsc: Microscope,
+  ma: GraduationCap,
+  mcom: FileText,
+  mba: PieChart,
+  mca: Bot,
+  msc: FlaskConical,
+  btech: Settings,
+  be: Building2,
 };
 
-const categoryBadge = {
-  Humanities: "bg-violet-100 text-violet-700",
-  Commerce: "bg-emerald-100 text-emerald-700",
-  Management: "bg-blue-100 text-blue-700",
-  "Computer Applications": "bg-orange-100 text-orange-700",
-  Science: "bg-emerald-100 text-emerald-700",
-  Engineering: "bg-red-100 text-red-700",
+// Colour reads off the stream/category, not the individual course — one consistent system
+const CATEGORY_STYLES = {
+  Humanities: {
+    icon: "text-violet-700",
+    badge: "border-violet-300 text-violet-700 bg-violet-50",
+  },
+  Commerce: {
+    icon: "text-emerald-700",
+    badge: "border-emerald-300 text-emerald-700 bg-emerald-50",
+  },
+  Management: {
+    icon: "text-blue-700",
+    badge: "border-blue-300 text-blue-700 bg-blue-50",
+  },
+  "Computer Applications": {
+    icon: "text-orange-700",
+    badge: "border-orange-300 text-orange-700 bg-orange-50",
+  },
+  Science: {
+    icon: "text-teal-700",
+    badge: "border-teal-300 text-teal-700 bg-teal-50",
+  },
+  Engineering: {
+    icon: "text-red-700",
+    badge: "border-red-300 text-red-700 bg-red-50",
+  },
 };
+const DEFAULT_STYLE = {
+  icon: "text-slate-700",
+  badge: "border-slate-300 text-slate-700 bg-slate-50",
+};
+
+function formatLakh(n) {
+  return (n / 100000).toFixed(1);
+}
 
 export default function Step2Screen({
   courses = SAMPLE_COURSES,
@@ -168,192 +193,233 @@ export default function Step2Screen({
   const [searchTerm, setSearchTerm] = React.useState("");
   const [sortBy, setSortBy] = React.useState("popular");
   const [filterStream, setFilterStream] = React.useState("all");
+  const [showAll, setShowAll] = React.useState(false);
+  const INITIAL_COUNT = 3;
 
-  const filteredCourses = courses.filter((c) =>
-    c.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  React.useEffect(() => {
+    setShowAll(false);
+  }, [filterStream, searchTerm, sortBy]);
+
+  const streams = React.useMemo(
+    () => Array.from(new Set(courses.map((c) => c.category))),
+    [courses],
   );
 
+  const visibleCourses = React.useMemo(() => {
+    let list = courses.filter((c) =>
+      c.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    if (filterStream !== "all") {
+      list = list.filter((c) => c.category === filterStream);
+    }
+    list = [...list];
+    switch (sortBy) {
+      case "rating":
+        list.sort((a, b) => b.rating - a.rating);
+        break;
+      case "fees-low":
+        list.sort((a, b) => a.feeMin - b.feeMin);
+        break;
+      case "fees-high":
+        list.sort((a, b) => b.feeMax - a.feeMax);
+        break;
+      case "duration":
+        list.sort((a, b) => parseInt(a.duration) - parseInt(b.duration));
+        break;
+      default:
+        break;
+    }
+    return list;
+  }, [courses, searchTerm, filterStream, sortBy]);
+
+  const isAllStreams = filterStream === "all";
+  const canCollapse = isAllStreams && visibleCourses.length > INITIAL_COUNT;
+  const displayedCourses =
+    canCollapse && !showAll
+      ? visibleCourses.slice(0, INITIAL_COUNT)
+      : visibleCourses;
+
   return (
-    <div className="w-full min-w-0 overflow-x-hidden bg-white">
-      {/* Title Section */}
-      <div className="mb-8 flex items-start justify-between gap-6">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 break-words">
-            Choose a course in {selectedTypeData?.label || "All Programs"}
-          </h2>
-          <p className="text-sm text-gray-500">
-            Explore {courses.length} programs and find the right fit for your
-            goals.
-          </p>
-        </div>
-        <div className="hidden lg:flex relative w-28 h-28 flex-shrink-0 items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-violet-50" />
-          <GraduationCap
-            className="w-12 h-12 text-gray-800 relative z-10"
-            strokeWidth={1.6}
-          />
-          <Sprout
-            className="w-6 h-6 text-emerald-500 absolute bottom-3 left-3 z-10"
-            strokeWidth={1.8}
-          />
-        </div>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search
-            className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"
-            strokeWidth={2}
-          />
-          <input
-            type="text"
-            placeholder="Search programs..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-100 text-sm"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <select
-              value={filterStream}
-              onChange={(e) => setFilterStream(e.target.value)}
-              className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
-            >
-              <option value="all">All Streams</option>
-              <option value="humanities">Humanities</option>
-              <option value="commerce">Commerce</option>
-              <option value="science">Science</option>
-              <option value="management">Management</option>
-            </select>
-            <LayoutGrid
-              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              strokeWidth={2}
-            />
-            <ChevronDown
-              className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
-              strokeWidth={2}
-            />
+    <div className="w-full min-w-0 overflow-x-hidden font-[Inter]">
+      <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 sm:py-10 lg:px-4 lg:py-14">
+        {/* Header */}
+        <div className="mb-8 sm:mb-10 flex flex-wrap items-start justify-between gap-4 sm:gap-8 border-b border-slate-200 pb-6 sm:pb-8">
+          <div className="min-w-0 flex-1">
+            <h2 className="mt-1 sm:mt-2 text-xl leading-snug break-words font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+              Choose a course in{" "}
+              <span className="text-red-500">
+                {selectedTypeData?.label || "All Programs"}
+              </span>
+            </h2>
           </div>
-
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none pl-9 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-400 text-sm font-medium text-gray-700 cursor-pointer"
-            >
-              <option value="popular">Sort by: Popular</option>
-              <option value="rating">Sort by: Rating</option>
-              <option value="fees-low">Sort by: Fees Low</option>
-              <option value="fees-high">Sort by: Fees High</option>
-              <option value="duration">Sort by: Duration</option>
-            </select>
-            <ArrowUpDown
-              className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              strokeWidth={2}
-            />
-            <ChevronDown
-              className="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
-              strokeWidth={2}
+          <div className="hidden lg:flex relative w-24 h-24 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-amber-300">
+            <div className="absolute inset-2 rounded-full border border-slate-200" />
+            <GraduationCap
+              className="w-9 h-9 text-slate-800 relative z-10"
+              strokeWidth={1.4}
             />
           </div>
         </div>
-      </div>
 
-      {/* Course Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {filteredCourses.map((course) => {
-          const visual = courseVisuals[course.id] ?? {
-            Icon: BookOpen,
-            bg: "bg-gray-50",
-            icon: "text-gray-600",
-          };
-          const Icon = visual.Icon;
-          const badgeClass =
-            categoryBadge[course.category] ?? "bg-gray-100 text-gray-700";
-          return (
-            <button
-              key={course.id}
-              onClick={() => onCourseSelect(course.id)}
-              className="w-full p-4 bg-white rounded-2xl border border-gray-200 hover:shadow-md hover:border-red-400 transition-all text-left min-w-0 duration-200"
-            >
-              <div className="flex items-start gap-3 mb-4">
-                <div
-                  className={`w-12 h-12 rounded-2xl ${visual.bg} ${visual.icon} flex items-center justify-center flex-shrink-0`}
-                >
-                  <Icon className="w-6 h-6" strokeWidth={1.8} />
-                </div>
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <h3 className="font-bold text-gray-900 text-sm leading-tight truncate">
-                    {course.title}
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-0.5 leading-tight">
+        {/* Filters */}
+        <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6">
+          <div className="relative w-full sm:flex-1 sm:max-w-xs">
+            <label className="block text-xs font-mono uppercase tracking-widest text-slate-400 mb-1.5">
+              Search
+            </label>
+            <div className="relative">
+              <Search
+                className="w-4 h-4 text-slate-400 absolute left-0 top-1/2 -translate-y-1/2"
+                strokeWidth={2}
+              />
+              <input
+                type="text"
+                placeholder="Program name…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-6 pr-2 py-2 bg-transparent border-b-2 border-slate-300 focus:outline-none focus:border-amber-600 text-sm text-slate-900 placeholder:text-slate-400 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col xs:flex-row sm:items-end gap-4 sm:gap-6 w-full sm:w-auto">
+            <div className="relative w-full sm:w-48">
+              <label className="block text-xs font-mono uppercase tracking-widest text-slate-400 mb-1.5">
+                Stream
+              </label>
+              <select
+                value={filterStream}
+                onChange={(e) => setFilterStream(e.target.value)}
+                className="appearance-none w-full pr-6 py-2 bg-transparent border-b-2 border-slate-300 focus:outline-none focus:border-amber-600 text-sm font-medium text-slate-800 cursor-pointer truncate"
+              >
+                <option value="all">All streams</option>
+                {streams.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="w-3.5 h-3.5 text-slate-400 absolute right-0 bottom-2.5 pointer-events-none"
+                strokeWidth={2}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Course cards — styled as admission-ticket stubs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-10 sm:mb-12">
+          {displayedCourses.map((course, i) => {
+            const Icon = COURSE_ICONS[course.id] ?? BookOpen;
+            const style = CATEGORY_STYLES[course.category] ?? DEFAULT_STYLE;
+            return (
+              <button
+                key={course.id}
+                onClick={() => onCourseSelect(course.id)}
+                className="group relative w-full text-left bg-white border border-slate-200 rounded-md overflow-hidden hover:border-amber-500 hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+              >
+                <div className="p-4 sm:p-5 pb-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <span className="font-mono text-xs uppercase tracking-widest text-slate-400">
+                      No. {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={`text-xs font-mono uppercase tracking-widest px-2 py-0.5 border rounded-sm whitespace-nowrap ${style.badge}`}
+                    >
+                      {course.category}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 mb-1">
+                    <Icon
+                      className={`w-5 h-5 flex-shrink-0 ${style.icon}`}
+                      strokeWidth={1.6}
+                    />
+                    <h3 className="font-serif text-base sm:text-lg text-slate-900 truncate">
+                      {course.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-400 font-mono">
                     {course.duration}
                   </p>
                 </div>
-              </div>
 
-              <div className="flex items-end justify-between gap-1 mb-3">
-                <div className="min-w-0">
-                  <div className="text-xs text-gray-400 font-medium">Fees</div>
-                  <div className="text-sm font-semibold text-gray-900 leading-tight">
-                    ₹{(course.feeMin / 100000).toFixed(1)} –{" "}
-                    {(course.feeMax / 100000).toFixed(1)} Lakh
+                {/* Perforation */}
+                <div className="relative">
+                  <div className="border-t border-dashed border-slate-300" />
+                  <span className="absolute -left-2 -top-2 w-4 h-4 rounded-full bg-stone-50 border border-slate-200" />
+                  <span className="absolute -right-2 -top-2 w-4 h-4 rounded-full bg-stone-50 border border-slate-200" />
+                </div>
+
+                <div className="p-4 sm:p-5 pt-4 flex flex-wrap items-end justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-1">
+                      Tuition
+                    </p>
+                    <p className="font-mono text-xs sm:text-sm font-semibold text-slate-900 whitespace-nowrap">
+                      ₹{formatLakh(course.feeMin)}L – ₹
+                      {formatLakh(course.feeMax)}L
+                    </p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-1">
+                      Rating
+                    </p>
+                    <p className="font-mono text-xs sm:text-sm font-semibold text-slate-900 flex items-center gap-1 justify-end">
+                      <Star
+                        className="w-3.5 h-3.5 text-amber-500"
+                        strokeWidth={0}
+                        fill="currentColor"
+                      />
+                      {course.rating}
+                    </p>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="flex items-center gap-1 justify-end">
-                    <Star
-                      className="w-3.5 h-3.5 text-amber-400"
-                      strokeWidth={0}
-                      fill="currentColor"
-                    />
-                    <span className="text-sm font-semibold text-gray-900">
-                      {course.rating}/5
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-400 font-medium">
-                    Rating
-                  </div>
+
+                <div className="px-4 sm:px-5 pb-4">
+                  <span className="text-xs font-mono uppercase tracking-widest text-slate-300 group-hover:text-amber-700 transition-colors">
+                    Select program →
+                  </span>
                 </div>
-              </div>
+              </button>
+            );
+          })}
 
-              <span
-                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full inline-block ${badgeClass}`}
-              >
-                {course.category}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Footer Info */}
-      {/* Footer Info */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-        <div className="flex items-center gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-2xl px-5 py-3 w-full sm:w-auto">
-          <div className="w-9 h-9 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
-            <GraduationCap className="w-5 h-5" strokeWidth={1.8} />
-          </div>
-          <div>
-            <strong className="block">
-              {filteredCourses.length} programs available
-            </strong>
-            <span className="text-gray-400 text-xs">Across 6 streams</span>
-          </div>
+          {visibleCourses.length === 0 && (
+            <div className="col-span-full text-center py-16 border border-dashed border-slate-300 rounded-md px-4">
+              <p className="text-sm text-slate-500">
+                No programs match “{searchTerm}”. Try a different search or
+                stream.
+              </p>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-2xl px-5 py-3 w-full sm:w-auto">
-          <div className="w-9 h-9 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
-            <ArrowLeftRight className="w-5 h-5" strokeWidth={1.8} />
+
+        {canCollapse && (
+          <div className="flex justify-center mb-10 sm:mb-12 -mt-2 sm:-mt-4">
+            <button
+              onClick={() => setShowAll((v) => !v)}
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 border border-dashed border-slate-300 rounded-full text-xs font-mono uppercase tracking-widest text-slate-600 hover:border-amber-500 hover:text-amber-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            >
+              {showAll
+                ? "Show fewer programs"
+                : `View all ${visibleCourses.length} programs`}
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform ${
+                  showAll ? "rotate-180" : ""
+                }`}
+                strokeWidth={2}
+              />
+            </button>
           </div>
-          <div>
-            <strong className="block">Compare up to 3 programs</strong>
-            <span className="text-gray-400 text-xs">
-              Select programs to compare
-            </span>
-          </div>
+        )}
+
+        {/* Footer ledger */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-dashed border-slate-300 text-xs font-mono uppercase tracking-widest text-slate-500 text-center sm:text-left">
+          <span>{visibleCourses.length} programs on record</span>
+          <span className="flex items-center gap-1.5">
+            <ArrowLeftRight className="w-3.5 h-3.5" strokeWidth={2} />
+            Compare up to 3 programs
+          </span>
         </div>
       </div>
     </div>

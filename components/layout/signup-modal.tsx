@@ -568,18 +568,18 @@ export function SignupModal({
           style={{ minHeight: "auto" }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex flex-col p-2">
+          <div className="flex flex-col p-3">
             {/* Logo */}
-            <div className="flex justify-center mb-2">
+            <div className="flex justify-center">
               <img
                 src="/image/logo.png"
                 alt="logo"
-                className="h-24 w-24 object-contain"
+                className="h-14 w-14 object-contain"
               />
             </div>
 
             {/* Heading with close button */}
-            <div className="flex items-center justify-between mb-1">
+            <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {step !== "phone" && (
                   <button
@@ -604,15 +604,15 @@ export function SignupModal({
               </button>
             </div>
 
-            <p className="text-xs text-gray-600 mb-3 text-center">
-              {step === "phone" && "Enter your phone number"}
+            <p className="text-xs text-gray-600 mb-1.5 text-center">
+              {step === "phone" && ""}
               {step === "otp" && `OTP sent to ${fullPhone}`}
               {step === "email" && "Complete your details"}
             </p>
 
             {/* Error */}
             {error && (
-              <div className="mb-3 px-3 py-2 bg-white border border-gray-300 text-gray-900 text-xs rounded-xl">
+              <div className="mb-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-900 text-xs rounded-xl">
                 {error}
               </div>
             )}
@@ -620,12 +620,12 @@ export function SignupModal({
             {step === "phone" && (
               <form
                 onSubmit={handlePhoneContinue}
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-1.5"
               >
                 {/* Phone row */}
                 <div className="flex items-center border border-gray-300 rounded-2xl">
                   {/* Country picker */}
-                  <div className="relative flex items-center border-r border-gray-300 px-2 py-2 gap-1 cursor-pointer">
+                  <div className="relative flex items-center border-r border-gray-300 px-2 py-1.5 gap-1 cursor-pointer">
                     <span className="text-sm">{selectedCountry.flag}</span>
                     <span className="text-xs font-medium text-black">
                       {selectedCountry.code}
@@ -653,7 +653,7 @@ export function SignupModal({
                     }
                     maxLength={15}
                     required
-                    className="flex-1 px-3 py-2 text-sm bg-white outline-none placeholder-gray-500"
+                    className="flex-1 px-3 py-1.5 text-sm bg-white outline-none placeholder-gray-500"
                   />
                 </div>
 
@@ -677,7 +677,7 @@ export function SignupModal({
                 </button>
 
                 {/* Assured refund promo banner */}
-                <div className="flex items-center justify-between gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2.5 shadow-lg">
+                <div className="flex items-center justify-between gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2 shadow-lg">
                   <div className="flex items-start gap-2">
                     <input
                       type="checkbox"
@@ -709,7 +709,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading || phone.length < 7}
-                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-2 rounded-2xl transition-all"
+                  className="w-90 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
                 >
                   {loading ? "Sending..." : "Continue"}
                 </Button>
@@ -717,7 +717,10 @@ export function SignupModal({
             )}
 
             {step === "otp" && (
-              <form onSubmit={handleOtpVerify} className="flex flex-col gap-3">
+              <form
+                onSubmit={handleOtpVerify}
+                className="flex flex-col gap-1.5"
+              >
                 <input
                   type="text"
                   inputMode="numeric"
@@ -728,7 +731,7 @@ export function SignupModal({
                   }
                   maxLength={6}
                   required
-                  className="w-full px-3 py-2 text-center text-sm tracking-widest font-semibold border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+                  className="w-full px-3 py-1.5 text-center text-sm tracking-widest font-semibold border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
 
                 <button
@@ -745,7 +748,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading || otp.length !== 6}
-                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-2 rounded-2xl transition-all"
+                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
                 >
                   {loading ? "Verifying..." : "Continue"}
                 </Button>
@@ -755,7 +758,7 @@ export function SignupModal({
             {step === "email" && (
               <form
                 onSubmit={handleEmailContinue}
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-1.5"
               >
                 <input
                   type="text"
@@ -763,7 +766,7 @@ export function SignupModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
                 <input
                   type="email"
@@ -771,7 +774,7 @@ export function SignupModal({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
                 <input
                   type="password"
@@ -780,12 +783,12 @@ export function SignupModal({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
                 />
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-black hover:bg-gray-800 text-white text-sm font-medium py-2 rounded-2xl transition-all"
+                  className="w-full bg-black hover:bg-gray-800 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
                 >
                   {loading ? "Creating..." : "Continue"}
                 </Button>
@@ -793,7 +796,7 @@ export function SignupModal({
             )}
 
             {/* Terms */}
-            <p className="mt-4 text-xs text-gray-600 text-center leading-relaxed">
+            <p className="mt-1.5 text-xs text-gray-600 text-center leading-relaxed">
               By continuing, you agree to our{" "}
               <a href="/terms" className="hover:underline">
                 Terms

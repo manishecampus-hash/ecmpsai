@@ -225,8 +225,8 @@ export default function Step1Screen({ onTypeSelect }) {
   return (
     <div className="py-5 px-4">
       {/* Header */}
-      <div className="text-center mb-5">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-200 bg-white text-black text-xs font-bold tracking-widest uppercase mb-3">
+      <div className="text-center mb-5 font-[Inter]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-200 bg-white text-black text-xs font-bold tracking-widest uppercase mb-3 ">
           <svg
             className="w-3 h-3 text-red-500"
             viewBox="0 0 24 24"
@@ -239,7 +239,7 @@ export default function Step1Screen({ onTypeSelect }) {
           Smart Degree Finder
         </div>
         <h1 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-          Find the right program for you
+          Find the right program <span className="text-red-500">for you</span>
         </h1>
       </div>
 

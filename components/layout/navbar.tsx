@@ -677,7 +677,7 @@ function ProgramDropdown({
   return (
     <div
       ref={dropdownRef}
-      className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-16px)] sm:max-w-[calc(100vw-32px)] bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-2xl z-[999] overflow-hidden"
+      className="fixed top-[80px] left-1/2 -translate-x-1/2 w-[1040px] max-w-[calc(100vw-16px)] sm:max-w-[calc(100vw-32px)] bg-[#f7fbff] rounded-2xl sm:rounded-3xl border border-gray-200 shadow-2xl z-[999] overflow-hidden"
     >
       <div className="flex flex-col md:flex-row max-h-[80vh] md:max-h-[520px]">
         {/* ===== Sidebar: category list ===== */}

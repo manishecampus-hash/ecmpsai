@@ -1,17 +1,13 @@
 import { notFound } from "next/navigation";
 
 import HeroSection from "@/components/universities/hero-section";
-// import OverviewSection from "@/components/universities/overview-section";
-// import CoursesSection from "@/components/universities/courses-section";
 import FAQSection from "@/components/universities/faq-section";
 
 import { universities } from "@/data/universities";
 import AboutProgram from "@/components/universities/about";
 import ProgramsSection from "@/components/universities/programs";
 import TopSpecializations from "@/components/universities/top-secializations";
-import ApprovalsSection from "@/components/universities/approvals";
-import PlacementPartners from "@/components/universities/placement-partners";
-// import { Footer } from "@/components/footer";
+// import ApprovalsSection from "@/components/universities/approvals";
 import TestimonialsSection from "@/components/universities/testimonials";
 import { Footer } from "@/components/layout/footer";
 import SubHeader from "@/components/universities/sub-header";
@@ -23,8 +19,6 @@ import LearningEnvironmentSection from "@/components/universities/environment-se
 import EligibilityFeesSection from "@/components/universities/eligibility-fees-section";
 import ExaminationPatternSection from "@/components/universities/examination-pattern-section";
 import ApSection from "@/components/universities/aproveltest";
-
-// import WhyOnline from "@/components/universities/why-online";
 
 interface UniversityPageProps {
   params: Promise<{
@@ -55,14 +49,9 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <LoanSection />
       <ExaminationPatternSection />
       <ApSection />
-      <ApprovalsSection university={university} />
+      {/* <ApprovalsSection university={university} /> */}
       <LearningEnvironmentSection />
-      {/* <PlacementPartners university={university} /> */}
       <TestimonialsSection university={university} />
-
-      {/* <WhyOnline university={university} /> */}
-
-      {/* <CoursesSection university={university} /> */}
 
       <FAQSection university={university} />
 

@@ -11,34 +11,37 @@ import {
 
 const careerRoles = [
   {
-    title: "Account Executive",
+    title: "Chief Financial Officer",
     icon: Calculator,
   },
   {
-    title: "Finance Associate",
+    title: "Chief Strategy Officer",
     icon: BarChart3,
   },
   {
-    title: "Tax Assistant",
+    title: "Corporate Governance Director",
     icon: FileCheck2,
   },
   {
-    title: "Banking Executive",
+    title: "Chief Executive Officer",
     icon: Landmark,
   },
   {
-    title: "Audit Assistant",
+    title: "Compliance & Risk Executive",
     icon: ShieldCheck,
   },
   {
-    title: "Business Analyst",
+    title: "Management Consultant",
     icon: BriefcaseBusiness,
   },
 ];
 
-export default function BComCareers() {
+export default function GGUDoctorateCareers() {
   return (
-    <section className="relative overflow-hidden bg-white px-4 py-10 text-slate-900 sm:px-6 lg:px-8 lg:py-14">
+    <section
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="relative overflow-hidden bg-white px-4 py-10 text-slate-900 sm:px-6 lg:px-8 lg:py-14"
+    >
       <div className="mx-auto max-w-7xl">
         {/* Center Header */}
         <div className="mx-auto mb-10 max-w-3xl border-b border-slate-100 pb-6 text-center">
@@ -48,7 +51,7 @@ export default function BComCareers() {
           </span>
 
           <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            After Online <span className="text-red-500">B.Com</span>
+            After Online <span className="text-red-500">DBA</span>
           </h2>
         </div>
 
@@ -59,8 +62,8 @@ export default function BComCareers() {
             <div className="absolute bottom-8 right-4 h-24 w-48 rounded-full bg-red-500/20 blur-3xl" />
 
             <img
-              src="/bcom-universities/mycareer.png"
-              alt="B.Com career opportunities"
+              src="/doctorate-universities/mycareer.png"
+              alt="DBA career opportunities"
               className="relative z-10 h-full max-h-[520px] w-full object-contain"
             />
           </div>
@@ -68,11 +71,11 @@ export default function BComCareers() {
           {/* Right Content */}
           <div>
             <p className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-              An Online B.Com degree opens career opportunities across
-              accounting, taxation, banking, finance, auditing, and business
-              operations. Students can build practical commerce skills and apply
-              for entry-level roles in corporates, banks, startups, and
-              financial service companies.
+              An Online DBA from Golden Gate University opens pathways into
+              executive leadership, strategy, governance, and consulting.
+              Professionals build advanced research and decision-making
+              capabilities and can pursue senior roles in corporations,
+              consulting firms, government bodies, and academic institutions.
             </p>
 
             {/* Career Role Cards */}
@@ -102,16 +105,16 @@ export default function BComCareers() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
                 <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                  Suitable for students interested in finance, accounts,
-                  banking, tax, and corporate job roles.
+                  Suitable for senior professionals aiming for board-level,
+                  consulting, and executive leadership roles.
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
                 <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                  Helps build a foundation for higher studies like M.Com, MBA,
-                  CA, CMA, CS, and finance certifications.
+                  Helps build a foundation for postdoctoral research, university
+                  teaching positions, and published thought leadership.
                 </p>
               </div>
             </div>

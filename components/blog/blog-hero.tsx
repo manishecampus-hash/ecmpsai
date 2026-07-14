@@ -93,8 +93,17 @@ export default function BlogHero({
                     alt={sliderBlog.title}
                     fill
                     priority
-                    className="object-cover pointer-events-none"
+                    className={`object-cover pointer-events-none ${sliderBlog.mobileImageSrc ? "hidden sm:block" : ""}`}
                   />
+                  {sliderBlog.mobileImageSrc && (
+                    <NextImage
+                      src={sliderBlog.mobileImageSrc}
+                      alt={sliderBlog.title}
+                      fill
+                      priority
+                      className="object-cover pointer-events-none block sm:hidden"
+                    />
+                  )}
                 </Link>
                 <div>
                   <div className="mb-6 flex flex-wrap items-center gap-4 text-sm font-bold uppercase tracking-[0.18em] text-gray-500">

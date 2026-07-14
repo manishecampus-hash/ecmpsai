@@ -36,6 +36,7 @@ function mapDbBlogToBlog(dbBlog: any) {
     category: dbBlog.category || "General",
     title: dbBlog.title || "",
     imageSrc,
+    mobileImageSrc: dbBlog.mobileImageUrl || "",
     excerpt: dbBlog.excerpt || "",
     description: dbBlog.excerpt || "", // use excerpt as description/lead paragraph
     author: dbBlog.publisher || "eCampus Team",
@@ -87,8 +88,8 @@ export default async function BlogPage() {
 
     // Filter and sort blogs configured for the slider/carousel in CMS
     const sliderBlogs = allBlogs
-        .filter((blog) => blog.inCarousel)
-        .sort((a, b) => (a.carouselOrder || 999) - (b.carouselOrder || 999));
+        .filter((blog: any) => blog.inCarousel)
+        .sort((a: any, b: any) => (a.carouselOrder || 999) - (b.carouselOrder || 999));
         
     // Fallback to first 4 blogs if none are set in the slider carousel
     const blogsToShow = sliderBlogs.length > 0 ? sliderBlogs : sortedAllBlogs.slice(0, 4);

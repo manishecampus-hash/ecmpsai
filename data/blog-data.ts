@@ -18,6 +18,8 @@ export type Blog = {
   category: string;
   title: string;
   imageSrc: string;
+  mobileImageSrc?: string;
+  image?: string;
   /** Short card excerpt (used on listing page) */
   excerpt: string;
   /** Longer subtitle shown in the hero of the detail page */

@@ -69,8 +69,16 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
                 src={post.imageSrc}
                 alt={post.title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className={`object-cover transition-transform duration-500 group-hover:scale-105 ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
               />
+              {post.mobileImageSrc && (
+                <Image
+                  src={post.mobileImageSrc}
+                  alt={post.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105 block sm:hidden"
+                />
+              )}
             </div>
             <div className="p-4">
               <span
@@ -131,8 +139,16 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
                 src={post.imageSrc}
                 alt={post.title}
                 fill
-                className="object-cover"
+                className={`object-cover ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
               />
+              {post.mobileImageSrc && (
+                <Image
+                  src={post.mobileImageSrc}
+                  alt={post.title}
+                  fill
+                  className="object-cover block sm:hidden"
+                />
+              )}
             </div>
             <div className="p-5">
               <span

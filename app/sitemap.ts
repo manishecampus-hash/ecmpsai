@@ -1,10 +1,12 @@
 import { MetadataRoute } from "next";
 
+export const dynamic = "force-dynamic";
+
 async function getBlogs() {
   const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
   try {
     const res = await fetch(`${apiUrl}/blogs`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour for sitemap calls
+      cache: "no-store",
     });
     if (res.ok) {
       return await res.json();

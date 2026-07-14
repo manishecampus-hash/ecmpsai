@@ -120,11 +120,16 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
                   className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="h-48 w-full overflow-hidden bg-gray-200">
-                    <img
-                      src={blog.imageSrc}
-                      alt={blog.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    <picture>
+                      {blog.mobileImageSrc && (
+                        <source media="(max-width: 640px)" srcSet={blog.mobileImageSrc} />
+                      )}
+                      <img
+                        src={blog.imageSrc}
+                        alt={blog.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    </picture>
                   </div>
 
                   <div className="p-6">

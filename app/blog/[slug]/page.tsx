@@ -170,6 +170,7 @@ function mapDbBlogToBlog(dbBlog: any) {
     category: dbBlog.category || "General",
     title: dbBlog.title || "",
     imageSrc,
+    mobileImageSrc: dbBlog.mobileImageUrl || "",
     excerpt: dbBlog.excerpt || "",
     description: dbBlog.excerpt || "", // use excerpt as description/lead paragraph
     author: dbBlog.publisher || "eCampus Team",

@@ -6,48 +6,48 @@ import { Section } from "././../../ui/section"; // Ensure this import path is co
 
 const faqs = [
   {
-    question: "Is the online B.Com degree valid?",
+    question: "Is the Golden Gate University Online DBA valid?",
     answer:
-      "Yes, a UGC-entitled online B.Com degree is valid and equivalent to a regular degree as per applicable university guidelines.",
+      "Yes, the Online DBA from Golden Gate University is offered through its AACSB-accredited Edward S. Ageno School of Business and holds full recognition equivalent to an on-campus doctoral degree.",
   },
   {
     question: "Who can apply for this program?",
     answer:
-      "Students who have completed 10+2 or equivalent qualification from a recognized board can apply for an online B.Com program.",
+      "Applicants typically need a master's degree (such as an MBA) along with several years of relevant professional or managerial experience to be eligible for the DBA program.",
   },
   {
     question: "Can working professionals pursue this course?",
     answer:
-      "Yes, the online format is flexible and suitable for students, freshers, entrepreneurs, and working professionals who want to study without leaving their current routine.",
+      "Yes, the program is specifically designed for working executives and senior professionals, with a flexible online format built around their schedules.",
   },
   {
-    question: "What is the duration of an online B.Com program?",
+    question: "What is the duration of the Online DBA program?",
     answer:
-      "Most online B.Com programs are completed in 3 years, divided into 6 semesters. Some universities may provide extended duration as per their academic policy.",
+      "The Online DBA is typically completed in 2-3 years, structured across 6 semesters covering coursework, comprehensive exams, and dissertation research.",
   },
   {
-    question: "What subjects are covered in online B.Com?",
+    question: "What subjects are covered in the Online DBA?",
     answer:
-      "The program usually covers financial accounting, business law, economics, taxation, auditing, corporate accounting, cost accounting, management, and banking-related subjects.",
+      "The program usually covers advanced research methods, organizational theory, strategic leadership, corporate finance, global business strategy, and dissertation-focused research seminars.",
   },
   {
-    question: "What career options are available after online B.Com?",
+    question: "What career options are available after the Online DBA?",
     answer:
-      "Graduates can explore roles in accounting, finance, banking, taxation, auditing, business operations, insurance, and corporate administration.",
+      "Graduates can pursue senior roles such as CEO, CFO, Chief Strategy Officer, management consultant, corporate governance director, or transition into academia and research.",
   },
   {
-    question: "Can I pursue CA, CS, CMA, or MBA after online B.Com?",
+    question: "Is a dissertation mandatory for this program?",
     answer:
-      "Yes, after completing a valid online B.Com degree, learners can pursue higher education and professional programs such as MBA, CA, CS, CMA, M.Com, or other eligible postgraduate courses.",
+      "Yes, candidates must complete an original dissertation involving applied business research, including a proposal defense and a final dissertation defense.",
   },
   {
-    question: "Are online exams conducted for this program?",
+    question: "Are online exams and defenses conducted virtually?",
     answer:
-      "Many universities conduct online proctored examinations, while some may follow hybrid or center-based exam models. The exact exam format depends on the university.",
+      "Comprehensive examinations and dissertation defenses are typically conducted online, though some milestones may follow a hybrid format depending on university policy.",
   },
 ];
 
-export default function BComFAQ() {
+export default function GGUDoctorateFAQ() {
   // Maintaining the same "all open" logic as the reference, or change to [] if you prefer single toggle
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     faqs.map((_, index) => index),
@@ -60,7 +60,10 @@ export default function BComFAQ() {
   };
 
   return (
-    <Section className="w-full bg-white px-4 pt-12 pb-24 sm:px-6 lg:pb-32 lg:px-8">
+    <Section
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="w-full bg-white px-4 pt-12 pb-24 sm:px-6 lg:pb-32 lg:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">

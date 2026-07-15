@@ -627,8 +627,8 @@ export function CarouselBanner() {
           width: 100%;
           overflow: hidden;
           background: #ffffff;
-          aspect-ratio: 16 / 6;
-          max-height: 30vh;
+          aspect-ratio: 16 / 8;
+          max-height: 40vh;
           border-radius: 12px;
           user-select: none;
           touch-action: pan-y;
@@ -773,7 +773,7 @@ export function CarouselBanner() {
         }
       `}</style>
 
-      <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 mt-4">
+      <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 -mt-8 md:mt-4">
         <div
           ref={wrapRef}
           className="cb-wrap shadow-sm border border-gray-100"

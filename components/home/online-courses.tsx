@@ -229,16 +229,6 @@ function useScrollState(ref: React.RefObject<HTMLDivElement | null>) {
 
   return { canLeft, canRight };
 }
-
-// Prevents the tap/click from giving the button browser focus.
-// Native focus triggers an automatic scrollIntoView() inside overflow
-// containers, which was racing against our own smooth scrollTo() call
-// and causing the visible "jhatka / hilna" (jitter) effect on tab click.
-// FIX: switched from onMouseDown to onPointerDown because mobile touch
-// taps don't reliably fire mousedown before the click - that's why the
-// jitter/drag-like behavior was still happening on mobile even though
-// desktop was fine. onPointerDown covers touch, mouse and pen in one go.
-// Keyboard (Tab-key) focus is untouched, so accessibility is preserved.
 const preventFocusScroll = (e: React.SyntheticEvent) => {
   e.preventDefault();
 };
@@ -258,13 +248,6 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   flexShrink: 0,
 });
 
-// Centering is now done with top:0 / bottom:0 / margin:auto instead of
-// top:50% + translateY(-50%). The translateY technique needs an exact
-// pixel height at layout time to cancel out correctly; on mobile,
-// where card height can settle a frame later (webfonts, image load,
-// flex "stretch" recalculation), that produced a visible off-center
-// arrow. top/bottom auto-margin re-centers itself automatically
-// whenever the parent's height changes, with no JS involved.
 const leftArrowStyle = (visible: boolean): React.CSSProperties => ({
   position: "absolute",
   left: 0,
@@ -316,9 +299,30 @@ const rightArrowStyle = (visible: boolean): React.CSSProperties => ({
 export default function ProgramsSection() {
   const [activeTab, setActiveTab] = useState("all");
   const [activeMode, setActiveMode] = useState("all");
+  const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const carouselWrapRef = useRef<HTMLDivElement>(null);
+  const lastTapRef = useRef<{ id: number | null; time: number }>({
+    id: null,
+    time: 0,
+  });
+
+  // Touch/mobile: single tap on the image opens the overlay,
+  // double tap (within 350ms) on it closes it again. This replaces
+  // CSS :hover on touch devices, which gets "stuck" after a tap and
+  // was causing the overlay to randomly flicker open/closed.
+  const handleImageTap = (id: number) => {
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last.id === id && now - last.time < 350) {
+      setActiveCardId(null);
+      lastTapRef.current = { id: null, time: 0 };
+      return;
+    }
+    lastTapRef.current = { id, time: now };
+    setActiveCardId((prev) => (prev === id ? prev : id));
+  };
 
   const filteredPrograms = useMemo(
     () =>
@@ -404,13 +408,14 @@ export default function ProgramsSection() {
           font-weight: 700;
         }
 
-        /* ---- Image zoom on hover ---- */
+        /* ---- __imgWrap ---- */
         .__imgWrap {
           position: relative;
           height: 160px;
           overflow: hidden;
           background: #f1f5f9;
           flex-shrink: 0;
+          z-index: 1;
         }
         .__imgWrap img {
           width: 100%;
@@ -418,11 +423,7 @@ export default function ProgramsSection() {
           object-fit: cover;
           transition: transform 0.5s ease;
         }
-        .__card:hover .__imgWrap img {
-          transform: scale(1.08);
-        }
 
-        /* ---- Full-card hover overlay (details on hover) ---- */
         .__card {
           cursor: pointer;
         }
@@ -439,11 +440,6 @@ export default function ProgramsSection() {
           transition: opacity 0.35s ease, transform 0.35s ease;
           pointer-events: none;
           z-index: 30;
-        }
-        .__card:hover .__cardOverlay {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: auto;
         }
         .__overlayDeadline {
           display: inline-flex;
@@ -462,10 +458,6 @@ export default function ProgramsSection() {
           transform: translateY(6px);
           transition: opacity 0.3s ease, transform 0.3s ease;
         }
-        .__card:hover .__overlayDeadline {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .__overlayTitle {
           margin: 0 0 8px;
           font-size: 14px;
@@ -480,10 +472,6 @@ export default function ProgramsSection() {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-        .__card:hover .__overlayTitle {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .__overlayText {
           color: #cbd2ff;
           font-size: 11px;
@@ -497,10 +485,6 @@ export default function ProgramsSection() {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-        .__card:hover .__overlayText {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .__overlayInfoRow {
           display: flex;
           align-items: center;
@@ -510,10 +494,6 @@ export default function ProgramsSection() {
           opacity: 0;
           transform: translateY(6px);
           transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
-        }
-        .__card:hover .__overlayInfoRow {
-          opacity: 1;
-          transform: translateY(0);
         }
         .__overlayInfoItem {
           display: flex;
@@ -555,10 +535,6 @@ export default function ProgramsSection() {
           transform: translateY(6px);
           transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
         }
-        .__card:hover .__overlayList {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .__overlayList li {
           display: flex;
           align-items: center;
@@ -584,12 +560,57 @@ export default function ProgramsSection() {
           transform: translateY(6px);
           transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, background 0.2s;
         }
-        .__card:hover .__overlayBtn {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .__overlayBtn:hover {
           background: #eef1ff;
+        }
+        /* Overlay itself stays pointer-events:none always (base rule
+           above) so the mouse never actually leaves .__imgWrap while
+           it's visually covered — this is what stops the hover
+           flicker loop. The one interactive element inside it, the
+           "Know More" button, opts back in explicitly. */
+        .__overlayBtn {
+          pointer-events: auto;
+        }
+
+        /* ---- DESKTOP / real mouse only: pure CSS hover on the image.
+           Wrapped in (hover: hover) and (pointer: fine) so touch
+           devices never see this rule at all — that mismatch is what
+           was causing the overlay to get "stuck" and randomly
+           flicker open/closed on mobile after a tap. ---- */
+        @media (hover: hover) and (pointer: fine) {
+          .__imgWrap:hover img {
+            transform: scale(1.08);
+          }
+          .__imgWrap:hover ~ .__cardOverlay {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          .__imgWrap:hover ~ .__cardOverlay .__overlayDeadline,
+          .__imgWrap:hover ~ .__cardOverlay .__overlayTitle,
+          .__imgWrap:hover ~ .__cardOverlay .__overlayText,
+          .__imgWrap:hover ~ .__cardOverlay .__overlayInfoRow,
+          .__imgWrap:hover ~ .__cardOverlay .__overlayList,
+          .__imgWrap:hover ~ .__cardOverlay .__overlayBtn {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* ---- MOBILE / touch: overlay is driven entirely by JS state
+           (single tap on image = open, double tap = close) through
+           this class, never through :hover. ---- */
+        .__cardOverlayActive {
+          opacity: 1 !important;
+          transform: translateY(0) !important;
+        }
+        .__cardOverlayActive .__overlayDeadline,
+        .__cardOverlayActive .__overlayTitle,
+        .__cardOverlayActive .__overlayText,
+        .__cardOverlayActive .__overlayInfoRow,
+        .__cardOverlayActive .__overlayList,
+        .__cardOverlayActive .__overlayBtn {
+          opacity: 1 !important;
+          transform: translateY(0) !important;
         }
       `}</style>
 
@@ -706,7 +727,6 @@ export default function ProgramsSection() {
             <ChevronRight size={16} />
           </button>
 
-          {/* Mode Toggle - inline with tabs, hidden on small/mobile devices */}
           <div
             className="__modeToggle"
             style={{
@@ -834,7 +854,10 @@ export default function ProgramsSection() {
                   }}
                 >
                   {/* Image */}
-                  <div className="__imgWrap">
+                  <div
+                    className="__imgWrap"
+                    onClick={() => handleImageTap(program.id)}
+                  >
                     <img
                       src={program.image}
                       alt={program.title}
@@ -1014,8 +1037,16 @@ export default function ProgramsSection() {
                     </a>
                   </div>
 
-                  {/* Full-card hover overlay - navy card style with icon rows */}
-                  <div className="__cardOverlay">
+                  {/* Full-card overlay - navy card style with icon rows.
+                      Desktop: reveals on real mouse hover of the image
+                      (see the (hover:hover) media query above).
+                      Mobile/touch: controlled by activeCardId state -
+                      single tap on image opens, double tap closes. */}
+                  <div
+                    className={`__cardOverlay ${
+                      activeCardId === program.id ? "__cardOverlayActive" : ""
+                    }`}
+                  >
                     <span className="__overlayDeadline">
                       <Clock size={10} color="#ffd166" />
                       {program.deadline}

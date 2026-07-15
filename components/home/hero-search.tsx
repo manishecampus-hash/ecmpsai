@@ -89,8 +89,11 @@ export default function HeroSearch() {
           )}
         </div>
         {/* Single Input Box */}
-        <form onSubmit={handleSearch} className="w-full max-w-2xl mb-6">
-          <div className="flex items-center h-10 md:h-12 px-4 md:px-5 rounded-full bg-white border border-gray-300">
+        <form
+          onSubmit={handleSearch}
+          className="w-[88%] sm:w-full max-w-2xl mx-auto mb-6"
+        >
+          <div className="flex items-center h-10 md:h-12 px-4 md:px-5 rounded-full bg-white border border-gray-300 w-full">
             <input
               type="text"
               value={query}

@@ -17,39 +17,39 @@ const fallbackTestimonials: TestimonialCard[] = [
   {
     id: "1",
     name: "Priya Mehta",
-    program: "Online B.Com",
-    university: "Amity University Online",
+    program: "Online DBA",
+    university: "Golden Gate University",
     image:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=700&auto=format&fit=crop&q=80",
     rating: 5,
     quote:
-      "The Online B.Com program helped me build a strong foundation in accounting, taxation, and business management. Recorded lectures and flexible classes made it easy to study while preparing for internships.",
+      "The Online DBA at GGU pushed me to think like a researcher and a strategist at the same time. Balancing coursework with a full-time VP role was tough, but the flexible schedule and faculty support made it work.",
   },
   {
     id: "2",
     name: "Rohan Agarwal",
-    program: "Online B.Com",
-    university: "Manipal University Online",
+    program: "Online DBA",
+    university: "Golden Gate University",
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&auto=format&fit=crop&q=80",
     rating: 5,
     quote:
-      "I wanted a commerce degree that would let me continue working part-time. The online format gave me flexibility, and the curriculum was practical for finance, banking, and accounting career paths.",
+      "I wanted a doctoral program that respected my time as a working executive. The dissertation process was rigorous, but it directly shaped the strategy work I now lead at my company.",
   },
   {
     id: "3",
     name: "Ananya Sharma",
-    program: "Online B.Com",
-    university: "GLA University Online",
+    program: "Online DBA",
+    university: "Golden Gate University",
     image:
       "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=700&auto=format&fit=crop&q=80",
     rating: 4,
     quote:
-      "The best part was how simple the learning platform was. I could attend live sessions, revise recorded classes, and submit assignments without disrupting my daily schedule.",
+      "The best part was the cohort of fellow executives — the discussions were as valuable as the coursework. I could attend live sessions, revisit recordings, and stay on track for my dissertation defense.",
   },
 ];
 
-export default function TestimonialsSection({
+export default function GGUDoctorateTestimonials({
   testimonials = fallbackTestimonials,
 }: {
   testimonials?: TestimonialCard[];
@@ -61,6 +61,7 @@ export default function TestimonialsSection({
       style={{
         background:
           "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
+        fontFamily: "'Inter', sans-serif",
       }}
       className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
     >
@@ -70,17 +71,17 @@ export default function TestimonialsSection({
           <div className="mx-auto mb-10 max-w-7xl text-center px-4 sm:px-6 lg:px-8">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
               <GraduationCap className="h-3.5 w-3.5 text-red-500" />
-              Student Stories
+              Scholar Stories
             </span>
             <h2 className="mt-2 text-2xl font-extrabold text-white-900 tracking-tight sm:text-3xl md:text-4xl">
-              B.Com Student <span className="text-red-500">Testimonials</span>
+              DBA Scholar <span className="text-red-500">Testimonials</span>
             </h2>
           </div>
 
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
-            Hear from learners who chose flexible online commerce programs and
-            built practical skills for accounting, finance, taxation, and
-            business careers.
+            Hear from working executives who chose the flexible Online DBA at
+            Golden Gate University and built advanced research and leadership
+            capabilities.
           </p>
         </div>
 

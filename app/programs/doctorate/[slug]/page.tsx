@@ -3,7 +3,6 @@ import BComCareers from "@/components/programs/bcom/bcom-careers";
 import BComCurriculum from "@/components/programs/bcom/bcom-curriculum";
 import BComEligibilityFees from "@/components/programs/bcom/bcom-eligibility-fees";
 import BComFAQ from "@/components/programs/bcom/bcom-faq";
-import TestimonialsSection from "@/components/programs/bcom/testimonials-section";
 import BComSubHeader from "@/components/programs/bcom/bcom-sub-header";
 import { Footer } from "@/components/layout/footer";
 import GGUDoctorateHero from "@/components/programs/ggu/ggu-hero";
@@ -16,6 +15,8 @@ import GguReadMore from "@/components/programs/ggu/read-more";
 import GGUDoctorateCurriculum from "@/components/programs/ggu/ggu-curriculum";
 import GGUDoctorateFeeSection from "@/components/programs/ggu/ggu-eligibility-fees";
 import GGUDoctorateCareers from "@/components/programs/ggu/ggu-careers";
+import GGUDoctorateTestimonials from "@/components/programs/ggu/ggu-testimonials-section";
+import GGUDoctorateFAQ from "@/components/programs/ggu/ggu-faq";
 
 export default function GguPage() {
   return (
@@ -76,11 +77,11 @@ export default function GguPage() {
         </div>
 
         {/* Testimonials */}
-        <TestimonialsSection />
+        <GGUDoctorateTestimonials />
 
         {/* 9. FAQs */}
         <div id="faqs">
-          <BComFAQ />
+          <GGUDoctorateFAQ />
         </div>
       </main>
 

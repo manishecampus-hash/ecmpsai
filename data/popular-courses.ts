@@ -114,8 +114,7 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 8,
-    imageSrc:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc: "/courses/8.png",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -128,8 +127,7 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 9,
-    imageSrc:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc: "/courses/9.png",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",
@@ -142,8 +140,7 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 10,
-    imageSrc:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+    imageSrc: "/courses/10.png",
     imageAlt: "AI and machine learning",
     tag: "New",
     title: "IIM K AI Professional",

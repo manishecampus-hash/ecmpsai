@@ -568,40 +568,40 @@ export function SignupModal({
           style={{ minHeight: "auto" }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex flex-col p-3">
+          {/* Close button - fixed to top-right corner of modal */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-black transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+
+          <div className="flex flex-col px-3 pb-3 pt-0">
             {/* Logo */}
             <div className="flex justify-center">
               <img
                 src="/image/logo.png"
                 alt="logo"
-                className="h-14 w-14 object-contain"
+                className="h-[100px] w-[100px] object-contain"
               />
             </div>
 
-            {/* Heading with close button */}
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {step !== "phone" && (
-                  <button
-                    onClick={handleBack}
-                    className="absolute left-0 flex h-8 w-8 items-center justify-center text-gray-600 hover:text-black"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                  </button>
-                )}
+            {/* Heading */}
+            <div className="relative flex items-center justify-center mb-2">
+              {step !== "phone" && (
+                <button
+                  onClick={handleBack}
+                  className="absolute left-0 flex h-8 w-8 items-center justify-center text-gray-600 hover:text-black"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+              )}
 
-                <h2 className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-lg font-semibold text-black">
-                  {step === "phone" && "Welcome! "}
-                  {step === "otp" && "Enter OTP"}
-                  {step === "email" && "Create Account"}
-                </h2>
-              </div>
-              <button
-                onClick={onClose}
-                className="text-gray-600 hover:text-black transition-colors flex-shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <h2 className="whitespace-nowrap text-lg font-semibold text-black">
+                {step === "phone" && "Welcome! "}
+                {step === "otp" && "Enter OTP"}
+                {step === "email" && "Create Account"}
+              </h2>
             </div>
 
             <p className="text-xs text-gray-600 mb-1.5 text-center">

@@ -31,7 +31,7 @@ export const popularCourses: Offer[] = [
   },
   {
     id: 2,
-    imageSrc: "/courses/opjindal.png",
+    imageSrc: "/courses/ChatGPT Image Jul 16, 2026, 12_59_05 PM.png",
     imageAlt: "1 Year MBA - O.P Jindal",
     tag: "Trending",
     title: "1 Year MBA - O.P Jindal",
@@ -69,7 +69,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "bot",
     href: "/programs/ggu-gen-ai",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    videoSrc: "https://youtube.com/shorts/nzwqSZmVm8I?feature=share",
   },
   {
     id: 5,

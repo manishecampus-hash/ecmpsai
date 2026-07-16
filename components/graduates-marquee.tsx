@@ -573,21 +573,28 @@ export function GraduatesMarquee({
           opacity: 1;
         }
         .__gradModalClose {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          z-index: 2;
-          background: rgba(0,0,0,0.55);
-          border: none;
-          color: #fff;
-          border-radius: 50%;
-          width: 34px;
-          height: 34px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-        }
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  background: #ffffff;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  color: #0b0f19;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.__gradModalClose:hover {
+  background: #f1f5f9;
+  border-color: rgba(0,0,0,0.18);
+  transform: scale(1.06);
+}
         .__gradModalImg {
           width: 100%;
           height: 60vh;

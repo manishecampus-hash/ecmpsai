@@ -85,7 +85,7 @@ export function Footer() {
       <FooterCta />
 
       <div className="relative mx-auto flex max-w-7xl flex-col gap-5 px-4 pb-0 pt-32 sm:px-6 sm:pt-40 sm:gap-6 sm:pb-1 lg:px-8 lg:pt-36">
-        <div className="relative h-12 w-40">
+        {/* <div className="relative h-12 w-40">
           <Link href="/" aria-label="eCampus home">
             <Image
               src="/image/logo.png"
@@ -95,7 +95,7 @@ export function Footer() {
               priority
             />
           </Link>
-        </div>
+        </div> */}
 
         <div className="w-full border-b border-dotted border-slate-800" />
 

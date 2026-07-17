@@ -2,10 +2,12 @@
 
 import { ArrowRight, Handshake } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { careerExplorer } from "@/data/career-explorer";
 
 const CareerExplorer = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <section className="px-4 pt-4 pb-12 sm:pt-6 sm:pb-12 min-h-screen -mt-8 sm:-mt-12 relative z-10">
       <div className="max-w-7xl mx-auto text-center font-[Inter]">
@@ -24,10 +26,16 @@ const CareerExplorer = () => {
           {careerExplorer.map((item, index) => (
             <div
               key={index}
-              className="group bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 flex flex-col transition-shadow duration-300 hover:shadow-md"
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 sm:p-4 flex flex-col transition-shadow duration-300 hover:shadow-md"
             >
-              {/* Image Container - size same rahega, andar overlay aayega hover pe */}
-              <div className="relative w-full h-[90px] sm:h-[110px] lg:h-[120px] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 mb-3 sm:mb-4 shrink-0">
+              {/* Image Container - hover/tap sirf isi area pe trigger hoga */}
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpenIndex((prev) => (prev === index ? null : index));
+                }}
+                className="group relative w-full h-[90px] sm:h-[110px] lg:h-[120px] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 mb-3 sm:mb-4 shrink-0 cursor-pointer"
+              >
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -37,11 +45,14 @@ const CareerExplorer = () => {
 
                 {/* Hover overlay - sirf image area ke andar, size change nahi hota */}
                 <div
-                  className="absolute inset-0 flex flex-col justify-center gap-2 p-2.5 sm:p-3
-                             bg-[#1b1464]/90 opacity-0 translate-y-1
-                             pointer-events-none
-                             group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto
-                             transition-all duration-300 ease-out"
+                  className={`absolute inset-0 flex flex-col justify-center gap-2 p-2.5 sm:p-3
+                             bg-[#1b1464]/90 transition-all duration-300 ease-out
+                             ${
+                               openIndex === index
+                                 ? "opacity-100 translate-y-0 pointer-events-auto"
+                                 : "opacity-0 translate-y-1 pointer-events-none"
+                             }
+                             group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto`}
                 >
                   <p className="text-white/90 text-[10px] sm:text-[11px] leading-snug line-clamp-3">
                     {item.description ??

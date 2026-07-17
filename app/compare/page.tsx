@@ -117,94 +117,32 @@ export default function ComparePage() {
   return (
     <>
       <UniversitySlider />
-      <main
-        style={{
-          fontFamily: "'Segoe UI',sans-serif",
-          background: "#f8f8f8",
-          minHeight: "100vh",
-          paddingBottom: 60,
-        }}
-      >
+      <main className="font-sans bg-[#f8f8f8] min-h-screen pb-14 sm:pb-16">
         {/* Hero */}
-        <section
-          style={{
-            textAlign: "center",
-            padding: "60px 20px 44px",
-            background: "#fff",
-            borderBottom: "1px solid #f0f0f0",
-          }}
-        >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              background: "#fff0f0",
-              color: "#e53935",
-              fontSize: ".75rem",
-              fontWeight: 700,
-              letterSpacing: "1.5px",
-              padding: "6px 16px",
-              borderRadius: 50,
-              marginBottom: 18,
-            }}
-          >
+        <section className="text-center px-5 py-12 sm:py-14 bg-white border-b border-gray-100">
+          <span className="inline-flex items-center gap-1.5 text-red-600 bg-red-50 border border-red-100 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold tracking-wide mb-4">
             🎓 COMPARE UNIVERSITIES
           </span>
-          <h1
-            style={{
-              fontSize: "clamp(1.6rem,3.8vw,2.6rem)",
-              fontWeight: 800,
-              color: "#111",
-              margin: "0 0 14px",
-              lineHeight: 1.2,
-            }}
-          >
+          <h2 className="text-[1.6rem] sm:text-4xl lg:2l font-bold text-gray-900 leading-tight m-0">
             Compare Multiple Universities{" "}
-            <span style={{ color: "#e53935" }}>&amp; Find The Best!</span>
-          </h1>
+            <span className="text-red-600">&amp; Find The Best!</span>
+          </h2>
         </section>
 
         {/* Selector Cards */}
-        <section
-          style={{
-            display: "flex",
-            gap: 16,
-            maxWidth: 1180,
-            margin: "40px auto 0",
-            padding: "0 20px",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <section className="flex flex-wrap justify-center gap-4 max-w-6xl mx-auto mt-8 sm:mt-10 px-5">
           {/* Course Card */}
           <div
-            style={{
-              background: course ? "#fff5f5" : "#e53935",
-              border: `2px solid ${course ? "#e53935" : "transparent"}`,
-              borderRadius: 16,
-              padding: "32px 20px 24px",
-              flex: "1 1 220px",
-              maxWidth: 268,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 16,
-              boxShadow: "0 2px 16px rgba(229,57,53,.15)",
-              transition: "all .2s",
-            }}
+            className={`flex-1 basis-[220px] max-w-[268px] flex flex-col items-center gap-4 rounded-2xl border-2 px-5 pt-8 pb-6 shadow-[0_2px_16px_rgba(229,57,53,0.15)] transition-all duration-200 ${
+              course
+                ? "bg-red-50 border-red-600"
+                : "bg-red-600 border-transparent"
+            }`}
           >
             <div
-              style={{
-                width: 68,
-                height: 68,
-                borderRadius: 16,
-                background: course ? "#ffd5d5" : "rgba(255,255,255,.2)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: course ? "#e53935" : "#fff",
-              }}
+              className={`w-[68px] h-[68px] rounded-2xl flex items-center justify-center ${
+                course ? "bg-red-200 text-red-600" : "bg-white/20 text-white"
+              }`}
             >
               <svg
                 width="36"
@@ -221,14 +159,9 @@ export default function ComparePage() {
               </svg>
             </div>
             <p
-              style={{
-                margin: 0,
-                fontWeight: 700,
-                fontSize: ".8rem",
-                letterSpacing: "1px",
-                color: course ? "#e53935" : "rgba(255,255,255,.8)",
-                textTransform: "uppercase",
-              }}
+              className={`m-0 font-bold text-[.8rem] tracking-wide uppercase ${
+                course ? "text-red-600" : "text-white/80"
+              }`}
             >
               Select Course
             </p>
@@ -238,19 +171,7 @@ export default function ComparePage() {
                 setCourse(e.target.value);
                 setUnis(["", "", ""]);
               }}
-              style={{
-                width: "100%",
-                padding: "11px 13px",
-                borderRadius: 10,
-                border: "1.5px solid #f0c0c0",
-                fontSize: ".88rem",
-                fontFamily: "inherit",
-                fontWeight: 600,
-                color: "#e53935",
-                background: "#fff",
-                cursor: "pointer",
-                outline: "none",
-              }}
+              className="w-full rounded-[10px] border-[1.5px] border-red-200 bg-white px-3.5 py-[11px] text-[.88rem] font-semibold text-red-600 outline-none cursor-pointer font-sans"
             >
               <option value="">— Choose Course —</option>
               {COURSES.map((c) => (
@@ -265,36 +186,18 @@ export default function ComparePage() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              style={{
-                background: unis[i] ? "#fff5f5" : "#fff",
-                border: `2px solid ${unis[i] ? "#e53935" : "#f0f0f0"}`,
-                borderRadius: 16,
-                padding: "32px 20px 24px",
-                flex: "1 1 220px",
-                maxWidth: 268,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 16,
-                boxShadow: unis[i]
-                  ? "0 4px 20px rgba(229,57,53,.12)"
-                  : "0 2px 10px rgba(0,0,0,.05)",
-                opacity: !course ? 0.5 : 1,
-                pointerEvents: !course ? "none" : "auto",
-                transition: "all .2s",
-              }}
+              className={`flex-1 basis-[220px] max-w-[268px] flex flex-col items-center gap-4 rounded-2xl border-2 px-5 pt-8 pb-6 transition-all duration-200 ${
+                unis[i]
+                  ? "bg-red-50 border-red-600 shadow-[0_4px_20px_rgba(229,57,53,0.12)]"
+                  : "bg-white border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+              } ${!course ? "opacity-50 pointer-events-none" : "opacity-100"}`}
             >
               <div
-                style={{
-                  width: 68,
-                  height: 68,
-                  borderRadius: 16,
-                  background: unis[i] ? "#ffd5d5" : "#f8f8f8",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: unis[i] ? "#e53935" : "#bbb",
-                }}
+                className={`w-[68px] h-[68px] rounded-2xl flex items-center justify-center ${
+                  unis[i]
+                    ? "bg-red-200 text-red-600"
+                    : "bg-[#f8f8f8] text-gray-300"
+                }`}
               >
                 <svg
                   width="36"
@@ -312,14 +215,9 @@ export default function ComparePage() {
                 </svg>
               </div>
               <p
-                style={{
-                  margin: 0,
-                  fontWeight: 700,
-                  fontSize: ".8rem",
-                  letterSpacing: "1px",
-                  color: unis[i] ? "#e53935" : "#bbb",
-                  textTransform: "uppercase",
-                }}
+                className={`m-0 font-bold text-[.8rem] tracking-wide uppercase ${
+                  unis[i] ? "text-red-600" : "text-gray-300"
+                }`}
               >
                 University {i + 1}
               </p>
@@ -327,19 +225,11 @@ export default function ComparePage() {
                 value={unis[i]}
                 disabled={!course}
                 onChange={(e) => setUni(i, e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "11px 13px",
-                  borderRadius: 10,
-                  border: "1.5px solid #f0f0f0",
-                  fontSize: ".88rem",
-                  fontFamily: "inherit",
-                  color: unis[i] ? "#e53935" : "#999",
-                  fontWeight: unis[i] ? 600 : 400,
-                  background: "#fff",
-                  cursor: course ? "pointer" : "not-allowed",
-                  outline: "none",
-                }}
+                className={`w-full rounded-[10px] border-[1.5px] border-gray-100 bg-white px-3.5 py-[11px] text-[.88rem] outline-none font-sans ${
+                  unis[i]
+                    ? "text-red-600 font-semibold"
+                    : "text-gray-500 font-normal"
+                } ${course ? "cursor-pointer" : "cursor-not-allowed"}`}
               >
                 <option value="">— Select University —</option>
                 {available
@@ -355,24 +245,15 @@ export default function ComparePage() {
         </section>
 
         {/* Compare Button */}
-        <div style={{ textAlign: "center", marginTop: 36 }}>
+        <div className="text-center mt-9">
           <button
             onClick={go}
             disabled={!canGo}
-            style={{
-              background: canGo ? "#e53935" : "#e0e0e0",
-              color: canGo ? "#fff" : "#aaa",
-              fontWeight: 800,
-              fontSize: "1.02rem",
-              padding: "15px 56px",
-              borderRadius: 50,
-              border: "none",
-              cursor: canGo ? "pointer" : "not-allowed",
-              fontFamily: "inherit",
-              letterSpacing: ".3px",
-              boxShadow: canGo ? "0 8px 24px rgba(229,57,53,.35)" : "none",
-              transition: "all .25s",
-            }}
+            className={`rounded-full px-14 py-[15px] text-[1.02rem] font-extrabold tracking-wide font-sans transition-all duration-200 ${
+              canGo
+                ? "bg-red-600 text-white shadow-[0_8px_24px_rgba(229,57,53,0.35)] cursor-pointer hover:bg-red-700"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
           >
             Compare Now →
           </button>

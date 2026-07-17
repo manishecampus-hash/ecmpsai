@@ -150,11 +150,13 @@ export default function LmsAccessPage() {
               key={pairIdx}
               className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100"
             >
-              <div className="grid md:grid-cols-2 gap-6 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-                {pair.universities.map((university) => (
+              <div className="relative grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x-2 divide-gray-200 gap-6 md:gap-0">
+                {pair.universities.map((university, uniIdx) => (
                   <div
                     key={university.name}
-                    className="flex flex-col gap-3 sm:gap-4 pt-6 first:pt-0 md:pt-0 md:pr-8"
+                    className={`flex flex-col gap-3 sm:gap-4 pt-6 first:pt-0 md:pt-0 ${
+                      uniIdx === 0 ? "md:pr-8" : "md:pl-8"
+                    }`}
                   >
                     <div className="flex justify-between items-start gap-3">
                       <div className="h-10 w-24 sm:h-12 sm:w-32 relative bg-gray-50 rounded-lg flex items-center justify-center p-2 border border-gray-100 shrink-0">
@@ -186,13 +188,18 @@ export default function LmsAccessPage() {
                     </ul>
 
                     <Link
-                      href="/apply"
+                      href="http://localhost:3000/apply"
                       className="mt-2 sm:mt-4 text-red-600 font-semibold flex items-center gap-1 text-sm hover:underline"
                     >
-                      View Access Details <ChevronRight className="h-4 w-4" />
+                      Access LMS <ChevronRight className="h-4 w-4" />
                     </Link>
                   </div>
                 ))}
+
+                {/* Center "OR" badge (desktop only) — anchored on the divide-x line */}
+                <span className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border-2 border-gray-200 text-[10px] font-bold text-gray-500 items-center justify-center shadow-sm">
+                  OR
+                </span>
               </div>
 
               {/* Deal Section */}

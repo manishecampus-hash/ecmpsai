@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import { Handshake, ChevronDown } from "lucide-react";
-import { Section } from "././../../ui/section"; // Ensure this import path is correct for your project
-
 const faqs = [
   {
     question: "Is the Golden Gate University Online DBA valid?",
@@ -60,9 +58,9 @@ export default function GGUDoctorateFAQ() {
   };
 
   return (
-    <Section
+    <div
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="w-full bg-white px-4 pt-12 pb-24 sm:px-6 lg:pb-32 lg:px-8"
+      className="w-full bg-white px-4 pt-12 pb-12 sm:px-6 lg:px-8 lg:pb-0"
     >
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
@@ -122,6 +120,6 @@ export default function GGUDoctorateFAQ() {
           })}
         </div>
       </div>
-    </Section>
+    </div>
   );
 }

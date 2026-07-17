@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const emailData = {
       from: {
         address: "no-reply@ecampusapp.com",
-        name: "GGU Leads",
+        name: "ECAMPUS Website Lead",
       },
       to: [
         {
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
           },
         },
       ],
-      subject: `New Lead received from GEN AI New LP`,
+      subject: `New Lead received from ECAMPUS New Website`,
       htmlbody: `
 <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px;">
 <h2 style="color: #2563eb;">New Lead Received </h2>

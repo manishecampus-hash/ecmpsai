@@ -687,7 +687,7 @@ export function SignupModal({
                     />
 
                     <div className="leading-snug">
-                      <p className="text-xs font-semibold text-white">
+                      <p className="text-xs font-semibold text-white text-center justify-center">
                         <span className="font-bold">eCampus Assured</span>{" "}
                         <span className="cursor-pointer font-semibold text-yellow-300 underline">
                           (Know More)
@@ -696,10 +696,9 @@ export function SignupModal({
 
                       <p className="text-xs text-red-100">
                         Get up to{" "}
-                        <span className="font-bold text-white">
+                        <span className=" text-white">
                           100% Course Fee Refund*
                         </span>{" "}
-                        if you cancel as per the policy.
                       </p>
                     </div>
                   </div>
@@ -709,7 +708,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading || phone.length < 7}
-                  className="w-90 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
+                  className="w-fit mx-auto bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium px-6 py-1.5 rounded-2xl transition-all"
                 >
                   {loading ? "Sending..." : "Continue"}
                 </Button>
@@ -788,7 +787,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-black hover:bg-gray-800 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
+                  className="w-30px bg-black hover:bg-gray-800 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
                 >
                   {loading ? "Creating..." : "Continue"}
                 </Button>

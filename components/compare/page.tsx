@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, GitCompare } from "lucide-react";
 import { UNIVERSITY_COMPARISONS } from "@/data/comparisons";
 import Link from "next/link";
 
@@ -43,10 +43,16 @@ export default function UniversitySlider() {
   return (
     // Reduced outer padding on small screens so content doesn't feel cramped
     <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 relative bg-white rounded-2xl border border-gray-200 shadow-sm">
-      {/* Smaller heading on mobile, scales up on larger screens */}
-      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-5 sm:mb-6 lg:mb-8 text-center">
-        Compare The Right University
-      </h2>
+      {/* Badge pill + heading, matching the "SKILL / Enhance Skills by Industry" pattern used elsewhere on the site */}
+      <div className="text-center mb-5 sm:mb-6 lg:mb-8">
+        <span className="inline-flex items-center gap-1.5 text-red-600 bg-red-50 border border-red-100 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-3">
+          <GitCompare size={14} />
+          COMPARE
+        </span>
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+          Compare The Right <span className="text-red-600">University</span>
+        </h2>
+      </div>
 
       <div className="relative">
         {/* Left Arrow - hidden on mobile since swipe gesture handles navigation there */}
@@ -86,19 +92,19 @@ export default function UniversitySlider() {
 
               {/* Content Section */}
               <div className="p-4 flex flex-col flex-1">
-                {/* Course Badge (e.g. MBA) */}
+                {/* Course Badge (e.g. MBA) - accent color, tightened tracking for a cleaner label look */}
                 <div className="text-center mb-3">
-                  <p className="font-bold text-gray-900 text-lg">
+                  <p className="font-bold text-red-600 text-base sm:text-lg tracking-tight uppercase">
                     {pair.a.name}
                   </p>
                 </div>
 
                 {/* University Names */}
                 <div className="flex justify-between items-start mb-2 pb-2 border-b border-gray-200">
-                  <p className="font-bold text-gray-900 text-sm text-left w-[48%] line-clamp-2">
+                  <p className="font-bold text-gray-900 text-sm leading-snug text-left w-[48%] line-clamp-2">
                     {pair.a.university}
                   </p>
-                  <p className="font-bold text-gray-900 text-sm text-right w-[48%] line-clamp-2">
+                  <p className="font-bold text-gray-900 text-sm leading-snug text-right w-[48%] line-clamp-2">
                     {pair.b.university}
                   </p>
                 </div>
@@ -106,21 +112,21 @@ export default function UniversitySlider() {
                 {/* Location */}
                 <div className="flex justify-between gap-2 text-xs text-gray-500 mb-3 pb-2 border-b border-gray-100">
                   <p className="flex items-center gap-1 min-w-0 w-[48%]">
-                    <MapPin size={12} className="shrink-0" />
+                    <MapPin size={12} className="shrink-0 text-red-500" />
                     <span className="truncate">{pair.a.location}</span>
                   </p>
                   <p className="flex items-center gap-1 min-w-0 w-[48%] justify-end">
-                    <MapPin size={12} className="shrink-0" />
+                    <MapPin size={12} className="shrink-0 text-red-500" />
                     <span className="truncate">{pair.b.location}</span>
                   </p>
                 </div>
 
-                {/* Course Tags */}
+                {/* Course Tags - kept color-coded per side for quick scanning, weight trimmed to medium/semibold for hierarchy */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {pair.a.courses.slice(0, 2).map((c, i) => (
                     <span
                       key={`a-${i}`}
-                      className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium"
+                      className="text-[11px] sm:text-xs bg-red-50 text-red-700 border border-red-100 px-2 py-0.5 rounded-full font-semibold"
                     >
                       {c}
                     </span>
@@ -128,17 +134,17 @@ export default function UniversitySlider() {
                   {pair.b.courses.slice(0, 2).map((c, i) => (
                     <span
                       key={`b-${i}`}
-                      className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium"
+                      className="text-[11px] sm:text-xs bg-gray-100 text-gray-700 border border-gray-200 px-2 py-0.5 rounded-full font-semibold"
                     >
                       {c}
                     </span>
                   ))}
                 </div>
 
-                {/* CTA Button */}
+                {/* CTA Button - switched to accent theme (orange) for a clear, consistent primary action */}
                 <Link
                   href={`/compare/${pair.id}`}
-                  className="w-full py-2 border-2 border-gray-500 text-black rounded-lg font-bold text-sm hover:bg-gray-50 transition mt-auto text-center block"
+                  className="w-full py-2 border-2 border-red-600 text-red-600 rounded-lg font-bold text-sm hover:bg-red-600 hover:text-white transition-colors mt-auto text-center block"
                 >
                   Compare Universities
                 </Link>
@@ -158,15 +164,17 @@ export default function UniversitySlider() {
         )}
       </div>
 
-      {/* View All Link */}
+      {/* View All Link - pill button with circular arrow badge, matching the arrow-circle style used on the course cards */}
       <div className="mt-6 sm:mt-8 text-center">
-        <a
+        <Link
           href="/comparisons"
-          className="text-orange-500 font-bold text-sm sm:text-base flex items-center justify-center gap-2 hover:gap-3 transition"
+          className="group inline-flex items-center gap-3 pl-5 sm:pl-6 pr-2 py-2 rounded-full border-2 border-red-600 text-red-600 font-bold text-sm sm:text-base hover:bg-red-600 hover:text-white transition-colors"
         >
           View All University Comparisons
-          <ChevronRight size={20} />
-        </a>
+          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-red-600 text-white transition-colors group-hover:bg-white group-hover:text-red-600">
+            <ChevronRight size={18} />
+          </span>
+        </Link>
       </div>
     </div>
   );

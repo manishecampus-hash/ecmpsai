@@ -25,6 +25,7 @@ const ContactUs: React.FC = () => {
     coupon: "",
   });
 
+  const [agreed, setAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
@@ -33,8 +34,18 @@ const ContactUs: React.FC = () => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleAgreeChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setAgreed(e.target.checked);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
+    if (!agreed) {
+      alert("Please agree to the terms & conditions before submitting.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -62,6 +73,7 @@ const ContactUs: React.FC = () => {
           state: "",
           coupon: "",
         });
+        setAgreed(false);
       } else {
         alert(data.message || "Something went wrong ❌");
       }
@@ -75,17 +87,24 @@ const ContactUs: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <p className="text-sm text-gray-400 mb-1">
-          Big decisions need clarity.
-        </p>
-        <h1 className="text-3xl font-bold mb-10 leading-snug">
-          Talk it through with us.
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        {/* Eyebrow badge, matches homepage "TRENDING COURSES" pill */}
+        <div className="flex justify-center mb-5">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide bg-red-50 text-red-600 px-4 py-1.5 rounded-full">
+            <ChatIcon /> Get In Touch
+          </span>
+        </div>
+
+        <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-3 leading-tight tracking-tight text-gray-950">
+          Talk it through <span className="text-red-600">with us.</span>
         </h1>
+        <p className="text-sm text-gray-400 text-center mb-12">
+          Big decisions need clarity — no spam, no pressure.
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Map */}
-          <div className="rounded-2xl overflow-hidden border border-gray-200 min-h-[360px]">
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 min-h-[400px]">
             <iframe
               title="eCampus HQ location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7006.989929442989!2d77.31512289999999!3d28.5849245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce458ccb0afa5%3A0x6f6a3dc21c831e29!2sSector%202%2C%20Noida%2C%20Uttar%20Pradesh%20201301!5e0!3m2!1sen!2sin!4v1781869959798!5m2!1sen!2sin"
@@ -96,11 +115,14 @@ const ContactUs: React.FC = () => {
               loading="lazy"
               className="w-full h-full block"
             />
+            <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 text-xs font-bold bg-black/85 text-white px-3 py-1.5 rounded-full backdrop-blur-sm">
+              <PinIcon /> eCampus HQ
+            </span>
           </div>
 
           {/* Enquiry Form */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">
+            <h2 className="text-lg font-bold text-gray-950 mb-1">
               Send us an enquiry
             </h2>
             <p className="text-xs text-gray-400 mb-4 leading-relaxed">
@@ -110,10 +132,10 @@ const ContactUs: React.FC = () => {
 
             {/* Badges */}
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="inline-flex items-center gap-1 text-xs font-medium bg-green-50 text-green-800 px-3 py-1 rounded-full">
+              <span className="inline-flex items-center gap-1 text-xs font-bold bg-red-50 text-red-600 px-3 py-1 rounded-full">
                 <DiscountIcon /> 15% online discount
               </span>
-              <span className="inline-flex items-center gap-1 text-xs font-medium bg-purple-50 text-purple-800 px-3 py-1 rounded-full">
+              <span className="inline-flex items-center gap-1 text-xs font-bold bg-gray-100 text-gray-900 px-3 py-1 rounded-full">
                 <ShieldIcon /> Lowest price promise
               </span>
             </div>
@@ -121,7 +143,7 @@ const ContactUs: React.FC = () => {
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     Full name
                   </label>
                   <input
@@ -131,11 +153,11 @@ const ContactUs: React.FC = () => {
                     value={form.name}
                     onChange={handleChange}
                     required
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     Phone number
                   </label>
                   <input
@@ -145,11 +167,11 @@ const ContactUs: React.FC = () => {
                     value={form.phone}
                     onChange={handleChange}
                     required
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     Email address
                   </label>
                   <input
@@ -159,11 +181,11 @@ const ContactUs: React.FC = () => {
                     value={form.email}
                     onChange={handleChange}
                     required
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     Select course
                   </label>
                   <select
@@ -171,7 +193,7 @@ const ContactUs: React.FC = () => {
                     value={form.course}
                     onChange={handleChange}
                     required
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   >
                     <option value="">Choose a course</option>
                     <option value="mba">MBA</option>
@@ -182,7 +204,7 @@ const ContactUs: React.FC = () => {
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     State
                   </label>
                   <select
@@ -190,7 +212,7 @@ const ContactUs: React.FC = () => {
                     value={form.state}
                     onChange={handleChange}
                     required
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   >
                     <option value="">Select state</option>
                     <option value="up">Uttar Pradesh</option>
@@ -201,7 +223,7 @@ const ContactUs: React.FC = () => {
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-gray-500 font-semibold">
                     Coupon code (optional)
                   </label>
                   <input
@@ -210,35 +232,48 @@ const ContactUs: React.FC = () => {
                     placeholder="Have a code?"
                     value={form.coupon}
                     onChange={handleChange}
-                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition"
+                    className="text-xs px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition"
                   />
                 </div>
               </div>
 
               {/* Assurance strip */}
-              <div className="flex items-start gap-2 bg-blue-50 rounded-xl px-3 py-2.5 mb-3">
-                <ShieldCheckIcon />
-                <p className="text-xs text-blue-800 leading-relaxed">
+              <div className="flex items-start gap-2 bg-red-50 rounded-xl px-3 py-2.5 mb-4">
+                <input
+                  type="checkbox"
+                  id="agree-terms"
+                  name="agree"
+                  checked={agreed}
+                  onChange={handleAgreeChange}
+                  required
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-red-600 focus:ring-2 focus:ring-red-100 accent-red-600"
+                />
+                <label
+                  htmlFor="agree-terms"
+                  className="text-xs text-red-700 leading-relaxed"
+                >
                   eCampus assured — get a 100% full refund on cancellation.{" "}
-                  <a href="#" className="font-semibold underline">
+                  <a href="#" className="font-bold underline">
                     Know more →
                   </a>
-                </p>
+                </label>
               </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-black hover:bg-black text-white text-sm font-semibold py-2.5 rounded-xl transition-colors mb-2 disabled:opacity-50"
-              >
-                {isLoading ? (
-                  "Submitting..."
-                ) : (
-                  <>
-                    <SendIcon /> Submit enquiry
-                  </>
-                )}
-              </button>
+              <div className="flex justify-center mb-2">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-2.5 px-8 rounded-xl transition-colors disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    "Submitting..."
+                  ) : (
+                    <>
+                      <SendIcon /> Submit enquiry
+                    </>
+                  )}
+                </button>
+              </div>
 
               <p className="text-xs text-gray-400 text-center leading-relaxed">
                 <LockIcon /> Your personal information is secure with us.
@@ -255,6 +290,37 @@ const ContactUs: React.FC = () => {
     </>
   );
 };
+
+const ChatIcon: React.FC = () => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+  </svg>
+);
+
+const PinIcon: React.FC = () => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
 
 const DiscountIcon: React.FC = () => (
   <svg
@@ -284,23 +350,6 @@ const ShieldIcon: React.FC = () => (
     strokeLinejoin="round"
   >
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-  </svg>
-);
-
-const ShieldCheckIcon: React.FC = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#1D4ED8"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="shrink-0 mt-0.5"
-  >
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <polyline points="9 12 11 14 15 10" />
   </svg>
 );
 

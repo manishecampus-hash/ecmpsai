@@ -11,7 +11,7 @@ export function FooterCta() {
           <div className="flex w-full shrink-0 justify-center md:w-64 md:items-center md:self-stretch">
             <div className="relative aspect-[16/9] w-1/2 max-w-[130px] sm:aspect-[4/3] sm:w-1/2 sm:max-w-[220px] md:aspect-auto md:h-full md:w-full md:min-h-[160px]">
               <Image
-                src="/cta/cta.png"
+                src="/image/logo.png"
                 alt="CTA"
                 fill
                 priority

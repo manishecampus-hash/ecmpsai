@@ -22,7 +22,7 @@ export default function GGUDoctorateOverview() {
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div className="overflow-hidden rounded-xl">
             <img
-              src="/doctorate-universities/ggu-dba.png"
+              src="/ggu/overview.png"
               alt="Golden Gate University DBA student researching"
               className="h-full w-full object-cover"
             />

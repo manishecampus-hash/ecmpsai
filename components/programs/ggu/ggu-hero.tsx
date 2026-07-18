@@ -151,20 +151,22 @@ export default function GGUDoctorateHero() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {highlights.map((item) => {
             const Icon = item.icon;
 
             return (
               <div
                 key={item.label}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm"
               >
-                <Icon className="mb-3 h-5 w-5 text-red-500" />
-                <p className="text-xs font-black uppercase tracking-wider text-slate-400">
+                <Icon className="h-5 w-5 shrink-0 text-red-500" />
+
+                <p className="text-xs font-bold uppercase text-slate-500 whitespace-nowrap">
                   {item.label}
                 </p>
-                <p className="mt-1 text-lg font-black text-gray-900">
+
+                <p className="text-base font-black text-gray-900 whitespace-nowrap">
                   {item.value}
                 </p>
               </div>

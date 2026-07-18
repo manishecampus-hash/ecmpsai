@@ -40,11 +40,11 @@ export default function GGUDoctorateCareers() {
   return (
     <section
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="relative overflow-hidden bg-white px-4 py-10 text-slate-900 sm:px-6 lg:px-8 lg:py-14"
+      className="relative overflow-hidden bg-white px-4 py-4 text-slate-900 sm:px-6 lg:px-8 lg:py-6"
     >
       <div className="mx-auto max-w-7xl">
         {/* Center Header */}
-        <div className="mx-auto mb-10 max-w-3xl border-b border-slate-100 pb-6 text-center">
+        <div className="mx-auto mb-5 max-w-3xl border-b border-slate-100 pb-3 text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
             <BriefcaseBusiness className="h-3.5 w-3.5 text-red-500" />
             Career Pathways
@@ -56,30 +56,22 @@ export default function GGUDoctorateCareers() {
         </div>
 
         {/* Image and Content */}
-        <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Left Image */}
-          <div className="relative mx-auto flex h-full min-h-[420px] w-full max-w-md items-center justify-center lg:min-h-[520px]">
-            <div className="absolute bottom-8 right-4 h-24 w-48 rounded-full bg-red-500/20 blur-3xl" />
+          <div className="relative mx-auto flex w-full max-w-md items-center justify-center">
+            <div className="absolute bottom-4 right-4 h-24 w-48 rounded-full bg-red-500/20 blur-3xl" />
 
             <img
-              src="/doctorate-universities/mycareer.png"
+              src="/ggu/career.png"
               alt="DBA career opportunities"
-              className="relative z-10 h-full max-h-[520px] w-full object-contain"
+              className="relative z-10 w-full object-contain"
             />
           </div>
 
           {/* Right Content */}
           <div>
-            <p className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-              An Online DBA from Golden Gate University opens pathways into
-              executive leadership, strategy, governance, and consulting.
-              Professionals build advanced research and decision-making
-              capabilities and can pursue senior roles in corporations,
-              consulting firms, government bodies, and academic institutions.
-            </p>
-
             {/* Career Role Cards */}
-            <div className="mt-7 grid max-w-2xl gap-3 sm:grid-cols-2">
+            <div className="grid max-w-2xl gap-3 sm:grid-cols-2">
               {careerRoles.map((role) => {
                 const Icon = role.icon;
 
@@ -101,7 +93,7 @@ export default function GGUDoctorateCareers() {
             </div>
 
             {/* Extra Career Notes */}
-            <div className="mt-7 max-w-2xl space-y-3">
+            <div className="mt-5 max-w-2xl space-y-2.5">
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
                 <p className="text-sm leading-relaxed text-slate-600 sm:text-base">

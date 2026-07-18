@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Handshake, ChevronDown } from "lucide-react";
-import { Section } from "././../../ui/section"; // Ensure this import path is correct for your project
 
 const faqs = [
   {
@@ -60,7 +59,7 @@ export default function BComFAQ() {
   };
 
   return (
-    <Section className="w-full bg-white px-4 pt-12 pb-24 sm:px-6 lg:pb-32 lg:px-8">
+    <section className="w-full bg-white px-4 pt-12 pb-14 sm:px-6 sm:pb-4 lg:px-8 lg:pb-3">
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
@@ -119,6 +118,6 @@ export default function BComFAQ() {
           })}
         </div>
       </div>
-    </Section>
+    </section>
   );
 }

@@ -578,16 +578,16 @@ export function SignupModal({
 
           <div className="flex flex-col px-3 pb-3 pt-0">
             {/* Logo */}
-            <div className="flex justify-center">
+            <div className="flex justify-center -mt-4">
               <img
                 src="/image/logo.png"
                 alt="logo"
-                className="h-[100px] w-[100px] object-contain"
+                className="block h-[100px] w-[100px] object-contain"
               />
             </div>
 
             {/* Heading */}
-            <div className="relative flex items-center justify-center mb-2">
+            <div className="relative flex items-center justify-center -mt-3 mb-1.5">
               {step !== "phone" && (
                 <button
                   onClick={handleBack}
@@ -677,30 +677,28 @@ export function SignupModal({
                 </button>
 
                 {/* Assured refund promo banner */}
-                <div className="flex items-center justify-between gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2 shadow-lg">
-                  <div className="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      checked={assuredOptIn}
-                      onChange={(e) => setAssuredOptIn(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
-                    />
+                <div className="flex w-fit mx-auto items-center justify-center gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2 shadow-lg">
+                  <input
+                    type="checkbox"
+                    checked={assuredOptIn}
+                    onChange={(e) => setAssuredOptIn(e.target.checked)}
+                    className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
+                  />
 
-                    <div className="leading-snug">
-                      <p className="text-xs font-semibold text-white text-center justify-center">
-                        <span className="font-bold">eCampus Assured</span>{" "}
-                        <span className="cursor-pointer font-semibold text-yellow-300 underline">
-                          (Know More)
-                        </span>
-                      </p>
+                  <div className="leading-snug text-center">
+                    <p className="text-xs font-semibold text-white text-center">
+                      <span className="font-bold">eCampus Assured</span>{" "}
+                      <span className="cursor-pointer font-semibold text-yellow-300 underline">
+                        (Know More)
+                      </span>
+                    </p>
 
-                      <p className="text-xs text-red-100">
-                        Get up to{" "}
-                        <span className=" text-white">
-                          100% Course Fee Refund*
-                        </span>{" "}
-                      </p>
-                    </div>
+                    <p className="text-xs text-red-100 text-center">
+                      Get up to{" "}
+                      <span className="text-white">
+                        100% Course Fee Refund*
+                      </span>{" "}
+                    </p>
                   </div>
                 </div>
 
@@ -708,7 +706,7 @@ export function SignupModal({
                 <Button
                   type="submit"
                   disabled={loading || phone.length < 7}
-                  className="w-fit mx-auto bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium px-6 py-1.5 rounded-2xl transition-all"
+                  className="w-fit mx-auto bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-base font-medium px-8 py-2.5 rounded-2xl transition-all"
                 >
                   {loading ? "Sending..." : "Continue"}
                 </Button>

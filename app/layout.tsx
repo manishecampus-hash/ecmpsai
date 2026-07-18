@@ -48,9 +48,6 @@ export default function RootLayout({
           <Navbar />
 
           <main className="flex-1 pb-16 md:pb-0 pt-16">{children}</main>
-
-          {/* <Footer /> */}
-          {/* <MobileBottomNav /> */}
         </ThemeProvider>
       </body>
     </html>

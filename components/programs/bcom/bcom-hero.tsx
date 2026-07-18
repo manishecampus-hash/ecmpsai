@@ -158,22 +158,28 @@ export default function BComHero() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {highlights.map((item) => {
             const Icon = item.icon;
 
             return (
               <div
                 key={item.label}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
               >
-                <Icon className="mb-3 h-5 w-5 text-red-500" />
-                <p className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  {item.label}
-                </p>
-                <p className="mt-1 text-lg font-black text-gray-900">
-                  {item.value}
-                </p>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-50">
+                  <Icon className="h-4 w-4 text-red-500" />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                    {item.label}
+                  </p>
+
+                  <p className="truncate text-sm font-bold text-gray-900 sm:text-base">
+                    {item.value}
+                  </p>
+                </div>
               </div>
             );
           })}

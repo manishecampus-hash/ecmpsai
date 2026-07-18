@@ -69,7 +69,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "bot",
     href: "/programs/ggu-gen-ai",
-    videoSrc: "https://youtube.com/shorts/nzwqSZmVm8I?feature=share",
+    videoSrc: "https://www.youtube.com/embed/nzwqSZmVm8I",
   },
   {
     id: 5,

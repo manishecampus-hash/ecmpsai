@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DIcons } from "dicons";
@@ -77,6 +78,31 @@ const contactLinkClass =
   "group relative flex h-12 items-center justify-center gap-2 rounded-lg border border-slate-700 px-4 pt-2 transition-colors";
 
 export function Footer() {
+  const [footerSections, setFooterSections] = useState<any[]>(navigation.categories[0].sections);
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    fetch(`${apiUrl}/menus/footer`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Footer menu not found");
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.items && data.items.length > 0) {
+          const sections = data.items.map((sec: any) => ({
+            id: sec.id || sec.label.toLowerCase().replace(/\s+/g, "-"),
+            name: sec.label,
+            items: (sec.children || []).map((item: any) => ({
+              name: item.label,
+              href: item.url || "#",
+            }))
+          }));
+          setFooterSections(sections);
+        }
+      })
+      .catch((err) => console.error("Error fetching footer menu:", err));
+  }, []);
+
   return (
     <footer
       id="footer"
@@ -100,13 +126,13 @@ export function Footer() {
         <div className="w-full border-b border-dotted border-slate-800" />
 
         <div className="grid w-full grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6">
-          {navigation.categories[0].sections.map((section) => (
+          {footerSections.map((section) => (
             <div key={section.id}>
               <h4 className="mb-4 text-sm font-semibold text-white">
                 {section.name}
               </h4>
               <ul className="flex flex-col space-y-2">
-                {section.items.map((item) => (
+                {section.items.map((item: any) => (
                   <li key={item.name}>
                     <Link
                       href={item.href}

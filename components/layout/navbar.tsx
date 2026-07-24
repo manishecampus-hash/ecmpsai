@@ -607,6 +607,7 @@ import { SignupModal } from "@/components/layout/signup-modal";
 import { categories } from "@/data/header-menu";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
+import * as LucideIcons from "lucide-react";
 
 type Student = {
   name?: string;
@@ -621,22 +622,62 @@ const navLinks = [
   { label: "Contact Us", href: "/contact-us" },
 ];
 
+function CategoryIcon({ icon, className }: { icon: any; className?: string }) {
+  if (!icon) return <LucideIcons.BookOpen className={className} />;
+
+  // If it's a React component / function, render it directly
+  if (typeof icon === "function" || (typeof icon === "object" && icon !== null)) {
+    const IconComp = icon;
+    return <IconComp className={className} />;
+  }
+
+  // If it's a string, check if it's an image URL or Lucide icon name
+  if (typeof icon === "string") {
+    if (icon.startsWith("http") || icon.startsWith("/") || icon.includes(".")) {
+      return <img src={icon} alt="" className="w-5 h-5 object-contain rounded-sm flex-shrink-0" />;
+    }
+    const IconComponent = (LucideIcons as any)[icon] || LucideIcons.BookOpen;
+    return <IconComponent className={className} />;
+  }
+
+  return <LucideIcons.BookOpen className={className} />;
+}
+
 function GrayIcon({
-  Icon,
+  icon,
   size = 20,
   active = false,
   boxClass = "w-11 h-11 rounded-full",
+}: {
+  icon: any;
+  size?: number;
+  active?: boolean;
+  boxClass?: string;
 }) {
   return (
     <span
       className={`${boxClass} bg-[#f3f4f6] border border-gray-200 flex items-center justify-center flex-shrink-0`}
     >
-      <Icon size={size} className="text-black" strokeWidth={1.8} />
+      <CategoryIcon icon={icon} className="text-black w-[18px] h-[18px]" />
     </span>
   );
 }
 
-function CourseCard({ tag, name, duration, href = "#", image, onNavigate }) {
+function CourseCard({
+  tag,
+  name,
+  duration,
+  href = "#",
+  image,
+  onNavigate,
+}: {
+  tag: string;
+  name: string;
+  duration: string;
+  href?: string;
+  image?: string;
+  onNavigate?: () => void;
+}) {
   return (
     <Link
       href={href}
@@ -675,21 +716,28 @@ function ProgramDropdown({
   open,
   onClose,
   dropdownRef,
+  categories,
+  activeCat,
+  setActiveCat,
 }: {
   open: boolean;
   onClose: () => void;
   dropdownRef: React.RefObject<HTMLDivElement>;
+  categories: any[];
+  activeCat: string;
+  setActiveCat: (id: string) => void;
 }) {
-  const [activeCat, setActiveCat] = useState(categories[0].id);
   const [mobileStep, setMobileStep] = useState<"list" | "detail">("list");
-  const active = categories.find((c) => c.id === activeCat) || categories[0];
 
   // Reset to category list every time the dropdown is (re)opened
   useEffect(() => {
     if (open) setMobileStep("list");
   }, [open]);
 
-  if (!open) return null;
+  if (!open || categories.length === 0) return null;
+
+  const currentActiveCatId = activeCat || (categories[0] ? categories[0].id : "");
+  const active = categories.find((c) => c.id === currentActiveCatId) || categories[0];
 
   const handleCategoryClick = (id: string) => {
     setActiveCat(id);
@@ -710,7 +758,7 @@ function ProgramDropdown({
           } md:block w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 py-2 md:py-3 flex-shrink-0 bg-gray-50/80 overflow-y-auto max-h-[80vh] md:max-h-[520px] custom-scroll`}
         >
           {categories.map((cat) => {
-            const isActive = cat.id === activeCat;
+            const isActive = cat.id === currentActiveCatId;
             return (
               <button
                 key={cat.id}
@@ -723,7 +771,7 @@ function ProgramDropdown({
                 }`}
               >
                 <GrayIcon
-                  Icon={cat.Icon}
+                  icon={cat.Icon}
                   size={18}
                   active={isActive}
                   boxClass="w-10 h-10 rounded-full"
@@ -758,7 +806,7 @@ function ProgramDropdown({
           </button>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-            {active.courses.map((c, i) => (
+            {active.courses.map((c: any, i: number) => (
               <CourseCard key={i} {...c} onNavigate={onClose} />
             ))}
           </div>
@@ -777,6 +825,16 @@ function MobileDrawer({
   onLogout,
   onSignup,
   pathname,
+  navLinks,
+}: {
+  open: boolean;
+  onClose: () => void;
+  student: any;
+  displayName: string | undefined;
+  onLogout: () => void;
+  onSignup: () => void;
+  pathname: string;
+  navLinks: any[];
 }) {
   const isActive = (href: string) => {
     const basePath = href.split("?")[0];
@@ -893,6 +951,67 @@ export function Navbar() {
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
+  const [programsMenu, setProgramsMenu] = useState<any[]>(categories);
+  const [activeCat, setActiveCat] = useState<string>("");
+
+  useEffect(() => {
+    if (programsMenu && programsMenu.length > 0 && !activeCat) {
+      setActiveCat(programsMenu[0].id || programsMenu[0].label.toLowerCase().replace(/\s+/g, "-"));
+    }
+  }, [programsMenu, activeCat]);
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+
+    // Fetch Header Links
+    fetch(`${apiUrl}/menus/header`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Header menu not found");
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.items && data.items.length > 0) {
+          const links = data.items.map((item: any) => ({
+            label: item.label,
+            href: item.url,
+            target: item.target
+          }));
+          setHeaderNavLinks(links);
+        }
+      })
+      .catch((err) => console.error("Error fetching header menu:", err));
+
+    // Fetch Programs Menu
+    fetch(`${apiUrl}/menus/programs`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Programs menu not found");
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.items && data.items.length > 0) {
+          const fetchedCats = data.items.map((cat: any) => ({
+            id: cat.id || cat.label.toLowerCase().replace(/\s+/g, "-"),
+            label: cat.label,
+            Icon: cat.icon || "BookOpen",
+            courses: (cat.children || []).map((child: any) => ({
+              tag: child.type || "",
+              name: child.label,
+              duration: child.duration || "",
+              href: child.url || "#",
+              image: child.icon || "",
+              target: child.target || "_self",
+            }))
+          }));
+          setProgramsMenu(fetchedCats);
+          if (fetchedCats.length > 0) {
+            setActiveCat(fetchedCats[0].id);
+          }
+        }
+      })
+      .catch((err) => console.error("Error fetching programs menu:", err));
+  }, []);
 
   // FIX: split the single shared ref into three separate refs so outside-click
   // detection can correctly check the desktop trigger, the mobile trigger, and
@@ -1069,7 +1188,7 @@ export function Navbar() {
                 />
               </button>
 
-              {navLinks.map((link) => (
+              {headerNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -1149,6 +1268,9 @@ export function Navbar() {
         open={activeMenu === "program"}
         onClose={closeAll}
         dropdownRef={dropdownRef}
+        categories={programsMenu}
+        activeCat={activeCat}
+        setActiveCat={setActiveCat}
       />
 
       {/* Mobile Drawer */}
@@ -1160,6 +1282,7 @@ export function Navbar() {
         onLogout={handleLogout}
         onSignup={() => setShowSignupModal(true)}
         pathname={pathname}
+        navLinks={headerNavLinks}
       />
 
       {/* Bottom Navigation Bar - Modern Design */}

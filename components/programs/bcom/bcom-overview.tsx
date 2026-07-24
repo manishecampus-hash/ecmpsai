@@ -40,20 +40,12 @@ export default function BComOverview() {
             </h2>
 
             <p className="mt-6 text-lg leading-relaxed text-slate-300">
-              The{" "}
-              <strong className="text-white">
-                Online B.Com (Bachelor of Commerce)
-              </strong>{" "}
-              is a flexible undergraduate degree that helps students gain
-              practical knowledge in{" "}
-              <strong className="text-white">
-                accounting, finance, taxation, and business fundamentals
-              </strong>{" "}
+              The Online B.Com (Bachelor of Commerce) is a flexible
+              undergraduate degree that helps students gain practical knowledge
+              in accounting, finance, taxation, and business fundamentals
               through online learning. It is ideal for students and working
-              professionals seeking a{" "}
-              <strong className="text-white">
-                recognized, career-oriented commerce degree.
-              </strong>
+              professionals seeking a recognized, career-oriented commerce
+              degree.
             </p>
 
             <div className="mt-8 space-y-4">

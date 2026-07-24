@@ -40,20 +40,11 @@ export default function GGUDoctorateOverview() {
             </h2>
 
             <p className="mt-6 text-lg leading-relaxed text-slate-300">
-              The{" "}
-              <strong className="text-white">
-                Doctor of Business Administration (DBA)
-              </strong>{" "}
-              from Golden Gate University is an AACSB-accredited doctoral
-              program built for{" "}
-              <strong className="text-white">
-                working executives and senior professionals
-              </strong>{" "}
-              who want to combine rigorous academic research with real-world
-              business strategy — all delivered through a{" "}
-              <strong className="text-white">
-                100% online, flexible format.
-              </strong>
+              The Doctor of Business Administration (DBA) from Golden Gate
+              University is an AACSB-accredited doctoral program built for{" "}
+              working executives and senior professionals who want to combine
+              rigorous academic research with real-world business strategy — all
+              delivered through a 100% online, flexible format.
             </p>
 
             <div className="mt-8 space-y-4">

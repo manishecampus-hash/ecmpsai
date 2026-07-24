@@ -67,8 +67,7 @@ export default function BComFAQ() {
             <Handshake className="h-3.5 w-3.5 text-red-500" />
             FAQ
           </span>
-
-          <h2 className="mt-3 text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Frequently Asked <span className="text-red-500">Questions</span>
           </h2>
         </div>

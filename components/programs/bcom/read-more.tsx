@@ -18,7 +18,7 @@ export default function ReadMore() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
-            <h2 className="mt-4 text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
               Benefits of Choosing an Online B.Com{" "}
               <span className="text-red-500">Program?</span>
             </h2>

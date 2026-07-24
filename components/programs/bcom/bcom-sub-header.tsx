@@ -162,7 +162,7 @@ export default function BComSubHeader() {
 
   return (
     <div
-      className={`fixed left-0 right-0 z-40 bg-white  border-gray-200 shadow-none transition-all duration-300 ${
+      className={`font-sans fixed left-0 right-0 z-40 bg-white  border-gray-200 shadow-none transition-all duration-300 ${
         isVisible
           ? "translate-y-0 opacity-100 pointer-events-auto"
           : "-translate-y-[calc(100%+70px)] opacity-0 pointer-events-none"
@@ -172,7 +172,7 @@ export default function BComSubHeader() {
       }}
     >
       <div ref={scrollContainerRef} className="overflow-x-auto scrollbar-hide">
-        <nav className="flex items-center min-w-max px-4 md:px-8">
+        <nav className="flex items-center justify-center min-w-max mx-auto px-4 md:px-8">
           {NAV_ITEMS.map(({ label, sectionId }) => {
             const isActive = activeSection === sectionId;
 

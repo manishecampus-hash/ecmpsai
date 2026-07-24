@@ -35,7 +35,7 @@ export default function BComHero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-8 pb-4 lg:pt-10 lg:pb-6">
+    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-4 pb-4 lg:pt-6 lg:pb-6">
       <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
         <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
           <defs>
@@ -56,18 +56,10 @@ export default function BComHero() {
         </svg>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <Link
-              href="/"
-              className="inline-flex items-center text-sm font-semibold text-slate-500 transition hover:text-red-500"
-            >
-              <ChevronLeft className="mr-1 h-4 w-4" />
-              Back to Courses
-            </Link>
-
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-sm font-bold text-red-600">
+            <div className="mt-1 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-sm font-bold text-red-600">
               <Award className="h-4 w-4" />
               Undergraduate Program
             </div>
@@ -80,18 +72,18 @@ export default function BComHero() {
               ONLY {seatsLeft} SEATS LEFT FOR JUNE 2026 BATCH
             </div>
 
-            <h1 className="mt-4 text-2xl font-black leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-4xl">
+            <h1 className="mt-2 text-2xl font-black text-gray-900 sm:text-3xl lg:text-3xl">
               Online B.Com in{" "}
               <span className="text-red-500">Accounting & Finance</span>
             </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
               Build a strong commerce foundation with accounting, finance,
               taxation, business law, and management concepts through a flexible
               online degree program.
             </p>
 
-            <div className="mt-7 flex flex-wrap gap-4">
+            <div className="mt-5 flex flex-wrap gap-4">
               <Link
                 href="#apply"
                 className="inline-flex items-center gap-2 rounded-full bg-red-500 px-8 py-3 text-sm font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600"

@@ -162,7 +162,7 @@ export default function BComSubHeader() {
 
   return (
     <div
-      className={`fixed left-0 right-0 z-40 bg-white  border-gray-200 shadow-none transition-all duration-300 ${
+      className={`font-sans fixed left-0 right-0 z-40 bg-white  border-gray-200 shadow-none transition-all duration-300 ${
         isVisible
           ? "translate-y-0 opacity-100 pointer-events-auto"
           : "-translate-y-[calc(100%+70px)] opacity-0 pointer-events-none"

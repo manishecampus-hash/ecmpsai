@@ -46,7 +46,7 @@ export default function UniversitySection() {
             Top Online Universities
           </span>
 
-          <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Compare Universities for{" "}
             <span className="text-red-500">Online B.Com</span>
           </h2>

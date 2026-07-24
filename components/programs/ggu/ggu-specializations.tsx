@@ -39,7 +39,7 @@ export default function GGUDoctorateSpecializations() {
     <section className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold leading-tight text-black sm:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Top Online DBA{" "}
             <span className="text-red-500">Specializations at GGU</span>
           </h2>

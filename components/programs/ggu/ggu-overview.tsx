@@ -16,7 +16,7 @@ export default function GGUDoctorateOverview() {
         background:
           "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
       }}
-      className="relative w-full px-4 py-12 text-slate-100 sm:px-6"
+      className="font-sans relative w-full px-4 py-12 text-slate-100 sm:px-6"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -34,9 +34,9 @@ export default function GGUDoctorateOverview() {
               Overview
             </span>
 
-            <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-white sm:text-3xl md:text-4xl">
-              Online DBA from Golden Gate University:{" "}
-              <span className="text-red-500">Overview</span>
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              Online DBA from Golden Gate University:
+              <span className="text-red-500"> Overview</span>
             </h2>
 
             <p className="mt-6 text-lg leading-relaxed text-slate-300">

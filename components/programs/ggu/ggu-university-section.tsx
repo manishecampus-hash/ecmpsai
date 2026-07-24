@@ -49,9 +49,9 @@ export default function DoctorateUniversitySection() {
             Top Doctorate Universities
           </span>
 
-          <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
-            Compare Universities for{" "}
-            <span className="text-red-500">Online DBA</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Compare Universities for
+            <span className="text-red-500"> Online DBA</span>
           </h2>
 
           <p className="mx-auto mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-500">

@@ -35,7 +35,7 @@ export default function GGUDoctorateHero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-8 pb-4 lg:pt-10 lg:pb-6">
+    <section className="font-sans relative overflow-hidden border-b border-slate-100 bg-slate-50 pt-8 pb-4 lg:pt-10 lg:pb-6">
       <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
         <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
           <defs>

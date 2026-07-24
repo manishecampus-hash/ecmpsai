@@ -62,9 +62,10 @@ export function KeyHighlights() {
                 <Handshake className="h-3.5 w-3.5 text-red-500" />
                 eCampus Advantage
               </span>
-              <h2 className="mt-2 text-2xl font-extrabold text-white-400 tracking-tight sm:text-3xl md:text-4xl">
-                Why Choose Online B.Com Through{" "}
-                <span className="text-red-500">eCampus</span>
+
+              <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+                Why Choose Online B.Com Through
+                <span className="text-red-500"> eCampus</span>
               </h2>
             </div>
 

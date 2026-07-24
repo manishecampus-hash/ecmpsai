@@ -91,8 +91,9 @@ export default function GGUDoctorateSyllabus() {
             Syllabus
           </span>
 
-          <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-            Online DBA <span className="text-red-500">Syllabus</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Online DBA
+            <span className="text-red-500"> Syllabus</span>
           </h2>
 
           <p className="mt-6 text-lg leading-relaxed text-slate-600">

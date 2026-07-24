@@ -34,8 +34,8 @@ export default function BComOverview() {
               Overview
             </span>
 
-            <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-white sm:text-3xl md:text-4xl">
-              Online B.Com Degree Courses:{" "}
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              Online B.Com Degree Courses{" "}
               <span className="text-red-500">Overview</span>
             </h2>
 

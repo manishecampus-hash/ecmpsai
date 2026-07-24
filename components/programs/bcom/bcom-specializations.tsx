@@ -39,9 +39,9 @@ export default function BComSpecializations() {
     <section className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold leading-tight text-black sm:text-4xl">
-            Top Online B.Com{" "}
-            <span className="text-red-500">Specializations in India</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Top Online B.Com
+            <span className="text-red-500"> Specializations in India</span>
           </h2>
 
           <p className="mx-auto mt-4 max-w-6xl text-lg leading-relaxed text-black">

@@ -49,8 +49,7 @@ export default function GGUDoctorateCareers() {
             <BriefcaseBusiness className="h-3.5 w-3.5 text-red-500" />
             Career Pathways
           </span>
-
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             After Online <span className="text-red-500">DBA</span>
           </h2>
         </div>

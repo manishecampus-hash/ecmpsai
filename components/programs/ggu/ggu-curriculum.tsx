@@ -90,8 +90,9 @@ export default function GGUDoctorateCurriculum() {
             DBA Program
           </span>
 
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            Program <span className="text-red-500">Curriculum</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Program
+            <span className="text-red-500"> Curriculum</span>
           </h2>
         </div>
 

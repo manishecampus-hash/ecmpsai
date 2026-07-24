@@ -70,8 +70,9 @@ export default function GGUDoctorateFAQ() {
             FAQ
           </span>
 
-          <h2 className="mt-3 text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
-            Frequently Asked <span className="text-red-500">Questions</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Frequently Asked
+            <span className="text-red-500"> Questions</span>
           </h2>
         </div>
 

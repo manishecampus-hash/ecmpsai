@@ -50,8 +50,9 @@ export default function GGUDoctorateFeeSection() {
               <ShieldCheck className="h-3.5 w-3.5 text-red-500" />
               Investment
             </span>
-            <h2 className="mt-2 text-2xl font-extrabold text-white-900 tracking-tight sm:text-3xl md:text-4xl">
-              Program Fee & <span className="text-red-500">Financing</span>
+
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              Program Fee &<span className="text-red-500"> Financing</span>
             </h2>
           </div>
 

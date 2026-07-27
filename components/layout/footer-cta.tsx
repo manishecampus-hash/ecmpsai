@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export function FooterCta() {
   return (
-    <div className="absolute inset-x-0 -top-36 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-24 md:-top-14 lg:-top-8">
+    <div className="absolute inset-x-0 -top-40 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-40 md:-top-28 lg:-top-20">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Image */}

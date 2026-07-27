@@ -78,10 +78,14 @@ const contactLinkClass =
   "group relative flex h-12 items-center justify-center gap-2 rounded-lg border border-slate-700 px-4 pt-2 transition-colors";
 
 export function Footer() {
-  const [footerSections, setFooterSections] = useState<any[]>(navigation.categories[0].sections);
+  const [footerSections, setFooterSections] = useState<any[]>(
+    navigation.categories[0].sections,
+  );
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+      "http://localhost:5000";
     fetch(`${apiUrl}/menus/footer`)
       .then((res) => {
         if (!res.ok) throw new Error("Footer menu not found");
@@ -95,7 +99,7 @@ export function Footer() {
             items: (sec.children || []).map((item: any) => ({
               name: item.label,
               href: item.url || "#",
-            }))
+            })),
           }));
           setFooterSections(sections);
         }
@@ -110,7 +114,7 @@ export function Footer() {
     >
       <FooterCta />
 
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-5 px-4 pb-0 pt-32 sm:px-6 sm:pt-40 sm:gap-6 sm:pb-1 lg:px-8 lg:pt-36">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-5 px-4 pb-0 pt-24 sm:px-6 sm:pt-32 sm:gap-6 sm:pb-1 lg:px-8 lg:pt-28">
         {/* <div className="relative h-12 w-40">
           <Link href="/" aria-label="eCampus home">
             <Image

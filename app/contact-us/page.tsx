@@ -87,20 +87,18 @@ const ContactUs: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 pt-6 pb-10 md:pt-16 md:pb-16">
         {/* Eyebrow badge, matches homepage "TRENDING COURSES" pill */}
-        <div className="flex justify-center mb-5">
+        <div className="flex justify-center mb-4 md:mb-5">
           <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide bg-red-50 text-red-600 px-4 py-1.5 rounded-full">
             <ChatIcon /> Get In Touch
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-3 leading-tight tracking-tight text-gray-950">
-          Talk it through <span className="text-red-600">with us.</span>
-        </h1>
-        <p className="text-sm text-gray-400 text-center mb-12">
-          Big decisions need clarity — no spam, no pressure.
-        </p>
+        <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl text-center">
+          Talk it through <span className="text-red-500">with us.</span>
+        </h2>
+        <p className="text-sm text-gray-400 text-center mb-8 md:mb-12"></p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Map */}

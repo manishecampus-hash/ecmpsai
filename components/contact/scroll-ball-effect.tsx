@@ -92,8 +92,8 @@ export default function ScrollBallEffect() {
   ];
 
   return (
-    <section ref={effectSectionRef} className="w-full py-8 md:py-12">
-      <div className="relative mx-auto h-40 sm:h-48 md:h-56 w-full max-w-6xl px-2 sm:px-4 md:px-6">
+    <section ref={effectSectionRef} className="w-full pt-4 pb-2 md:py-12">
+      <div className="relative mx-auto h-28 sm:h-48 md:h-56 w-full max-w-6xl px-2 sm:px-4 md:px-6">
         <svg
           className="h-full w-full"
           viewBox="0 0 1000 180"

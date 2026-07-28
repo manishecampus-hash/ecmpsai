@@ -107,7 +107,7 @@
 //   );
 // };
 
-// export default OurOffices;
+// export default OurOffice
 
 "use client";
 
@@ -160,8 +160,8 @@ const getTagStyle = (tag?: string) => {
 
 const OurOffices: React.FC = () => {
   return (
-    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-10 sm:mb-14 md:mb-20 text-center">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12 sm:pt-16 sm:pb-16 md:pt-20 md:pb-20">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8 sm:mb-14 md:mb-20 text-center">
         Our Offices
       </h2>
 

@@ -1,256 +1,102 @@
 "use client";
 
-import { Users } from "lucide-react";
-import { useState } from "react";
-
-interface EnvironmentSection {
+interface CertificateSection {
   university?: {
     name?: string;
   };
 }
 
-const JOB_PROFILES = [
-  "General Management",
-  "Strategy",
-  "Operations",
-  "Project Management",
-  "Consulting",
-  "Finance",
-  "Sales",
-  "Human Resources",
+const DEFAULT_CHECKLIST = [
+  "1st in India to get UGC approval for online programs",
+  "India's only Online MBA accredited by QS and ranked among the top 10 in Asia Pacific.",
+  "Degrees recognised by World Education Services (WES) across Canada & USA.",
+  "Ranked 22nd by NIRF in 2025",
 ];
 
-const INDUSTRIES = [
-  "Information Technology",
-  "Banking",
-  "Consulting",
-  "Human Resources",
-  "Manufacturing",
-  "Finance & Accounting",
-  "Government / PSU",
-  "Operations Management",
-  "Sales & Marketing",
-  "Legal & Compliance",
-];
-
-interface ExperienceSegment {
-  label: string;
-  percent: number;
-  color: string;
-}
-
-const EXPERIENCE_SEGMENTS: ExperienceSegment[] = [
-  { label: "3-5 Years", percent: 17, color: "#dc2626" },
-  { label: "5-10 Years", percent: 42, color: "#7c2d12" },
-  { label: "10-15 Years", percent: 27, color: "#f59e0b" },
-  { label: "15+ Years", percent: 14, color: "#1e293b" },
-];
-
-const RADIUS = 70;
-const STROKE = 26;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-export default function LearningEnvironmentSection({
+export default function SampleCertificateSection({
   university,
-}: EnvironmentSection) {
-  const [hovered, setHovered] = useState<number | null>(null);
+}: CertificateSection) {
+  const certData = university?.details?.certificate || {};
+  const universityName = university?.name || "Amity University";
 
-  const peerData = university?.details?.peerNetwork || {};
-  const jobProfiles = peerData.jobProfiles && peerData.jobProfiles.length > 0
-    ? peerData.jobProfiles
-    : JOB_PROFILES;
-  const industries = peerData.industries && peerData.industries.length > 0
-    ? peerData.industries
-    : INDUSTRIES;
-
-  const defaultColors = ["#dc2626", "#7c2d12", "#f59e0b", "#1e293b"];
-  const segments = peerData.experienceSegments && peerData.experienceSegments.length > 0
-    ? peerData.experienceSegments.map((seg: any, idx: number) => ({
-        label: seg.label || "",
-        percent: Number(seg.percent) || 0,
-        color: seg.color || defaultColors[idx % defaultColors.length],
-      }))
-    : EXPERIENCE_SEGMENTS;
-
-  let cumulativePercent = 0;
+  const checklist =
+    certData.checklist && certData.checklist.length > 0
+      ? certData.checklist
+      : DEFAULT_CHECKLIST;
 
   return (
     <section
-      id="learning-environment"
-      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
+      id="sample-certificate"
+      className="bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20 font-[Inter]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Users className="h-3.5 w-3.5 text-red-500" />
-            {peerData.badge || "Peer Network"}
-          </span>
-
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            {peerData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: peerData.heading }} />
-            ) : (
-              <>
-                Your Learning <span className="text-red-500">Environment</span>
-              </>
-            )}
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-8 text-left">
-          {/* Left: profiles & industries */}
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-5 lg:gap-8">
+          {/* Left: heading, description & checklist */}
           <div className="lg:col-span-3">
-            <div>
-              <h3 className="mb-4 text-lg font-bold text-slate-800">
-                {peerData.jobProfilesHeading || "Top Job Profiles"}
-              </h3>
-              <ul className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-3">
-                {jobProfiles.map((item: string) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-2.5 text-sm text-slate-700"
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
-                      <svg
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="h-3 w-3"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 111.414-1.414l2.793 2.792 6.793-6.793a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+              {certData.heading ? (
+                <span dangerouslySetInnerHTML={{ __html: certData.heading }} />
+              ) : (
+                <>
+                  Sample Certificate from{" "}
+                  <span className="text-red-500">{universityName} Online</span>
+                </>
+              )}
+            </h2>
 
-            <div className="my-8 border-t border-slate-100" />
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600">
+              {certData.description ||
+                `Become alumnus of ${universityName} Online and get a UGC-approved online degree. The degree awarded by the university is also been accredited by WES, etc.`}
+            </p>
 
-            <div>
-              <h3 className="mb-4 text-lg font-bold text-slate-800">
-                {peerData.industriesHeading || "Top Industries"}
-              </h3>
-              <ul className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-3">
-                {industries.map((item: string) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-2.5 text-sm text-slate-700"
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
-                      <svg
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="h-3 w-3"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 111.414-1.414l2.793 2.792 6.793-6.793a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Right: interactive work-experience donut */}
-          <div className="flex flex-col items-center justify-center lg:col-span-2">
-            <div className="relative h-72 w-72">
-              <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
-                <circle
-                  cx={100}
-                  cy={100}
-                  r={RADIUS}
-                  fill="none"
-                  stroke="#f1f5f9"
-                  strokeWidth={STROKE}
-                />
-                {segments.map((segment: any, index: number) => {
-                  const dash = (segment.percent / 100) * CIRCUMFERENCE;
-                  const gap = CIRCUMFERENCE - dash;
-                  const offset = -((cumulativePercent / 100) * CIRCUMFERENCE);
-                  cumulativePercent += segment.percent;
-                  const isActive = hovered === index;
-
-                  return (
-                    <circle
-                      key={segment.label}
-                      cx={100}
-                      cy={100}
-                      r={RADIUS}
-                      fill="none"
-                      stroke={segment.color}
-                      strokeWidth={isActive ? STROKE + 6 : STROKE}
-                      strokeDasharray={`${dash} ${gap}`}
-                      strokeDashoffset={offset}
-                      strokeLinecap="butt"
-                      onMouseEnter={() => setHovered(index)}
-                      onMouseLeave={() => setHovered(null)}
-                      className="cursor-pointer transition-all duration-200"
-                      style={{
-                        opacity: hovered === null || isActive ? 1 : 0.45,
-                      }}
-                    />
-                  );
-                })}
-              </svg>
-
-              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-                {hovered !== null ? (
-                  <>
-                    <span
-                      className="text-3xl font-extrabold"
-                      style={{ color: segments[hovered].color }}
-                    >
-                      {segments[hovered].percent}%
-                    </span>
-                    <span className="mt-1 text-xs font-semibold text-slate-500">
-                      {segments[hovered].label}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-sm font-bold uppercase tracking-wide text-slate-800">
-                      Work
-                    </span>
-                    <span className="text-sm font-bold uppercase tracking-wide text-slate-800">
-                      Experience
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Legend */}
-            <ul className="mt-8 grid w-full max-w-xs grid-cols-2 gap-x-6 gap-y-3">
-              {segments.map((segment: any, index: number) => (
+            <ul className="mt-7 space-y-4">
+              {checklist.map((item: string) => (
                 <li
-                  key={segment.label}
-                  onMouseEnter={() => setHovered(index)}
-                  onMouseLeave={() => setHovered(null)}
-                  className="flex cursor-pointer items-center gap-2 text-sm text-left animate-fade-in"
+                  key={item}
+                  className="flex items-start gap-3 text-sm text-slate-700 sm:text-base"
                 >
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: segment.color }}
-                  />
-                  <span className="text-slate-600">
-                    <span className="font-semibold text-slate-800">
-                      {segment.percent}%
-                    </span>{" "}
-                    {segment.label}
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
+                    <svg
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="h-3 w-3"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 111.414-1.414l2.793 2.792 6.793-6.793a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </span>
+                  {item}
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Right: framed certificate image */}
+          <div className="flex justify-center lg:col-span-2">
+            <div className="relative w-full max-w-xs border-[8px] border-slate-900 bg-slate-900 shadow-2xl sm:max-w-sm">
+              <div className="relative h-56 overflow-hidden bg-[#f5efe4] p-3 sm:h-64">
+                {certData.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={certData.imageUrl}
+                    alt={`Sample certificate from ${universityName}`}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-center text-xs font-medium text-slate-400">
+                    Certificate image goes here
+                  </div>
+                )}
+
+                {/* diagonal SAMPLE watermark */}
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-3xl font-bold uppercase tracking-widest text-slate-400/30 [transform:rotate(-25deg)]">
+                  Sample
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

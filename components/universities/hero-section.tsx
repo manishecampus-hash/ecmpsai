@@ -204,7 +204,7 @@ export default function UniversityHeroWithStats({
                 UGC Entrusted Degree
               </div>
 
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 leading-tight sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 leading-tight sm:text-3xl lg:text-4xl">
                 {displayHeading} <br />
                 <span className="text-red-500">Degree Programs</span>
               </h1>
@@ -220,14 +220,14 @@ export default function UniversityHeroWithStats({
                   href="#apply"
                   className="flex items-center justify-center rounded-xl bg-red-500 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-200 transition-all hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98]"
                 >
-                  Apply Now
+                  Apply to University
                 </Link>
 
                 <a
                   href="#catalog"
                   className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-3 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
                 >
-                  Explore Courses
+                  Download Brochure
                 </a>
               </div>
             </div>
@@ -241,21 +241,28 @@ export default function UniversityHeroWithStats({
                 />
 
                 {/* Feature Cards Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-3 bg-gradient-to-t from-black/40 to-transparent p-4 sm:p-6 ">
+                <div className="absolute bottom-0 left-0 right-0 z-20 flex justify-center gap-2 bg-gradient-to-t from-black/40 to-transparent p-2">
                   {featureCards.map((card, idx) => {
                     const IconComponent = card.icon;
+
                     return (
                       <div
                         key={idx}
-                        className="flex-1 flex flex-col items-center gap-2 rounded-2xl bg-white p-3 sm:p-4 shadow-lg"
+                        className="relative w-[110px] rounded-lg bg-white px-2 py-1 shadow-md"
                       >
-                        <div className="rounded-lg bg-slate-100 p-2.5 text-slate-700">
-                          <IconComponent className="h-5 w-5 sm:h-6 sm:w-6" />
+                        <div className="absolute -top-2 right-1 rounded-full bg-yellow-400 px-1 py-0.5 text-[8px] font-bold text-black">
+                          ⭐ 4.8
                         </div>
-                        <p className="text-xs sm:text-sm font-bold text-gray-900 text-center">
+
+                        <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-700">
+                          <IconComponent className="h-4 w-4" />
+                        </div>
+
+                        <p className="text-[10px] font-semibold text-gray-900 text-center leading-tight">
                           {card.title}
                         </p>
-                        <p className="text-[10px] sm:text-xs text-gray-600 text-center">
+
+                        <p className="text-[8px] text-gray-500 text-center leading-tight mt-0.5 line-clamp-2">
                           {card.subtitle}
                         </p>
                       </div>

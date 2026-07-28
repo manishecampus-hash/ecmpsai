@@ -5,7 +5,7 @@ import FAQSection from "@/components/universities/faq-section";
 
 import { universities } from "@/data/universities";
 import AboutProgram from "@/components/universities/about";
-import ProgramsSection from "@/components/universities/programs";
+// import ProgramsSection from "@/components/universities/programs";
 import TopSpecializations from "@/components/universities/top-secializations";
 // import ApprovalsSection from "@/components/universities/approvals";
 import TestimonialsSection from "@/components/universities/testimonials";
@@ -42,7 +42,7 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
 
       {/* <OverviewSection university={university} /> */}
       <AboutProgram university={university} />
-      <ProgramsSection university={university} />
+      {/* <ProgramsSection university={university} /> */}
       <AdmissionProcessSection />
       <EligibilityFeesSection />
       <TopSpecializations university={university} />

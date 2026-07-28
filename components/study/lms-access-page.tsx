@@ -120,13 +120,9 @@ export default function LmsAccessPage(): JSX.Element {
       <div className="mx-auto w-full max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-3xl font-bold text-gray-900 tracking-tight mb-3 sm:mb-4 leading-tight">
-            Access Your <span className="text-red-600">University LMS</span>
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-lg mx-auto px-2">
-            Choose your institution to get verified access to your learning
-            portal, dashboard, and resources.
-          </p>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Access Your University<span className="text-red-500"> LMS</span>
+          </h2>
         </div>
 
         {/* Stats Strip */}

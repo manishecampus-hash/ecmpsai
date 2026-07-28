@@ -3,13 +3,26 @@
 import { Wallet } from "lucide-react";
 import { useState } from "react";
 
-export default function EducationLoanSection() {
+interface LoanSectionProps {
+  university?: any;
+}
+
+export default function EducationLoanSection({ university }: LoanSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const loanData = university?.details?.financialAssistance || {};
+  const cards = loanData.cards && loanData.cards.length > 0
+    ? loanData.cards
+    : [
+        { title: "0%", subtitle: "Interest EMI options available" },
+        { title: "No Cost", subtitle: "Easy EMI, no hidden charges" },
+        { title: "Quick", subtitle: "Approval within 24-48 hours" },
+      ];
 
   const openModal = () => {
     setSubmitted(false);
@@ -50,33 +63,29 @@ export default function EducationLoanSection() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Wallet className="h-3.5 w-3.5 text-red-500" />
-            Financial Assistance
+            {loanData.badge || "Financial Assistance"}
           </span>
 
           <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            Education Loan <span className="text-red-500">EMI</span>
+            {loanData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: loanData.heading }} />
+            ) : (
+              <>
+                Education Loan <span className="text-red-500">EMI</span>
+              </>
+            )}
           </h2>
         </div>
 
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
-            <p className="text-2xl font-bold text-red-600">0%</p>
-            <p className="mt-2 text-sm text-slate-500">
-              Interest EMI options available
-            </p>
-          </div>
-          <div className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
-            <p className="text-2xl font-bold text-red-600">No Cost</p>
-            <p className="mt-2 text-sm text-slate-500">
-              Easy EMI, no hidden charges
-            </p>
-          </div>
-          <div className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
-            <p className="text-2xl font-bold text-red-600">Quick</p>
-            <p className="mt-2 text-sm text-slate-500">
-              Approval within 24-48 hours
-            </p>
-          </div>
+        <div className={`mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-${Math.min(3, cards.length)}`}>
+          {cards.map((card: any, idx: number) => (
+            <div key={idx} className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
+              <p className="text-2xl font-bold text-red-600">{card.title}</p>
+              <p className="mt-2 text-sm text-slate-500">
+                {card.subtitle}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-10 flex justify-center">
@@ -85,7 +94,7 @@ export default function EducationLoanSection() {
             onClick={openModal}
             className="cursor-pointer rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
           >
-            Check EMI Eligibility
+            {loanData.buttonText || "Check EMI Eligibility"}
           </button>
         </div>
       </div>

@@ -56,6 +56,19 @@ const PATTERN_ITEMS: PatternItem[] = [
 export default function ExaminationPatternSection({
   university,
 }: ExaminationPatternSectionProps) {
+  const examData = university?.details?.examination || {};
+  const items = examData.items && examData.items.length > 0
+    ? examData.items.map((item: any, idx: number) => {
+        const defaultIcons = [Scale, FileText, ClipboardList, Award, ShieldCheck];
+        const Icon = defaultIcons[idx % defaultIcons.length] || FileText;
+        return {
+          icon: Icon,
+          title: item.title,
+          description: item.description,
+        };
+      })
+    : PATTERN_ITEMS;
+
   return (
     <section
       id="examination-pattern"
@@ -65,17 +78,23 @@ export default function ExaminationPatternSection({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <ClipboardCheck className="h-3.5 w-3.5 text-red-500" />
-            Examination
+            {examData.badge || "Examination"}
           </span>
 
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            Online Examination <span className="text-red-500">Pattern</span>
+            {examData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: examData.heading }} />
+            ) : (
+              <>
+                Online Examination <span className="text-red-500">Pattern</span>
+              </>
+            )}
           </h2>
         </div>
 
         {/* List */}
-        <div className="mt-8 divide-y divide-slate-100 border-t border-slate-100">
-          {PATTERN_ITEMS.map((item) => {
+        <div className="mt-8 divide-y divide-slate-100 border-t border-slate-100 text-left">
+          {items.map((item: any) => {
             const Icon = item.icon;
             return (
               <div

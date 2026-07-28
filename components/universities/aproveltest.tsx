@@ -8,6 +8,11 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import * as Icons from "lucide-react";
+
+interface ApSectionProps {
+  university?: any;
+}
 
 interface RecognitionItem {
   id: string;
@@ -59,7 +64,28 @@ const recognitionData: RecognitionItem[] = [
   },
 ];
 
-export default function ApSection() {
+export default function ApSection({ university }: ApSectionProps) {
+  const accData = university?.details?.accreditation || {};
+  const list = accData.list && accData.list.length > 0
+    ? accData.list.map((item: any, idx: number) => {
+        let resolvedIcon: any = item.icon || "";
+        const isImageUrl = typeof resolvedIcon === "string" && (resolvedIcon.startsWith("/") || resolvedIcon.startsWith("http") || resolvedIcon.startsWith("data:"));
+        if (!isImageUrl && resolvedIcon) {
+          resolvedIcon = (Icons as any)[resolvedIcon] || ShieldCheck;
+        } else if (!resolvedIcon) {
+          const defaultIcons = [Landmark, BadgeCheck, Crown, Sparkles];
+          resolvedIcon = defaultIcons[idx % defaultIcons.length];
+        }
+        return {
+          id: item.id || String(idx),
+          label: item.label || "",
+          description: item.description || "",
+          ribbon: item.ribbon || "",
+          icon: resolvedIcon,
+        };
+      })
+    : recognitionData;
+
   return (
     <section
       id="approvals"
@@ -70,16 +96,16 @@ export default function ApSection() {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-wider">
             <ShieldCheck className="h-4 w-4" />
-            Accreditation
+            {accData.badge || "Accreditation"}
           </span>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            Recognition & Approvals
+            {accData.heading || "Recognition & Approvals"}
           </h2>
         </div>
 
         {/* Horizontal Row List / Grid */}
         <div className="grid divide-y divide-slate-100 border-y border-slate-100 md:grid-cols-2 md:divide-y-0 md:divide-x md:border-x-0 lg:grid-cols-3">
-          {recognitionData.map((item, index) => {
+          {list.map((item, index) => {
             const isImage = typeof item.icon === "string";
             const IconComponent = !isImage
               ? (item.icon as React.ElementType)

@@ -61,6 +61,23 @@ export default function EligibilityFeesSection({
   university,
 }: EligibilityFeesSectionProps) {
   const universityName = university?.name ?? "the university";
+  const eligibilityData = university?.details?.eligibility || {};
+
+  const groups = eligibilityData.groups && eligibilityData.groups.length > 0
+    ? eligibilityData.groups.map((group: any, idx: number) => ({
+        icon: idx === 0 ? UserRound : GraduationCap,
+        title: group.title,
+        points: group.points || [],
+      }))
+    : ELIGIBILITY_GROUPS;
+
+  const feeRows = eligibilityData.feeRows && eligibilityData.feeRows.length > 0
+    ? eligibilityData.feeRows.map((row: any, idx: number) => ({
+        icon: idx === 0 ? GraduationCap : BookOpen,
+        label: row.label,
+        range: row.range,
+      }))
+    : FEE_ROWS;
 
   return (
     <section
@@ -71,11 +88,17 @@ export default function EligibilityFeesSection({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <BadgeCheck className="h-3.5 w-3.5 text-red-500" />
-            Eligibility
+            {eligibilityData.badge || "Eligibility"}
           </span>
 
           <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            Verify Your <span className="text-red-500">Eligibility</span>
+            {eligibilityData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: eligibilityData.heading }} />
+            ) : (
+              <>
+                Verify Your <span className="text-red-500">Eligibility</span>
+              </>
+            )}
           </h2>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -89,12 +112,18 @@ export default function EligibilityFeesSection({
                     strokeWidth={1.75}
                   />
                 </span>
-                <div>
+                <div className="text-left">
                   <h3 className="text-xl font-bold text-slate-900">
-                    Eligibility <span className="text-red-600">Criteria</span>
+                    {eligibilityData.criteriaHeading ? (
+                      <span dangerouslySetInnerHTML={{ __html: eligibilityData.criteriaHeading }} />
+                    ) : (
+                      <>
+                        Eligibility <span className="text-red-600">Criteria</span>
+                      </>
+                    )}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    Simple requirements for a bright future
+                    {eligibilityData.criteriaSub || "Simple requirements for a bright future"}
                   </p>
                 </div>
               </div>
@@ -102,12 +131,12 @@ export default function EligibilityFeesSection({
             </div>
 
             <div className="px-6 py-6 sm:px-8">
-              {ELIGIBILITY_GROUPS.map((group, groupIndex) => {
+              {groups.map((group: any, groupIndex: number) => {
                 const Icon = group.icon;
                 return (
                   <div
                     key={group.title}
-                    className={groupIndex > 0 ? "mt-6" : ""}
+                    className={groupIndex > 0 ? "mt-6 text-left" : "text-left"}
                   >
                     <div className="mb-3 flex items-center gap-3">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50">
@@ -121,7 +150,7 @@ export default function EligibilityFeesSection({
                       </h4>
                     </div>
                     <ul className="divide-y divide-slate-100">
-                      {group.points.map((point) => (
+                      {group.points.map((point: string) => (
                         <li
                           key={point}
                           className="flex items-start gap-3 py-2.5"
@@ -143,7 +172,7 @@ export default function EligibilityFeesSection({
           </div>
 
           {/* Fees Structure */}
-          <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-sm text-left">
             <div className="bg-amber-50/60 px-6 py-6 sm:px-8">
               <div className="flex items-center gap-4">
                 <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white">
@@ -154,10 +183,16 @@ export default function EligibilityFeesSection({
                 </span>
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">
-                    Fees <span className="text-amber-600">Structure</span>
+                    {eligibilityData.feeHeading ? (
+                      <span dangerouslySetInnerHTML={{ __html: eligibilityData.feeHeading }} />
+                    ) : (
+                      <>
+                        Fees <span className="text-amber-600">Structure</span>
+                      </>
+                    )}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    Affordable and flexible fee structure
+                    {eligibilityData.feeSub || "Affordable and flexible fee structure"}
                   </p>
                 </div>
               </div>
@@ -166,18 +201,19 @@ export default function EligibilityFeesSection({
 
             <div className="px-6 py-6 sm:px-8">
               <p className="text-sm leading-7 text-slate-600">
-                {universityName.charAt(0).toUpperCase() +
-                  universityName.slice(1)}{" "}
-                offers an affordable and flexible fee structure, making quality
-                higher education accessible to a wide range of learners.
+                {eligibilityData.feeDesc || (
+                  <>
+                    {universityName.charAt(0).toUpperCase() + universityName.slice(1)} offers an affordable and flexible fee structure, making quality higher education accessible to a wide range of learners.
+                  </>
+                )}
               </p>
 
               <div className="mt-6 rounded-xl bg-amber-50/60 p-4 sm:p-5">
                 <h4 className="mb-4 text-sm font-bold text-amber-700 sm:text-base">
-                  Fee Range Overview
+                  {eligibilityData.feeRangeHeading || "Fee Range Overview"}
                 </h4>
                 <ul className="divide-y divide-amber-100">
-                  {FEE_ROWS.map((row) => {
+                  {feeRows.map((row: any) => {
                     const Icon = row.icon;
                     return (
                       <li
@@ -215,9 +251,7 @@ export default function EligibilityFeesSection({
                   strokeWidth={2}
                 />
                 <p className="text-sm leading-6 text-slate-600">
-                  Program fees vary depending on the chosen course and
-                  specialization. The fee structure is competitive and may be
-                  revised as per university guidelines.
+                  {eligibilityData.feeFooter || "Program fees vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines."}
                 </p>
               </div>
             </div>
@@ -228,7 +262,7 @@ export default function EligibilityFeesSection({
                 strokeWidth={1.75}
               />
               <p className="text-sm font-medium text-slate-700">
-                Easy installment options available.*
+                {eligibilityData.feeInstallments || "Easy installment options available.*"}
               </p>
             </div>
           </div>

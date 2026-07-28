@@ -4,9 +4,7 @@ import React from "react";
 import { Workflow, CheckCircle2 } from "lucide-react";
 
 interface ProcessSection {
-  university?: {
-    name?: string;
-  };
+  university?: any;
 }
 
 interface AdmissionStep {
@@ -45,6 +43,9 @@ const ADMISSION_STEPS: AdmissionStep[] = [
 export default function AdmissionProcessSection({
   university,
 }: ProcessSection) {
+  const processData = university?.details?.processFlow || {};
+  const steps = processData.steps && processData.steps.length > 0 ? processData.steps : ADMISSION_STEPS;
+
   return (
     <section
       id="admission-process"
@@ -55,16 +56,22 @@ export default function AdmissionProcessSection({
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-800 uppercase tracking-wider shadow-sm">
             <Workflow className="h-3.5 w-3.5 text-red-500" />
-            Process Flow
+            {processData.badge || "Process Flow"}
           </span>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            Online Admission <span className="text-red-500">Steps</span>
+            {processData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: processData.heading }} />
+            ) : (
+              <>
+                Online Admission <span className="text-red-500">Steps</span>
+              </>
+            )}
           </h2>
         </div>
 
         {/* Step Cards Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-          {ADMISSION_STEPS.map((step, index) => {
+        <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-${Math.min(5, steps.length)}`}>
+          {steps.map((step: any, index: number) => {
             return (
               <div
                 key={step.title}

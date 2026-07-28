@@ -22,14 +22,12 @@ interface SpecializationRow {
   emi: string;
 }
 
-export default function TopSpecializations() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+interface TopSpecializationsProps {
+  university?: any;
+}
 
-  // Premium mock dataset avoiding complete direct duplication
-  const specializationsData: SpecializationRow[] = [
-    {
+const DEFAULT_SPECIALIZATIONS_DATA: SpecializationRow[] = [
+  {
       id: "1",
       course: "B.Tech",
       specialization: "Cloud & Cyber Security",
@@ -151,6 +149,23 @@ export default function TopSpecializations() {
     },
   ];
 
+export default function TopSpecializations({ university }: TopSpecializationsProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const specData = university?.details?.inDemandSpecializations || {};
+  const specializationsData = specData.list && specData.list.length > 0
+    ? specData.list.map((item: any, idx: number) => ({
+        id: item.id || String(idx),
+        course: item.course || "",
+        specialization: item.specialization || "",
+        duration: item.duration || "",
+        fees: item.fees || "",
+        emi: item.emi || "",
+      }))
+    : DEFAULT_SPECIALIZATIONS_DATA;
+
   // Dynamic filter processing tracking over course and specialization title loops
   const filteredRows = specializationsData.filter(
     (row) =>
@@ -180,11 +195,17 @@ export default function TopSpecializations() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
           <GraduationCap className="h-3.5 w-3.5 text-red-500" />
-          In-Demand Specializations
+          {specData.badge || "In-Demand Specializations"}
         </span>
 
         <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-          Discover Your <span className="text-red-500">Specialization</span>
+          {specData.heading ? (
+            <span dangerouslySetInnerHTML={{ __html: specData.heading }} />
+          ) : (
+            <>
+              Discover Your <span className="text-red-500">Specialization</span>
+            </>
+          )}
         </h2>
       </div>
 

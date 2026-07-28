@@ -15,10 +15,7 @@ interface FAQItem {
 }
 
 interface FAQSectionProps {
-  university?: {
-    name?: string;
-    faqs?: FAQItem[];
-  };
+  university?: any;
 }
 
 export default function FAQSection({ university }: FAQSectionProps) {
@@ -26,6 +23,7 @@ export default function FAQSection({ university }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // opens first item by default
 
   const universityName = university?.name || "IIM K";
+  const sdData = university?.details?.supportDesk || {};
 
   // Premium baseline data fallback if university.faqs is not populated
   const defaultFaqs: FAQItem[] = [
@@ -52,12 +50,13 @@ export default function FAQSection({ university }: FAQSectionProps) {
   ];
 
   // Defensive execution to guarantee a valid array structure loops over cleanly
-  const rawFaqs =
-    university?.faqs &&
-    Array.isArray(university.faqs) &&
-    university.faqs.length > 0
-      ? university.faqs
-      : defaultFaqs;
+  const rawFaqs = sdData.faqs && sdData.faqs.length > 0
+    ? sdData.faqs
+    : (university?.faqs &&
+       Array.isArray(university.faqs) &&
+       university.faqs.length > 0
+         ? university.faqs
+         : defaultFaqs);
 
   const toggleAccordion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -70,7 +69,7 @@ export default function FAQSection({ university }: FAQSectionProps) {
        ============================================================ */
     <section
       id="faq"
-      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 text-left"
     >
       {/* FAQ Grid Wrapper layout split */}
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
@@ -78,21 +77,26 @@ export default function FAQSection({ university }: FAQSectionProps) {
         <div className="lg:col-span-4 lg:sticky lg:top-8">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <CircleHelp className="h-3.5 w-3.5 text-red-500" />
-            Support Desk
+            {sdData.badge || "Support Desk"}
           </span>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl">
-            Frequently Asked <span className="text-red-500">Questions</span>
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left">
+            {sdData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: sdData.heading }} />
+            ) : (
+              <>
+                Frequently Asked <span className="text-red-500">Questions</span>
+              </>
+            )}
           </h2>
 
           {/* Helpful Support Context Info Card */}
           <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
             <div className="flex items-center gap-3 text-slate-700">
               <MessageSquare className="h-5 w-5 text-red-500" />
-              <span className="text-sm font-bold">Still have doubts?</span>
+              <span className="text-sm font-bold">{sdData.doubtsTitle || "Still have doubts?"}</span>
             </div>
             <p className="mt-2 text-xs text-gray-500 leading-relaxed">
-              Connect with our professional academic program advisors directly
-              for personalized roadmap assistance.
+              {sdData.doubtsDesc || "Connect with our professional academic program advisors directly for personalized roadmap assistance."}
             </p>
           </div>
         </div>

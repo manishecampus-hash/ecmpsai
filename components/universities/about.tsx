@@ -140,11 +140,43 @@ const tabContent: Record<
   },
 };
 
-const tabs = Object.keys(tabContent) as TabKey[];
+interface AboutProgramProps {
+  university?: any;
+}
 
-export default function AboutProgram() {
-  const [activeTab, setActiveTab] = useState<TabKey>("Program Overview");
-  const currentContent = useMemo(() => tabContent[activeTab], [activeTab]);
+export default function AboutProgram({ university }: AboutProgramProps) {
+  const aboutData = university?.details?.about;
+
+  const dynamicTabs = useMemo(() => {
+    if (aboutData?.tabs && aboutData.tabs.length > 0) {
+      return aboutData.tabs.map((t: any) => t.label);
+    }
+    return ["Program Overview", "Skills You Will Learn", "Eligibility", "Who is this Program for", "Program Fee"];
+  }, [aboutData]);
+
+  const [activeTab, setActiveTab] = useState<string>("Program Overview");
+
+  React.useEffect(() => {
+    if (dynamicTabs.length > 0 && !dynamicTabs.includes(activeTab)) {
+      setActiveTab(dynamicTabs[0]);
+    }
+  }, [dynamicTabs, activeTab]);
+
+  const currentContent = useMemo(() => {
+    if (aboutData?.tabs && aboutData.tabs.length > 0) {
+      const matched = aboutData.tabs.find((t: any) => t.label === activeTab);
+      if (matched) {
+        return {
+          heading: matched.heading,
+          subtext: matched.subtext,
+          list: matched.points || [],
+        };
+      }
+    }
+    const fallback = tabContent[activeTab as TabKey];
+    if (fallback) return fallback;
+    return { heading: "", subtext: "", list: [] };
+  }, [aboutData, activeTab]);
 
   return (
     <section
@@ -159,9 +191,19 @@ export default function AboutProgram() {
           </span>
 
           <h2 className="mt-1.5 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            About IIM K HR Analytics{" "}
-            <span className="text-red-500">Course</span>
+            {aboutData?.heading || (
+              <>
+                About {university?.name || "IIM K HR Analytics"}{" "}
+                <span className="text-red-500">Course</span>
+              </>
+            )}
           </h2>
+
+          {aboutData?.description && (
+            <p className="mt-3 max-w-3xl mx-auto text-sm text-slate-600 leading-relaxed">
+              {aboutData.description}
+            </p>
+          )}
         </div>
 
         {/* Main layout */}
@@ -169,7 +211,7 @@ export default function AboutProgram() {
           {/* Sidebar */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 lg:h-fit">
             <div className="flex flex-col gap-2 rounded-3xl border border-slate-100 bg-white p-2">
-              {tabs.map((tab) => {
+              {dynamicTabs.map((tab) => {
                 const active = activeTab === tab;
                 return (
                   <button

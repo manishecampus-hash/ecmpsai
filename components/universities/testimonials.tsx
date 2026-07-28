@@ -55,7 +55,23 @@ const testimonials: TestimonialCard[] = [
   },
 ];
 
-export default function TestimonialsSection() {
+interface TestimonialsProps {
+  university?: any;
+}
+
+export default function TestimonialsSection({ university }: TestimonialsProps) {
+  const reviewsData = university?.details?.studentReviews || {};
+  const list = reviewsData.list && reviewsData.list.length > 0
+    ? reviewsData.list.map((item: any, idx: number) => ({
+        id: item.id || String(idx),
+        name: item.name || "",
+        program: item.program || "",
+        university: item.university || "",
+        image: item.image || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+        quote: item.quote || "",
+      }))
+    : testimonials;
+
   return (
     <section
       id="testimonials"
@@ -66,19 +82,25 @@ export default function TestimonialsSection() {
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-800 uppercase tracking-wider shadow-sm">
             <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
-            Student Reviews
+            {reviewsData.badge || "Student Reviews"}
           </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Student <span className="text-red-500">Testimonials</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-center">
+            {reviewsData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: reviewsData.heading }} />
+            ) : (
+              <>
+                Student <span className="text-red-500">Testimonials</span>
+              </>
+            )}
           </h2>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {testimonials.map((testimonial) => (
+        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-${Math.min(4, list.length)}`}>
+          {list.map((testimonial: any) => (
             <article
               key={testimonial.id}
-              className="relative flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300"
+              className="relative flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300 text-left"
             >
               <div>
                 <Quote className="h-6 w-6 text-slate-200 mb-4" />

@@ -55,6 +55,23 @@ export default function LearningEnvironmentSection({
 }: EnvironmentSection) {
   const [hovered, setHovered] = useState<number | null>(null);
 
+  const peerData = university?.details?.peerNetwork || {};
+  const jobProfiles = peerData.jobProfiles && peerData.jobProfiles.length > 0
+    ? peerData.jobProfiles
+    : JOB_PROFILES;
+  const industries = peerData.industries && peerData.industries.length > 0
+    ? peerData.industries
+    : INDUSTRIES;
+
+  const defaultColors = ["#dc2626", "#7c2d12", "#f59e0b", "#1e293b"];
+  const segments = peerData.experienceSegments && peerData.experienceSegments.length > 0
+    ? peerData.experienceSegments.map((seg: any, idx: number) => ({
+        label: seg.label || "",
+        percent: Number(seg.percent) || 0,
+        color: seg.color || defaultColors[idx % defaultColors.length],
+      }))
+    : EXPERIENCE_SEGMENTS;
+
   let cumulativePercent = 0;
 
   return (
@@ -66,23 +83,29 @@ export default function LearningEnvironmentSection({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Users className="h-3.5 w-3.5 text-red-500" />
-            Peer Network
+            {peerData.badge || "Peer Network"}
           </span>
 
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            Your Learning <span className="text-red-500">Environment</span>
+            {peerData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: peerData.heading }} />
+            ) : (
+              <>
+                Your Learning <span className="text-red-500">Environment</span>
+              </>
+            )}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-8 text-left">
           {/* Left: profiles & industries */}
           <div className="lg:col-span-3">
             <div>
               <h3 className="mb-4 text-lg font-bold text-slate-800">
-                Top Job Profiles
+                {peerData.jobProfilesHeading || "Top Job Profiles"}
               </h3>
               <ul className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-3">
-                {JOB_PROFILES.map((item) => (
+                {jobProfiles.map((item: string) => (
                   <li
                     key={item}
                     className="flex items-center gap-2.5 text-sm text-slate-700"
@@ -110,10 +133,10 @@ export default function LearningEnvironmentSection({
 
             <div>
               <h3 className="mb-4 text-lg font-bold text-slate-800">
-                Top Industries
+                {peerData.industriesHeading || "Top Industries"}
               </h3>
               <ul className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-3">
-                {INDUSTRIES.map((item) => (
+                {industries.map((item: string) => (
                   <li
                     key={item}
                     className="flex items-center gap-2.5 text-sm text-slate-700"
@@ -150,7 +173,7 @@ export default function LearningEnvironmentSection({
                   stroke="#f1f5f9"
                   strokeWidth={STROKE}
                 />
-                {EXPERIENCE_SEGMENTS.map((segment, index) => {
+                {segments.map((segment: any, index: number) => {
                   const dash = (segment.percent / 100) * CIRCUMFERENCE;
                   const gap = CIRCUMFERENCE - dash;
                   const offset = -((cumulativePercent / 100) * CIRCUMFERENCE);
@@ -185,12 +208,12 @@ export default function LearningEnvironmentSection({
                   <>
                     <span
                       className="text-3xl font-extrabold"
-                      style={{ color: EXPERIENCE_SEGMENTS[hovered].color }}
+                      style={{ color: segments[hovered].color }}
                     >
-                      {EXPERIENCE_SEGMENTS[hovered].percent}%
+                      {segments[hovered].percent}%
                     </span>
                     <span className="mt-1 text-xs font-semibold text-slate-500">
-                      {EXPERIENCE_SEGMENTS[hovered].label}
+                      {segments[hovered].label}
                     </span>
                   </>
                 ) : (
@@ -208,12 +231,12 @@ export default function LearningEnvironmentSection({
 
             {/* Legend */}
             <ul className="mt-8 grid w-full max-w-xs grid-cols-2 gap-x-6 gap-y-3">
-              {EXPERIENCE_SEGMENTS.map((segment, index) => (
+              {segments.map((segment: any, index: number) => (
                 <li
                   key={segment.label}
                   onMouseEnter={() => setHovered(index)}
                   onMouseLeave={() => setHovered(null)}
-                  className="flex cursor-pointer items-center gap-2 text-sm"
+                  className="flex cursor-pointer items-center gap-2 text-sm text-left animate-fade-in"
                 >
                   <span
                     className="h-2.5 w-2.5 shrink-0 rounded-full"

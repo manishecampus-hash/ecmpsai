@@ -145,7 +145,7 @@ export default function LmsAccessPage(): JSX.Element {
         </div>
 
         {/* Search Bar */}
-        <div className="relative w-72 sm:max-w-lg md:max-w-xl mx-auto mb-12 sm:mb-16">
+        <div className="relative w-full max-w-xs sm:max-w-lg md:max-w-xl mx-auto mb-12 sm:mb-16">
           <form onSubmit={handleSubmit} className="relative">
             <label htmlFor="university-search" className="sr-only">
               Search for your university

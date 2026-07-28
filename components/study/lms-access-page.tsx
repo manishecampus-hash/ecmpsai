@@ -149,37 +149,40 @@ export default function LmsAccessPage(): JSX.Element {
             <input
               id="university-search"
               name="q"
-              type="search"
+              type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for your university..."
               aria-label="Search for your university"
-              className="w-full h-12 sm:h-16 pl-4 sm:pl-6 pr-12 sm:pr-44 rounded-2xl border-0 shadow-lg ring-1 ring-gray-200 focus:ring-2 focus:ring-red-500 outline-none transition-all text-xs sm:text-lg"
+              className="w-full h-12 sm:h-16 pl-4 sm:pl-6 pr-24 sm:pr-44 rounded-2xl border-0 shadow-lg ring-1 ring-gray-200 focus:ring-2 focus:ring-red-500 outline-none transition-all text-xs sm:text-lg [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
             />
 
-            {/* Search / Submit button */}
-            <button
-              type="submit"
-              aria-label="Search"
-              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white h-8 sm:h-10 px-2 sm:px-3 rounded-full font-medium text-xs sm:text-base hover:bg-red-600 transition-colors flex items-center gap-2"
-            >
-              <span className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20">
-                <Search className="w-4 h-4" />
-              </span>
-              <span className="hidden sm:inline">Search</span>
-            </button>
+            {/* Right-side buttons wrapped together so they never overlap */}
+            <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
+              {/* Clear button (visible only when there is a query) */}
+              {query && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => setQuery("")}
+                  className="bg-white text-gray-500 h-8 sm:h-10 w-8 sm:w-10 rounded-full shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center shrink-0"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
 
-            {/* Clear button (visible only when there is a query) */}
-            {query && (
+              {/* Search / Submit button */}
               <button
-                type="button"
-                aria-label="Clear search"
-                onClick={() => setQuery("")}
-                className="absolute right-12 sm:right-24 top-1/2 -translate-y-1/2 bg-white text-gray-500 h-8 sm:h-10 px-2 rounded-full shadow-sm hover:bg-gray-50 transition-colors flex items-center justify-center"
+                type="submit"
+                aria-label="Search"
+                className="bg-gray-900 text-white h-8 sm:h-10 px-2 sm:px-3 rounded-full font-medium text-xs sm:text-base hover:bg-red-600 transition-colors flex items-center gap-2 shrink-0"
               >
-                <X className="w-4 h-4" />
+                <span className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20">
+                  <Search className="w-4 h-4" />
+                </span>
+                <span className="hidden sm:inline">Search</span>
               </button>
-            )}
+            </div>
           </form>
         </div>
 

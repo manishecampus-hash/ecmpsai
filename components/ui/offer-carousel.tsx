@@ -208,6 +208,333 @@
 //   );
 // };
 
+// "use client";
+
+// import * as React from "react";
+// import Link from "next/link";
+// import { ChevronLeft, ChevronRight, X } from "lucide-react";
+// import { cn } from "@/lib/utils";
+
+// export interface Offer {
+//   id: string | number;
+//   imageSrc: string;
+//   imageAlt: string;
+//   tag?: string;
+//   href: string;
+//   videoSrc?: string;
+// }
+
+// // Detect direct video file (CDN mp4/webm) vs YouTube/embed URL
+// const isDirectVideoFile = (src?: string) => {
+//   if (!src) return false;
+//   return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
+// };
+
+// const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
+//   const isDirect = isDirectVideoFile(src);
+
+//   React.useEffect(() => {
+//     const handleKey = (e: KeyboardEvent) => {
+//       if (e.key === "Escape") onClose();
+//     };
+//     document.addEventListener("keydown", handleKey);
+//     return () => document.removeEventListener("keydown", handleKey);
+//   }, [onClose]);
+
+//   return (
+//     <div
+//       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+//       onClick={onClose}
+//     >
+//       <div
+//         className="relative w-full max-w-3xl mx-4 aspect-video rounded-xl overflow-hidden shadow-2xl"
+//         onClick={(e) => e.stopPropagation()}
+//       >
+//         {isDirect ? (
+//           <video
+//             src={src}
+//             className="w-full h-full object-contain bg-black"
+//             autoPlay
+//             controls
+//             playsInline
+//           />
+//         ) : (
+//           <iframe
+//             src={src}
+//             className="w-full h-full"
+//             referrerPolicy="strict-origin-when-cross-origin"
+//             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+//             allowFullScreen
+//           />
+//         )}
+//         <button
+//           onClick={onClose}
+//           className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full p-1.5 transition-colors"
+//           aria-label="Close"
+//         >
+//           <X className="w-5 h-5" />
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// const OfferCard = ({
+//   offer,
+//   index,
+//   onVideoClick,
+// }: {
+//   offer: Offer;
+//   index: number;
+//   onVideoClick: (src: string) => void;
+// }) => {
+//   const rank = index + 1;
+//   const [hovered, setHovered] = React.useState(false);
+//   const videoRef = React.useRef<HTMLVideoElement>(null);
+//   const directVideo = isDirectVideoFile(offer.videoSrc);
+
+//   // Build the autoplay src only when hovered, for YouTube/iframe embeds only
+//   const autoplaySrc = React.useMemo(() => {
+//     if (!offer.videoSrc || directVideo) return null;
+//     try {
+//       const url = new URL(offer.videoSrc);
+//       url.searchParams.set("autoplay", "1");
+//       url.searchParams.set("mute", "1"); // required for autoplay in most browsers
+//       url.searchParams.set("controls", "0");
+//       url.searchParams.set("loop", "1");
+//       url.searchParams.set("modestbranding", "1");
+//       url.searchParams.set("rel", "0");
+//       return url.toString();
+//     } catch {
+//       return offer.videoSrc;
+//     }
+//   }, [offer.videoSrc, directVideo]);
+
+//   // Play/pause the native <video> instantly on hover (already preloaded, no fetch delay)
+//   React.useEffect(() => {
+//     if (!directVideo) return;
+//     const vid = videoRef.current;
+//     if (!vid) return;
+
+//     if (hovered) {
+//       // play() returns a promise; ignore autoplay-blocked rejections
+//       const playPromise = vid.play();
+//       if (playPromise !== undefined) {
+//         playPromise.catch(() => {});
+//       }
+//     } else {
+//       vid.pause();
+//       vid.currentTime = 0;
+//     }
+//   }, [hovered, directVideo]);
+
+//   const cardInner = (
+//     <>
+//       {/* Rank number */}
+//       <span
+//         className="absolute bottom-0 left-2 z-10 text-[65px] sm:text-[85px] lg:text-[100px] font-black select-none pointer-events-none"
+//         style={{
+//           WebkitTextStroke: "2px white",
+//           WebkitTextFillColor: "#111",
+//           paintOrder: "stroke fill",
+//         }}
+//       >
+//         {rank}
+//       </span>
+
+//       {/* Media container */}
+//       <div className="ml-4 h-full w-full overflow-hidden rounded-xl shadow-md relative">
+//         {/* Thumbnail image — always rendered */}
+//         <img
+//           src={offer.imageSrc}
+//           alt={offer.imageAlt}
+//           className={cn(
+//             "h-full w-full object-cover transition-all duration-500",
+//             hovered && offer.videoSrc
+//               ? "opacity-0 scale-110"
+//               : "opacity-100 scale-100",
+//           )}
+//           onError={(e) => {
+//             const target = e.currentTarget;
+//             target.style.display = "none";
+//             const placeholder = target.nextElementSibling as HTMLElement | null;
+//             if (placeholder) placeholder.style.display = "flex";
+//           }}
+//         />
+
+//         {/* Fallback placeholder */}
+//         <div
+//           className="hidden h-full w-full items-center justify-center bg-gray-100 text-gray-400 text-xs text-center p-2"
+//           aria-hidden="true"
+//         >
+//           <span>No Image</span>
+//         </div>
+
+//         {/* Native <video> for CDN mp4 files — always mounted so it preloads in the
+//             background; play/pause is toggled instantly on hover with no fetch delay. */}
+//         {directVideo && (
+//           <video
+//             ref={videoRef}
+//             src={offer.videoSrc}
+//             muted
+//             loop
+//             playsInline
+//             preload="auto"
+//             className={cn(
+//               "absolute inset-0 h-full w-full object-cover transition-opacity duration-300 pointer-events-none",
+//               hovered ? "opacity-100" : "opacity-0",
+//             )}
+//           />
+//         )}
+
+//         {/* Hover video preview for YouTube/iframe embeds only — covers full card */}
+//         {!directVideo && offer.videoSrc && hovered && autoplaySrc && (
+//           <div className="absolute inset-0 overflow-hidden pointer-events-none">
+//             <iframe
+//               src={autoplaySrc}
+//               className="absolute pointer-events-none"
+//               style={{
+//                 top: "50%",
+//                 left: "50%",
+//                 transform: "translate(-50%, -50%)",
+//                 width: "177.78%" /* 16/9 * 100 */,
+//                 height:
+//                   "177.78%" /* fills height, overflows width — clipped by overflow-hidden */,
+//                 minWidth: "100%",
+//                 minHeight: "100%",
+//               }}
+//               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+//               title={offer.imageAlt}
+//             />
+//           </div>
+//         )}
+
+//         {/* Click-to-fullscreen overlay (only when video exists) */}
+//         {offer.videoSrc && (
+//           <div
+//             className="absolute inset-0 z-20 cursor-pointer"
+//             onClick={(e) => {
+//               e.preventDefault();
+//               onVideoClick(offer.videoSrc!);
+//             }}
+//           />
+//         )}
+//       </div>
+//     </>
+//   );
+
+//   const sizeClasses =
+//     "relative flex h-[180px] w-[150px] flex-shrink-0 sm:h-[250px] sm:w-[180px] lg:h-[260px] lg:w-[210px]";
+
+//   if (offer.videoSrc) {
+//     return (
+//       <div
+//         className={sizeClasses}
+//         onMouseEnter={() => setHovered(true)}
+//         onMouseLeave={() => setHovered(false)}
+//       >
+//         {cardInner}
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <Link href={offer.href || "#"} className={sizeClasses}>
+//       {cardInner}
+//     </Link>
+//   );
+// };
+
+// export const OfferCarousel = ({
+//   offers,
+//   className,
+// }: {
+//   offers: Offer[];
+//   className?: string;
+// }) => {
+//   const scrollRef = React.useRef<HTMLDivElement>(null);
+//   const [showLeft, setShowLeft] = React.useState(false);
+//   const [showRight, setShowRight] = React.useState(true);
+//   const [activeVideo, setActiveVideo] = React.useState<string | null>(null);
+
+//   const checkScroll = () => {
+//     const el = scrollRef.current;
+//     if (!el) return;
+//     setShowLeft(el.scrollLeft > 10);
+//     setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+//   };
+
+//   const scroll = (dir: "left" | "right") => {
+//     const el = scrollRef.current;
+//     if (!el) return;
+//     const scrollAmount = scrollRef.current?.clientWidth ?? 400;
+//     el.scrollBy({
+//       left: dir === "left" ? -scrollAmount : scrollAmount,
+//       behavior: "smooth",
+//     });
+//     setTimeout(checkScroll, 500);
+//   };
+
+//   React.useEffect(() => {
+//     checkScroll();
+//     window.addEventListener("resize", checkScroll);
+//     return () => window.removeEventListener("resize", checkScroll);
+//   }, [offers]);
+
+//   return (
+//     <>
+//       <div className={cn("relative w-full", className)}>
+//         {showLeft && (
+//           <button
+//             onClick={() => scroll("left")}
+//             className="absolute left-0 top-1/2 z-40 -translate-y-1/2 flex h-24 w-4 items-center justify-center rounded-r-full bg-[#666666] text-white hover:bg-[#333] transition-colors"
+//             aria-label="Scroll left"
+//           >
+//             <ChevronLeft className="w-4 h-4" />
+//           </button>
+//         )}
+
+//         <div
+//           ref={scrollRef}
+//           onScroll={checkScroll}
+//           className={cn(
+//             "flex gap-4 overflow-x-auto py-6 scroll-smooth",
+//             showLeft && showRight
+//               ? "px-0 md:mx-10 md:px-0"
+//               : showLeft
+//                 ? "pl-0 pr-2 md:mx-10 md:px-0"
+//                 : "pl-0 pr-7 md:mx-10 md:px-0",
+//           )}
+//           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+//         >
+//           {offers.map((offer, index) => (
+//             <OfferCard
+//               key={offer.id}
+//               offer={offer}
+//               index={index}
+//               onVideoClick={setActiveVideo}
+//             />
+//           ))}
+//         </div>
+
+//         {showRight && (
+//           <button
+//             onClick={() => scroll("right")}
+//             className="absolute right-0 top-1/2 z-40 -translate-y-1/2 flex h-24 w-4 items-center justify-center rounded-l-full bg-[#666666] text-white hover:bg-[#333] transition-colors"
+//             aria-label="Scroll right"
+//           >
+//             <ChevronRight className="w-4 h-4" />
+//           </button>
+//         )}
+//       </div>
+
+//       {activeVideo && (
+//         <VideoModal src={activeVideo} onClose={() => setActiveVideo(null)} />
+//       )}
+//     </>
+//   );
+// };
+
 "use client";
 
 import * as React from "react";
@@ -221,18 +548,10 @@ export interface Offer {
   imageAlt: string;
   tag?: string;
   href: string;
-  videoSrc?: string;
+  videoSrc?: string; // YouTube / embeddable iframe URL only
 }
 
-// Detect direct video file (CDN mp4/webm) vs YouTube/embed URL
-const isDirectVideoFile = (src?: string) => {
-  if (!src) return false;
-  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
-};
-
 const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
-  const isDirect = isDirectVideoFile(src);
-
   React.useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -250,23 +569,13 @@ const VideoModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
         className="relative w-full max-w-3xl mx-4 aspect-video rounded-xl overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {isDirect ? (
-          <video
-            src={src}
-            className="w-full h-full object-contain bg-black"
-            autoPlay
-            controls
-            playsInline
-          />
-        ) : (
-          <iframe
-            src={src}
-            className="w-full h-full"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        )}
+        <iframe
+          src={src}
+          className="w-full h-full"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
         <button
           onClick={onClose}
           className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full p-1.5 transition-colors"
@@ -290,12 +599,10 @@ const OfferCard = ({
 }) => {
   const rank = index + 1;
   const [hovered, setHovered] = React.useState(false);
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const directVideo = isDirectVideoFile(offer.videoSrc);
 
-  // Build the autoplay src only when hovered, for YouTube/iframe embeds only
+  // Build the autoplay src only when hovered
   const autoplaySrc = React.useMemo(() => {
-    if (!offer.videoSrc || directVideo) return null;
+    if (!offer.videoSrc) return null;
     try {
       const url = new URL(offer.videoSrc);
       url.searchParams.set("autoplay", "1");
@@ -308,25 +615,7 @@ const OfferCard = ({
     } catch {
       return offer.videoSrc;
     }
-  }, [offer.videoSrc, directVideo]);
-
-  // Play/pause the native <video> instantly on hover (already preloaded, no fetch delay)
-  React.useEffect(() => {
-    if (!directVideo) return;
-    const vid = videoRef.current;
-    if (!vid) return;
-
-    if (hovered) {
-      // play() returns a promise; ignore autoplay-blocked rejections
-      const playPromise = vid.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {});
-      }
-    } else {
-      vid.pause();
-      vid.currentTime = 0;
-    }
-  }, [hovered, directVideo]);
+  }, [offer.videoSrc]);
 
   const cardInner = (
     <>
@@ -370,25 +659,8 @@ const OfferCard = ({
           <span>No Image</span>
         </div>
 
-        {/* Native <video> for CDN mp4 files — always mounted so it preloads in the
-            background; play/pause is toggled instantly on hover with no fetch delay. */}
-        {directVideo && (
-          <video
-            ref={videoRef}
-            src={offer.videoSrc}
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className={cn(
-              "absolute inset-0 h-full w-full object-cover transition-opacity duration-300 pointer-events-none",
-              hovered ? "opacity-100" : "opacity-0",
-            )}
-          />
-        )}
-
-        {/* Hover video preview for YouTube/iframe embeds only — covers full card */}
-        {!directVideo && offer.videoSrc && hovered && autoplaySrc && (
+        {/* Hover video preview for YouTube/iframe embeds — covers full card */}
+        {offer.videoSrc && hovered && autoplaySrc && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <iframe
               src={autoplaySrc}

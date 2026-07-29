@@ -63,25 +63,27 @@ export default function EligibilityFeesSection({
   const universityName = university?.name ?? "the university";
   const eligibilityData = university?.details?.eligibility || {};
 
-  const groups = eligibilityData.groups && eligibilityData.groups.length > 0
-    ? eligibilityData.groups.map((group: any, idx: number) => ({
-        icon: idx === 0 ? UserRound : GraduationCap,
-        title: group.title,
-        points: group.points || [],
-      }))
-    : ELIGIBILITY_GROUPS;
+  const groups =
+    eligibilityData.groups && eligibilityData.groups.length > 0
+      ? eligibilityData.groups.map((group: any, idx: number) => ({
+          icon: idx === 0 ? UserRound : GraduationCap,
+          title: group.title,
+          points: group.points || [],
+        }))
+      : ELIGIBILITY_GROUPS;
 
-  const feeRows = eligibilityData.feeRows && eligibilityData.feeRows.length > 0
-    ? eligibilityData.feeRows.map((row: any, idx: number) => ({
-        icon: idx === 0 ? GraduationCap : BookOpen,
-        label: row.label,
-        range: row.range,
-      }))
-    : FEE_ROWS;
+  const feeRows =
+    eligibilityData.feeRows && eligibilityData.feeRows.length > 0
+      ? eligibilityData.feeRows.map((row: any, idx: number) => ({
+          icon: idx === 0 ? GraduationCap : BookOpen,
+          label: row.label,
+          range: row.range,
+        }))
+      : FEE_ROWS;
 
   return (
     <section
-      id="eligibility-fees"
+      id="fee"
       className="bg-white px-4 pt-3 pb-14 sm:px-6 sm:pt-4 lg:px-8 lg:pt-6 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
@@ -93,7 +95,9 @@ export default function EligibilityFeesSection({
 
           <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             {eligibilityData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: eligibilityData.heading }} />
+              <span
+                dangerouslySetInnerHTML={{ __html: eligibilityData.heading }}
+              />
             ) : (
               <>
                 Verify Your <span className="text-red-500">Eligibility</span>
@@ -115,15 +119,21 @@ export default function EligibilityFeesSection({
                 <div className="text-left">
                   <h3 className="text-xl font-bold text-slate-900">
                     {eligibilityData.criteriaHeading ? (
-                      <span dangerouslySetInnerHTML={{ __html: eligibilityData.criteriaHeading }} />
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: eligibilityData.criteriaHeading,
+                        }}
+                      />
                     ) : (
                       <>
-                        Eligibility <span className="text-red-600">Criteria</span>
+                        Eligibility{" "}
+                        <span className="text-red-600">Criteria</span>
                       </>
                     )}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    {eligibilityData.criteriaSub || "Simple requirements for a bright future"}
+                    {eligibilityData.criteriaSub ||
+                      "Simple requirements for a bright future"}
                   </p>
                 </div>
               </div>
@@ -184,7 +194,11 @@ export default function EligibilityFeesSection({
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">
                     {eligibilityData.feeHeading ? (
-                      <span dangerouslySetInnerHTML={{ __html: eligibilityData.feeHeading }} />
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: eligibilityData.feeHeading,
+                        }}
+                      />
                     ) : (
                       <>
                         Fees <span className="text-amber-600">Structure</span>
@@ -192,7 +206,8 @@ export default function EligibilityFeesSection({
                     )}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    {eligibilityData.feeSub || "Affordable and flexible fee structure"}
+                    {eligibilityData.feeSub ||
+                      "Affordable and flexible fee structure"}
                   </p>
                 </div>
               </div>
@@ -203,7 +218,11 @@ export default function EligibilityFeesSection({
               <p className="text-sm leading-7 text-slate-600">
                 {eligibilityData.feeDesc || (
                   <>
-                    {universityName.charAt(0).toUpperCase() + universityName.slice(1)} offers an affordable and flexible fee structure, making quality higher education accessible to a wide range of learners.
+                    {universityName.charAt(0).toUpperCase() +
+                      universityName.slice(1)}{" "}
+                    offers an affordable and flexible fee structure, making
+                    quality higher education accessible to a wide range of
+                    learners.
                   </>
                 )}
               </p>
@@ -251,7 +270,8 @@ export default function EligibilityFeesSection({
                   strokeWidth={2}
                 />
                 <p className="text-sm leading-6 text-slate-600">
-                  {eligibilityData.feeFooter || "Program fees vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines."}
+                  {eligibilityData.feeFooter ||
+                    "Program fees vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines."}
                 </p>
               </div>
             </div>
@@ -262,7 +282,8 @@ export default function EligibilityFeesSection({
                 strokeWidth={1.75}
               />
               <p className="text-sm font-medium text-slate-700">
-                {eligibilityData.feeInstallments || "Easy installment options available.*"}
+                {eligibilityData.feeInstallments ||
+                  "Easy installment options available.*"}
               </p>
             </div>
           </div>

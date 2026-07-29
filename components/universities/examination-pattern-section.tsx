@@ -57,21 +57,28 @@ export default function ExaminationPatternSection({
   university,
 }: ExaminationPatternSectionProps) {
   const examData = university?.details?.examination || {};
-  const items = examData.items && examData.items.length > 0
-    ? examData.items.map((item: any, idx: number) => {
-        const defaultIcons = [Scale, FileText, ClipboardList, Award, ShieldCheck];
-        const Icon = defaultIcons[idx % defaultIcons.length] || FileText;
-        return {
-          icon: Icon,
-          title: item.title,
-          description: item.description,
-        };
-      })
-    : PATTERN_ITEMS;
+  const items =
+    examData.items && examData.items.length > 0
+      ? examData.items.map((item: any, idx: number) => {
+          const defaultIcons = [
+            Scale,
+            FileText,
+            ClipboardList,
+            Award,
+            ShieldCheck,
+          ];
+          const Icon = defaultIcons[idx % defaultIcons.length] || FileText;
+          return {
+            icon: Icon,
+            title: item.title,
+            description: item.description,
+          };
+        })
+      : PATTERN_ITEMS;
 
   return (
     <section
-      id="examination-pattern"
+      id="examination"
       className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">

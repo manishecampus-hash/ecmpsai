@@ -38,14 +38,14 @@ export default function PlacementPartners() {
        ============================================================ */
     <section
       id="placements"
-      className="bg-white border-y border-slate-100 py-14 overflow-hidden"
+      className="bg-white border-y border-slate-100 pt-2 pb-10 sm:pt-3 sm:pb-12 overflow-hidden"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-4">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
           Our Elite Hiring Network
         </span>
-        <h2 className="mt-2 text-xl font-extrabold text-gray-900 tracking-tight sm:text-2xl">
+        <h2 className="mt-2 text-base sm:text-lg font-extrabold text-gray-900 tracking-tight sm:text-2xl">
           Top Corporate Recruitment &{" "}
           <span className="text-red-500">Placement Partners</span>
         </h2>
@@ -54,19 +54,21 @@ export default function PlacementPartners() {
       {/* Infinite loop flex track wrapper container */}
       <div className="relative w-full flex items-center overflow-hidden py-1 select-none">
         {/* Left & Right gradient masking over components context elements */}
-        <div className="pointer-events-none absolute left-0 z-10 h-full w-44 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute right-0 z-10 h-full w-44 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute left-0 z-10 h-full w-32 sm:w-44 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute right-0 z-10 h-full w-32 sm:w-44 bg-gradient-to-l from-white to-transparent" />
 
-        {/* ALIGNMENT FIX: 
+        {/* ALIGNMENT FIX:
             1. Changed 'justify-around' to 'justify-start' so tracking is linear.
-            2. Added 'pr-6' to matching element tracks to balance the inner 'gap-6'. */}
-        <div className="flex shrink-0 items-center justify-start gap-6 pr-6 animate-marquee whitespace-nowrap">
+            2. Added 'pr-4 sm:pr-6' to balance the inner 'gap-6'. */}
+        <div className="flex shrink-0 items-center justify-start gap-4 sm:gap-6 pr-4 sm:pr-6 animate-marquee whitespace-nowrap">
           {doublePartners.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
-              className="flex items-center justify-center px-8 py-4 min-w-[170px] h-[72px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
+              className="flex items-center justify-center px-4 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] md:min-w-[170px] h-[64px] sm:h-[72px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
             >
-              <span className={`text-base select-none ${partner.color}`}>
+              <span
+                className={`text-sm sm:text-base select-none ${partner.color}`}
+              >
                 {partner.name}
               </span>
             </div>
@@ -90,6 +92,13 @@ export default function PlacementPartners() {
         }
         .animate-marquee:hover {
           animation-play-state: paused;
+        }
+
+        /* Reduce motion on very small screens for smoother UX */
+        @media (max-width: 420px) {
+          .animate-marquee {
+            animation-duration: 40s;
+          }
         }
       `}</style>
     </section>

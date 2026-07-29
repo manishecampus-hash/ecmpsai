@@ -16,13 +16,14 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
   const [error, setError] = useState("");
 
   const loanData = university?.details?.financialAssistance || {};
-  const cards = loanData.cards && loanData.cards.length > 0
-    ? loanData.cards
-    : [
-        { title: "0%", subtitle: "Interest EMI options available" },
-        { title: "No Cost", subtitle: "Easy EMI, no hidden charges" },
-        { title: "Quick", subtitle: "Approval within 24-48 hours" },
-      ];
+  const cards =
+    loanData.cards && loanData.cards.length > 0
+      ? loanData.cards
+      : [
+          { title: "0%", subtitle: "Interest EMI options available" },
+          { title: "No Cost", subtitle: "Easy EMI, no hidden charges" },
+          { title: "Quick", subtitle: "Approval within 24-48 hours" },
+        ];
 
   const openModal = () => {
     setSubmitted(false);
@@ -56,7 +57,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
 
   return (
     <section
-      id="education-loan"
+      id="loan"
       className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
@@ -77,13 +78,16 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
           </h2>
         </div>
 
-        <div className={`mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-${Math.min(3, cards.length)}`}>
+        <div
+          className={`mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-${Math.min(3, cards.length)}`}
+        >
           {cards.map((card: any, idx: number) => (
-            <div key={idx} className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
+            <div
+              key={idx}
+              className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm"
+            >
               <p className="text-2xl font-bold text-red-600">{card.title}</p>
-              <p className="mt-2 text-sm text-slate-500">
-                {card.subtitle}
-              </p>
+              <p className="mt-2 text-sm text-slate-500">{card.subtitle}</p>
             </div>
           ))}
         </div>

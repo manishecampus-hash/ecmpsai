@@ -1,6 +1,312 @@
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+
+// interface NavItem {
+//   id: string;
+//   label: string;
+// }
+
+// const NAV_ITEMS: NavItem[] = [
+//   { id: "overview", label: "Overview" },
+//   { id: "programs", label: "Programs" },
+//   { id: "specializations", label: "Specializations" },
+//   { id: "approvals", label: "Approvals" },
+//   { id: "placements", label: "Placements" },
+//   { id: "testimonials", label: "Testimonials" },
+//   { id: "faq", label: "FAQs" },
+// ];
+
+// export default function SubHeader() {
+//   const [activeId, setActiveId] = useState<string>("overview");
+//   const [isSticky, setIsSticky] = useState(false);
+//   const [isVisible, setIsVisible] = useState(false); // Initially hidden
+//   const navRef = useRef<HTMLDivElement | null>(null);
+//   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+//   const mainHeaderHeight = 70;
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       const triggerPoint = mainHeaderHeight + 100;
+
+//       setIsVisible(window.scrollY > 150);
+
+//       const sections = NAV_ITEMS.map((item) => ({
+//         id: item.id,
+//         element: document.getElementById(item.id),
+//       })).filter((s) => s.element !== null);
+
+//       if (sections.length === 0) return;
+
+//       let current = sections[0].id;
+
+//       for (let i = sections.length - 1; i >= 0; i--) {
+//         const rect = sections[i].element!.getBoundingClientRect();
+//         if (rect.top <= triggerPoint) {
+//           current = sections[i].id;
+//           break;
+//         }
+//       }
+
+//       setActiveId(current);
+//       setIsSticky(window.scrollY > mainHeaderHeight);
+//     };
+
+//     window.addEventListener("scroll", handleScroll, { passive: true });
+//     handleScroll();
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   useEffect(() => {
+//     const activeEl = itemRefs.current[activeId];
+//     if (activeEl && navRef.current) {
+//       activeEl.scrollIntoView({
+//         behavior: "smooth",
+//         block: "nearest",
+//         inline: "center",
+//       });
+//     }
+//   }, [activeId]);
+
+//   const handleClick = (id: string) => {
+//     const el = document.getElementById(id);
+//     if (!el) return;
+
+//     const offset = mainHeaderHeight + 80;
+//     const top = el.getBoundingClientRect().top + window.scrollY - offset;
+//     window.scrollTo({ top, behavior: "smooth" });
+//   };
+
+//   return (
+//     <div
+//       ref={navRef}
+//       style={{
+//         position: "sticky",
+//         top: mainHeaderHeight,
+//         zIndex: 50,
+//         borderBottom: "1px solid #e6f0fa",
+//         background: "linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)",
+//         boxShadow: isSticky ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+//         transition:
+//           "box-shadow 200ms ease, opacity 300ms ease, transform 300ms ease",
+//         opacity: isVisible ? 1 : 0,
+//         transform: isVisible ? "translateY(0)" : "translateY(-10px)",
+//         pointerEvents: isVisible ? "auto" : "none", // Clicks ko disable karta hai jab hidden ho
+//       }}
+//     >
+//       <div
+//         style={{
+//           display: "flex",
+//           gap: "0.5rem",
+//           overflowX: "auto",
+//           maxWidth: "1280px",
+//           margin: "0 auto",
+//           padding: "0.75rem 1rem",
+//         }}
+//       >
+//         {NAV_ITEMS.map((item) => {
+//           const isActive = item.id === activeId;
+//           return (
+//             <button
+//               key={item.id}
+//               ref={(el) => {
+//                 itemRefs.current[item.id] = el;
+//               }}
+//               onClick={() => handleClick(item.id)}
+//               style={{
+//                 flex: "0 0 auto",
+//                 whiteSpace: "nowrap",
+//                 borderRadius: "9999px",
+//                 padding: "0.375rem 1rem",
+//                 fontSize: "0.875rem",
+//                 fontWeight: 500,
+//                 border: isActive
+//                   ? "1px solid rgba(255,255,255,0.06)"
+//                   : "1px solid rgba(15,23,42,0.04)",
+//                 background: isActive ? "#0284c7" : "#ffffff",
+//                 color: isActive ? "#ffffff" : "#334155",
+//                 cursor: "pointer",
+//                 transition: "all 200ms",
+//                 boxShadow: isActive ? "0 1px 3px rgba(2,132,199,0.2)" : "none",
+//               }}
+//             >
+//               {item.label}
+//             </button>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// }
+
+// "use client";
+
+// import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
+// interface NavItem {
+//   id: string;
+//   label: string;
+// }
+
+// const NAV_ITEMS: NavItem[] = [
+//   { id: "overview", label: "Overview" },
+//   { id: "programs", label: "Programs" },
+//   { id: "specializations", label: "Specializations" },
+//   { id: "approvals", label: "Approvals" },
+//   { id: "placements", label: "Placements" },
+//   { id: "testimonials", label: "Testimonials" },
+//   { id: "faq", label: "FAQs" },
+// ];
+
+// export default function SubHeader() {
+//   const [activeId, setActiveId] = useState<string>("overview");
+//   const [isSticky, setIsSticky] = useState(false);
+//   const navRef = useRef<HTMLDivElement | null>(null);
+//   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+//   const mainHeaderHeight = 70; // must match your main header CSS height (px)
+//   const [subHeaderHeight, setSubHeaderHeight] = useState<number>(56);
+
+//   // measure subheader height (for scroll offsets)
+//   useLayoutEffect(() => {
+//     const update = () => {
+//       const h = navRef.current?.offsetHeight ?? 56;
+//       setSubHeaderHeight(h);
+//     };
+//     update();
+//     window.addEventListener("resize", update);
+//     return () => window.removeEventListener("resize", update);
+//   }, []);
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       const triggerPoint = mainHeaderHeight + 100;
+
+//       const sections = NAV_ITEMS.map((item) => ({
+//         id: item.id,
+//         element: document.getElementById(item.id),
+//       })).filter((s) => s.element !== null);
+
+//       if (sections.length === 0) return;
+
+//       let current = sections[0].id;
+
+//       for (let i = sections.length - 1; i >= 0; i--) {
+//         const rect = sections[i].element!.getBoundingClientRect();
+//         if (rect.top <= triggerPoint) {
+//           current = sections[i].id;
+//           break;
+//         }
+//       }
+
+//       setActiveId(current);
+//       setIsSticky(window.scrollY > mainHeaderHeight);
+//     };
+
+//     window.addEventListener("scroll", handleScroll, { passive: true });
+//     handleScroll();
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   // Toggle main header hidden class when isSticky changes
+//   useEffect(() => {
+//     const mainHeader = document.getElementById("main-header");
+//     if (!mainHeader) return;
+//     if (isSticky) {
+//       mainHeader.classList.add("main-header--hidden");
+//       mainHeader.setAttribute("aria-hidden", "true");
+//     } else {
+//       mainHeader.classList.remove("main-header--hidden");
+//       mainHeader.removeAttribute("aria-hidden");
+//     }
+//   }, [isSticky]);
+
+//   useEffect(() => {
+//     const activeEl = itemRefs.current[activeId];
+//     if (activeEl && navRef.current) {
+//       activeEl.scrollIntoView({
+//         behavior: "smooth",
+//         block: "nearest",
+//         inline: "center",
+//       });
+//     }
+//   }, [activeId]);
+
+//   const handleClick = (id: string) => {
+//     const el = document.getElementById(id);
+//     if (!el) return;
+
+//     // When subheader is replacing the main header, offset by subHeaderHeight
+//     // Otherwise offset by mainHeaderHeight + subHeaderHeight to keep section below headers
+//     const offset = isSticky
+//       ? subHeaderHeight
+//       : mainHeaderHeight + subHeaderHeight;
+//     const top = el.getBoundingClientRect().top + window.scrollY - offset;
+//     window.scrollTo({ top, behavior: "smooth" });
+//   };
+
+//   return (
+//     <div
+//       ref={navRef}
+//       style={{
+//         position: "sticky",
+//         // move subheader to top when replacing main header
+//         top: isSticky ? 0 : mainHeaderHeight,
+//         zIndex: 70,
+//         borderBottom: "1px solid #e6f0fa",
+//         background: "linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)",
+//         boxShadow: isSticky ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+//         transition: "box-shadow 200ms ease, top 200ms ease",
+//         pointerEvents: "auto",
+//       }}
+//     >
+//       <div
+//         style={{
+//           display: "flex",
+//           gap: "0.5rem",
+//           overflowX: "auto",
+//           maxWidth: "1280px",
+//           margin: "0 auto",
+//           padding: "0.75rem 1rem",
+//         }}
+//       >
+//         {NAV_ITEMS.map((item) => {
+//           const isActive = item.id === activeId;
+//           return (
+//             <button
+//               key={item.id}
+//               ref={(el) => {
+//                 itemRefs.current[item.id] = el;
+//               }}
+//               onClick={() => handleClick(item.id)}
+//               style={{
+//                 flex: "0 0 auto",
+//                 whiteSpace: "nowrap",
+//                 borderRadius: "9999px",
+//                 padding: "0.375rem 1rem",
+//                 fontSize: "0.875rem",
+//                 fontWeight: 500,
+//                 border: isActive
+//                   ? "1px solid rgba(255,255,255,0.06)"
+//                   : "1px solid rgba(15,23,42,0.04)",
+//                 background: isActive ? "#0284c7" : "#ffffff",
+//                 color: isActive ? "#ffffff" : "#334155",
+//                 cursor: "pointer",
+//                 transition: "all 200ms",
+//                 boxShadow: isActive ? "0 1px 3px rgba(2,132,199,0.2)" : "none",
+//               }}
+//             >
+//               {item.label}
+//             </button>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface NavItem {
   id: string;
@@ -8,111 +314,129 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "overview", label: "Overview" },
-  { id: "programs", label: "Programs" },
-  { id: "specializations", label: "Specializations" },
+  { id: "why", label: "Why Amity" },
+  { id: "courses", label: "Courses" },
+  { id: "fee", label: "Fee & Scholarship" },
+  { id: "loan", label: "Loan & EMI" },
+  { id: "admission", label: "Admission Process" },
+  { id: "examination", label: "Examination Pattern" },
   { id: "approvals", label: "Approvals" },
+  { id: "certificate", label: "Certificate" },
   { id: "placements", label: "Placements" },
-  { id: "testimonials", label: "Testimonials" },
+  { id: "reviews", label: "Reviews" },
   { id: "faq", label: "FAQs" },
 ];
 
-// How far (in px) the user needs to scroll before the sub-header appears.
-const SHOW_AFTER_SCROLL = 320;
-
 export default function SubHeader() {
-  const [activeId, setActiveId] = useState<string>(NAV_ITEMS[0].id);
+  const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const navRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const mainHeaderHeight = 70; // must match your main header CSS height (px)
+  const [subHeaderHeight, setSubHeaderHeight] = useState<number>(56);
 
-  // Track which section is currently in view and toggle sticky shadow
-  useEffect(() => {
-    const sections = NAV_ITEMS.map((item) =>
-      document.getElementById(item.id),
-    ).filter((el): el is HTMLElement => Boolean(el));
-
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "-120px 0px -60% 0px",
-        threshold: 0,
-      },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 40);
-      setIsVisible(window.scrollY > SHOW_AFTER_SCROLL);
+  // measure subheader height (for scroll offsets)
+  useLayoutEffect(() => {
+    const update = () => {
+      const h = navRef.current?.offsetHeight ?? 56;
+      setSubHeaderHeight(h);
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Keep the active pill scrolled into view on mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      const triggerPoint = mainHeaderHeight + 100;
+
+      const sections = NAV_ITEMS.map((item) => ({
+        id: item.id,
+        element: document.getElementById(item.id),
+      })).filter((s) => s.element !== null);
+
+      if (sections.length === 0) return;
+
+      let current = sections[0].id;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const rect = sections[i].element!.getBoundingClientRect();
+        if (rect.top <= triggerPoint) {
+          current = sections[i].id;
+          break;
+        }
+      }
+
+      setActiveId(current);
+      setIsSticky(window.scrollY > mainHeaderHeight);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Toggle main header hidden class when isSticky changes
+  useEffect(() => {
+    const mainHeader = document.getElementById("main-header");
+    if (!mainHeader) return;
+    if (isSticky) {
+      mainHeader.classList.add("main-header--hidden");
+      mainHeader.setAttribute("aria-hidden", "true");
+    } else {
+      mainHeader.classList.remove("main-header--hidden");
+      mainHeader.removeAttribute("aria-hidden");
+    }
+  }, [isSticky]);
+
   useEffect(() => {
     const activeEl = itemRefs.current[activeId];
     if (activeEl && navRef.current) {
-      const nav = navRef.current;
-      const elLeft = activeEl.offsetLeft;
-      const elRight = elLeft + activeEl.offsetWidth;
-      if (
-        elLeft < nav.scrollLeft ||
-        elRight > nav.scrollLeft + nav.clientWidth
-      ) {
-        nav.scrollTo({ left: elLeft - 16, behavior: "smooth" });
-      }
+      activeEl.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
     }
   }, [activeId]);
 
   const handleClick = (id: string) => {
-    setActiveId(id);
-
     const el = document.getElementById(id);
-    if (!el) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[SubHeader] No element with id="${id}" found on the page. ` +
-          `Make sure the matching <section> has that id.`,
-      );
-      return;
-    }
+    if (!el) return;
 
-    const headerOffset = 96; // account for sticky sub-header + any main navbar
-    const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
-
+    // When subheader is replacing the main header, offset by subHeaderHeight
+    // Otherwise offset by mainHeaderHeight + subHeaderHeight to keep section below headers
+    const offset = isSticky
+      ? subHeaderHeight
+      : mainHeaderHeight + subHeaderHeight;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
     <div
-      className={`sticky top-0 z-[60] w-full border-b border-slate-100 bg-white/95 backdrop-blur transition-all duration-300 ${
-        isVisible
-          ? "pointer-events-auto translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-4 opacity-0"
-      } ${isSticky ? "shadow-sm" : ""}`}
+      ref={navRef}
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 70,
+        borderBottom: "1px solid #e6f0fa",
+        background: "linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)",
+        boxShadow: isSticky ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+        transition: "box-shadow 200ms ease, top 200ms ease",
+        pointerEvents: "auto",
+      }}
     >
       <div
-        ref={navRef}
-        className="relative z-[60] mx-auto flex max-w-7xl justify-center gap-1 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          display: "flex",
+          gap: "0.5rem",
+          overflowX: "auto",
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0.75rem 1rem",
+          justifyContent: "center",
+        }}
       >
         {NAV_ITEMS.map((item) => {
           const isActive = item.id === activeId;
@@ -122,14 +446,23 @@ export default function SubHeader() {
               ref={(el) => {
                 itemRefs.current[item.id] = el;
               }}
-              type="button"
               onClick={() => handleClick(item.id)}
-              aria-current={isActive ? "true" : undefined}
-              className={`relative z-[60] shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-red-50 text-red-600"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-              }`}
+              style={{
+                flex: "0 0 auto",
+                whiteSpace: "nowrap",
+                borderRadius: "9999px",
+                padding: "0.375rem 1rem",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                border: isActive
+                  ? "1px solid rgba(255,255,255,0.06)"
+                  : "1px solid rgba(15,23,42,0.04)",
+                background: isActive ? "#0284c7" : "#ffffff",
+                color: isActive ? "#ffffff" : "#334155",
+                cursor: "pointer",
+                transition: "all 200ms",
+                boxShadow: isActive ? "0 1px 3px rgba(2,132,199,0.2)" : "none",
+              }}
             >
               {item.label}
             </button>

@@ -151,7 +151,13 @@ export default function AboutProgram({ university }: AboutProgramProps) {
     if (aboutData?.tabs && aboutData.tabs.length > 0) {
       return aboutData.tabs.map((t: any) => t.label);
     }
-    return ["Program Overview", "Skills You Will Learn", "Eligibility", "Who is this Program for", "Program Fee"];
+    return [
+      "Program Overview",
+      "Skills You Will Learn",
+      "Eligibility",
+      "Who is this Program for",
+      "Program Fee",
+    ];
   }, [aboutData]);
 
   const [activeTab, setActiveTab] = useState<string>("Program Overview");
@@ -180,17 +186,17 @@ export default function AboutProgram({ university }: AboutProgramProps) {
 
   return (
     <section
-      id="overview"
-      className="bg-white px-4 pt-8 pb-14 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12 lg:pb-20"
+      id="why"
+      className="bg-white px-4 pt-4 pb-14 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8 lg:pb-20"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 text-center font-[Inter]">
+        <div className="mx-auto max-w-3xl px-2 sm:px-6 text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <CircleHelp className="h-3.5 w-3.5 text-red-500" />
             About
           </span>
 
-          <h2 className="mt-1.5 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-0.5 text-[22px] font-bold tracking-tight text-gray-900 sm:text-2xl md:text-3xl lg:text-4xl">
             {aboutData?.heading || (
               <>
                 About {university?.name || "IIM K HR Analytics"}{" "}
@@ -207,10 +213,10 @@ export default function AboutProgram({ university }: AboutProgramProps) {
         </div>
 
         {/* Main layout */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-10">
           {/* Sidebar */}
-          <div className="lg:col-span-4 lg:sticky lg:top-24 lg:h-fit">
-            <div className="flex flex-col gap-2 rounded-3xl border border-slate-100 bg-white p-2">
+          <div className="lg:col-span-4">
+            <div className="flex flex-col gap-2 rounded-3xl border border-slate-100 bg-white p-2 sticky top-3 lg:top-16">
               {dynamicTabs.map((tab) => {
                 const active = activeTab === tab;
                 return (
@@ -218,13 +224,13 @@ export default function AboutProgram({ university }: AboutProgramProps) {
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className={`group flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left text-sm font-semibold transition-all duration-200 sm:text-[15px] ${
+                    className={`group flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left text-sm font-semibold transition-all duration-200 sm:px-4 sm:py-4 sm:text-[15px] ${
                       active
                         ? "bg-red-50 text-red-600 shadow-sm"
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
-                    <span className="pr-3 leading-snug">{tab}</span>
+                    <span className="pr-3 leading-snug break-words">{tab}</span>
                     <ChevronRight
                       className={`h-4 w-4 shrink-0 transition-all duration-200 ${
                         active
@@ -240,7 +246,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
 
           {/* Content panel */}
           <div className="lg:col-span-8">
-            <div className="rounded-[28px] border border-slate-100 bg-slate-50 p-6 shadow-sm sm:p-8 lg:p-10 flex flex-col items-center text-center">
+            <div className="rounded-[28px] border border-slate-100 bg-slate-50 p-4 sm:p-6 lg:p-8 shadow-sm flex flex-col items-center text-center">
               <div
                 key={activeTab}
                 className="animate-in fade-in slide-in-from-right-4 duration-300 w-full flex flex-col items-center"
@@ -251,7 +257,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
                   </span>
                 )}
                 <h3
-                  className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl"
+                  className="text-xl font-bold leading-tight text-slate-900 sm:text-2xl md:text-3xl"
                   dangerouslySetInnerHTML={{
                     __html: currentContent.heading,
                   }}
@@ -279,7 +285,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
                       ? feeCards.map((card, idx) => (
                           <div
                             key={idx}
-                            className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm w-full hover:shadow-md transition-shadow"
+                            className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 shadow-sm w-full hover:shadow-md transition-shadow"
                           >
                             <div className="flex items-start gap-3">
                               <div
@@ -293,7 +299,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
                                 </h4>
                                 {card.value && (
                                   <div className="mt-2">
-                                    <div className="text-xl font-bold text-slate-900">
+                                    <div className="text-lg sm:text-xl font-bold text-slate-900">
                                       {card.value}
                                     </div>
                                     {card.subtext && (
@@ -316,7 +322,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
                         ? eligibilityCards.map((card, idx) => (
                             <div
                               key={idx}
-                              className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm w-full hover:shadow-md transition-shadow"
+                              className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 shadow-sm w-full hover:shadow-md transition-shadow"
                             >
                               <div className="flex flex-col items-center text-center gap-3">
                                 <div

@@ -66,34 +66,39 @@ const recognitionData: RecognitionItem[] = [
 
 export default function ApSection({ university }: ApSectionProps) {
   const accData = university?.details?.accreditation || {};
-  const list = accData.list && accData.list.length > 0
-    ? accData.list.map((item: any, idx: number) => {
-        let resolvedIcon: any = item.icon || "";
-        const isImageUrl = typeof resolvedIcon === "string" && (resolvedIcon.startsWith("/") || resolvedIcon.startsWith("http") || resolvedIcon.startsWith("data:"));
-        if (!isImageUrl && resolvedIcon) {
-          resolvedIcon = (Icons as any)[resolvedIcon] || ShieldCheck;
-        } else if (!resolvedIcon) {
-          const defaultIcons = [Landmark, BadgeCheck, Crown, Sparkles];
-          resolvedIcon = defaultIcons[idx % defaultIcons.length];
-        }
-        return {
-          id: item.id || String(idx),
-          label: item.label || "",
-          description: item.description || "",
-          ribbon: item.ribbon || "",
-          icon: resolvedIcon,
-        };
-      })
-    : recognitionData;
+  const list =
+    accData.list && accData.list.length > 0
+      ? accData.list.map((item: any, idx: number) => {
+          let resolvedIcon: any = item.icon || "";
+          const isImageUrl =
+            typeof resolvedIcon === "string" &&
+            (resolvedIcon.startsWith("/") ||
+              resolvedIcon.startsWith("http") ||
+              resolvedIcon.startsWith("data:"));
+          if (!isImageUrl && resolvedIcon) {
+            resolvedIcon = (Icons as any)[resolvedIcon] || ShieldCheck;
+          } else if (!resolvedIcon) {
+            const defaultIcons = [Landmark, BadgeCheck, Crown, Sparkles];
+            resolvedIcon = defaultIcons[idx % defaultIcons.length];
+          }
+          return {
+            id: item.id || String(idx),
+            label: item.label || "",
+            description: item.description || "",
+            ribbon: item.ribbon || "",
+            icon: resolvedIcon,
+          };
+        })
+      : recognitionData;
 
   return (
     <section
       id="approvals"
-      className="bg-white px-4 py-16 sm:px-6 lg:px-8 font-sans"
+      className="bg-white px-4 pt-1 pb-12 sm:px-6 sm:pt-2 lg:px-8 lg:pt-3 font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Centered Header Block */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-center max-w-2xl mx-auto mb-4">
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-wider">
             <ShieldCheck className="h-4 w-4" />
             {accData.badge || "Accreditation"}

@@ -61,30 +61,33 @@ interface TestimonialsProps {
 
 export default function TestimonialsSection({ university }: TestimonialsProps) {
   const reviewsData = university?.details?.studentReviews || {};
-  const list = reviewsData.list && reviewsData.list.length > 0
-    ? reviewsData.list.map((item: any, idx: number) => ({
-        id: item.id || String(idx),
-        name: item.name || "",
-        program: item.program || "",
-        university: item.university || "",
-        image: item.image || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-        quote: item.quote || "",
-      }))
-    : testimonials;
+  const list =
+    reviewsData.list && reviewsData.list.length > 0
+      ? reviewsData.list.map((item: any, idx: number) => ({
+          id: item.id || String(idx),
+          name: item.name || "",
+          program: item.program || "",
+          university: item.university || "",
+          image:
+            item.image ||
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+          quote: item.quote || "",
+        }))
+      : testimonials;
 
   return (
     <section
-      id="testimonials"
-      className="bg-slate-50 px-4 py-16 sm:px-6 lg:px-8 font-sans"
+      id="reviews"
+      className="bg-slate-50 px-4 pt-2 pb-12 sm:px-6 sm:pt-3 lg:px-8 lg:pt-4 font-sans"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-800 uppercase tracking-wider shadow-sm">
             <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
             {reviewsData.badge || "Student Reviews"}
           </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-center">
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-center">
             {reviewsData.heading ? (
               <span dangerouslySetInnerHTML={{ __html: reviewsData.heading }} />
             ) : (
@@ -96,7 +99,9 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
         </div>
 
         {/* Testimonials Grid */}
-        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-${Math.min(4, list.length)}`}>
+        <div
+          className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-${Math.min(4, list.length)}`}
+        >
           {list.map((testimonial: any) => (
             <article
               key={testimonial.id}

@@ -175,7 +175,7 @@ export default function UniversityHeroWithStats({
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b  -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
+      <section className="relative overflow-hidden border-b -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
             <defs>
@@ -197,14 +197,14 @@ export default function UniversityHeroWithStats({
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
-          <div className="grid items-center gap-12 md:grid-cols-2">
+          <div className="grid items-center gap-8 md:grid-cols-2">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-xs font-extrabold text-red-600 uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-xs font-extrabold text-red-600 uppercase tracking-wider">
                 <Sparkles className="h-3.5 w-3.5" />
                 UGC Entrusted Degree
               </div>
 
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 leading-tight sm:text-3xl lg:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-5xl lg:text-5xl">
                 {displayHeading} <br />
                 <span className="text-red-500">Degree Programs</span>
               </h1>
@@ -215,59 +215,63 @@ export default function UniversityHeroWithStats({
                 success.
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-2">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
                 <Link
                   href="#apply"
-                  className="flex items-center justify-center rounded-xl bg-red-500 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-200 transition-all hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98]"
+                  className="w-full rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
                 >
                   Apply to University
                 </Link>
 
                 <a
                   href="#catalog"
-                  className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-3 text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
                 >
                   Download Brochure
                 </a>
               </div>
             </div>
 
-            <div className="relative px-4 sm:px-0">
+            <div className="relative px-0 sm:px-4">
               <div className="relative z-10 overflow-hidden rounded-3xl shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
                 <img
                   src={activeHeroImage}
                   alt={`${uniFullName} Digital Campus`}
-                  className="h-[360px] w-full object-cover sm:h-[480px]"
+                  className="w-full h-[260px] sm:h-[360px] md:h-[420px] lg:h-[520px] object-cover"
                 />
 
                 {/* Feature Cards Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 z-20 flex justify-center gap-2 bg-gradient-to-t from-black/40 to-transparent p-2">
-                  {featureCards.map((card, idx) => {
-                    const IconComponent = card.icon;
+                <div className="absolute bottom-2 left-0 right-0 z-20 flex justify-center">
+                  <div className="w-full max-w-lg px-3">
+                    <div className="flex gap-2 overflow-x-auto py-2 px-1 sm:justify-center sm:flex-wrap sm:overflow-visible">
+                      {featureCards.map((card, idx) => {
+                        const IconComponent = card.icon;
 
-                    return (
-                      <div
-                        key={idx}
-                        className="relative w-[110px] rounded-lg bg-white px-2 py-1 shadow-md"
-                      >
-                        <div className="absolute -top-2 right-1 rounded-full bg-yellow-400 px-1 py-0.5 text-[8px] font-bold text-black">
-                          ⭐ 4.8
-                        </div>
+                        return (
+                          <div
+                            key={idx}
+                            className="relative min-w-[100px] sm:w-[110px] flex-shrink-0 rounded-lg bg-white px-2 py-2 shadow-md sm:mx-1"
+                          >
+                            <div className="absolute -top-3 right-2 rounded-full bg-yellow-400 px-1 py-0.5 text-[9px] font-bold text-black">
+                              ⭐ 4.8
+                            </div>
 
-                        <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-700">
-                          <IconComponent className="h-4 w-4" />
-                        </div>
+                            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-700">
+                              <IconComponent className="h-4 w-4" />
+                            </div>
 
-                        <p className="text-[10px] font-semibold text-gray-900 text-center leading-tight">
-                          {card.title}
-                        </p>
+                            <p className="text-xs font-semibold text-gray-900 text-center leading-tight">
+                              {card.title}
+                            </p>
 
-                        <p className="text-[8px] text-gray-500 text-center leading-tight mt-0.5 line-clamp-2">
-                          {card.subtitle}
-                        </p>
-                      </div>
-                    );
-                  })}
+                            <p className="text-[10px] text-gray-500 text-center leading-tight mt-0.5 line-clamp-2">
+                              {card.subtitle}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

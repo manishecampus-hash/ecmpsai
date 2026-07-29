@@ -5,14 +5,13 @@ import FAQSection from "@/components/universities/faq-section";
 
 import { universities } from "@/data/universities";
 import AboutProgram from "@/components/universities/about";
-// import ProgramsSection from "@/components/universities/programs";
+
 import TopSpecializations from "@/components/universities/top-secializations";
-// import ApprovalsSection from "@/components/universities/approvals";
+
 import TestimonialsSection from "@/components/universities/testimonials";
 import { Footer } from "@/components/layout/footer";
 import SubHeader from "@/components/universities/sub-header";
 import LoanSection from "@/components/universities/loan-section";
-// ✅ correct
 import AdmissionProcessSection from "@/components/universities/process-section";
 
 import LearningEnvironmentSection from "@/components/universities/environment-section";
@@ -36,20 +35,20 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <SubHeader />
       <HeroSection university={university} />
 
-      {/* <OverviewSection university={university} /> */}
       <AboutProgram university={university} />
-      {/* <ProgramsSection university={university} /> */}
-      <AdmissionProcessSection />
-      <EligibilityFeesSection />
       <TopSpecializations university={university} />
+
+      <EligibilityFeesSection />
       <LoanSection />
+      <AdmissionProcessSection />
+
       <ExaminationPatternSection />
       <ApSection />
-      {/* <ApprovalsSection university={university} /> */}
+
       <LearningEnvironmentSection />
       <TestimonialsSection university={university} />
 

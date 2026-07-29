@@ -1,8 +1,64 @@
-import Link from "next/link";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+
+import {
+  ApplicationForm,
+  type LeadData,
+} from "../discovery/degree-finder/application-form";
+
+// ── SuccessState (shown inside dialog after a successful submit) ─────────────
+
+function SuccessState({
+  name,
+  onClose,
+}: {
+  name: string;
+  onClose: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center text-center py-6 px-2">
+      <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
+      <h3 className="text-xl font-bold text-gray-900">
+        Thanks, {name.split(" ")[0]}!
+      </h3>
+      <p className="text-sm text-gray-500 mt-1.5 max-w-xs">
+        Your application has been received. Our admissions team will reach out
+        to you shortly.
+      </p>
+      <Button
+        onClick={onClose}
+        className="mt-5 h-10 px-6 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm"
+      >
+        Close
+      </Button>
+    </div>
+  );
+}
+
+// ── FooterCta ─────────────────────────────────────────────────────────────────
+
 export function FooterCta() {
+  const [open, setOpen] = useState(false);
+  const [submittedLead, setSubmittedLead] = useState<LeadData | null>(null);
+
+  const handleFormSubmit = (data: LeadData) => {
+    setSubmittedLead(data);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    // reset once fully closed so the dialog shows a fresh form next time
+    if (!next) {
+      setTimeout(() => setSubmittedLead(null), 200);
+    }
+  };
+
   return (
     <div className="absolute inset-x-0 -top-24 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-40 md:-top-28 lg:-top-20">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
@@ -47,22 +103,37 @@ export function FooterCta() {
               </div>
             </div>
 
-            {/* Button */}
+            {/* Button — opens popup instead of navigating */}
             <div className="flex shrink-0 flex-col items-center gap-1 sm:gap-2">
-              <Link
-                href="/apply"
-                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-5 py-1.5 text-xs font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-6 sm:py-3"
-              >
-                <span
-                  className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
-                  aria-hidden="true"
-                />
+              <Dialog open={open} onOpenChange={handleOpenChange}>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-5 py-1.5 text-xs font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-6 sm:py-3"
+                  >
+                    <span
+                      className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                      aria-hidden="true"
+                    />
 
-                <span className="relative z-10 flex items-center gap-2">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              </Link>
+                    <span className="relative z-10 flex items-center gap-2">
+                      Apply Now
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </button>
+                </DialogTrigger>
+
+                <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
+                  {submittedLead ? (
+                    <SuccessState
+                      name={submittedLead.name}
+                      onClose={() => handleOpenChange(false)}
+                    />
+                  ) : (
+                    <ApplicationForm onSubmit={handleFormSubmit} />
+                  )}
+                </DialogContent>
+              </Dialog>
 
               <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                 Join 50,000+ Alumni

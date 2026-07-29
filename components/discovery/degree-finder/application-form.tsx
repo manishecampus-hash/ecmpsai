@@ -1214,8 +1214,16 @@ export function ApplicationForm({
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) err.email = "Enter valid email";
 
     const digitsOnly = formData.mobile.replace(/\D/g, "");
-    if (!digitsOnly || digitsOnly.length !== selectedCountry.length) {
-      err.mobile = `Enter a valid ${selectedCountry.name} phone number`;
+    if (selectedCountry.code === "in") {
+      // Strict 10-digit check only for India
+      if (!digitsOnly || digitsOnly.length !== selectedCountry.length) {
+        err.mobile = `Enter a valid ${selectedCountry.name} phone number`;
+      }
+    } else {
+      // For all other countries, just make sure some number has been entered
+      if (!digitsOnly) {
+        err.mobile = "Enter a valid phone number";
+      }
     }
 
     if (!formData.course) err.course = "Select a course";
@@ -1228,7 +1236,10 @@ export function ApplicationForm({
 
   const isPhoneValid = () => {
     const digitsOnly = formData.mobile.replace(/\D/g, "");
-    return digitsOnly.length === selectedCountry.length;
+    if (selectedCountry.code === "in") {
+      return digitsOnly.length === selectedCountry.length;
+    }
+    return digitsOnly.length > 0;
   };
 
   const isFormValid = !!(
@@ -1394,10 +1405,18 @@ export function ApplicationForm({
               value={formData.mobile.replace(/\D/g, "")}
               onChange={(e) => {
                 const digitsOnly = e.target.value.replace(/\D/g, "");
-                const capped = digitsOnly.slice(0, selectedCountry.length);
+                // India: capped at fixed length. Other countries: no limit.
+                const capped =
+                  selectedCountry.code === "in"
+                    ? digitsOnly.slice(0, selectedCountry.length)
+                    : digitsOnly;
                 setFormData({ ...formData, mobile: capped });
               }}
-              maxLength={selectedCountry.length}
+              maxLength={
+                selectedCountry.code === "in"
+                  ? selectedCountry.length
+                  : undefined
+              }
               className="__phone-input flex-1 px-3 h-full outline-none text-sm text-gray-900 bg-transparent placeholder-gray-400"
             />
           </div>

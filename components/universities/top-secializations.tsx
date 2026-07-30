@@ -260,7 +260,7 @@ export default function TopSpecializations({
           {specData.badge || "In-Demand Specializations"}
         </span>
 
-        <h2 className="mt-2 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl md:text-3xl lg:text-4xl">
+        <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
           {specData.heading ? (
             <span dangerouslySetInnerHTML={{ __html: specData.heading }} />
           ) : (

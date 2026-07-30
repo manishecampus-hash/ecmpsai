@@ -83,12 +83,12 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-800 uppercase tracking-wider shadow-sm">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wider">
             <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
             {reviewsData.badge || "Student Reviews"}
           </span>
 
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
             Student <span className="text-red-500">Testimonials</span>
           </h2>
         </div>

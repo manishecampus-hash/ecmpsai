@@ -58,7 +58,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
   return (
     <section
       id="loan"
-      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
+      className="bg-white px-4 -mt-2 pt-4 pb-14 sm:px-6 sm:mt-0 lg:px-8 lg:mt-2 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-4">
@@ -67,7 +67,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
             {loanData.badge || "Financial Assistance"}
           </span>
 
-          <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
             {loanData.heading ? (
               <span dangerouslySetInnerHTML={{ __html: loanData.heading }} />
             ) : (

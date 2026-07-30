@@ -254,8 +254,8 @@ export default function UniversityHeroWithStats({
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-5">
-                <div className="text-left leading-none">
+              <div className="flex items-center gap-4 overflow-x-auto whitespace-nowrap pb-2 [&::-webkit-scrollbar]:hidden">
+                <div className="text-left leading-none flex-shrink-0">
                   <p className="text-lg font-black text-slate-600">NAAC</p>
                   <p className="-mt-0.5 text-lg font-black text-red-500">
                     GRADE A+
@@ -265,7 +265,7 @@ export default function UniversityHeroWithStats({
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <span className="text-2xl">✺</span>
                   <div className="leading-none">
                     <p className="text-sm font-black text-blue-900">UGC-DEB</p>
@@ -273,7 +273,7 @@ export default function UniversityHeroWithStats({
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-1.5">
+                <div className="flex items-baseline gap-1.5 flex-shrink-0">
                   <span className="text-xl font-black italic text-blue-900">
                     nirf
                   </span>

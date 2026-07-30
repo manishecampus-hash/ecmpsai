@@ -62,7 +62,7 @@ export default function AdmissionProcessSection({
             {processData.badge || "Process Flow"}
           </span>
 
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
             Online Admission <span className="text-red-500">Steps</span>
           </h2>
         </div>

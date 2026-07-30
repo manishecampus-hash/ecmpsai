@@ -41,12 +41,12 @@ export default function PlacementPartners() {
       className="bg-white border-y border-slate-100 pt-2 pb-10 sm:pt-3 sm:pb-12 overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-4">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-black uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
           Our Elite Hiring Network
         </span>
 
-        <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+        <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
           Top Corporate Recruitment &{" "}
           <span className="text-red-500">Placement Partners</span>
         </h2>

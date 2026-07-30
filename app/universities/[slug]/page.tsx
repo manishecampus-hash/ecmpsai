@@ -18,6 +18,7 @@ import LearningEnvironmentSection from "@/components/universities/environment-se
 import EligibilityFeesSection from "@/components/universities/eligibility-fees-section";
 import ExaminationPatternSection from "@/components/universities/examination-pattern-section";
 import ApSection from "@/components/universities/aproveltest";
+import PlacementPartners from "@/components/universities/placement-partners";
 
 interface UniversityPageProps {
   params: Promise<{
@@ -50,6 +51,7 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <ApSection />
 
       <LearningEnvironmentSection />
+      <PlacementPartners />
       <TestimonialsSection university={university} />
 
       <FAQSection university={university} />

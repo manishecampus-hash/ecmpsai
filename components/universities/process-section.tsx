@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Workflow, CheckCircle2 } from "lucide-react";
+import { Workflow } from "lucide-react";
 
 interface ProcessSection {
   university?: any;
@@ -61,52 +61,29 @@ export default function AdmissionProcessSection({
             <Workflow className="h-3.5 w-3.5 text-red-500" />
             {processData.badge || "Process Flow"}
           </span>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-            {processData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: processData.heading }} />
-            ) : (
-              <>
-                Online Admission <span className="text-red-500">Steps</span>
-              </>
-            )}
+
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Online Admission <span className="text-red-500">Steps</span>
           </h2>
         </div>
 
         {/* Step Cards Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="flex flex-wrap justify-center gap-3">
           {steps.map((step: any, index: number) => {
             return (
               <div
                 key={step.title}
-                className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-100 hover:shadow-md"
+                className="flex flex-col items-center text-center rounded-2xl border-2 border-red-500 bg-white px-3 py-4 w-[200px] transition-all duration-300 hover:shadow-md"
               >
-                {/* Visual Connector / Accent Top Accent Line */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl bg-gradient-to-r from-transparent via-slate-200 to-transparent group-hover:via-red-400 transition-all duration-300" />
-
-                <div>
-                  {/* Step Metric Top Header */}
-                  <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-8 px-2.5 items-center justify-center rounded-lg bg-red-50 text-xs font-black tracking-wider text-red-600 border border-red-100/50">
-                      STEP 0{index + 1}
-                    </span>
-                    <CheckCircle2 className="h-4 w-4 text-slate-300 group-hover:text-red-500 transition-colors duration-300" />
-                  </div>
-
-                  {/* Text Details */}
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-200">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2.5 text-xs font-medium leading-relaxed text-slate-500">
-                    {step.description}
-                  </p>
-                </div>
-
-                {/* Micro decorative indicator at card base */}
-                <div className="mt-6 flex items-center justify-end">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300 group-hover:text-red-300 transition-colors">
-                    Phase 0{index + 1}
-                  </span>
-                </div>
+                <h3 className="text-base font-bold text-red-500">
+                  Step {index + 1}
+                </h3>
+                <h4 className="mt-1 text-base font-bold text-slate-900">
+                  {step.title}
+                </h4>
+                <p className="mt-2 text-xs font-medium leading-relaxed text-slate-500">
+                  {step.description}
+                </p>
               </div>
             );
           })}

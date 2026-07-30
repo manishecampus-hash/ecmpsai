@@ -87,14 +87,9 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
             <MessageSquareQuote className="h-3.5 w-3.5 text-red-500" />
             {reviewsData.badge || "Student Reviews"}
           </span>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-center">
-            {reviewsData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: reviewsData.heading }} />
-            ) : (
-              <>
-                Student <span className="text-red-500">Testimonials</span>
-              </>
-            )}
+
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Student <span className="text-red-500">Testimonials</span>
           </h2>
         </div>
 

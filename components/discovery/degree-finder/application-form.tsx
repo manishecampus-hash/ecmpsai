@@ -1126,7 +1126,28 @@ export interface LeadData {
 
 // ── Shared Data ──────────────────────────────────────────────────────────────
 
-const courseList = ["DBA in Generative AI"];
+const courseList = [
+  "DBA in Generative AI",
+  "DBA_(IT_Management)",
+  "DBA_(Energy_Management)",
+  "DBA_(Business_Analytics)",
+  "DBA_(Data_Science)",
+  "DBA_(Machine_Learning)",
+  "DBA_(Global_&_International_Management)",
+  "DBA_(Finance)",
+  "DBA_(General_Management)",
+  "DBA_(Healthcare_Management)",
+  "DBA_(Human_Resource_Management)",
+  "DBA_(International_Business)",
+  "DBA_(Marketing)",
+  "DBA_(Supply_Chain_Management)",
+  "DBA_(Accounting)",
+  "DBA_(AML_Compliance)",
+  "DBA_(Cyber_Security)",
+  "DBA_(Tax_Management)",
+  "DBA_(Strategic_Management)",
+  "DBA_(Entrepreneurship)",
+];
 
 // ── Countries ────────────────────────────────────────────────────────────────
 
@@ -1280,7 +1301,7 @@ export function ApplicationForm({
       leadFormData.append("course", formData.course);
       leadFormData.append("state", formData.state);
       leadFormData.append("no_of_users", "0");
-      leadFormData.append("source", "Gen AI LP");
+      leadFormData.append("source", "ECAMPUS NEW WB");
 
       const response = await fetch(
         "https://bls.ecampuscrm.com/api/form/leads",

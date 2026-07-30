@@ -8,7 +8,7 @@ import Link from "next/link";
 const staticSlides = [
   {
     id: "static-1",
-    desktop: "/banner/newupdatebanner.svg",
+    desktop: "/banner/new333.svg",
     mobile: "/banner/desktop1.png",
     slug: "",
     title: "",
@@ -17,31 +17,31 @@ const staticSlides = [
   },
   {
     id: "static-2",
-    desktop: "/banner/newbanners.svg",
+    desktop: "/banner/newupdatebanner.svg",
     mobile: "/banner/mobile2.png",
     slug: "",
     title: "",
     category: "",
     isDynamic: false,
   },
-  {
-    id: "static-3",
-    desktop: "/banner/",
-    mobile: "/banner/mobile3.png",
-    slug: "",
-    title: "",
-    category: "",
-    isDynamic: false,
-  },
-  {
-    id: "static-4",
-    desktop: "/banner/",
-    mobile: "/banner/mobile4.png",
-    slug: "",
-    title: "",
-    category: "",
-    isDynamic: false,
-  },
+  // {
+  //   id: "static-3",
+  //   desktop: "/banner/",
+  //   mobile: "/banner/mobile3.png",
+  //   slug: "",
+  //   title: "",
+  //   category: "",
+  //   isDynamic: false,
+  // },
+  // {
+  //   id: "static-4",
+  //   desktop: "/banner/",
+  //   mobile: "/banner/mobile4.png",
+  //   slug: "",
+  //   title: "",
+  //   category: "",
+  //   isDynamic: false,
+  // },
 ];
 
 const SWIPE_THRESHOLD = 50;

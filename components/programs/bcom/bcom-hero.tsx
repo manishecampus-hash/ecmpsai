@@ -83,6 +83,12 @@ export default function BComHero() {
               online degree program.
             </p>
 
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              Build a strong commerce foundation with accounting, finance,
+              taxation, business law, and management concepts through a flexible
+              online degree program.
+            </p>
+
             <div className="mt-5 flex flex-wrap gap-4">
               <Link
                 href="#apply"

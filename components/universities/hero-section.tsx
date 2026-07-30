@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { Download, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -9,11 +10,7 @@ import {
   Globe,
   BookOpen,
   Building2,
-  Award,
-  Clock,
-  Headphones,
 } from "lucide-react";
-import PlacementPartners from "./placement-partners";
 
 interface HeroSectionProps {
   university?: {
@@ -96,6 +93,47 @@ function AnimatedStatValue({
   );
 }
 
+// Reveals `text` one character at a time, without ever shrinking the
+// element's footprint (the un-typed remainder is rendered invisibly so
+// nothing below the block shifts while typing is in progress).
+function useTypewriter(
+  text: string,
+  {
+    speed = 16,
+    startDelay = 400,
+  }: { speed?: number; startDelay?: number } = {},
+) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setIsDone(false);
+
+    let i = 0;
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+
+    const startTimeout = setTimeout(() => {
+      intervalId = setInterval(() => {
+        i += 1;
+        setDisplayedText(text.slice(0, i));
+
+        if (i >= text.length) {
+          if (intervalId) clearInterval(intervalId);
+          setIsDone(true);
+        }
+      }, speed);
+    }, startDelay);
+
+    return () => {
+      clearTimeout(startTimeout);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [text, speed, startDelay]);
+
+  return { displayedText, isDone };
+}
+
 export default function UniversityHeroWithStats({
   university,
   stats,
@@ -103,29 +141,15 @@ export default function UniversityHeroWithStats({
   const uniName = university?.name || "Amity";
   const uniFullName = university?.fullName || uniName;
 
-  const defaultHeroImage = "/newuniversities/amity.png";
-  const activeHeroImage = defaultHeroImage;
-
   const hasOnlineWord = uniName.toLowerCase().includes("online");
   const displayHeading = hasOnlineWord ? uniName : `${uniName} Online`;
 
-  const featureCards = [
-    {
-      icon: Award,
-      title: "UGC Entitled",
-      subtitle: "Online Degrees",
-    },
-    {
-      icon: Clock,
-      title: "100% Online",
-      subtitle: "Flexible Learning",
-    },
-    {
-      icon: Headphones,
-      title: "24/7 Support",
-      subtitle: "For Learners",
-    },
-  ];
+  const aiOverviewCopy = `${uniFullName} Online offers flexible, industry-focused online degree programs from ${uniFullName}, empowering learners to access quality education, develop practical skills, and achieve career growth through an advanced digital learning experience.`;
+
+  const { displayedText: aiOverviewText, isDone: aiOverviewDone } =
+    useTypewriter(aiOverviewCopy, { speed: 16, startDelay: 400 });
+
+  const youtubeVideoId = "po5P0XIUT2k";
 
   const statsData = [
     {
@@ -175,7 +199,7 @@ export default function UniversityHeroWithStats({
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b -mt-4 sm:-mt-6 lg:-mt-8 pt-0 pb-6 lg:pb-8">
+      <section className="relative overflow-hidden border-b -mt-2 sm:-mt-3 lg:-mt-4 pt-2 sm:pt-3 lg:pt-4 pb-6 lg:pb-8">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
             <defs>
@@ -199,79 +223,97 @@ export default function UniversityHeroWithStats({
         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-xs font-extrabold text-red-600 uppercase tracking-wider">
-                <Sparkles className="h-3.5 w-3.5" />
-                UGC Entrusted Degree
-              </div>
-
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-5xl lg:text-5xl">
-                {displayHeading} <br />
-                <span className="text-red-500">Degree Programs</span>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-4xl lg:text-4xl">
+                {displayHeading.split(" ").slice(0, -1).join(" ")}{" "}
+                <span className="text-red-500">
+                  {displayHeading.split(" ").slice(-1)}
+                </span>
               </h1>
 
-              <p className="max-w-xl text-base text-gray-600 leading-relaxed sm:text-lg">
-                Build your future with globally recognized undergraduate and
-                postgraduate degrees. Flexible, engaging and designed for your
-                success.
-              </p>
+              {/* AI Overview with typewriter effect */}
+              <div className="max-w-xl">
+                <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <div className="text-[#1e293b] text-[15px] font-medium">
+                    AI Overview
+                  </div>
+                </div>
+
+                <p className="text-base text-gray-600 leading-relaxed">
+                  <span>{aiOverviewText}</span>
+                  <span
+                    className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
+                      aiOverviewDone ? "animate-pulse" : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                  {/* Reserves the final space up front so nothing below shifts while typing */}
+                  <span className="invisible">
+                    {aiOverviewCopy.slice(aiOverviewText.length)}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-5">
+                <div className="text-left leading-none">
+                  <p className="text-lg font-black text-slate-600">NAAC</p>
+                  <p className="-mt-0.5 text-lg font-black text-red-500">
+                    GRADE A+
+                  </p>
+                  <p className="mt-0.5 text-[9px] font-medium text-slate-400">
+                    Accredited University
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl">✺</span>
+                  <div className="leading-none">
+                    <p className="text-sm font-black text-blue-900">UGC-DEB</p>
+                    <p className="text-sm font-black text-blue-900">APPROVED</p>
+                  </div>
+                </div>
+
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-xl font-black italic text-blue-900">
+                    nirf
+                  </span>
+                  <span className="text-xl font-black text-red-500">
+                    27<sup className="text-xs">th</sup>
+                  </span>
+                  <span className="text-[10px] font-bold tracking-wide text-slate-700">
+                    RANKING
+                  </span>
+                </div>
+              </div>
 
               <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
                 <Link
-                  href="#apply"
-                  className="w-full rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
+                  href="https://ecampusapp.com/amity-university-online/#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjEzMjMxIiwidG9nZ2xlIjpmYWxzZX0%3D"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
                 >
                   Apply to University
                 </Link>
 
                 <a
-                  href="#catalog"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
+                  href="https://ecampusapp.com/amity-university-online/#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjEzMjMxIiwidG9nZ2xlIjpmYWxzZX0%3D"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
                 >
+                  <Download className="h-4 w-4" />
                   Download Brochure
                 </a>
               </div>
             </div>
 
             <div className="relative px-0 sm:px-4">
-              <div className="relative z-10 overflow-hidden rounded-3xl shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
-                <img
-                  src={activeHeroImage}
-                  alt={`${uniFullName} Digital Campus`}
-                  className="w-full h-[260px] sm:h-[360px] md:h-[420px] lg:h-[520px] object-cover"
-                />
-
-                {/* Feature Cards Overlay */}
-                <div className="absolute bottom-2 left-0 right-0 z-20 flex justify-center">
-                  <div className="w-full max-w-lg px-3">
-                    <div className="flex gap-2 overflow-x-auto py-2 px-1 sm:justify-center sm:flex-wrap sm:overflow-visible">
-                      {featureCards.map((card, idx) => {
-                        const IconComponent = card.icon;
-
-                        return (
-                          <div
-                            key={idx}
-                            className="relative min-w-[100px] sm:w-[110px] flex-shrink-0 rounded-lg bg-white px-2 py-2 shadow-md sm:mx-1"
-                          >
-                            <div className="absolute -top-3 right-2 rounded-full bg-yellow-400 px-1 py-0.5 text-[9px] font-bold text-black">
-                              ⭐ 4.8
-                            </div>
-
-                            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-700">
-                              <IconComponent className="h-4 w-4" />
-                            </div>
-
-                            <p className="text-xs font-semibold text-gray-900 text-center leading-tight">
-                              {card.title}
-                            </p>
-
-                            <p className="text-[10px] text-gray-500 text-center leading-tight mt-0.5 line-clamp-2">
-                              {card.subtitle}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+              <div className="relative z-10 mt-12 overflow-hidden shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
+                <div className="w-full h-[260px] sm:h-[320px] md:h-[380px]">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                    title={`${uniFullName} Video`}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
               </div>
             </div>
@@ -280,7 +322,6 @@ export default function UniversityHeroWithStats({
       </section>
 
       {/* Stats Section */}
-      <PlacementPartners />
     </>
   );
 }

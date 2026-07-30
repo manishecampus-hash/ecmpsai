@@ -45,7 +45,8 @@ export default function PlacementPartners() {
           <Handshake className="h-3.5 w-3.5 text-red-500" />
           Our Elite Hiring Network
         </span>
-        <h2 className="mt-2 text-base sm:text-lg font-extrabold text-gray-900 tracking-tight sm:text-2xl">
+
+        <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
           Top Corporate Recruitment &{" "}
           <span className="text-red-500">Placement Partners</span>
         </h2>

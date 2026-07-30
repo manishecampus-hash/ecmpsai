@@ -99,12 +99,12 @@ export default function ApSection({ university }: ApSectionProps) {
       <div className="max-w-7xl mx-auto">
         {/* Centered Header Block */}
         <div className="text-center max-w-2xl mx-auto mb-4">
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-wider">
-            <ShieldCheck className="h-4 w-4" />
-            {accData.badge || "Accreditation"}
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-black uppercase tracking-wider">
+            <ShieldCheck className="h-4 w-4 text-red-500" />
+            {"Accreditation"}
           </span>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            {accData.heading || "Recognition & Approvals"}
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Recognition & <span className="text-red-500">Approval</span>
           </h2>
         </div>
 

@@ -72,8 +72,8 @@ export default function ApprovalsSection() {
             Accreditation
           </span>
 
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            Recognition & <span className="text-red-500">Approvals</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Recognition & <span className="text-red-500">Approval</span>
           </h2>
         </div>
 

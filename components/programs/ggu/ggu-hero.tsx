@@ -12,6 +12,7 @@ import {
   CreditCard,
   Download,
   IndianRupee,
+  Sparkles,
   Star,
 } from "lucide-react";
 
@@ -22,9 +23,48 @@ const highlights = [
   { label: "Mode", value: "100% Online", icon: BookOpen },
 ];
 
+// Full AI Overview copy that will be "typed" out on load
+const AI_OVERVIEW_TEXT =
+  "Golden Gate University offers DBA program for working professionals and business leaders. The Online DBA is a 3 years long postgraduate degree, and the DBA is a doctoral level program mainly made for senior professionals and managers. These programs are career focused and offers specializations like Finance, Marketing, Human Resource, International Business, Project Management, Strategy, Leadership and many more.";
+
+// Small reusable typewriter hook: reveals `text` one character at a time.
+function useTypewriter(text, { speed = 18, startDelay = 300 } = {}) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    setDisplayedText("");
+    setIsDone(false);
+
+    let i = 0;
+    let intervalId;
+
+    const startTimeout = setTimeout(() => {
+      intervalId = setInterval(() => {
+        i += 1;
+        setDisplayedText(text.slice(0, i));
+
+        if (i >= text.length) {
+          clearInterval(intervalId);
+          setIsDone(true);
+        }
+      }, speed);
+    }, startDelay);
+
+    return () => {
+      clearTimeout(startTimeout);
+      clearInterval(intervalId);
+    };
+  }, [text, speed, startDelay]);
+
+  return { displayedText, isDone };
+}
+
 export default function GGUDoctorateHero() {
   const [seatsLeft, setSeatsLeft] = useState(12);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const { displayedText: aiOverviewText, isDone: aiOverviewDone } =
+    useTypewriter(AI_OVERVIEW_TEXT, { speed: 16, startDelay: 400 });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -77,12 +117,26 @@ export default function GGUDoctorateHero() {
               <span className="text-red-500">Golden Gate University</span>
             </h1>
 
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-              Earn your Doctor of Business Administration from Golden Gate
-              University&apos;s AACSB-accredited Edward S. Ageno School of
-              Business — designed for working executives who want to lead
-              through original research and applied strategy, 100% online.
-            </p>
+            {/* AI Overview with typewriter effect */}
+            <div className="mt-4 max-w-xl">
+              <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Overview
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                <span>{aiOverviewText}</span>
+                <span
+                  className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
+                    aiOverviewDone ? "animate-pulse" : ""
+                  }`}
+                  aria-hidden="true"
+                />
+                {/* Reserves the final space up front so nothing below shifts while typing */}
+                <span className="invisible">
+                  {AI_OVERVIEW_TEXT.slice(aiOverviewText.length)}
+                </span>
+              </p>
+            </div>
 
             <div className="mt-5 flex flex-wrap gap-4">
               <Link

@@ -88,7 +88,7 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
             {reviewsData.badge || "Student Reviews"}
           </span>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
             Student <span className="text-red-500">Testimonials</span>
           </h2>
         </div>

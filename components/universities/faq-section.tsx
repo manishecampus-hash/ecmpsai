@@ -50,13 +50,14 @@ export default function FAQSection({ university }: FAQSectionProps) {
   ];
 
   // Defensive execution to guarantee a valid array structure loops over cleanly
-  const rawFaqs = sdData.faqs && sdData.faqs.length > 0
-    ? sdData.faqs
-    : (university?.faqs &&
-       Array.isArray(university.faqs) &&
-       university.faqs.length > 0
-         ? university.faqs
-         : defaultFaqs);
+  const rawFaqs =
+    sdData.faqs && sdData.faqs.length > 0
+      ? sdData.faqs
+      : university?.faqs &&
+          Array.isArray(university.faqs) &&
+          university.faqs.length > 0
+        ? university.faqs
+        : defaultFaqs;
 
   const toggleAccordion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -79,7 +80,7 @@ export default function FAQSection({ university }: FAQSectionProps) {
             <CircleHelp className="h-3.5 w-3.5 text-red-500" />
             {sdData.badge || "Support Desk"}
           </span>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left lg:text-3xl">
             {sdData.heading ? (
               <span dangerouslySetInnerHTML={{ __html: sdData.heading }} />
             ) : (
@@ -93,10 +94,13 @@ export default function FAQSection({ university }: FAQSectionProps) {
           <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
             <div className="flex items-center gap-3 text-slate-700">
               <MessageSquare className="h-5 w-5 text-red-500" />
-              <span className="text-sm font-bold">{sdData.doubtsTitle || "Still have doubts?"}</span>
+              <span className="text-sm font-bold">
+                {sdData.doubtsTitle || "Still have doubts?"}
+              </span>
             </div>
             <p className="mt-2 text-xs text-gray-500 leading-relaxed">
-              {sdData.doubtsDesc || "Connect with our professional academic program advisors directly for personalized roadmap assistance."}
+              {sdData.doubtsDesc ||
+                "Connect with our professional academic program advisors directly for personalized roadmap assistance."}
             </p>
           </div>
         </div>

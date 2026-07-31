@@ -83,7 +83,7 @@ export default function EligibilityFeesSection({
           {/* Eligibility Criteria */}
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl  lg:text-3xl">
                 Eligibility{" "}
                 <span className="text-red-600">
                   {eligibilityData.criteriaHeading || "Criteria"}
@@ -120,7 +120,7 @@ export default function EligibilityFeesSection({
           {/* Fees Structure */}
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
                 Fees{" "}
                 <span className="text-red-600">
                   {eligibilityData.feeHeading || "Structure"}
@@ -180,7 +180,7 @@ export default function EligibilityFeesSection({
               </div>
 
               <div>
-                <p className="text-base text-blue-600 italic">
+                <p className="text-base text-blue-600 italic text-center">
                   {eligibilityData.feeInstallments ||
                     "Easy installment options available.*"}
                 </p>

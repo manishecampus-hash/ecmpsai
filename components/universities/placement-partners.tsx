@@ -1,32 +1,36 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Handshake } from "lucide-react";
 
 export default function PlacementPartners() {
-  // Brand items extracted from image_161a52.png with exact brand coloring accents
+  // Brand logos with actual image paths
   const partners = [
-    { name: "Hero", color: "text-red-600 font-black tracking-tighter" },
+    {
+      name: "IFFCO Tokio",
+      logo: "/newuniversities/iffco_tokio_ba0ca0e2fd.webp",
+    },
+    { name: "Hero", logo: "/newuniversities/hero_8069edb396.webp" },
     {
       name: "Hitachi Vantara",
-      color: "text-neutral-900 font-extrabold tracking-tight",
+      logo: "/newuniversities/hitachi_vantara_4f43434588.webp",
     },
     {
-      name: "FEDERAL BANK",
-      color: "text-blue-700 font-black italic tracking-tight",
+      name: "Federal Bank",
+      logo: "/newuniversities/federal_bank_cb688f0f4c.webp",
     },
-    { name: "Apple", color: "text-black font-semibold tracking-tight" },
+    { name: "Apple", logo: "/newuniversities/apple_e6c370def7.webp" },
     {
-      name: "Reliance Industries Limited",
-      color: "text-amber-700 font-bold tracking-normal",
+      name: "Reliance",
+      logo: "/newuniversities/reliance_industries_limited_2baf8ef73a.webp",
     },
+    { name: "Samsung", logo: "/newuniversities/samsung_fc88911e0c.webp" },
     {
-      name: "SAMSUNG",
-      color: "text-blue-800 font-black tracking-widest italic",
+      name: "Tech Mahindra",
+      logo: "/newuniversities/techmahindra_14d9b4f362.webp",
     },
-    { name: "TECH mahindra", color: "text-red-500 font-medium tracking-tight" },
-    { name: "HDFC BANK", color: "text-blue-900 font-black tracking-tight" },
-    { name: "Granite", color: "text-purple-700 font-bold tracking-tight" },
+    { name: "HDFC Bank", logo: "/newuniversities/hdfc_75e1e13a82.webp" },
   ];
 
   // Double the list array to ensure a flawless, gapless loop animation transitions
@@ -38,15 +42,15 @@ export default function PlacementPartners() {
        ============================================================ */
     <section
       id="placements"
-      className="bg-white border-y border-slate-100 pt-2 pb-10 sm:pt-3 sm:pb-12 overflow-hidden"
+      className="bg-white border-y border-slate-100 pt-1.5 pb-8 sm:pt-2 sm:pb-10 overflow-hidden"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-black uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
           Our Elite Hiring Network
         </span>
 
-        <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+        <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
           Top Corporate Recruitment &{" "}
           <span className="text-red-500">Placement Partners</span>
         </h2>
@@ -58,20 +62,23 @@ export default function PlacementPartners() {
         <div className="pointer-events-none absolute left-0 z-10 h-full w-32 sm:w-44 bg-gradient-to-r from-white to-transparent" />
         <div className="pointer-events-none absolute right-0 z-10 h-full w-32 sm:w-44 bg-gradient-to-l from-white to-transparent" />
 
-        {/* ALIGNMENT FIX:
-            1. Changed 'justify-around' to 'justify-start' so tracking is linear.
-            2. Added 'pr-4 sm:pr-6' to balance the inner 'gap-6'. */}
-        <div className="flex shrink-0 items-center justify-start gap-4 sm:gap-6 pr-4 sm:pr-6 animate-marquee whitespace-nowrap">
+        {/* Logo carousel track */}
+        <div className="flex shrink-0 items-center justify-start gap-3 sm:gap-4 pr-3 sm:pr-4 animate-marquee whitespace-nowrap">
           {doublePartners.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
-              className="flex items-center justify-center px-4 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] md:min-w-[170px] h-[64px] sm:h-[72px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
+              className="flex items-center justify-center px-4 sm:px-6 py-1.5 sm:py-2.5 min-w-[120px] sm:min-w-[150px] h-[52px] sm:h-[65px] rounded-xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-900/5 transition-transform duration-300 hover:scale-105"
             >
-              <span
-                className={`text-sm sm:text-base select-none ${partner.color}`}
-              >
-                {partner.name}
-              </span>
+              <div className="relative w-full h-full flex items-center justify-center">
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  width={220}
+                  height={130}
+                  className="h-auto w-auto max-h-[110%] max-w-[110%] object-contain"
+                  priority={index < 3}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -89,7 +96,7 @@ export default function PlacementPartners() {
           }
         }
         .animate-marquee {
-          animation: marquee 30s linear infinite;
+          animation: marquee 28s linear infinite;
         }
         .animate-marquee:hover {
           animation-play-state: paused;
@@ -98,7 +105,7 @@ export default function PlacementPartners() {
         /* Reduce motion on very small screens for smoother UX */
         @media (max-width: 420px) {
           .animate-marquee {
-            animation-duration: 40s;
+            animation-duration: 38s;
           }
         }
       `}</style>

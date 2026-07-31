@@ -88,7 +88,7 @@ export default function ExaminationPatternSection({
             {examData.badge || "Examination"}
           </span>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
             {examData.heading ? (
               <span dangerouslySetInnerHTML={{ __html: examData.heading }} />
             ) : (

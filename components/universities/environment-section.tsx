@@ -112,7 +112,7 @@ export default function SampleCertificateSection({
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-5 lg:gap-6">
           {/* Left: heading, description & checklist */}
           <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-3xl">
               {certData.heading ? (
                 <span dangerouslySetInnerHTML={{ __html: certData.heading }} />
               ) : (

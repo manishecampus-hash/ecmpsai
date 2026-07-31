@@ -15,7 +15,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
   return (
     <section
       id="why"
-      className="bg-white px-4 pt-4 pb-14 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8 lg:pb-20"
+      className="bg-white px-4 -mt-2 pt-0 pb-14 sm:px-6 sm:-mt-4 sm:pt-1 lg:px-8 lg:-mt-12 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 font-[Inter]">
         {/* Intro: image left, About copy right */}
@@ -42,7 +42,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
 
           {/* Text */}
           <div className="order-2 text-left">
-            <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+            <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
               About Amity University{" "}
               <span className="text-red-500">Online</span>
             </h2>

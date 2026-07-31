@@ -1335,7 +1335,7 @@ export function ApplicationForm({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-4 sm:py-6 shadow-sm">
+    <div className="w-full max-w-md mx-auto bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-6">
       <div className="flex flex-col items-center text-center space-y-1.5 mb-3">
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
           Apply Now
@@ -1395,7 +1395,11 @@ export function ApplicationForm({
             <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 text-gray-900 max-h-60 overflow-y-auto">
+            <SelectContent
+              side="bottom"
+              align="start"
+              className="bg-white border border-gray-200 text-gray-900 max-h-48 overflow-y-auto w-full"
+            >
               {countryList.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.name} (+{country.dialCode})
@@ -1444,10 +1448,9 @@ export function ApplicationForm({
           {errors.mobile && (
             <p className="text-red-500 text-xs mt-0.5">{errors.mobile}</p>
           )}
-          {/* <p className="text-gray-500 text-xs mt-1">{selectedCountry.length}</p> */}
         </div>
 
-        <div>
+        <div className="relative z-50">
           <Select
             value={formData.course}
             onValueChange={(v) => setFormData({ ...formData, course: v })}
@@ -1455,7 +1458,11 @@ export function ApplicationForm({
             <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
               <SelectValue placeholder="Select Course" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 text-gray-900">
+            <SelectContent
+              side="bottom"
+              align="start"
+              className="bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+            >
               {courseList.map((c) => (
                 <SelectItem key={c} value={c}>
                   {c}
@@ -1469,7 +1476,7 @@ export function ApplicationForm({
         </div>
 
         {selectedCountry.code === "in" && (
-          <div>
+          <div className="relative z-40">
             <Select
               value={formData.state}
               onValueChange={(v) => setFormData({ ...formData, state: v })}
@@ -1477,7 +1484,11 @@ export function ApplicationForm({
               <SelectTrigger className="!h-10 !min-h-[40px] bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 text-gray-900 max-h-60 overflow-y-auto">
+              <SelectContent
+                side="bottom"
+                align="start"
+                className="bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+              >
                 {indianStates.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}

@@ -12,8 +12,6 @@ import {
   type LeadData,
 } from "../discovery/degree-finder/application-form";
 
-// ── SuccessState (shown inside dialog after a successful submit) ─────────────
-
 function SuccessState({
   name,
   onClose,
@@ -60,7 +58,7 @@ export function FooterCta() {
   };
 
   return (
-    <div className="absolute inset-x-0 -top-24 z-20 mx-auto max-w-6xl px-2 sm:px-4 md:px-6 sm:-top-40 md:-top-28 lg:-top-20">
+    <div className="absolute inset-x-0 -top-32 z-20 mx-auto max-w-6xl px-4 sm:px-4 md:px-6 sm:-top-40 md:-top-28 lg:-top-20">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           {/* Image */}
@@ -77,7 +75,7 @@ export function FooterCta() {
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col items-center gap-0.5 px-3 pb-1.5 pt-0 sm:gap-4 sm:pb-8 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
+          <div className="flex flex-1 flex-col items-center gap-2 px-4 pb-4 pt-2 sm:gap-4 sm:pb-8 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
             {/* Text */}
             <div className="text-center md:text-left">
               <h2 className="text-base font-bold leading-tight text-slate-800 sm:text-2xl lg:text-4xl">
@@ -86,7 +84,7 @@ export function FooterCta() {
                 Global Academic Journey?
               </h2>
 
-              <div className="mt-1.5 flex flex-wrap justify-center gap-3 sm:mt-4 md:justify-start">
+              <div className="mt-2 flex flex-wrap justify-center gap-2 sm:mt-4 sm:gap-3 md:justify-start">
                 {[
                   "Globally Accredited",
                   "Flexible Online",
@@ -104,12 +102,12 @@ export function FooterCta() {
             </div>
 
             {/* Button — opens popup instead of navigating */}
-            <div className="flex shrink-0 flex-col items-center gap-1 sm:gap-2">
+            <div className="flex shrink-0 flex-col items-center gap-1.5 sm:gap-2">
               <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogTrigger asChild>
                   <button
                     type="button"
-                    className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-5 py-1.5 text-xs font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-6 sm:py-3"
+                    className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-6 sm:py-3"
                   >
                     <span
                       className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"

@@ -385,10 +385,443 @@
 
 // test...................
 
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import { X, ArrowLeft, ChevronDown } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+
+// interface SignupModalProps {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   onSwitchToLogin?: () => void;
+// }
+
+// const countryCodes = [
+//   { code: "+91", flag: "🇮🇳", name: "IN" },
+//   { code: "+1", flag: "🇺🇸", name: "US" },
+//   { code: "+44", flag: "🇬🇧", name: "GB" },
+//   { code: "+61", flag: "🇦🇺", name: "AU" },
+//   { code: "+971", flag: "🇦🇪", name: "AE" },
+//   { code: "+65", flag: "🇸🇬", name: "SG" },
+//   { code: "+60", flag: "🇲🇾", name: "MY" },
+//   { code: "+49", flag: "🇩🇪", name: "DE" },
+//   { code: "+33", flag: "🇫🇷", name: "FR" },
+//   { code: "+81", flag: "🇯🇵", name: "JP" },
+// ];
+
+// type Step = "phone" | "otp" | "email";
+
+// export function SignupModal({
+//   isOpen,
+//   onClose,
+//   onSwitchToLogin,
+// }: SignupModalProps) {
+//   const [step, setStep] = useState<Step>("phone");
+//   const [countryCode, setCountryCode] = useState("+91");
+//   const [phone, setPhone] = useState("");
+//   const [otp, setOtp] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [name, setName] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [resendCooldown, setResendCooldown] = useState(0);
+//   const [assuredOptIn, setAssuredOptIn] = useState(false);
+
+//   useEffect(() => {
+//     if (resendCooldown <= 0) return;
+//     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+//     return () => clearTimeout(t);
+//   }, [resendCooldown]);
+
+//   if (!isOpen) return null;
+
+//   const selectedCountry = countryCodes.find((c) => c.code === countryCode)!;
+//   const fullPhone = `${countryCode}${phone}`;
+
+//   const handlePhoneContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{7,15}$/.test(phone)) {
+//       setError("Please enter a valid phone number.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/signup", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           phone: fullPhone,
+//           email: `${fullPhone}@otp.ecampus`,
+//           name: "",
+//         }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Failed to send OTP");
+//       setResendCooldown(30);
+//       setStep("otp");
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleOtpVerify = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{6}$/.test(otp)) {
+//       setError("Enter the 6-digit OTP.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/verify-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone, otp }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Verification failed");
+//       localStorage.setItem(
+//         "ecampus_student",
+//         JSON.stringify({ phone: fullPhone }),
+//       );
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleResendOtp = async () => {
+//     if (resendCooldown > 0) return;
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/resend-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone }),
+//       });
+//       const data = await res.json();
+//       if (!data.success)
+//         throw new Error(data.message || "Failed to resend OTP");
+//       setResendCooldown(30);
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleEmailContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const apiUrl =
+//         process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+//         "http://localhost:5000";
+//       const res = await fetch(`${apiUrl}/auth/signup`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ name, email, password }),
+//       });
+//       if (!res.ok) {
+//         const data = await res.json();
+//         throw new Error(data.message || "Signup failed");
+//       }
+//       localStorage.setItem("ecampus_student", JSON.stringify({ name, email }));
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleBack = () => {
+//     if (step === "otp") {
+//       setOtp("");
+//       setStep("phone");
+//     } else {
+//       setStep("phone");
+//     }
+//     setError("");
+//   };
+
+//   return (
+//     <>
+//       {/* Backdrop */}
+//       <div className="fixed inset-0 z-50 bg-black/30" onClick={onClose} />
+
+//       {/* Modal */}
+//       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+//         <div
+//           className="relative w-full max-w-sm bg-white rounded-3xl shadow-lg overflow-hidden"
+//           style={{ minHeight: "auto" }}
+//           onClick={(e) => e.stopPropagation()}
+//         >
+//           {/* Close button - fixed to top-right corner of modal */}
+//           <button
+//             onClick={onClose}
+//             className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-black transition-colors"
+//           >
+//             <X className="w-4 h-4" />
+//           </button>
+
+//           <div className="flex flex-col px-3 pb-3 pt-0">
+//             {/* Logo */}
+//             <div className="flex justify-center -mt-4">
+//               <img
+//                 src="/image/logo.png"
+//                 alt="logo"
+//                 className="block h-[100px] w-[100px] object-contain"
+//               />
+//             </div>
+
+//             {/* Heading */}
+//             <div className="relative flex items-center justify-center -mt-3 mb-1.5">
+//               {step !== "phone" && (
+//                 <button
+//                   onClick={handleBack}
+//                   className="absolute left-0 flex h-8 w-8 items-center justify-center text-gray-600 hover:text-black"
+//                 >
+//                   <ArrowLeft className="h-4 w-4" />
+//                 </button>
+//               )}
+
+//               <h2 className="whitespace-nowrap text-lg font-semibold text-black">
+//                 {step === "phone" && "Welcome! "}
+//                 {step === "otp" && "Enter OTP"}
+//                 {step === "email" && "Create Account"}
+//               </h2>
+//             </div>
+
+//             <p className="text-xs text-gray-600 mb-1.5 text-center">
+//               {step === "phone" && ""}
+//               {step === "otp" && `OTP sent to ${fullPhone}`}
+//               {step === "email" && "Complete your details"}
+//             </p>
+
+//             {/* Error */}
+//             {error && (
+//               <div className="mb-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-900 text-xs rounded-xl">
+//                 {error}
+//               </div>
+//             )}
+
+//             {step === "phone" && (
+//               <form
+//                 onSubmit={handlePhoneContinue}
+//                 className="flex flex-col gap-1.5"
+//               >
+//                 {/* Phone row */}
+//                 <div className="flex items-center border border-gray-300 rounded-2xl">
+//                   {/* Country picker */}
+//                   <div className="relative flex items-center border-r border-gray-300 px-2 py-1.5 gap-1 cursor-pointer">
+//                     <span className="text-sm">{selectedCountry.flag}</span>
+//                     <span className="text-xs font-medium text-black">
+//                       {selectedCountry.code}
+//                     </span>
+//                     <ChevronDown className="w-3 h-3 text-gray-600" />
+//                     <select
+//                       value={countryCode}
+//                       onChange={(e) => setCountryCode(e.target.value)}
+//                       className="absolute inset-0 opacity-0 cursor-pointer w-full"
+//                     >
+//                       {countryCodes.map((c) => (
+//                         <option key={c.code} value={c.code}>
+//                           {c.flag} {c.code} ({c.name})
+//                         </option>
+//                       ))}
+//                     </select>
+//                   </div>
+//                   {/* Number input */}
+//                   <input
+//                     type="tel"
+//                     placeholder="Mobile number"
+//                     value={phone}
+//                     onChange={(e) =>
+//                       setPhone(e.target.value.replace(/\D/g, ""))
+//                     }
+//                     maxLength={15}
+//                     required
+//                     className="flex-1 px-3 py-1.5 text-sm bg-white outline-none placeholder-gray-500"
+//                   />
+//                 </div>
+
+//                 {/* OR divider */}
+//                 <div className="flex items-center gap-2 text-gray-600 text-xs">
+//                   <div className="flex-1 h-px bg-gray-300" />
+//                   or
+//                   <div className="flex-1 h-px bg-gray-300" />
+//                 </div>
+
+//                 {/* Switch to email */}
+//                 <button
+//                   type="button"
+//                   onClick={() => {
+//                     setStep("email");
+//                     setError("");
+//                   }}
+//                   className="text-xs font-medium text-gray-700 hover:text-black text-center transition"
+//                 >
+//                   Sign up with email
+//                 </button>
+
+//                 {/* Assured refund promo banner */}
+//                 <div className="flex w-fit mx-auto items-center justify-center gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2 shadow-lg">
+//                   <input
+//                     type="checkbox"
+//                     checked={assuredOptIn}
+//                     onChange={(e) => setAssuredOptIn(e.target.checked)}
+//                     className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
+//                   />
+
+//                   <div className="leading-snug text-center">
+//                     <p className="text-xs font-semibold text-white text-center">
+//                       <span className="font-bold">eCampus Assured</span>{" "}
+//                       <span className="cursor-pointer font-semibold text-yellow-300 underline">
+//                         (Know More)
+//                       </span>
+//                     </p>
+
+//                     <p className="text-xs text-red-100 text-center">
+//                       Get up to{" "}
+//                       <span className="text-white">
+//                         100% Course Fee Refund*
+//                       </span>{" "}
+//                     </p>
+//                   </div>
+//                 </div>
+
+//                 {/* Continue */}
+//                 <Button
+//                   type="submit"
+//                   disabled={loading || phone.length < 7}
+//                   className="w-fit mx-auto bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-base font-medium px-8 py-2.5 rounded-2xl transition-all"
+//                 >
+//                   {loading ? "Sending..." : "Continue"}
+//                 </Button>
+//               </form>
+//             )}
+
+//             {step === "otp" && (
+//               <form
+//                 onSubmit={handleOtpVerify}
+//                 className="flex flex-col gap-1.5"
+//               >
+//                 <input
+//                   type="text"
+//                   inputMode="numeric"
+//                   placeholder="6-digit OTP"
+//                   value={otp}
+//                   onChange={(e) =>
+//                     setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+//                   }
+//                   maxLength={6}
+//                   required
+//                   className="w-full px-3 py-1.5 text-center text-sm tracking-widest font-semibold border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+//                 />
+
+//                 <button
+//                   type="button"
+//                   onClick={handleResendOtp}
+//                   disabled={resendCooldown > 0 || loading}
+//                   className="text-xs font-medium text-gray-700 hover:text-black disabled:text-gray-400 text-center transition"
+//                 >
+//                   {resendCooldown > 0
+//                     ? `Resend in ${resendCooldown}s`
+//                     : "Resend OTP"}
+//                 </button>
+
+//                 <Button
+//                   type="submit"
+//                   disabled={loading || otp.length !== 6}
+//                   className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
+//                 >
+//                   {loading ? "Verifying..." : "Continue"}
+//                 </Button>
+//               </form>
+//             )}
+
+//             {step === "email" && (
+//               <form
+//                 onSubmit={handleEmailContinue}
+//                 className="flex flex-col gap-1.5"
+//               >
+//                 <input
+//                   type="text"
+//                   placeholder="Full Name"
+//                   value={name}
+//                   onChange={(e) => setName(e.target.value)}
+//                   required
+//                   className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+//                 />
+//                 <input
+//                   type="email"
+//                   placeholder="Email Address"
+//                   value={email}
+//                   onChange={(e) => setEmail(e.target.value)}
+//                   required
+//                   className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+//                 />
+//                 <input
+//                   type="password"
+//                   placeholder="Password (min. 8 characters)"
+//                   value={password}
+//                   onChange={(e) => setPassword(e.target.value)}
+//                   required
+//                   minLength={8}
+//                   className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
+//                 />
+//                 <Button
+//                   type="submit"
+//                   disabled={loading}
+//                   className="w-30px bg-black hover:bg-gray-800 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
+//                 >
+//                   {loading ? "Creating..." : "Continue"}
+//                 </Button>
+//               </form>
+//             )}
+
+//             {/* Terms */}
+//             <p className="mt-1.5 text-xs text-gray-600 text-center leading-relaxed">
+//               By continuing, you agree to our{" "}
+//               <a href="/terms" className="hover:underline">
+//                 Terms
+//               </a>{" "}
+//               &{" "}
+//               <a href="/privacy" className="hover:underline">
+//                 Privacy Policy
+//               </a>
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, ArrowLeft, ChevronDown } from "lucide-react";
+import {
+  X,
+  ArrowLeft,
+  ChevronDown,
+  ShieldCheck,
+  GraduationCap,
+  Users,
+  Laptop,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SignupModalProps {
@@ -559,253 +992,336 @@ export function SignupModal({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-50 bg-black/30" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div
-          className="relative w-full max-w-sm bg-white rounded-3xl shadow-lg overflow-hidden"
-          style={{ minHeight: "auto" }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Close button - fixed to top-right corner of modal */}
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 hover:text-black transition-colors"
+      {/* Outer wrapper scrolls as a last resort on very short screens,
+          so nothing is ever clipped off-screen. */}
+      <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
+        <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
+          <div
+            className="relative grid max-h-[88vh] w-full max-w-3xl grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="w-4 h-4" />
-          </button>
+            {/* LEFT PANEL */}
+            <div className="hidden max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-6 text-white md:flex lg:p-8">
+              <div>
+                <img
+                  src="/image/logo.png"
+                  alt="logo"
+                  className="mb-4 h-7 object-contain"
+                />
 
-          <div className="flex flex-col px-3 pb-3 pt-0">
-            {/* Logo */}
-            <div className="flex justify-center -mt-4">
-              <img
-                src="/image/logo.png"
-                alt="logo"
-                className="block h-[100px] w-[100px] object-contain"
-              />
+                <h1 className="text-xl font-bold leading-snug lg:text-2xl">
+                  Your Future.
+                  <br />
+                  Our Responsibility.
+                </h1>
+
+                <p className="mt-2 text-xs text-red-100 lg:text-sm">
+                  Find the right university. Build the right career.
+                </p>
+
+                <div className="mt-5 space-y-3">
+                  <Feature
+                    icon={<GraduationCap size={16} />}
+                    title="UGC Recognised Universities"
+                    desc="Study from India's top universities"
+                  />
+                  <Feature
+                    icon={<Laptop size={16} />}
+                    title="100% Online & Flexible"
+                    desc="Learn at your own pace"
+                  />
+                  <Feature
+                    icon={<Users size={16} />}
+                    title="Career Focused Programs"
+                    desc="Skills that employers value"
+                  />
+                  <Feature
+                    icon={<ShieldCheck size={16} />}
+                    title="Personal Student Support"
+                    desc="From admission till graduation"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAssuredOptIn((v) => !v)}
+                className={`mt-5 rounded-xl border p-3 text-left transition ${
+                  assuredOptIn
+                    ? "border-yellow-300 bg-white/20"
+                    : "border-white/20 bg-white/10"
+                } backdrop-blur-md`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="rounded-full bg-white/20 p-2">
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold">eCampus Assured</h3>
+                    <p className="text-xs text-red-100">
+                      Get up to{" "}
+                      <span className="font-bold text-yellow-300">
+                        100% Course Fee Refund*
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </button>
             </div>
 
-            {/* Heading */}
-            <div className="relative flex items-center justify-center -mt-3 mb-1.5">
+            {/* RIGHT PANEL */}
+            <div className="relative flex max-h-[88vh] flex-col overflow-y-auto bg-white p-5 sm:p-6 md:p-8">
+              <button
+                onClick={onClose}
+                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:right-4 sm:top-4"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
               {step !== "phone" && (
                 <button
                   onClick={handleBack}
-                  className="absolute left-0 flex h-8 w-8 items-center justify-center text-gray-600 hover:text-black"
+                  className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:left-4 sm:top-4"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
               )}
 
-              <h2 className="whitespace-nowrap text-lg font-semibold text-black">
-                {step === "phone" && "Welcome! "}
-                {step === "otp" && "Enter OTP"}
-                {step === "email" && "Create Account"}
-              </h2>
-            </div>
+              <div className="m-auto w-full max-w-xs py-6">
+                <div className="flex justify-center md:hidden">
+                  <img
+                    src="/image/logo.png"
+                    alt="logo"
+                    className="mb-3 h-10 w-10 object-contain"
+                  />
+                </div>
 
-            <p className="text-xs text-gray-600 mb-1.5 text-center">
-              {step === "phone" && ""}
-              {step === "otp" && `OTP sent to ${fullPhone}`}
-              {step === "email" && "Complete your details"}
-            </p>
+                <h2 className="text-center text-xl font-bold text-black md:text-left md:text-2xl">
+                  {step === "phone" && "Welcome to eCampus"}
+                  {step === "otp" && "Enter OTP"}
+                  {step === "email" && "Create Account"}
+                </h2>
 
-            {/* Error */}
-            {error && (
-              <div className="mb-1.5 px-3 py-1.5 bg-white border border-gray-300 text-gray-900 text-xs rounded-xl">
-                {error}
-              </div>
-            )}
+                <p className="mt-1.5 text-center text-xs text-gray-500 md:text-left">
+                  {step === "phone" &&
+                    "Create your account to explore India's best online degrees."}
+                  {step === "otp" && `OTP sent to ${fullPhone}`}
+                  {step === "email" && "Complete your details to continue."}
+                </p>
 
-            {step === "phone" && (
-              <form
-                onSubmit={handlePhoneContinue}
-                className="flex flex-col gap-1.5"
-              >
-                {/* Phone row */}
-                <div className="flex items-center border border-gray-300 rounded-2xl">
-                  {/* Country picker */}
-                  <div className="relative flex items-center border-r border-gray-300 px-2 py-1.5 gap-1 cursor-pointer">
-                    <span className="text-sm">{selectedCountry.flag}</span>
-                    <span className="text-xs font-medium text-black">
-                      {selectedCountry.code}
-                    </span>
-                    <ChevronDown className="w-3 h-3 text-gray-600" />
-                    <select
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                      className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                {error && (
+                  <div className="mt-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
+                    {error}
+                  </div>
+                )}
+
+                {step === "phone" && (
+                  <form onSubmit={handlePhoneContinue} className="mt-4">
+                    <div className="flex overflow-hidden rounded-lg border border-gray-300 transition focus-within:border-black">
+                      <div className="relative flex items-center gap-1 border-r border-gray-300 px-3">
+                        <span className="text-sm">{selectedCountry.flag}</span>
+                        <span className="text-xs font-medium text-black">
+                          {selectedCountry.code}
+                        </span>
+                        <ChevronDown className="h-3 w-3 text-gray-500" />
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="absolute inset-0 w-full cursor-pointer opacity-0"
+                        >
+                          {countryCodes.map((c) => (
+                            <option key={c.code} value={c.code}>
+                              {c.flag} {c.code} ({c.name})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <input
+                        type="tel"
+                        placeholder="Enter Mobile Number"
+                        value={phone}
+                        onChange={(e) =>
+                          setPhone(e.target.value.replace(/\D/g, ""))
+                        }
+                        maxLength={15}
+                        required
+                        className="flex-1 bg-white p-2.5 text-sm outline-none placeholder-gray-500"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={loading || phone.length < 7}
+                      className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
-                      {countryCodes.map((c) => (
-                        <option key={c.code} value={c.code}>
-                          {c.flag} {c.code} ({c.name})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {/* Number input */}
-                  <input
-                    type="tel"
-                    placeholder="Mobile number"
-                    value={phone}
-                    onChange={(e) =>
-                      setPhone(e.target.value.replace(/\D/g, ""))
-                    }
-                    maxLength={15}
-                    required
-                    className="flex-1 px-3 py-1.5 text-sm bg-white outline-none placeholder-gray-500"
-                  />
-                </div>
+                      {loading ? "Sending..." : "Continue"}
+                    </Button>
 
-                {/* OR divider */}
-                <div className="flex items-center gap-2 text-gray-600 text-xs">
-                  <div className="flex-1 h-px bg-gray-300" />
-                  or
-                  <div className="flex-1 h-px bg-gray-300" />
-                </div>
+                    <div className="my-4 flex items-center gap-3">
+                      <div className="h-px flex-1 bg-gray-300" />
+                      <span className="text-xs text-gray-500">OR</span>
+                      <div className="h-px flex-1 bg-gray-300" />
+                    </div>
 
-                {/* Switch to email */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep("email");
+                        setError("");
+                      }}
+                      className="w-full rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                    >
+                      Sign up with email
+                    </button>
+                  </form>
+                )}
+
+                {step === "otp" && (
+                  <form onSubmit={handleOtpVerify} className="mt-4">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="6-digit OTP"
+                      value={otp}
+                      onChange={(e) =>
+                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                      }
+                      maxLength={6}
+                      required
+                      autoFocus
+                      className="w-full rounded-lg border border-gray-300 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={resendCooldown > 0 || loading}
+                      className="mt-2 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+                    >
+                      {resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend OTP"}
+                    </button>
+
+                    <Button
+                      type="submit"
+                      disabled={loading || otp.length !== 6}
+                      className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                    >
+                      {loading ? "Verifying..." : "Continue"}
+                    </Button>
+                  </form>
+                )}
+
+                {step === "email" && (
+                  <form
+                    onSubmit={handleEmailContinue}
+                    className="mt-4 space-y-2.5"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Password (min. 8 characters)"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                    >
+                      {loading ? "Creating..." : "Continue"}
+                    </Button>
+                  </form>
+                )}
+
+                {/* Assured banner — mobile only, desktop already shows it in the left panel */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setStep("email");
-                    setError("");
-                  }}
-                  className="text-xs font-medium text-gray-700 hover:text-black text-center transition"
+                  onClick={() => setAssuredOptIn((v) => !v)}
+                  className={`mt-4 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
+                    assuredOptIn
+                      ? "border-red-300 bg-red-50"
+                      : "border-red-100 bg-red-50/60"
+                  }`}
                 >
-                  Sign up with email
-                </button>
-
-                {/* Assured refund promo banner */}
-                <div className="flex w-fit mx-auto items-center justify-center gap-2 rounded-2xl bg-[#ef4444] from-red-700 via-red-600 to-red-500 px-3 py-2 shadow-lg">
-                  <input
-                    type="checkbox"
-                    checked={assuredOptIn}
-                    onChange={(e) => setAssuredOptIn(e.target.checked)}
-                    className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
-                  />
-
-                  <div className="leading-snug text-center">
-                    <p className="text-xs font-semibold text-white text-center">
-                      <span className="font-bold">eCampus Assured</span>{" "}
-                      <span className="cursor-pointer font-semibold text-yellow-300 underline">
-                        (Know More)
-                      </span>
-                    </p>
-
-                    <p className="text-xs text-red-100 text-center">
-                      Get up to{" "}
-                      <span className="text-white">
-                        100% Course Fee Refund*
-                      </span>{" "}
-                    </p>
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="text-red-600" size={22} />
+                    <div>
+                      <h3 className="text-xs font-semibold text-black">
+                        eCampus Assured
+                      </h3>
+                      <p className="text-[11px] text-gray-600">
+                        Get up to{" "}
+                        <span className="font-bold text-red-600">
+                          100% Refund*
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                {/* Continue */}
-                <Button
-                  type="submit"
-                  disabled={loading || phone.length < 7}
-                  className="w-fit mx-auto bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-base font-medium px-8 py-2.5 rounded-2xl transition-all"
-                >
-                  {loading ? "Sending..." : "Continue"}
-                </Button>
-              </form>
-            )}
-
-            {step === "otp" && (
-              <form
-                onSubmit={handleOtpVerify}
-                className="flex flex-col gap-1.5"
-              >
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="6-digit OTP"
-                  value={otp}
-                  onChange={(e) =>
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
-                  maxLength={6}
-                  required
-                  className="w-full px-3 py-1.5 text-center text-sm tracking-widest font-semibold border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
-                />
-
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  disabled={resendCooldown > 0 || loading}
-                  className="text-xs font-medium text-gray-700 hover:text-black disabled:text-gray-400 text-center transition"
-                >
-                  {resendCooldown > 0
-                    ? `Resend in ${resendCooldown}s`
-                    : "Resend OTP"}
+                  <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-red-600 shadow">
+                    Know More
+                  </span>
                 </button>
 
-                <Button
-                  type="submit"
-                  disabled={loading || otp.length !== 6}
-                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-600 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
-                >
-                  {loading ? "Verifying..." : "Continue"}
-                </Button>
-              </form>
-            )}
-
-            {step === "email" && (
-              <form
-                onSubmit={handleEmailContinue}
-                className="flex flex-col gap-1.5"
-              >
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
-                />
-                <input
-                  type="password"
-                  placeholder="Password (min. 8 characters)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition placeholder-gray-500"
-                />
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-30px bg-black hover:bg-gray-800 text-white text-sm font-medium py-1.5 rounded-2xl transition-all"
-                >
-                  {loading ? "Creating..." : "Continue"}
-                </Button>
-              </form>
-            )}
-
-            {/* Terms */}
-            <p className="mt-1.5 text-xs text-gray-600 text-center leading-relaxed">
-              By continuing, you agree to our{" "}
-              <a href="/terms" className="hover:underline">
-                Terms
-              </a>{" "}
-              &{" "}
-              <a href="/privacy" className="hover:underline">
-                Privacy Policy
-              </a>
-            </p>
+                <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-500">
+                  By continuing, you agree to our{" "}
+                  <a href="/terms" className="text-red-600 hover:underline">
+                    Terms
+                  </a>{" "}
+                  &{" "}
+                  <a href="/privacy" className="text-red-600 hover:underline">
+                    Privacy Policy
+                  </a>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  desc,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <div className="mt-0.5 rounded-lg bg-white/15 p-1.5">{icon}</div>
+      <div>
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <p className="text-xs text-red-100">{desc}</p>
+      </div>
+    </div>
   );
 }

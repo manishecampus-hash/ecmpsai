@@ -84,7 +84,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
           {cards.map((card: any, idx: number) => (
             <div
               key={idx}
-              className="rounded-2xl border border-slate-100 p-6 text-center shadow-sm"
+              className="rounded-2xl border border-slate-300 p-6 text-center shadow-sm"
             >
               <p className="text-2xl font-bold text-red-600">{card.title}</p>
               <p className="mt-2 text-sm text-slate-500">{card.subtitle}</p>

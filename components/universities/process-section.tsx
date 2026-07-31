@@ -52,7 +52,7 @@ export default function AdmissionProcessSection({
   return (
     <section
       id="admission"
-      className="px-4 pt-2 pb-12 sm:px-6 sm:pt-3 lg:px-8 lg:pt-5 lg:pb-12 font-sans"
+      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header Block */}
@@ -62,7 +62,7 @@ export default function AdmissionProcessSection({
             {processData.badge || "Process Flow"}
           </span>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
             Online Admission <span className="text-red-500">Steps</span>
           </h2>
         </div>

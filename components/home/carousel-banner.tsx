@@ -8,7 +8,7 @@ import Link from "next/link";
 const staticSlides = [
   {
     id: "static-1",
-    desktop: "/banner/31july.jpeg",
+    desktop: "/banner/new333.svg",
     mobile: "/banner/desktop1.png",
     slug: "",
     title: "",
@@ -17,7 +17,7 @@ const staticSlides = [
   },
   {
     id: "static-2",
-    desktop: "/banner/31new.jpeg",
+    desktop: "/banner/newupdatebanner.svg",
     mobile: "/banner/mobile2.png",
     slug: "",
     title: "",
@@ -309,7 +309,7 @@ export function CarouselBanner() {
         }
       `}</style>
 
-      <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 -mt-8 md:mt-4">
+      <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 -mt-8 md:-mt-6">
         <div
           ref={wrapRef}
           className="cb-wrap shadow-sm border border-gray-100"

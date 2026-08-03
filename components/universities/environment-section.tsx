@@ -11,12 +11,7 @@ interface CertificateData {
 }
 
 interface CertificateSection {
-  university?: {
-    name?: string;
-    details?: {
-      certificate?: CertificateData;
-    };
-  };
+  university?: any;
 }
 
 const DEFAULT_CHECKLIST = [
@@ -103,12 +98,124 @@ export default function SampleCertificateSection({
     }
   }, [isOpen]);
 
+  const peerNetwork = university?.details?.peerNetwork;
+  const hasPeerNetwork =
+    peerNetwork &&
+    ((peerNetwork.jobProfiles && peerNetwork.jobProfiles.length > 0) ||
+      (peerNetwork.industries && peerNetwork.industries.length > 0) ||
+      (peerNetwork.experienceSegments && peerNetwork.experienceSegments.length > 0));
+
   return (
-    <section
-      id="certificate"
-      className="bg-white px-4 pt-2 pb-14 sm:px-6 sm:pt-3 lg:px-8 lg:pt-4 lg:pb-20 font-[Inter]"
-    >
-      <div className="mx-auto max-w-7xl">
+    <>
+      {hasPeerNetwork && (
+        <section
+          id="peernetwork"
+          className="bg-slate-50 px-4 pt-12 pb-14 sm:px-6 lg:px-8 lg:pb-20 font-[Inter] border-t border-slate-100"
+        >
+          <div className="mx-auto max-w-7xl">
+            {/* Header Block */}
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-bold text-slate-800 uppercase tracking-wider shadow-sm">
+                <svg className="h-3.5 w-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {peerNetwork.badge || "Peer Network"}
+              </span>
+
+              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
+                {peerNetwork.heading ? (
+                  <span dangerouslySetInnerHTML={{ __html: peerNetwork.heading }} />
+                ) : (
+                  <>
+                    Connect With a <span className="text-red-500">Diverse Peer Network</span>
+                  </>
+                )}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              {/* Work Experience Segments */}
+              {peerNetwork.experienceSegments && peerNetwork.experienceSegments.length > 0 && (
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                  <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-red-500" />
+                    Work Experience Distribution
+                  </h3>
+                  <div className="space-y-5">
+                    {peerNetwork.experienceSegments.map((seg: any, idx: number) => {
+                      const color = seg.color || "#ef4444";
+                      const percentage = Number(seg.percent) || 0;
+                      return (
+                        <div key={idx} className="space-y-2 text-left">
+                          <div className="flex justify-between text-sm font-semibold">
+                            <span className="text-slate-700">{seg.label}</span>
+                            <span style={{ color }}>{percentage}%</span>
+                          </div>
+                          <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%`, backgroundColor: color }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Industries and Job Roles */}
+              <div className="flex flex-col gap-6">
+                {/* Industries */}
+                {peerNetwork.industries && peerNetwork.industries.length > 0 && (
+                  <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm flex-1">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-red-500" />
+                      Top Industries Represented
+                    </h3>
+                    <div className="flex flex-wrap gap-2 text-left">
+                      {peerNetwork.industries.map((ind: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 rounded-xl border border-red-100 bg-red-50/40 text-sm font-medium text-slate-700 hover:border-red-200 transition-colors"
+                        >
+                          {ind}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Job Profiles */}
+                {peerNetwork.jobProfiles && peerNetwork.jobProfiles.length > 0 && (
+                  <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm flex-1">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-red-500" />
+                      Job Roles & Profiles
+                    </h3>
+                    <div className="flex flex-wrap gap-2 text-left">
+                      {peerNetwork.jobProfiles.map((role: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 hover:border-slate-300 transition-colors"
+                        >
+                          {role}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section
+        id="certificate"
+        className="bg-white px-4 pt-12 pb-14 sm:px-6 sm:pt-16 lg:px-8 lg:pb-20 font-[Inter] border-t border-slate-100"
+      >
+        <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-5 lg:gap-6">
           {/* Left: heading, description & checklist */}
           <div className="lg:col-span-3">
@@ -232,5 +339,6 @@ export default function SampleCertificateSection({
         </div>
       </PortalModal>
     </section>
+    </>
   );
 }

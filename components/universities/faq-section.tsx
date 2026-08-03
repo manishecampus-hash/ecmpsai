@@ -57,7 +57,11 @@ export default function FAQSection({ university }: FAQSectionProps) {
           Array.isArray(university.faqs) &&
           university.faqs.length > 0
         ? university.faqs
-        : defaultFaqs;
+        : [];
+
+  if (!rawFaqs || rawFaqs.length === 0) {
+    return null;
+  }
 
   const toggleAccordion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);

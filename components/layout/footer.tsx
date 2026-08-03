@@ -205,7 +205,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="bg-[#1b1e20] px-4 py-4 sm:py-6">
+      <div className="bg-[#1b1e20] px-4 pt-4 pb-24 sm:pt-6 sm:pb-24 md:py-6">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-[12px] sm:gap-4 md:flex-row">
           <div className="flex flex-wrap justify-center gap-4 text-slate-300">
             <Link href="/terms" className="hover:text-red-500">

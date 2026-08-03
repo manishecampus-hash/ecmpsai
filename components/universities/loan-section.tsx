@@ -16,14 +16,23 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
   const [error, setError] = useState("");
 
   const loanData = university?.details?.financialAssistance || {};
-  const cards =
-    loanData.cards && loanData.cards.length > 0
-      ? loanData.cards
-      : [
-          { title: "0%", subtitle: "Interest EMI options available" },
-          { title: "No Cost", subtitle: "Easy EMI, no hidden charges" },
-          { title: "Quick", subtitle: "Approval within 24-48 hours" },
-        ];
+  const cards = loanData.cards || [];
+
+  if (!cards || cards.length === 0) {
+    return null;
+  }
+
+  const mappedCards = cards.map((c: any) => ({
+    title: c.value || c.title || "",
+    subtitle: c.text || c.subtitle || "",
+  }));
+
+  const gridColsClass =
+    mappedCards.length === 1
+      ? "sm:grid-cols-1"
+      : mappedCards.length === 2
+      ? "sm:grid-cols-2"
+      : "sm:grid-cols-3";
 
   const openModal = () => {
     setSubmitted(false);
@@ -79,9 +88,9 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
         </div>
 
         <div
-          className={`mx-auto grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-${Math.min(3, cards.length)}`}
+          className={`mx-auto grid max-w-4xl grid-cols-1 gap-6 ${gridColsClass}`}
         >
-          {cards.map((card: any, idx: number) => (
+          {mappedCards.map((card: any, idx: number) => (
             <div
               key={idx}
               className="rounded-2xl border border-slate-300 p-6 text-center shadow-sm"

@@ -44,8 +44,6 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* Full width white background layer */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 h-20 bg-white md:hidden" />
 
       <div
         className={`fixed bottom-2 left-3 right-3 z-50 flex items-center gap-2 md:hidden transition-all duration-300 ${

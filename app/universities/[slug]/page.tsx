@@ -29,11 +29,42 @@ interface UniversityPageProps {
 export default async function UniversityPage({ params }: UniversityPageProps) {
   const { slug } = await params;
 
-  const university = universities.find((item) => item.slug === slug);
+  let dbUniversity: any = null;
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    const res = await fetch(`${apiUrl}/universities/${slug}`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.trim()) {
+        dbUniversity = JSON.parse(text);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch university details from database:", error);
+  }
 
-  if (!university) {
+  const localUniversity = universities.find(
+    (item) =>
+      item.slug === slug ||
+      item.slug === `amity-university-online` && slug === `amity-university-online`
+  );
+
+  if (!dbUniversity && !localUniversity) {
     notFound();
   }
+
+  // Merge database university data with static fallbacks
+  const university = {
+    name: localUniversity?.name || dbUniversity?.name,
+    image: localUniversity?.image || dbUniversity?.logoUrl,
+    ...localUniversity,
+    ...dbUniversity,
+    details: {
+      ...dbUniversity?.details,
+    },
+  };
 
   return (
     <main className="min-h-screen">
@@ -43,15 +74,15 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <AboutProgram university={university} />
       <TopSpecializations university={university} />
 
-      <EligibilityFeesSection />
-      <LoanSection />
-      <AdmissionProcessSection />
+      <EligibilityFeesSection university={university} />
+      <LoanSection university={university} />
+      <AdmissionProcessSection university={university} />
 
-      <ExaminationPatternSection />
-      <ApSection />
+      <ExaminationPatternSection university={university} />
+      <ApSection university={university} />
 
-      <LearningEnvironmentSection />
-      <PlacementPartners />
+      <LearningEnvironmentSection university={university} />
+      <PlacementPartners university={university} />
       <TestimonialsSection university={university} />
 
       <FAQSection university={university} />

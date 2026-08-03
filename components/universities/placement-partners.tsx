@@ -4,34 +4,22 @@ import React from "react";
 import Image from "next/image";
 import { Handshake } from "lucide-react";
 
-export default function PlacementPartners() {
-  // Brand logos with actual image paths
-  const partners = [
-    {
-      name: "IFFCO Tokio",
-      logo: "/newuniversities/iffco_tokio_ba0ca0e2fd.webp",
-    },
-    { name: "Hero", logo: "/newuniversities/hero_8069edb396.webp" },
-    {
-      name: "Hitachi Vantara",
-      logo: "/newuniversities/hitachi_vantara_4f43434588.webp",
-    },
-    {
-      name: "Federal Bank",
-      logo: "/newuniversities/federal_bank_cb688f0f4c.webp",
-    },
-    { name: "Apple", logo: "/newuniversities/apple_e6c370def7.webp" },
-    {
-      name: "Reliance",
-      logo: "/newuniversities/reliance_industries_limited_2baf8ef73a.webp",
-    },
-    { name: "Samsung", logo: "/newuniversities/samsung_fc88911e0c.webp" },
-    {
-      name: "Tech Mahindra",
-      logo: "/newuniversities/techmahindra_14d9b4f362.webp",
-    },
-    { name: "HDFC Bank", logo: "/newuniversities/hdfc_75e1e13a82.webp" },
-  ];
+interface PlacementPartnersProps {
+  university?: any;
+}
+
+export default function PlacementPartners({ university }: PlacementPartnersProps) {
+  const hiringNetwork = university?.details?.hiringNetwork || {};
+  const rawLogos = hiringNetwork.logos || hiringNetwork.partners || [];
+
+  if (!rawLogos || rawLogos.length === 0) {
+    return null;
+  }
+
+  const partners = rawLogos.map((item: any) => ({
+    name: item.name || "",
+    logo: item.logoUrl || item.logo || "",
+  }));
 
   // Double the list array to ensure a flawless, gapless loop animation transitions
   const doublePartners = [...partners, ...partners];
@@ -47,12 +35,18 @@ export default function PlacementPartners() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-black uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
-          Our Elite Hiring Network
+          {hiringNetwork.badge || "Our Elite Hiring Network"}
         </span>
 
         <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-          Top Corporate Recruitment &{" "}
-          <span className="text-red-500">Placement Partners</span>
+          {hiringNetwork.heading ? (
+            <span dangerouslySetInnerHTML={{ __html: hiringNetwork.heading }} />
+          ) : (
+            <>
+              Top Corporate Recruitment &{" "}
+              <span className="text-red-500">Placement Partners</span>
+            </>
+          )}
         </h2>
       </div>
 

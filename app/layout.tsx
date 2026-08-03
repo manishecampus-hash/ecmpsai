@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/navbar";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body
         className={`${inter.className} antialiased min-h-screen flex flex-col bg-white text-gray-900`}
       >
@@ -47,7 +48,7 @@ export default function RootLayout({
         >
           <Navbar />
 
-          <main className="flex-1 pb-16 md:pb-0 pt-16">{children}</main>
+          <main className="flex-1 pt-16">{children}</main>
         </ThemeProvider>
       </body>
     </html>

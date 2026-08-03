@@ -61,19 +61,31 @@ interface TestimonialsProps {
 
 export default function TestimonialsSection({ university }: TestimonialsProps) {
   const reviewsData = university?.details?.studentReviews || {};
-  const list =
-    reviewsData.list && reviewsData.list.length > 0
-      ? reviewsData.list.map((item: any, idx: number) => ({
-          id: item.id || String(idx),
-          name: item.name || "",
-          program: item.program || "",
-          university: item.university || "",
-          image:
-            item.image ||
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-          quote: item.quote || "",
-        }))
-      : testimonials;
+  const rawReviews = reviewsData.reviews || reviewsData.list || [];
+
+  if (!rawReviews || rawReviews.length === 0) {
+    return null;
+  }
+
+  const list = rawReviews.map((item: any, idx: number) => ({
+    id: item.id || String(idx),
+    name: item.name || "",
+    program: item.program || "",
+    university: item.university || "",
+    image:
+      item.image ||
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    quote: item.quote || "",
+  }));
+
+  const gridColsClass =
+    list.length === 1
+      ? "lg:grid-cols-1"
+      : list.length === 2
+      ? "lg:grid-cols-2"
+      : list.length === 3
+      ? "lg:grid-cols-3"
+      : "lg:grid-cols-4";
 
   return (
     <section
@@ -89,13 +101,19 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
           </span>
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
-            Student <span className="text-red-500">Testimonials</span>
+            {reviewsData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: reviewsData.heading }} />
+            ) : (
+              <>
+                Student <span className="text-red-500">Testimonials</span>
+              </>
+            )}
           </h2>
         </div>
 
         {/* Testimonials Grid */}
         <div
-          className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-${Math.min(4, list.length)}`}
+          className={`grid gap-6 sm:grid-cols-2 ${gridColsClass}`}
         >
           {list.map((testimonial: any) => (
             <article

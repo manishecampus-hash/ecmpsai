@@ -67,30 +67,33 @@ const recognitionData: RecognitionItem[] = [
 
 export default function ApSection({ university }: ApSectionProps) {
   const accData = university?.details?.accreditation || {};
-  const list =
-    accData.list && accData.list.length > 0
-      ? accData.list.map((item: any, idx: number) => {
-          let resolvedIcon: any = item.icon || "";
-          const isImageUrl =
-            typeof resolvedIcon === "string" &&
-            (resolvedIcon.startsWith("/") ||
-              resolvedIcon.startsWith("http") ||
-              resolvedIcon.startsWith("data:"));
-          if (!isImageUrl && resolvedIcon) {
-            resolvedIcon = (Icons as any)[resolvedIcon] || ShieldCheck;
-          } else if (!resolvedIcon) {
-            const defaultIcons = [Landmark, BadgeCheck, Crown, Sparkles];
-            resolvedIcon = defaultIcons[idx % defaultIcons.length];
-          }
-          return {
-            id: item.id || String(idx),
-            label: item.label || "",
-            description: item.description || "",
-            ribbon: item.ribbon || "",
-            icon: resolvedIcon,
-          };
-        })
-      : recognitionData;
+  const list = accData.list || [];
+
+  if (!list || list.length === 0) {
+    return null;
+  }
+
+  const mappedList = list.map((item: any, idx: number) => {
+    let resolvedIcon: any = item.icon || "";
+    const isImageUrl =
+      typeof resolvedIcon === "string" &&
+      (resolvedIcon.startsWith("/") ||
+        resolvedIcon.startsWith("http") ||
+        resolvedIcon.startsWith("data:"));
+    if (!isImageUrl && resolvedIcon) {
+      resolvedIcon = (Icons as any)[resolvedIcon] || ShieldCheck;
+    } else if (!resolvedIcon) {
+      const defaultIcons = [Landmark, BadgeCheck, Crown, Sparkles];
+      resolvedIcon = defaultIcons[idx % defaultIcons.length];
+    }
+    return {
+      id: item.id || String(idx),
+      label: item.label || "",
+      description: item.description || "",
+      ribbon: item.ribbon || "",
+      icon: resolvedIcon,
+    };
+  });
 
   return (
     <section
@@ -106,13 +109,19 @@ export default function ApSection({ university }: ApSectionProps) {
           </span>
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-            Recognition & <span className="text-red-500">Approval</span>
+            {accData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: accData.heading }} />
+            ) : (
+              <>
+                Recognition & <span className="text-red-500">Approval</span>
+              </>
+            )}
           </h2>
         </div>
 
         {/* Approval Grid */}
         <div className="grid divide-y divide-slate-100 border-y border-slate-100 md:grid-cols-2 md:divide-y-0 md:divide-x lg:grid-cols-3">
-          {list.map((item, index) => {
+          {mappedList.map((item: any, index: number) => {
             const isImage = typeof item.icon === "string";
             const IconComponent = !isImage
               ? (item.icon as React.ElementType)

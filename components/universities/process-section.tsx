@@ -44,10 +44,11 @@ export default function AdmissionProcessSection({
   university,
 }: ProcessSection) {
   const processData = university?.details?.processFlow || {};
-  const steps =
-    processData.steps && processData.steps.length > 0
-      ? processData.steps
-      : ADMISSION_STEPS;
+  const steps = processData.steps || [];
+
+  if (!steps || steps.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -63,7 +64,13 @@ export default function AdmissionProcessSection({
           </span>
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
-            Online Admission <span className="text-red-500">Steps</span>
+            {processData.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: processData.heading }} />
+            ) : (
+              <>
+                Online Admission <span className="text-red-500">Steps</span>
+              </>
+            )}
           </h2>
         </div>
 

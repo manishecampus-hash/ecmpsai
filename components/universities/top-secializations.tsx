@@ -22,6 +22,7 @@ interface SpecializationRow {
   duration: string;
   fees: string;
   emi: string;
+  brochure?: string;
 }
 
 interface TopSpecializationsProps {
@@ -185,7 +186,10 @@ export default function TopSpecializations({
     ? `${university.name} Online`
     : "Amity Online";
 
-  const specData = university?.details?.inDemandSpecializations || {};
+  const specData =
+    university?.details?.specializations ||
+    university?.details?.inDemandSpecializations ||
+    {};
   const specializationsData: SpecializationRow[] =
     specData.list && specData.list.length > 0
       ? specData.list.map((item: any, idx: number) => ({
@@ -195,6 +199,7 @@ export default function TopSpecializations({
           duration: item.duration || "",
           fees: item.fees || "",
           emi: item.emi || "",
+          brochure: item.brochure || "",
         }))
       : DEFAULT_SPECIALIZATIONS_DATA;
 
@@ -506,15 +511,28 @@ export default function TopSpecializations({
                         </td>
 
                         <td className="p-2 sm:p-3 text-center whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => handleDownload(row.specialization)}
-                            className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500"
-                          >
-                            <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                            <span className="hidden sm:inline">Download</span>
-                            <span className="sm:hidden">DL</span>
-                          </button>
+                          {row.brochure ? (
+                            <a
+                              href={row.brochure}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500"
+                            >
+                              <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                              <span className="hidden sm:inline">Download</span>
+                              <span className="sm:hidden">DL</span>
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleDownload(row.specialization)}
+                              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500"
+                            >
+                              <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                              <span className="hidden sm:inline">Download</span>
+                              <span className="sm:hidden">DL</span>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );

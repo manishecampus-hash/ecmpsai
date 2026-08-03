@@ -7,15 +7,14 @@ import {
   type LucideIcon,
   ClipboardCheck,
 } from "lucide-react";
+import * as Icons from "lucide-react";
 
 interface ExaminationPatternSectionProps {
-  university?: {
-    name?: string;
-  };
+  university?: any;
 }
 
 interface PatternItem {
-  icon: LucideIcon;
+  icon: any;
   title: string;
   description: string;
 }
@@ -60,16 +59,28 @@ export default function ExaminationPatternSection({
   const items =
     examData.items && examData.items.length > 0
       ? examData.items.map((item: any, idx: number) => {
-          const defaultIcons = [
-            Scale,
-            FileText,
-            ClipboardList,
-            Award,
-            ShieldCheck,
-          ];
-          const Icon = defaultIcons[idx % defaultIcons.length] || FileText;
+          let resolvedIcon: any = item.iconName || item.icon || "";
+          const isImageUrl =
+            typeof resolvedIcon === "string" &&
+            (resolvedIcon.startsWith("/") ||
+              resolvedIcon.startsWith("http") ||
+              resolvedIcon.startsWith("data:"));
+
+          if (!isImageUrl && resolvedIcon) {
+            resolvedIcon = (Icons as any)[resolvedIcon] || FileText;
+          } else if (!resolvedIcon) {
+            const defaultIcons = [
+              Scale,
+              FileText,
+              ClipboardList,
+              Award,
+              ShieldCheck,
+            ];
+            resolvedIcon = defaultIcons[idx % defaultIcons.length];
+          }
+
           return {
-            icon: Icon,
+            icon: resolvedIcon,
             title: item.title,
             description: item.description,
           };
@@ -103,6 +114,7 @@ export default function ExaminationPatternSection({
         <div className="mt-8 divide-y divide-slate-100 border-t border-slate-100 text-left">
           {items.map((item: any) => {
             const Icon = item.icon;
+            const isImage = typeof Icon === "string";
             return (
               <div
                 key={item.title}
@@ -111,7 +123,11 @@ export default function ExaminationPatternSection({
                 {/* Icon + title */}
                 <div className="flex shrink-0 items-center gap-4 sm:w-64">
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-red-50">
-                    <Icon className="h-6 w-6 text-red-600" strokeWidth={1.75} />
+                    {isImage ? (
+                      <img src={Icon} alt="" className="h-6 w-6 object-contain" />
+                    ) : (
+                      Icon && <Icon className="h-6 w-6 text-red-600" strokeWidth={1.75} />
+                    )}
                   </span>
                   <h3 className="text-base font-bold text-slate-900 sm:text-lg">
                     {item.title}
@@ -133,3 +149,4 @@ export default function ExaminationPatternSection({
     </section>
   );
 }
+

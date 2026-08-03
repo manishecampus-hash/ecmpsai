@@ -6,9 +6,7 @@ import {
 } from "lucide-react";
 
 interface EligibilityFeesSectionProps {
-  university?: {
-    name?: string;
-  };
+  university?: any;
 }
 
 interface EligibilityGroup {
@@ -61,20 +59,27 @@ export default function EligibilityFeesSection({
   const eligibilityData = university?.details?.eligibility || {};
 
   const groups =
-    eligibilityData.groups && eligibilityData.groups.length > 0
-      ? eligibilityData.groups.map((group: any, idx: number) => ({
+    (eligibilityData.criteriaGroups || eligibilityData.groups) &&
+    (eligibilityData.criteriaGroups || eligibilityData.groups).length > 0
+      ? (eligibilityData.criteriaGroups || eligibilityData.groups).map((group: any, idx: number) => ({
           title: group.title,
           points: group.points || [],
         }))
       : ELIGIBILITY_GROUPS;
 
   const feeRows =
-    eligibilityData.feeRows && eligibilityData.feeRows.length > 0
-      ? eligibilityData.feeRows.map((row: any) => ({
+    (eligibilityData.feesRange || eligibilityData.feeRows) &&
+    (eligibilityData.feesRange || eligibilityData.feeRows).length > 0
+      ? (eligibilityData.feesRange || eligibilityData.feeRows).map((row: any) => ({
           label: row.label,
           range: row.range,
         }))
       : FEE_ROWS;
+
+  const feeDesc = eligibilityData.feesDescription || eligibilityData.feeDesc;
+  const feesHeading = eligibilityData.feesHeading || eligibilityData.feeHeading;
+  const feesFooter = eligibilityData.feesFooter || eligibilityData.feeFooter;
+  const feesInstallments = eligibilityData.feesInstallments || eligibilityData.feeInstallments;
 
   return (
     <section id="fee" className="bg-white px-6 py-4 sm:px-8 lg:px-12 lg:py-8">
@@ -123,7 +128,7 @@ export default function EligibilityFeesSection({
               <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
                 Fees{" "}
                 <span className="text-red-600">
-                  {eligibilityData.feeHeading || "Structure"}
+                  {feesHeading || "Structure"}
                 </span>
               </h2>
               <div className="mt-5 h-1 w-20 bg-red-600" />
@@ -131,7 +136,7 @@ export default function EligibilityFeesSection({
 
             <div className="space-y-7">
               <p className="text-base leading-7 text-black">
-                {eligibilityData.feeDesc || (
+                {feeDesc || (
                   <>
                     {universityName.charAt(0).toUpperCase() +
                       universityName.slice(1)}{" "}
@@ -174,14 +179,14 @@ export default function EligibilityFeesSection({
                   fill="currentColor"
                 />
                 <p className="text-base leading-7 text-black">
-                  {eligibilityData.feeFooter ||
+                  {feesFooter ||
                     "Program fees at Amity Online University vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines."}
                 </p>
               </div>
 
               <div>
                 <p className="text-base text-blue-600 italic text-center">
-                  {eligibilityData.feeInstallments ||
+                  {feesInstallments ||
                     "Easy installment options available.*"}
                 </p>
               </div>

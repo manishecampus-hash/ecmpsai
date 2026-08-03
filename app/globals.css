@@ -309,3 +309,10 @@ body,
 body * {
   font-family: var(--font-inter);
 }
+
+/* Force Inter, Inter Fallback for About Us Section */
+#why,
+#why * {
+  font-family: "Inter", "Inter Fallback", sans-serif;
+}
+

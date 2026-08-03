@@ -46,31 +46,24 @@ const perks = [
 export function KeyHighlights() {
   return (
     // Used consistent vertical padding like the Hero section
-    <section
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
-        fontFamily: "'Inter', sans-serif",
-      }}
-      className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
-    >
+    <section className="relative w-full px-4 py-10 text-black sm:px-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left Side: Text and Perks */}
           <div>
-            <div className="mx-auto text-center mb-8 border-b border-slate-100 pb-6 max-w-3xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <div className="mx-auto text-center mb-8 border-b border-slate-200 pb-6 max-w-3xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-black uppercase tracking-wider">
                 <Handshake className="h-3.5 w-3.5 text-red-500" />
                 eCampus Advantage
               </span>
 
-              <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
                 Why Choose Online DBA Through
                 <span className="text-red-500"> eCampus</span>
               </h2>
             </div>
 
-            <p className="mt-5 text-base leading-relaxed text-white sm:text-lg">
+            <p className="mt-5 text-base leading-relaxed text-black sm:text-lg">
               eCampus delivers trusted academic assistance, helping executives
               make informed decisions when choosing an online DBA program.
             </p>
@@ -82,7 +75,7 @@ export function KeyHighlights() {
                   <div className="rounded-xl bg-red-50 p-2 text-red-600">
                     <perk.icon className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-bold text-white-900">
+                  <span className="text-sm font-bold text-black">
                     {perk.title}
                   </span>
                 </div>
@@ -101,10 +94,10 @@ export function KeyHighlights() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
                   <item.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-base font-black text-gray-900">
+                <h3 className="text-base font-black text-black">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <p className="mt-2 text-sm leading-relaxed text-black">
                   {item.description}
                 </p>
               </div>

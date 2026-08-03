@@ -246,7 +246,7 @@ const CareerExplorer = () => {
           </span>
 
           <h2 className="mt-2 text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
-            Enhance Skills by <span className="text-red-500">Industry</span>
+            Enhance Skills by <span className="text-red-500">Job Role</span>
           </h2>
         </div>
 

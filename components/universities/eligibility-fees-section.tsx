@@ -59,13 +59,11 @@ export default function EligibilityFeesSection({
   const eligibilityData = university?.details?.eligibility || {};
 
   const groups =
-    (eligibilityData.criteriaGroups || eligibilityData.groups) &&
-    (eligibilityData.criteriaGroups || eligibilityData.groups).length > 0
-      ? (eligibilityData.criteriaGroups || eligibilityData.groups).map((group: any, idx: number) => ({
-          title: group.title,
-          points: group.points || [],
-        }))
-      : ELIGIBILITY_GROUPS;
+    eligibilityData.criteriaGroups && eligibilityData.criteriaGroups.length > 0
+      ? eligibilityData.criteriaGroups
+      : (eligibilityData.groups && eligibilityData.groups.length > 0
+          ? eligibilityData.groups
+          : ELIGIBILITY_GROUPS);
 
   const feeRows =
     (eligibilityData.feesRange || eligibilityData.feeRows) &&
@@ -78,17 +76,32 @@ export default function EligibilityFeesSection({
 
   const feeDesc = eligibilityData.feesDescription || eligibilityData.feeDesc;
   const feesHeading = eligibilityData.feesHeading || eligibilityData.feeHeading;
-  const feesFooter = eligibilityData.feesFooter || eligibilityData.feeFooter;
+  const feesSubTitle = eligibilityData.feesSubTitle || eligibilityData.feeRangeHeading || `${universityName.charAt(0).toUpperCase() + universityName.slice(1)} Online Fee Range`;
   const feesInstallments = eligibilityData.feesInstallments || eligibilityData.feeInstallments;
 
+  let bullets = eligibilityData.feesBullets;
+  if (!bullets || bullets.length === 0) {
+    bullets = [
+      ...feeRows.map((row: any) => ({
+        isFeeRange: true,
+        label: row.label,
+        range: row.range,
+      })),
+      {
+        isFeeRange: false,
+        text: eligibilityData.feesFooter || eligibilityData.feeFooter || "Program fees at Amity Online University vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines.",
+      }
+    ];
+  }
+
   return (
-    <section id="fee" className="bg-white px-6 py-4 sm:px-8 lg:px-12 lg:py-8">
+    <section id="fee" className="bg-white px-6 py-4 sm:px-8 lg:px-12 lg:py-8 font-[Inter]">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* Eligibility Criteria */}
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl  lg:text-3xl">
+              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
                 Eligibility{" "}
                 <span className="text-red-600">
                   {eligibilityData.criteriaHeading || "Criteria"}
@@ -98,14 +111,14 @@ export default function EligibilityFeesSection({
             </div>
 
             <div className="space-y-8">
-              {groups.map((group: any) => (
-                <div key={group.title}>
+              {groups.map((group: any, gIdx: number) => (
+                <div key={gIdx}>
                   <h3 className="mb-4 text-base font-bold text-black">
                     {group.title}
                   </h3>
                   <ul className="space-y-3.5">
-                    {group.points.map((point: string) => (
-                      <li key={point} className="flex items-start gap-3">
+                    {group.points?.map((point: string, pIdx: number) => (
+                      <li key={pIdx} className="flex items-start gap-3">
                         <CheckCircle2
                           className="mt-0.5 h-5 w-5 shrink-0 text-red-600 flex-shrink-0"
                           strokeWidth={2}
@@ -125,7 +138,7 @@ export default function EligibilityFeesSection({
           {/* Fees Structure */}
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
+              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
                 Fees{" "}
                 <span className="text-red-600">
                   {feesHeading || "Structure"}
@@ -149,39 +162,43 @@ export default function EligibilityFeesSection({
 
               <div>
                 <h3 className="mb-5 text-base font-bold text-black">
-                  {eligibilityData.feeRangeHeading ||
-                    universityName.charAt(0).toUpperCase() +
-                      universityName.slice(1) +
-                      " Online Fee Range"}
+                  {feesSubTitle}
                 </h3>
                 <ul className="space-y-3.5">
-                  {feeRows.map((row: any) => (
-                    <li key={row.label} className="flex items-center gap-3">
-                      <CheckCircle2
-                        className="h-5 w-5 text-red-600 flex-shrink-0"
-                        strokeWidth={2}
-                        fill="currentColor"
-                      />
-                      <span className="text-base text-black">{row.label}</span>
-                      <span className="ml-auto text-base text-black font-semibold">
-                        {row.range}
-                      </span>
-                    </li>
-                  ))}
+                  {bullets.map((bullet: any, idx: number) => {
+                    if (bullet.isFeeRange) {
+                      return (
+                        <li key={idx} className="flex items-center gap-3">
+                          <CheckCircle2
+                            className="h-5 w-5 text-red-600 flex-shrink-0"
+                            strokeWidth={2}
+                            fill="currentColor"
+                          />
+                          <span className="text-base text-black">{bullet.label}</span>
+                          <span className="ml-auto text-base text-black font-semibold">
+                            {bullet.range}
+                          </span>
+                        </li>
+                      );
+                    } else {
+                      return (
+                        <li key={idx} className="flex items-start gap-3">
+                          <CheckCircle2
+                            className="mt-0.5 h-5 w-5 shrink-0 text-red-600 flex-shrink-0"
+                            strokeWidth={2}
+                            fill="currentColor"
+                          />
+                          <p className="text-base leading-7 text-black">
+                            {bullet.text}
+                          </p>
+                        </li>
+                      );
+                    }
+                  })}
                 </ul>
-                <p className="mt-2 text-sm text-gray-600">per semester*</p>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CheckCircle2
-                  className="mt-0.5 h-5 w-5 shrink-0 text-red-600 flex-shrink-0"
-                  strokeWidth={2}
-                  fill="currentColor"
-                />
-                <p className="text-base leading-7 text-black">
-                  {feesFooter ||
-                    "Program fees at Amity Online University vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines."}
-                </p>
+                {bullets.some((b: any) => b.isFeeRange) && (
+                  <p className="mt-2 text-sm text-gray-600">per semester*</p>
+                )}
               </div>
 
               <div>

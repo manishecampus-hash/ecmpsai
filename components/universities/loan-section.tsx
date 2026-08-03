@@ -31,8 +31,8 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
     mappedCards.length === 1
       ? "sm:grid-cols-1"
       : mappedCards.length === 2
-      ? "sm:grid-cols-2"
-      : "sm:grid-cols-3";
+        ? "sm:grid-cols-2"
+        : "sm:grid-cols-3";
 
   const openModal = () => {
     setSubmitted(false);

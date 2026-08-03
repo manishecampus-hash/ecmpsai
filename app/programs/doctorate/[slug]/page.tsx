@@ -3,7 +3,7 @@ import BComCareers from "@/components/programs/bcom/bcom-careers";
 import BComCurriculum from "@/components/programs/bcom/bcom-curriculum";
 import BComEligibilityFees from "@/components/programs/bcom/bcom-eligibility-fees";
 import BComFAQ from "@/components/programs/bcom/bcom-faq";
-import BComSubHeader from "@/components/programs/bcom/bcom-sub-header";
+
 import { Footer } from "@/components/layout/footer";
 import GGUDoctorateHero from "@/components/programs/ggu/ggu-hero";
 import GGUDoctorateOverview from "@/components/programs/ggu/ggu-overview";
@@ -17,6 +17,7 @@ import GGUDoctorateFeeSection from "@/components/programs/ggu/ggu-eligibility-fe
 import GGUDoctorateCareers from "@/components/programs/ggu/ggu-careers";
 import GGUDoctorateTestimonials from "@/components/programs/ggu/ggu-testimonials-section";
 import GGUDoctorateFAQ from "@/components/programs/ggu/ggu-faq";
+import GguSubHeader from "@/components/programs/ggu/ggu-sub-header";
 
 export default function GguPage() {
   return (
@@ -24,7 +25,7 @@ export default function GguPage() {
       {/* <Header /> */}
 
       {/* Sticky scroll-spy sub-navigation */}
-      <BComSubHeader />
+      <GguSubHeader />
 
       <main className="bg-white">
         {/* 1. Hero and Overview */}

@@ -246,7 +246,7 @@ const CareerExplorer = () => {
           </span>
 
           <h2 className="mt-2 text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
-            Enhance Skills by <span className="text-red-500">Industry</span>
+            Enhance Skills by <span className="text-red-500">Job Role</span>
           </h2>
         </div>
 
@@ -299,25 +299,19 @@ const CareerExplorer = () => {
               </div>
 
               {/* Text and Button Row */}
-              <div className="flex flex-col gap-1 mt-1 flex-1">
-                <h3 className="font-bold leading-tight text-gray-900 text-[11px] sm:text-sm line-clamp-2">
+              <div className="flex items-center justify-between gap-1.5 flex-1">
+                <h3 className="font-bold leading-tight text-gray-900 text-[11px] sm:text-sm line-clamp-2 flex-1">
                   {item.title}
                 </h3>
 
-                <div className="flex items-center justify-between gap-1.5 mt-auto">
-                  <p className="text-xs font-bold text-red-500 line-clamp-1">
-                    {item.count}
-                  </p>
-
-                  <button
-                    type="button"
-                    className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full border border-gray-200 bg-white text-red-500 flex items-center justify-center shadow-sm hover:bg-gray-50 hover:text-gray-700 transition-colors flex-shrink-0"
-                    aria-label={`View ${item.title}`}
-                  >
-                    <ArrowRight size={12} className="sm:hidden" />
-                    <ArrowRight size={13} className="hidden sm:block" />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full border border-gray-200 bg-white text-red-500 flex items-center justify-center shadow-sm hover:bg-gray-50 hover:text-gray-700 transition-colors flex-shrink-0"
+                  aria-label={`View ${item.title}`}
+                >
+                  <ArrowRight size={11} className="sm:hidden" />
+                  <ArrowRight size={12} className="hidden sm:block" />
+                </button>
               </div>
             </div>
           ))}

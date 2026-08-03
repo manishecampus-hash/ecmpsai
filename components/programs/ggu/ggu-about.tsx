@@ -9,14 +9,12 @@ const specializations = [
   "International Business",
 ];
 
-export default function GGUDoctorateOverview() {
+export default function GGUDoctorateAbout() {
   return (
     <section
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
-      }}
-      className="font-sans relative w-full px-4 py-12 text-slate-100 sm:px-6"
+      id="about"
+      style={{}}
+      className="font-sans relative w-full px-4 py-12 text-black sm:px-6"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -29,17 +27,17 @@ export default function GGUDoctorateOverview() {
           </div>
 
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-black">
               <Handshake className="h-3.5 w-3.5 text-red-500" />
-              Overview
+              About
             </span>
 
-            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
               Online DBA from Golden Gate University:
-              <span className="text-red-500"> Overview</span>
+              <span className="text-red-500"> About</span>
             </h2>
 
-            <p className="mt-6 text-lg leading-relaxed text-slate-300">
+            <p className="mt-6 text-lg leading-relaxed text-black">
               The Doctor of Business Administration (DBA) from Golden Gate
               University is an AACSB-accredited doctoral program built for{" "}
               working executives and senior professionals who want to combine
@@ -50,7 +48,7 @@ export default function GGUDoctorateOverview() {
             <div className="mt-8 space-y-4">
               <div className="flex items-start gap-3">
                 <CheckSquare className="mt-1 h-5 w-5 flex-shrink-0 fill-red-500 text-red-500" />
-                <p className="text-lg leading-relaxed text-slate-300">
+                <p className="text-lg leading-relaxed text-black">
                   Prepares you for C-suite, consulting, and academic leadership
                   roles through applied doctoral research
                 </p>
@@ -58,7 +56,7 @@ export default function GGUDoctorateOverview() {
 
               <div className="flex items-start gap-3">
                 <CheckSquare className="mt-1 h-5 w-5 flex-shrink-0 fill-red-500 text-red-500" />
-                <p className="text-lg leading-relaxed text-slate-300">
+                <p className="text-lg leading-relaxed text-black">
                   Offers flexible online learning designed around the schedules
                   of working professionals
                 </p>

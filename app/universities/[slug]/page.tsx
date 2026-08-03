@@ -31,7 +31,9 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
 
   let dbUniversity: any = null;
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+      "http://localhost:5000";
     const res = await fetch(`${apiUrl}/universities/${slug}`, {
       cache: "no-store",
     });
@@ -48,7 +50,8 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
   const localUniversity = universities.find(
     (item) =>
       item.slug === slug ||
-      item.slug === `amity-university-online` && slug === `amity-university-online`
+      (item.slug === `amity-university-online` &&
+        slug === `amity-university-online`),
   );
 
   if (!dbUniversity && !localUniversity) {

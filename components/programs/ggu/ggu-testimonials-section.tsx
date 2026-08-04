@@ -60,10 +60,10 @@ export default function GGUDoctorateTestimonials({
     <section
       style={{
         background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
+          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.08), transparent 35%), #ffffff",
         fontFamily: "'Inter', sans-serif",
       }}
-      className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
+      className="relative w-full px-4 py-10 text-slate-900 sm:px-6"
     >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-10 max-w-3xl text-center">
@@ -73,12 +73,12 @@ export default function GGUDoctorateTestimonials({
               <GraduationCap className="h-3.5 w-3.5 text-red-500" />
               Scholar Stories
             </span>
-            <h2 className="mt-2 text-2xl font-extrabold text-white-900 tracking-tight sm:text-3xl md:text-4xl">
+            <h2 className="mt-2 text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl md:text-4xl">
               DBA Scholar <span className="text-red-500">Testimonials</span>
             </h2>
           </div>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
             Hear from working executives who chose the flexible Online DBA at
             Golden Gate University and built advanced research and leadership
             capabilities.
@@ -93,7 +93,7 @@ export default function GGUDoctorateTestimonials({
             return (
               <article
                 key={testimonial.id}
-                className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#111827] p-5 shadow-[0_18px_45px_rgba(0,0,0,0.28)] transition-all duration-300 hover:-translate-y-1 hover:border-red-500/50"
+                className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_45px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 hover:border-red-500/50"
               >
                 <div className="absolute right-0 top-0 h-28 w-28 translate-x-10 -translate-y-10 rounded-full bg-red-500/10 transition group-hover:bg-red-500/20" />
 
@@ -101,16 +101,16 @@ export default function GGUDoctorateTestimonials({
                   <img
                     src={testimonial.image}
                     alt={testimonial.name}
-                    className="h-16 w-16 rounded-2xl object-cover ring-2 ring-white/10"
+                    className="h-16 w-16 rounded-2xl object-cover ring-2 ring-slate-200"
                     loading="lazy"
                   />
 
                   <div>
-                    <h3 className="text-base font-extrabold text-white">
+                    <h3 className="text-base font-extrabold text-slate-900">
                       {testimonial.name}
                     </h3>
 
-                    <p className="mt-1 text-xs font-semibold text-slate-400">
+                    <p className="mt-1 text-xs font-semibold text-slate-500">
                       {testimonial.program} • {testimonial.university}
                     </p>
 
@@ -121,7 +121,7 @@ export default function GGUDoctorateTestimonials({
                           className={`h-3.5 w-3.5 ${
                             index < rating
                               ? "fill-red-500 text-red-500"
-                              : "text-slate-600"
+                              : "text-slate-300"
                           }`}
                         />
                       ))}
@@ -133,7 +133,7 @@ export default function GGUDoctorateTestimonials({
                   <Quote className="mb-3 h-8 w-8 text-red-500/80" />
 
                   <p
-                    className={`text-sm font-medium leading-6 text-slate-300 ${
+                    className={`text-sm font-medium leading-6 text-slate-600 ${
                       isOpen ? "" : "line-clamp-4"
                     }`}
                   >
@@ -143,7 +143,7 @@ export default function GGUDoctorateTestimonials({
                   <button
                     type="button"
                     onClick={() => setActiveId(isOpen ? null : testimonial.id)}
-                    className="mt-4 inline-flex items-center gap-1 text-sm font-extrabold text-red-500 transition hover:text-red-400"
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-extrabold text-red-500 transition hover:text-red-600"
                   >
                     {isOpen ? "Show Less" : "Read More"}
                     <ChevronRight

@@ -151,7 +151,9 @@
 // }
 
 "use client";
-
+import Link from "next/link";
+import { Link as LinkIcon } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface NavItem {
@@ -174,8 +176,10 @@ const NAV_ITEMS: NavItem[] = [
   { id: "placement-partners", label: "Placement Partners" },
   { id: "faculty", label: "Faculty" },
 ];
-
+const BASE_PATH = "/programs/doctorate/ggu";
 export default function GguSubHeader() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -238,7 +242,12 @@ export default function GguSubHeader() {
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
-    if (!el) return;
+    if (!el) {
+      if (pathname !== BASE_PATH) {
+        router.push(`${BASE_PATH}#${id}`);
+      }
+      return;
+    }
 
     setActiveId(id);
 
@@ -296,6 +305,45 @@ export default function GguSubHeader() {
         {NAV_ITEMS.map((item) => {
           const isActive = item.id === activeId;
 
+          if (item.id === "who-can-apply") {
+            return (
+              <Link
+                key={item.id}
+                href="/programs/doctorate/ggu/who-can-apply"
+                style={{
+                  flex: "0 0 auto",
+                  whiteSpace: "nowrap",
+                  padding: "0.5rem 0.25rem",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "#111827",
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </Link>
+            );
+          }
+
+          if (item.id === "specializations") {
+            return (
+              <Link
+                key={item.id}
+                href="/programs/doctorate/ggu/specializations"
+                style={{
+                  flex: "0 0 auto",
+                  whiteSpace: "nowrap",
+                  padding: "0.5rem 0.25rem",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "#111827",
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </Link>
+            );
+          }
           return (
             <button
               key={item.id}

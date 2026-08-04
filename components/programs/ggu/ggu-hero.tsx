@@ -97,10 +97,12 @@ export default function GGUDoctorateHero() {
             </h1>
 
             {/* AI Overview with typewriter effect */}
-            <div className="mt-4 max-w-xl">
+            <div className="max-w-xl">
               <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
                 <Sparkles className="h-3.5 w-3.5" />
-                AI Overview
+                <div className="text-[#1e293b] text-[14px] font-medium">
+                  AI Overview
+                </div>
               </div>
               <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
                 <span>{aiOverviewText}</span>

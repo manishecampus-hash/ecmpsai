@@ -92,23 +92,7 @@ export default function GGUDoctorateCareers() {
             </div>
 
             {/* Extra Career Notes */}
-            <div className="mt-5 max-w-2xl space-y-2.5">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
-                <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                  Suitable for senior professionals aiming for board-level,
-                  consulting, and executive leadership roles.
-                </p>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
-                <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                  Helps build a foundation for postdoctoral research, university
-                  teaching positions, and published thought leadership.
-                </p>
-              </div>
-            </div>
+            <div className="mt-5 max-w-2xl space-y-2.5"></div>
           </div>
         </div>
       </div>

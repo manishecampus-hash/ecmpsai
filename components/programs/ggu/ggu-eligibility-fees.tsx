@@ -37,10 +37,10 @@ export default function GGUDoctorateFeeSection() {
       id="fee"
       style={{
         background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
+          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.08), transparent 35%), #ffffff",
         fontFamily: "'Inter', sans-serif",
       }}
-      className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
+      className="relative w-full px-4 py-10 text-slate-900 sm:px-6"
     >
       <div className="mx-auto max-w-7xl">
         {/* Header */}
@@ -51,12 +51,12 @@ export default function GGUDoctorateFeeSection() {
               Investment
             </span>
 
-            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
               Program Fee &<span className="text-red-500"> Financing</span>
             </h2>
           </div>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
             Flexible payment options to make a Golden Gate University DBA more
             accessible for working executives and senior professionals.
           </p>
@@ -65,12 +65,12 @@ export default function GGUDoctorateFeeSection() {
         {/* Main Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Fee Highlight Card */}
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#111827] p-8 text-white shadow-[0_18px_45px_rgba(0,0,0,0.28)] sm:p-10">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 text-slate-900 shadow-[0_6px_18px_rgba(15,23,42,0.08)] sm:p-10">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-red-500/10" />
             <div className="absolute bottom-0 left-0 h-28 w-28 -translate-x-10 translate-y-10 rounded-full bg-red-500/10 blur-2xl" />
 
             <div className="relative z-10">
-              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">
+              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 Total Program Fee
               </div>
 
@@ -78,20 +78,22 @@ export default function GGUDoctorateFeeSection() {
                 Rs.3,50,000
               </div>
 
-              <div className="mb-6 text-sm text-slate-400 sm:text-base">
+              <div className="mb-6 text-sm text-slate-600 sm:text-base">
                 Online DBA Program - Golden Gate University
               </div>
 
               {/* EMI Box */}
-              <div className="mb-5 rounded-2xl border border-red-500/20 bg-red-500/10 p-4">
-                <div className="mb-1 flex items-center gap-2 text-sm font-bold text-red-400">
+              <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4">
+                <div className="mb-1 flex items-center gap-2 text-sm font-bold text-red-600">
                   <CreditCard className="h-4 w-4" />
                   No-Cost EMI
                 </div>
 
-                <div className="text-sm leading-6 text-slate-300 sm:text-base">
+                <div className="text-sm leading-6 text-slate-700 sm:text-base">
                   Starting from{" "}
-                  <span className="font-bold text-white">Rs.9,750/month</span>{" "}
+                  <span className="font-bold text-slate-900">
+                    Rs.9,750/month
+                  </span>{" "}
                   with flexible payment tenure.
                 </div>
               </div>
@@ -111,18 +113,18 @@ export default function GGUDoctorateFeeSection() {
               return (
                 <div
                   key={item.title}
-                  className="group flex items-start gap-4 rounded-2xl border border-white/10 bg-[#111827] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-500/50 hover:bg-[#151f32]"
+                  className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-red-50"
                 >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500 transition group-hover:bg-red-500 group-hover:text-white">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600 transition group-hover:bg-red-500 group-hover:text-white">
                     <Icon className="h-6 w-6" />
                   </div>
 
                   <div>
-                    <h3 className="mb-1 text-base font-bold text-white">
+                    <h3 className="mb-1 text-base font-bold text-slate-900">
                       {item.title}
                     </h3>
 
-                    <p className="text-sm leading-6 text-slate-300 sm:text-[15px]">
+                    <p className="text-sm leading-6 text-slate-600 sm:text-[15px]">
                       {item.desc}
                     </p>
                   </div>

@@ -14,6 +14,7 @@ import {
   GraduationCap,
   Star,
 } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface SpecializationRow {
   id: string;
@@ -267,7 +268,7 @@ export default function TopSpecializations({
 
         <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
           {specData.heading ? (
-            <span dangerouslySetInnerHTML={{ __html: specData.heading }} />
+            <HighlightedText text={specData.heading} />
           ) : (
             <>
               {uniLabel} <span className="text-red-500">Programs</span>

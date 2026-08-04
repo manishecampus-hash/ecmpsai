@@ -8,6 +8,7 @@ import {
   MessageSquare,
   CircleHelp,
 } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface FAQItem {
   question: string;
@@ -86,7 +87,7 @@ export default function FAQSection({ university }: FAQSectionProps) {
           </span>
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left lg:text-3xl">
             {sdData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: sdData.heading }} />
+              <HighlightedText text={sdData.heading} />
             ) : (
               <>
                 Frequently Asked <span className="text-red-500">Questions</span>

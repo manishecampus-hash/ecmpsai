@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Workflow } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface ProcessSection {
   university?: any;
@@ -65,7 +66,7 @@ export default function AdmissionProcessSection({
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
             {processData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: processData.heading }} />
+              <HighlightedText text={processData.heading} />
             ) : (
               <>
                 Online Admission <span className="text-red-500">Steps</span>

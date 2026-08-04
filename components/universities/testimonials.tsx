@@ -2,6 +2,7 @@
 
 import { MessageSquareQuote, Quote } from "lucide-react";
 import React from "react";
+import HighlightedText from "./HighlightedText";
 
 interface TestimonialCard {
   id: string;
@@ -102,7 +103,7 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
             {reviewsData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: reviewsData.heading }} />
+              <HighlightedText text={reviewsData.heading} />
             ) : (
               <>
                 Student <span className="text-red-500">Testimonials</span>

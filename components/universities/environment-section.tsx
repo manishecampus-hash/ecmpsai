@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import HighlightedText from "./HighlightedText";
 
 interface CertificateData {
   heading?: string;
@@ -124,7 +125,7 @@ export default function SampleCertificateSection({
 
               <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
                 {peerNetwork.heading ? (
-                  <span dangerouslySetInnerHTML={{ __html: peerNetwork.heading }} />
+                  <HighlightedText text={peerNetwork.heading} />
                 ) : (
                   <>
                     Connect With a <span className="text-red-500">Diverse Peer Network</span>
@@ -221,7 +222,7 @@ export default function SampleCertificateSection({
           <div className="lg:col-span-3">
             <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-3xl">
               {certData.heading ? (
-                <span dangerouslySetInnerHTML={{ __html: certData.heading }} />
+                <HighlightedText text={certData.heading} />
               ) : (
                 <>
                   Sample Certificate from{" "}

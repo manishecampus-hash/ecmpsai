@@ -4,6 +4,7 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface EligibilityFeesSectionProps {
   university?: any;
@@ -102,10 +103,13 @@ export default function EligibilityFeesSection({
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
               <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-                Eligibility{" "}
-                <span className="text-red-600">
-                  {eligibilityData.criteriaHeading || "Criteria"}
-                </span>
+                {eligibilityData.criteriaHeading ? (
+                  <HighlightedText text={eligibilityData.criteriaHeading} />
+                ) : (
+                  <>
+                    Eligibility <span className="text-red-600">Criteria</span>
+                  </>
+                )}
               </h2>
               <div className="mt-5 h-1 w-20 bg-red-600" />
             </div>
@@ -139,10 +143,13 @@ export default function EligibilityFeesSection({
           <div className="rounded-3xl border border-gray-300 bg-white p-10">
             <div className="mb-8">
               <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-                Fees{" "}
-                <span className="text-red-600">
-                  {feesHeading || "Structure"}
-                </span>
+                {feesHeading ? (
+                  <HighlightedText text={feesHeading} />
+                ) : (
+                  <>
+                    Fees <span className="text-red-600">Structure</span>
+                  </>
+                )}
               </h2>
               <div className="mt-5 h-1 w-20 bg-red-600" />
             </div>

@@ -374,6 +374,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import HighlightedText from "./HighlightedText";
 import {
   ApplicationForm,
   type LeadData,
@@ -393,6 +394,7 @@ interface HeroSectionProps {
     name?: string;
     fullName?: string;
     image?: string;
+    details?: any;
   };
   stats?: {
     learners?: string;
@@ -537,6 +539,13 @@ function SuccessState({
   );
 }
 
+function getYoutubeId(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
 export default function UniversityHeroWithStats({
   university,
   stats,
@@ -544,10 +553,20 @@ export default function UniversityHeroWithStats({
   const uniName = university?.name || "Amity";
   const uniFullName = university?.fullName || uniName;
 
-  const hasOnlineWord = uniName.toLowerCase().includes("online");
-  const displayHeading = hasOnlineWord ? uniName : `${uniName} Online`;
+  const banner = university?.details?.banner || {};
+  const bannerHeading = banner.heading || "";
+  const bannerSubheading = banner.subheading || "";
+  const bannerImage = banner.image || "";
+  const bannerVideo = banner.video || "";
+  const bannerYoutubeUrl = banner.youtubeUrl || "";
+  const youtubeVideoId = getYoutubeId(bannerYoutubeUrl);
+  const bannerMediaType = banner.mediaType || (bannerImage ? "image" : (bannerVideo ? "video" : (youtubeVideoId ? "youtube" : null)));
 
-  const aiOverviewCopy = `${uniFullName} Online offers flexible, industry-focused online degree programs from ${uniFullName}, empowering learners to access quality education, develop practical skills, and achieve career growth through an advanced digital learning experience.`;
+  if (!bannerHeading && !bannerImage && !bannerVideo && !youtubeVideoId) {
+    return null;
+  }
+
+  const aiOverviewCopy = bannerSubheading || "";
 
   const { displayedText: aiOverviewText, isDone: aiOverviewDone } =
     useTypewriter(aiOverviewCopy, { speed: 16, startDelay: 400 });
@@ -583,7 +602,6 @@ export default function UniversityHeroWithStats({
     setOpen(true);
   };
 
-  const youtubeVideoId = "po5P0XIUT2k";
 
   const statsData = [
     {
@@ -657,121 +675,158 @@ export default function UniversityHeroWithStats({
         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <div className="space-y-6">
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-4xl lg:text-4xl">
-                {displayHeading.split(" ").slice(0, -1).join(" ")}{" "}
-                <span className="text-red-500">
-                  {displayHeading.split(" ").slice(-1)}
-                </span>
-              </h1>
+              {bannerHeading && (
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-4xl lg:text-4xl">
+                  {bannerHeading.includes("*") ? (
+                    <HighlightedText text={bannerHeading} />
+                  ) : (
+                    <>
+                      {bannerHeading.split(" ").slice(0, -1).join(" ")}{" "}
+                      <span className="text-red-500">
+                        {bannerHeading.split(" ").slice(-1)}
+                      </span>
+                    </>
+                  )}
+                </h1>
+              )}
 
               {/* AI Overview with typewriter effect */}
-              <div className="max-w-xl">
-                <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <div className="text-[#1e293b] text-[14px] font-medium">
-                    AI Overview
+              {aiOverviewCopy && (
+                <div className="max-w-xl">
+                  <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <div className="text-[#1e293b] text-[14px] font-medium">
+                      AI Overview
+                    </div>
+                  </div>
+
+                  <p className="text-base text-gray-600 leading-relaxed">
+                    <span>{aiOverviewText}</span>
+                    <span
+                      className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
+                        aiOverviewDone ? "animate-pulse" : ""
+                      }`}
+                      aria-hidden="true"
+                    />
+                    {/* Reserves the final space up front so nothing below shifts while typing */}
+                    <span className="invisible">
+                      {aiOverviewCopy.slice(aiOverviewText.length)}
+                    </span>
+                  </p>
+                </div>
+              )}
+
+              {/* Accreditations Badge */}
+              {banner.accreditationLogos && banner.accreditationLogos.filter(Boolean).length > 0 && (
+                <div className="pt-2">
+                  <div className="flex gap-4 items-center flex-wrap">
+                    {banner.accreditationLogos.filter(Boolean).map((logoUrl: string, idx: number) => (
+                      <img
+                        key={idx}
+                        src={logoUrl}
+                        alt={`Accreditation Logo ${idx + 1}`}
+                        className="h-12 w-auto object-contain"
+                      />
+                    ))}
                   </div>
                 </div>
+              )}
 
-                <p className="text-base text-gray-600 leading-relaxed">
-                  <span>{aiOverviewText}</span>
-                  <span
-                    className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
-                      aiOverviewDone ? "animate-pulse" : ""
-                    }`}
-                    aria-hidden="true"
-                  />
-                  {/* Reserves the final space up front so nothing below shifts while typing */}
-                  <span className="invisible">
-                    {aiOverviewCopy.slice(aiOverviewText.length)}
-                  </span>
-                </p>
-              </div>
-
-              {/* Accreditations Badge - Image */}
-              <div className="pt-2">
-                <Image
-                  src="/newuniversities/merge-approvals-nirf.png"
-                  alt="NAAC A+, UGC-DEB Approved, NIRF 27th Ranking"
-                  width={400}
-                  height={80}
-                  className="h-auto w-auto object-contain"
-                  priority
-                />
-              </div>
-
-              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
-                {/* Apply to University - Shows ApplicationForm */}
-                <Dialog
-                  open={open && dialogMode === "apply"}
-                  onOpenChange={handleOpenChange}
-                >
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={handleApplyClick}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
+              {((banner.ctas?.[0]?.buttonText) || (banner.ctas?.[1]?.buttonText)) && (
+                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
+                  {/* Apply to University - Shows ApplicationForm */}
+                  {banner.ctas?.[0]?.buttonText && (
+                    <Dialog
+                      open={open && dialogMode === "apply"}
+                      onOpenChange={handleOpenChange}
                     >
-                      Apply to University
-                    </button>
-                  </DialogTrigger>
+                      <DialogTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={handleApplyClick}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
+                        >
+                          {banner.ctas[0].buttonText}
+                        </button>
+                      </DialogTrigger>
 
-                  <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-                    {submittedLead ? (
-                      <SuccessState
-                        name={submittedLead.name}
-                        onClose={() => handleOpenChange(false)}
-                      />
-                    ) : (
-                      <ApplicationForm
-                        onSubmit={handleFormSubmit}
-                        brochureUrl="/brochure.pdf"
-                      />
-                    )}
-                  </DialogContent>
-                </Dialog>
+                      <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
+                        {submittedLead ? (
+                          <SuccessState
+                            name={submittedLead.name}
+                            onClose={() => handleOpenChange(false)}
+                          />
+                        ) : (
+                          <ApplicationForm
+                            onSubmit={handleFormSubmit}
+                          />
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  )}
 
-                {/* Download Brochure - Shows BrochureForm */}
-                <Dialog
-                  open={open && dialogMode === "brochure"}
-                  onOpenChange={handleOpenChange}
-                >
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={handleBrochureClick}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
+                  {/* Download Brochure - Shows BrochureForm */}
+                  {banner.ctas?.[1]?.buttonText && (
+                    <Dialog
+                      open={open && dialogMode === "brochure"}
+                      onOpenChange={handleOpenChange}
                     >
-                      <Download className="h-4 w-4" />
-                      Download Brochure
-                    </button>
-                  </DialogTrigger>
+                      <DialogTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={handleBrochureClick}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
+                        >
+                          <Download className="h-4 w-4" />
+                          {banner.ctas[1].buttonText}
+                        </button>
+                      </DialogTrigger>
 
-                  <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-                    {submittedLead ? (
-                      <SuccessState
-                        name={submittedLead.name}
-                        onClose={() => handleOpenChange(false)}
-                      />
-                    ) : (
-                      <BrochureForm onSubmit={handleFormSubmit} />
-                    )}
-                  </DialogContent>
-                </Dialog>
-              </div>
+                      <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
+                        {submittedLead ? (
+                          <SuccessState
+                            name={submittedLead.name}
+                            onClose={() => handleOpenChange(false)}
+                          />
+                        ) : (
+                          <BrochureForm onSubmit={handleFormSubmit} />
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="relative px-0 sm:px-4">
               <div className="">
-                <div className="w-full h-[260px] sm:h-[320px] md:h-[380px]">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-                    title={`${uniFullName} Video`}
-                    className="h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+                {(bannerImage || bannerVideo || youtubeVideoId) && (
+                  <div className="w-full h-[260px] sm:h-[320px] md:h-[380px] overflow-hidden rounded-xl bg-slate-100">
+                    {bannerMediaType === "image" && bannerImage && (
+                      <img
+                        src={bannerImage}
+                        alt={`${uniFullName} Banner`}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                    {bannerMediaType === "video" && bannerVideo && (
+                      <video
+                        src={bannerVideo}
+                        controls
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                    {bannerMediaType === "youtube" && youtubeVideoId && (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                        title={`${uniFullName} Video`}
+                        className="h-full w-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

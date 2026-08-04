@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Handshake } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface PlacementPartnersProps {
   university?: any;
@@ -40,7 +41,7 @@ export default function PlacementPartners({ university }: PlacementPartnersProps
 
         <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
           {hiringNetwork.heading ? (
-            <span dangerouslySetInnerHTML={{ __html: hiringNetwork.heading }} />
+            <HighlightedText text={hiringNetwork.heading} />
           ) : (
             <>
               Top Corporate Recruitment &{" "}

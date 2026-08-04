@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import * as Icons from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface ApSectionProps {
   university?: any;
@@ -110,7 +111,7 @@ export default function ApSection({ university }: ApSectionProps) {
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
             {accData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: accData.heading }} />
+              <HighlightedText text={accData.heading} />
             ) : (
               <>
                 Recognition & <span className="text-red-500">Approval</span>

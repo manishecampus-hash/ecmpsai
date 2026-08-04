@@ -2,6 +2,7 @@
 
 import { Wallet } from "lucide-react";
 import { useState } from "react";
+import HighlightedText from "./HighlightedText";
 
 interface LoanSectionProps {
   university?: any;
@@ -78,7 +79,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl ">
             {loanData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: loanData.heading }} />
+              <HighlightedText text={loanData.heading} />
             ) : (
               <>
                 Education Loan <span className="text-red-500">EMI</span>

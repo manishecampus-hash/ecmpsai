@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ImageIcon } from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface AboutProgramProps {
   university?: any;
@@ -10,7 +11,7 @@ interface AboutProgramProps {
 export default function AboutProgram({ university }: AboutProgramProps) {
   const aboutData = university?.details?.about;
   const uniDisplayName = university?.name || "Amity University Online";
-  const uniImage = university?.image || aboutData?.image;
+  const uniImage = aboutData?.image || aboutData?.imageUrl || university?.image;
 
   return (
     <section
@@ -20,12 +21,12 @@ export default function AboutProgram({ university }: AboutProgramProps) {
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 font-[Inter]">
         {/* Intro: image left, About copy right */}
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-14">
-          {/* Image slot — leave space here, image to be added later */}
+          {/* Image slot */}
           <div className="order-1">
-            <div className="relative w-full overflow-hidden border border-dashed border-slate-200 bg-slate-50 aspect-[4/3] flex items-center justify-center">
+            <div className="relative w-full overflow-hidden border border-dashed border-slate-200 bg-slate-50 aspect-[4/3] flex items-center justify-center rounded-2xl">
               {uniImage ? (
                 <img
-                  src="/newuniversities/image.webp"
+                  src={uniImage}
                   alt={`${uniDisplayName} Campus`}
                   className="h-full w-full object-cover"
                 />
@@ -43,13 +44,30 @@ export default function AboutProgram({ university }: AboutProgramProps) {
           {/* Text */}
           <div className="order-2 text-left">
             <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-              About Amity University{" "}
-              <span className="text-red-500">Online</span>
+              {aboutData?.heading ? (
+                aboutData.heading.includes("*") ? (
+                  <HighlightedText text={aboutData.heading} />
+                ) : (
+                  <>
+                    {aboutData.heading.split(" ").slice(0, -1).join(" ")}{" "}
+                    <span className="text-red-500">
+                      {aboutData.heading.split(" ").slice(-1)}
+                    </span>
+                  </>
+                )
+              ) : (
+                <>
+                  About {uniDisplayName.split(" ").slice(0, -1).join(" ")}{" "}
+                  <span className="text-red-500">
+                    {uniDisplayName.split(" ").slice(-1)}
+                  </span>
+                </>
+              )}
             </h2>
 
             <div className="mt-4 max-w-2xl text-sm leading-7 text-slate-700 sm:text-base sm:leading-8">
               {aboutData?.description ? (
-                <p>{aboutData.description}</p>
+                <div dangerouslySetInnerHTML={{ __html: aboutData.description }} className="space-y-3 rich-text-content" />
               ) : (
                 <>
                   <p>

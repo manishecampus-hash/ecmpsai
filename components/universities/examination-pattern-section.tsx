@@ -8,6 +8,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import * as Icons from "lucide-react";
+import HighlightedText from "./HighlightedText";
 
 interface ExaminationPatternSectionProps {
   university?: any;
@@ -101,7 +102,7 @@ export default function ExaminationPatternSection({
 
           <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
             {examData.heading ? (
-              <span dangerouslySetInnerHTML={{ __html: examData.heading }} />
+              <HighlightedText text={examData.heading} />
             ) : (
               <>
                 Online Examination <span className="text-red-500">Pattern</span>

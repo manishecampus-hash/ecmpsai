@@ -810,7 +810,1144 @@
 //   );
 // }
 
-"use client";
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import {
+//   X,
+//   ArrowLeft,
+//   ChevronDown,
+//   ShieldCheck,
+//   GraduationCap,
+//   Users,
+//   Laptop,
+// } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+
+// interface SignupModalProps {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   onSwitchToLogin?: () => void;
+// }
+
+// const countryCodes = [
+//   { code: "+91", flag: "🇮🇳", name: "IN" },
+//   { code: "+1", flag: "🇺🇸", name: "US" },
+//   { code: "+44", flag: "🇬🇧", name: "GB" },
+//   { code: "+61", flag: "🇦🇺", name: "AU" },
+//   { code: "+971", flag: "🇦🇪", name: "AE" },
+//   { code: "+65", flag: "🇸🇬", name: "SG" },
+//   { code: "+60", flag: "🇲🇾", name: "MY" },
+//   { code: "+49", flag: "🇩🇪", name: "DE" },
+//   { code: "+33", flag: "🇫🇷", name: "FR" },
+//   { code: "+81", flag: "🇯🇵", name: "JP" },
+// ];
+
+// type Step = "phone" | "otp" | "email";
+
+// export function SignupModal({
+//   isOpen,
+//   onClose,
+//   onSwitchToLogin,
+// }: SignupModalProps) {
+//   const [step, setStep] = useState<Step>("phone");
+//   const [countryCode, setCountryCode] = useState("+91");
+//   const [phone, setPhone] = useState("");
+//   const [otp, setOtp] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [name, setName] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [resendCooldown, setResendCooldown] = useState(0);
+//   const [assuredOptIn, setAssuredOptIn] = useState(false);
+
+//   useEffect(() => {
+//     if (resendCooldown <= 0) return;
+//     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+//     return () => clearTimeout(t);
+//   }, [resendCooldown]);
+
+//   if (!isOpen) return null;
+
+//   const selectedCountry = countryCodes.find((c) => c.code === countryCode)!;
+//   const fullPhone = `${countryCode}${phone}`;
+
+//   const handlePhoneContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{7,15}$/.test(phone)) {
+//       setError("Please enter a valid phone number.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/signup", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           phone: fullPhone,
+//           email: `${fullPhone}@otp.ecampus`,
+//           name: "",
+//         }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Failed to send OTP");
+//       setResendCooldown(30);
+//       setStep("otp");
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleOtpVerify = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{6}$/.test(otp)) {
+//       setError("Enter the 6-digit OTP.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/verify-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone, otp }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Verification failed");
+//       localStorage.setItem(
+//         "ecampus_student",
+//         JSON.stringify({ phone: fullPhone }),
+//       );
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleResendOtp = async () => {
+//     if (resendCooldown > 0) return;
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/resend-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone }),
+//       });
+//       const data = await res.json();
+//       if (!data.success)
+//         throw new Error(data.message || "Failed to resend OTP");
+//       setResendCooldown(30);
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleEmailContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const apiUrl =
+//         process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+//         "http://localhost:5000";
+//       const res = await fetch(`${apiUrl}/auth/signup`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ name, email, password }),
+//       });
+//       if (!res.ok) {
+//         const data = await res.json();
+//         throw new Error(data.message || "Signup failed");
+//       }
+//       localStorage.setItem("ecampus_student", JSON.stringify({ name, email }));
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleBack = () => {
+//     if (step === "otp") {
+//       setOtp("");
+//       setStep("phone");
+//     } else {
+//       setStep("phone");
+//     }
+//     setError("");
+//   };
+
+//   return (
+//     <>
+//       {/* Backdrop */}
+//       <div
+//         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+//         onClick={onClose}
+//       />
+
+//       {/* Outer wrapper scrolls as a last resort on very short screens,
+//           so nothing is ever clipped off-screen. */}
+//       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
+//         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
+//           <div
+//             className="relative grid max-h-[88vh] w-full max-w-3xl grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+//             onClick={(e) => e.stopPropagation()}
+//           >
+//             {/* LEFT PANEL */}
+//             <div className="hidden max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-6 text-white md:flex lg:p-8">
+//               <div>
+//                 <img
+//                   src="/image/logo.png"
+//                   alt="logo"
+//                   className="mb-4 h-7 object-contain"
+//                 />
+
+//                 <h1 className="text-xl font-bold leading-snug lg:text-2xl">
+//                   Your Future.
+//                   <br />
+//                   Our Responsibility.
+//                 </h1>
+
+//                 <p className="mt-2 text-xs text-red-100 lg:text-sm">
+//                   Find the right university. Build the right career.
+//                 </p>
+
+//                 <div className="mt-5 space-y-3">
+//                   <Feature
+//                     icon={<GraduationCap size={16} />}
+//                     title="UGC Recognised Universities"
+//                     desc="Study from India's top universities"
+//                   />
+//                   <Feature
+//                     icon={<Laptop size={16} />}
+//                     title="100% Online & Flexible"
+//                     desc="Learn at your own pace"
+//                   />
+//                   <Feature
+//                     icon={<Users size={16} />}
+//                     title="Career Focused Programs"
+//                     desc="Skills that employers value"
+//                   />
+//                   <Feature
+//                     icon={<ShieldCheck size={16} />}
+//                     title="Personal Student Support"
+//                     desc="From admission till graduation"
+//                   />
+//                 </div>
+//               </div>
+
+//               <button
+//                 type="button"
+//                 onClick={() => setAssuredOptIn((v) => !v)}
+//                 className={`mt-5 rounded-xl border p-3 text-left transition ${
+//                   assuredOptIn
+//                     ? "border-yellow-300 bg-white/20"
+//                     : "border-white/20 bg-white/10"
+//                 } backdrop-blur-md`}
+//               >
+//                 <div className="flex items-center gap-3">
+//                   <div className="rounded-full bg-white/20 p-2">
+//                     <ShieldCheck size={18} />
+//                   </div>
+//                   <div>
+//                     <h3 className="text-sm font-bold">eCampus Assured</h3>
+//                     <p className="text-xs text-red-100">
+//                       Get up to{" "}
+//                       <span className="font-bold text-yellow-300">
+//                         100% Course Fee Refund*
+//                       </span>
+//                     </p>
+//                   </div>
+//                 </div>
+//               </button>
+//             </div>
+
+//             {/* RIGHT PANEL */}
+//             <div className="relative flex max-h-[88vh] flex-col overflow-y-auto bg-white p-5 sm:p-6 md:p-8">
+//               <button
+//                 onClick={onClose}
+//                 className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:right-4 sm:top-4"
+//               >
+//                 <X className="h-4 w-4" />
+//               </button>
+
+//               {step !== "phone" && (
+//                 <button
+//                   onClick={handleBack}
+//                   className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:left-4 sm:top-4"
+//                 >
+//                   <ArrowLeft className="h-4 w-4" />
+//                 </button>
+//               )}
+
+//               <div className="m-auto w-full max-w-xs py-6">
+//                 <div className="flex justify-center md:hidden">
+//                   <img
+//                     src="/image/logo.png"
+//                     alt="logo"
+//                     className="mb-3 h-10 w-10 object-contain"
+//                   />
+//                 </div>
+
+//                 <h2 className="text-center text-xl font-bold text-black md:text-left md:text-2xl">
+//                   {step === "phone" && "Welcome to eCampus"}
+//                   {step === "otp" && "Enter OTP"}
+//                   {step === "email" && "Create Account"}
+//                 </h2>
+
+//                 <p className="mt-1.5 text-center text-xs text-gray-500 md:text-left">
+//                   {step === "phone" &&
+//                     "Create your account to explore India's best online degrees."}
+//                   {step === "otp" && `OTP sent to ${fullPhone}`}
+//                   {step === "email" && "Complete your details to continue."}
+//                 </p>
+
+//                 {error && (
+//                   <div className="mt-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
+//                     {error}
+//                   </div>
+//                 )}
+
+//                 {step === "phone" && (
+//                   <form onSubmit={handlePhoneContinue} className="mt-4">
+//                     <div className="flex overflow-hidden rounded-lg border border-gray-300 transition focus-within:border-black">
+//                       <div className="relative flex items-center gap-1 border-r border-gray-300 px-3">
+//                         <span className="text-sm">{selectedCountry.flag}</span>
+//                         <span className="text-xs font-medium text-black">
+//                           {selectedCountry.code}
+//                         </span>
+//                         <ChevronDown className="h-3 w-3 text-gray-500" />
+//                         <select
+//                           value={countryCode}
+//                           onChange={(e) => setCountryCode(e.target.value)}
+//                           className="absolute inset-0 w-full cursor-pointer opacity-0"
+//                         >
+//                           {countryCodes.map((c) => (
+//                             <option key={c.code} value={c.code}>
+//                               {c.flag} {c.code} ({c.name})
+//                             </option>
+//                           ))}
+//                         </select>
+//                       </div>
+//                       <input
+//                         type="tel"
+//                         placeholder="Enter Mobile Number"
+//                         value={phone}
+//                         onChange={(e) =>
+//                           setPhone(e.target.value.replace(/\D/g, ""))
+//                         }
+//                         maxLength={15}
+//                         required
+//                         className="flex-1 bg-white p-2.5 text-sm outline-none placeholder-gray-500"
+//                       />
+//                     </div>
+
+//                     <Button
+//                       type="submit"
+//                       disabled={loading || phone.length < 7}
+//                       className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                     >
+//                       {loading ? "Sending..." : "Continue"}
+//                     </Button>
+
+//                     <div className="my-4 flex items-center gap-3">
+//                       <div className="h-px flex-1 bg-gray-300" />
+//                       <span className="text-xs text-gray-500">OR</span>
+//                       <div className="h-px flex-1 bg-gray-300" />
+//                     </div>
+
+//                     <button
+//                       type="button"
+//                       onClick={() => {
+//                         setStep("email");
+//                         setError("");
+//                       }}
+//                       className="w-full rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+//                     >
+//                       Sign up with email
+//                     </button>
+//                   </form>
+//                 )}
+
+//                 {step === "otp" && (
+//                   <form onSubmit={handleOtpVerify} className="mt-4">
+//                     <input
+//                       type="text"
+//                       inputMode="numeric"
+//                       placeholder="6-digit OTP"
+//                       value={otp}
+//                       onChange={(e) =>
+//                         setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+//                       }
+//                       maxLength={6}
+//                       required
+//                       autoFocus
+//                       className="w-full rounded-lg border border-gray-300 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+//                     />
+
+//                     <button
+//                       type="button"
+//                       onClick={handleResendOtp}
+//                       disabled={resendCooldown > 0 || loading}
+//                       className="mt-2 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+//                     >
+//                       {resendCooldown > 0
+//                         ? `Resend in ${resendCooldown}s`
+//                         : "Resend OTP"}
+//                     </button>
+
+//                     <Button
+//                       type="submit"
+//                       disabled={loading || otp.length !== 6}
+//                       className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                     >
+//                       {loading ? "Verifying..." : "Continue"}
+//                     </Button>
+//                   </form>
+//                 )}
+
+//                 {step === "email" && (
+//                   <form
+//                     onSubmit={handleEmailContinue}
+//                     className="mt-4 space-y-2.5"
+//                   >
+//                     <input
+//                       type="text"
+//                       placeholder="Full Name"
+//                       value={name}
+//                       onChange={(e) => setName(e.target.value)}
+//                       required
+//                       className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <input
+//                       type="email"
+//                       placeholder="Email Address"
+//                       value={email}
+//                       onChange={(e) => setEmail(e.target.value)}
+//                       required
+//                       className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <input
+//                       type="password"
+//                       placeholder="Password (min. 8 characters)"
+//                       value={password}
+//                       onChange={(e) => setPassword(e.target.value)}
+//                       required
+//                       minLength={8}
+//                       className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <Button
+//                       type="submit"
+//                       disabled={loading}
+//                       className="h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                     >
+//                       {loading ? "Creating..." : "Continue"}
+//                     </Button>
+//                   </form>
+//                 )}
+
+//                 {/* Assured banner — mobile only, desktop already shows it in the left panel */}
+//                 <button
+//                   type="button"
+//                   onClick={() => setAssuredOptIn((v) => !v)}
+//                   className={`mt-4 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
+//                     assuredOptIn
+//                       ? "border-red-300 bg-red-50"
+//                       : "border-red-100 bg-red-50/60"
+//                   }`}
+//                 >
+//                   <div className="flex items-center gap-2.5">
+//                     <ShieldCheck className="text-red-600" size={22} />
+//                     <div>
+//                       <h3 className="text-xs font-semibold text-black">
+//                         eCampus Assured
+//                       </h3>
+//                       <p className="text-[11px] text-gray-600">
+//                         Get up to{" "}
+//                         <span className="font-bold text-red-600">
+//                           100% Refund*
+//                         </span>
+//                       </p>
+//                     </div>
+//                   </div>
+//                   <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-red-600 shadow">
+//                     Know More
+//                   </span>
+//                 </button>
+
+//                 <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-500">
+//                   By continuing, you agree to our{" "}
+//                   <a href="/terms" className="text-red-600 hover:underline">
+//                     Terms
+//                   </a>{" "}
+//                   &{" "}
+//                   <a href="/privacy" className="text-red-600 hover:underline">
+//                     Privacy Policy
+//                   </a>
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// function Feature({
+//   icon,
+//   title,
+//   desc,
+// }: {
+//   icon: React.ReactNode;
+//   title: string;
+//   desc: string;
+// }) {
+//   return (
+//     <div className="flex items-start gap-2.5">
+//       <div className="mt-0.5 rounded-lg bg-white/15 p-1.5">{icon}</div>
+//       <div>
+//         <h3 className="text-sm font-semibold">{title}</h3>
+//         <p className="text-xs text-red-100">{desc}</p>
+//       </div>
+//     </div>
+//   );
+// }
+
+// import { useState, useEffect } from "react";
+// import {
+//   X,
+//   ArrowLeft,
+//   ChevronDown,
+//   ShieldCheck,
+//   GraduationCap,
+//   Users,
+//   Laptop,
+//   ArrowRight,
+// } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+
+// interface SignupModalProps {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   onSwitchToLogin?: () => void;
+// }
+
+// const countryCodes = [
+//   { code: "+91", flag: "🇮🇳", name: "IN" },
+//   { code: "+1", flag: "🇺🇸", name: "US" },
+//   { code: "+44", flag: "🇬🇧", name: "GB" },
+//   { code: "+61", flag: "🇦🇺", name: "AU" },
+//   { code: "+971", flag: "🇦🇪", name: "AE" },
+//   { code: "+65", flag: "🇸🇬", name: "SG" },
+//   { code: "+60", flag: "🇲🇾", name: "MY" },
+//   { code: "+49", flag: "🇩🇪", name: "DE" },
+//   { code: "+33", flag: "🇫🇷", name: "FR" },
+//   { code: "+81", flag: "🇯🇵", name: "JP" },
+// ];
+
+// type Step = "phone" | "otp" | "email";
+
+// export function SignupModal({
+//   isOpen,
+//   onClose,
+//   onSwitchToLogin,
+// }: SignupModalProps) {
+//   const [step, setStep] = useState<Step>("phone");
+//   const [countryCode, setCountryCode] = useState("+91");
+//   const [phone, setPhone] = useState("");
+//   const [otp, setOtp] = useState("");
+//   const [email, setEmail] = useState("");
+//   const [name, setName] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [resendCooldown, setResendCooldown] = useState(0);
+//   const [assuredOptIn, setAssuredOptIn] = useState(false);
+//   const [mode, setMode] = useState<"mobile" | "email">("mobile");
+
+//   useEffect(() => {
+//     if (resendCooldown <= 0) return;
+//     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+//     return () => clearTimeout(t);
+//   }, [resendCooldown]);
+
+//   if (!isOpen) return null;
+
+//   const selectedCountry = countryCodes.find((c) => c.code === countryCode)!;
+//   const fullPhone = `${countryCode}${phone}`;
+
+//   const handlePhoneContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{7,15}$/.test(phone)) {
+//       setError("Please enter a valid phone number.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/signup", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           phone: fullPhone,
+//           email: `${fullPhone}@otp.ecampus`,
+//           name: "",
+//         }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Failed to send OTP");
+//       setResendCooldown(30);
+//       setStep("otp");
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleOtpVerify = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     if (!/^\d{6}$/.test(otp)) {
+//       setError("Enter the 6-digit OTP.");
+//       return;
+//     }
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/verify-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone, otp }),
+//       });
+//       const data = await res.json();
+//       if (!data.success) throw new Error(data.message || "Verification failed");
+//       localStorage.setItem(
+//         "ecampus_student",
+//         JSON.stringify({ phone: fullPhone }),
+//       );
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleResendOtp = async () => {
+//     if (resendCooldown > 0) return;
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const res = await fetch("/api/auth/resend-otp", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ phone: fullPhone }),
+//       });
+//       const data = await res.json();
+//       if (!data.success)
+//         throw new Error(data.message || "Failed to resend OTP");
+//       setResendCooldown(30);
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleEmailContinue = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError("");
+//     setLoading(true);
+//     try {
+//       const apiUrl =
+//         process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+//         "http://localhost:5000";
+//       const res = await fetch(`${apiUrl}/auth/signup`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ name, email, password }),
+//       });
+//       if (!res.ok) {
+//         const data = await res.json();
+//         throw new Error(data.message || "Signup failed");
+//       }
+//       localStorage.setItem("ecampus_student", JSON.stringify({ name, email }));
+//       window.dispatchEvent(new Event("ecampus-auth-change"));
+//       onClose();
+//     } catch (err: any) {
+//       setError(err.message || "Something went wrong");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleBack = () => {
+//     if (step === "otp") {
+//       setOtp("");
+//       setStep("phone");
+//     } else {
+//       setStep("phone");
+//     }
+//     setError("");
+//   };
+
+//   return (
+//     <>
+//       {/* Backdrop */}
+//       <div
+//         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+//         onClick={onClose}
+//       />
+
+//       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
+//         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
+//           <div
+//             className="relative grid max-h-[88vh] w-full max-w-3xl grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+//             onClick={(e) => e.stopPropagation()}
+//           >
+//             {/* LEFT PANEL */}
+//             <div className="hidden relative max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-8 text-white md:flex lg:p-10">
+//               {/* decorative curve */}
+//               <svg
+//                 className="absolute -right-20 -bottom-10 h-80 w-80 opacity-20"
+//                 viewBox="0 0 200 200"
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 aria-hidden
+//               >
+//                 <defs>
+//                   <radialGradient id="g" cx="30%" cy="30%">
+//                     <stop offset="0%" stopColor="#ffffff" stopOpacity="0.06" />
+//                     <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+//                   </radialGradient>
+//                 </defs>
+//                 <circle cx="100" cy="100" r="100" fill="url(#g)" />
+//               </svg>
+
+//               <div>
+//                 <img
+//                   src="/image/logo.png"
+//                   alt="logo"
+//                   className="mb-4 h-7 object-contain"
+//                 />
+
+//                 <h1 className="text-2xl font-extrabold leading-snug lg:text-3xl">
+//                   Your Future.
+//                   <br />
+//                   Our Responsibility.
+//                 </h1>
+
+//                 <p className="mt-3 max-w-[18rem] text-sm text-red-100 lg:text-base">
+//                   Find the right university. Build the right career.
+//                 </p>
+
+//                 <div className="mt-6 space-y-4">
+//                   <Feature
+//                     icon={<GraduationCap size={16} />}
+//                     title="UGC Recognised Universities"
+//                     desc="Study from India's top universities"
+//                   />
+//                   <Feature
+//                     icon={<Laptop size={16} />}
+//                     title="100% Online & Flexible"
+//                     desc="Learn at your own pace"
+//                   />
+//                   <Feature
+//                     icon={<Users size={16} />}
+//                     title="Career Focused Programs"
+//                     desc="Skills that employers value"
+//                   />
+//                   <Feature
+//                     icon={<ShieldCheck size={16} />}
+//                     title="Personal Student Support"
+//                     desc="From admission till graduation"
+//                   />
+//                 </div>
+//               </div>
+
+//               <button
+//                 type="button"
+//                 onClick={() => setAssuredOptIn((v) => !v)}
+//                 className={`mt-6 rounded-xl border p-3 text-left transition ${
+//                   assuredOptIn
+//                     ? "border-yellow-300 bg-white/20"
+//                     : "border-white/20 bg-white/10"
+//                 } backdrop-blur-md`}
+//               >
+//                 <div className="flex items-center gap-3">
+//                   <div className="rounded-full bg-white/20 p-2">
+//                     <ShieldCheck size={18} />
+//                   </div>
+//                   <div>
+//                     <h3 className="text-sm font-bold">eCampus Assured</h3>
+//                     <p className="text-xs text-red-100">
+//                       Get up to{" "}
+//                       <span className="font-bold text-yellow-300">
+//                         100% Course Fee Refund*
+//                       </span>
+//                     </p>
+//                   </div>
+//                 </div>
+//               </button>
+//             </div>
+
+//             {/* RIGHT PANEL */}
+//             <div className="relative flex max-h-[88vh] flex-col overflow-y-auto bg-white p-5 sm:p-6 md:p-8">
+//               <button
+//                 onClick={onClose}
+//                 className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:right-4 sm:top-4"
+//               >
+//                 <X className="h-4 w-4" />
+//               </button>
+
+//               {step !== "phone" && (
+//                 <button
+//                   onClick={handleBack}
+//                   className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:left-4 sm:top-4"
+//                 >
+//                   <ArrowLeft className="h-4 w-4" />
+//                 </button>
+//               )}
+
+//               <div className="m-auto w-full max-w-xs py-6">
+//                 <div className="flex justify-center md:hidden">
+//                   <img
+//                     src="/image/logo.png"
+//                     alt="logo"
+//                     className="mb-3 h-10 w-10 object-contain"
+//                   />
+//                 </div>
+
+//                 <h2 className="text-center text-xl font-bold text-black md:text-left md:text-2xl">
+//                   {step === "phone" && "Welcome to eCampus"}
+//                   {step === "otp" && "Enter OTP"}
+//                   {step === "email" && "Create Account"}
+//                 </h2>
+
+//                 <p className="mt-1.5 text-center text-xs text-gray-500 md:text-left">
+//                   {step === "phone" &&
+//                     "Create your account to explore India's best online degrees."}
+//                   {step === "otp" && `OTP sent to ${fullPhone}`}
+//                   {step === "email" && "Complete your details to continue."}
+//                 </p>
+
+//                 {error && (
+//                   <div className="mt-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
+//                     {error}
+//                   </div>
+//                 )}
+
+//                 {/* Segmented control */}
+//                 {step === "phone" && (
+//                   <>
+//                     <div className="mt-4 flex items-center justify-center">
+//                       <div className="rounded-full bg-red-50 p-1.5 shadow-inner">
+//                         <div className="flex rounded-full bg-white/80 p-0.5">
+//                           <button
+//                             onClick={() => {
+//                               setMode("mobile");
+//                               setError("");
+//                             }}
+//                             className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+//                               mode === "mobile"
+//                                 ? "bg-red-600 text-white shadow"
+//                                 : "text-gray-600"
+//                             }`}
+//                           >
+//                             <svg
+//                               className={`h-4 w-4 ${
+//                                 mode === "mobile"
+//                                   ? "text-white"
+//                                   : "text-red-600"
+//                               }`}
+//                               viewBox="0 0 24 24"
+//                               fill="none"
+//                               xmlns="http://www.w3.org/2000/svg"
+//                             >
+//                               <rect
+//                                 x="7"
+//                                 y="3"
+//                                 width="10"
+//                                 height="18"
+//                                 rx="2"
+//                                 stroke="currentColor"
+//                                 strokeWidth="1.2"
+//                               />
+//                             </svg>
+//                             Mobile Number
+//                           </button>
+//                           <button
+//                             onClick={() => {
+//                               setMode("email");
+//                               setError("");
+//                               setStep("email");
+//                             }}
+//                             className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+//                               mode === "email"
+//                                 ? "bg-red-600 text-white shadow"
+//                                 : "text-gray-600"
+//                             }`}
+//                           >
+//                             <svg
+//                               className={`h-4 w-4 ${
+//                                 mode === "email" ? "text-white" : "text-red-600"
+//                               }`}
+//                               viewBox="0 0 24 24"
+//                               fill="none"
+//                               xmlns="http://www.w3.org/2000/svg"
+//                             >
+//                               <path
+//                                 d="M3 8l9 6 9-6"
+//                                 stroke="currentColor"
+//                                 strokeWidth="1.2"
+//                                 strokeLinecap="round"
+//                                 strokeLinejoin="round"
+//                               />
+//                               <rect
+//                                 x="3"
+//                                 y="5"
+//                                 width="18"
+//                                 height="14"
+//                                 rx="2"
+//                                 stroke="currentColor"
+//                                 strokeWidth="1.2"
+//                               />
+//                             </svg>
+//                             Email
+//                           </button>
+//                         </div>
+//                       </div>
+//                     </div>
+
+//                     <form onSubmit={handlePhoneContinue} className="mt-5">
+//                       <label className="text-xs font-medium text-gray-600">
+//                         Mobile Number
+//                       </label>
+//                       <div className="mt-2 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
+//                         <div className="relative flex items-center gap-2 border-r border-gray-200 px-3">
+//                           <span className="text-sm">
+//                             {selectedCountry.flag}
+//                           </span>
+//                           <span className="text-xs font-medium text-black">
+//                             {selectedCountry.code}
+//                           </span>
+//                           <ChevronDown className="h-3 w-3 text-gray-400" />
+//                           <select
+//                             value={countryCode}
+//                             onChange={(e) => setCountryCode(e.target.value)}
+//                             className="absolute inset-0 w-full cursor-pointer opacity-0"
+//                           >
+//                             {countryCodes.map((c) => (
+//                               <option key={c.code} value={c.code}>
+//                                 {c.flag} {c.code} ({c.name})
+//                               </option>
+//                             ))}
+//                           </select>
+//                         </div>
+//                         <input
+//                           type="tel"
+//                           placeholder="Enter your mobile number"
+//                           value={phone}
+//                           onChange={(e) =>
+//                             setPhone(e.target.value.replace(/\D/g, ""))
+//                           }
+//                           maxLength={15}
+//                           required
+//                           className="flex-1 bg-white p-3 text-sm outline-none placeholder-gray-400"
+//                         />
+//                       </div>
+
+//                       <Button
+//                         type="submit"
+//                         disabled={loading || phone.length < 7}
+//                         className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                       >
+//                         <span>{loading ? "Sending..." : "Continue"}</span>
+//                         <ArrowRight className="h-4 w-4" />
+//                       </Button>
+
+//                       <div className="my-4 flex items-center gap-3">
+//                         <div className="h-px flex-1 bg-gray-200" />
+//                         <span className="text-xs text-gray-400">OR</span>
+//                         <div className="h-px flex-1 bg-gray-200" />
+//                       </div>
+
+//                       <button
+//                         type="button"
+//                         onClick={() => {
+//                           setStep("email");
+//                           setMode("email");
+//                           setError("");
+//                         }}
+//                         className="w-full rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+//                       >
+//                         Sign up with email instead
+//                       </button>
+//                     </form>
+//                   </>
+//                 )}
+
+//                 {step === "otp" && (
+//                   <form onSubmit={handleOtpVerify} className="mt-4">
+//                     <input
+//                       type="text"
+//                       inputMode="numeric"
+//                       placeholder="6-digit OTP"
+//                       value={otp}
+//                       onChange={(e) =>
+//                         setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+//                       }
+//                       maxLength={6}
+//                       required
+//                       autoFocus
+//                       className="w-full rounded-lg border border-gray-200 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+//                     />
+
+//                     <button
+//                       type="button"
+//                       onClick={handleResendOtp}
+//                       disabled={resendCooldown > 0 || loading}
+//                       className="mt-3 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+//                     >
+//                       {resendCooldown > 0
+//                         ? `Resend in ${resendCooldown}s`
+//                         : "Resend OTP"}
+//                     </button>
+
+//                     <Button
+//                       type="submit"
+//                       disabled={loading || otp.length !== 6}
+//                       className="mt-4 h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                     >
+//                       {loading ? "Verifying..." : "Continue"}
+//                     </Button>
+//                   </form>
+//                 )}
+
+//                 {step === "email" && (
+//                   <form
+//                     onSubmit={handleEmailContinue}
+//                     className="mt-4 space-y-2.5"
+//                   >
+//                     <input
+//                       type="text"
+//                       placeholder="Full Name"
+//                       value={name}
+//                       onChange={(e) => setName(e.target.value)}
+//                       required
+//                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <input
+//                       type="email"
+//                       placeholder="Email Address"
+//                       value={email}
+//                       onChange={(e) => setEmail(e.target.value)}
+//                       required
+//                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <input
+//                       type="password"
+//                       placeholder="Password (min. 8 characters)"
+//                       value={password}
+//                       onChange={(e) => setPassword(e.target.value)}
+//                       required
+//                       minLength={8}
+//                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+//                     />
+//                     <Button
+//                       type="submit"
+//                       disabled={loading}
+//                       className="h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+//                     >
+//                       {loading ? "Creating..." : "Continue"}
+//                     </Button>
+//                   </form>
+//                 )}
+
+//                 {/* Assured banner — mobile only, desktop already shows it in the left panel */}
+//                 <button
+//                   type="button"
+//                   onClick={() => setAssuredOptIn((v) => !v)}
+//                   className={`mt-5 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
+//                     assuredOptIn
+//                       ? "border-red-300 bg-red-50"
+//                       : "border-red-100 bg-red-50/60"
+//                   }`}
+//                 >
+//                   <div className="flex items-center gap-2.5">
+//                     <ShieldCheck className="text-red-600" size={22} />
+//                     <div>
+//                       <h3 className="text-xs font-semibold text-black">
+//                         eCampus Assured
+//                       </h3>
+//                       <p className="text-[11px] text-gray-600">
+//                         Get up to{" "}
+//                         <span className="font-bold text-red-600">
+//                           100% Refund*
+//                         </span>
+//                       </p>
+//                     </div>
+//                   </div>
+//                   <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-red-600 shadow">
+//                     Know More
+//                   </span>
+//                 </button>
+
+//                 <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-500">
+//                   By continuing, you agree to our{" "}
+//                   <a href="/terms" className="text-red-600 hover:underline">
+//                     Terms
+//                   </a>{" "}
+//                   &{" "}
+//                   <a href="/privacy" className="text-red-600 hover:underline">
+//                     Privacy Policy
+//                   </a>
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// function Feature({
+//   icon,
+//   title,
+//   desc,
+// }: {
+//   icon: React.ReactNode;
+//   title: string;
+//   desc: string;
+// }) {
+//   return (
+//     <div className="flex items-start gap-3">
+//       <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+//         {icon}
+//       </div>
+//       <div>
+//         <h3 className="text-sm font-semibold">{title}</h3>
+//         <p className="text-xs text-red-100">{desc}</p>
+//       </div>
+//     </div>
+//   );
+// }
+
+// test
 
 import { useState, useEffect } from "react";
 import {
@@ -821,6 +1958,7 @@ import {
   GraduationCap,
   Users,
   Laptop,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -861,6 +1999,7 @@ export function SignupModal({
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [assuredOptIn, setAssuredOptIn] = useState(false);
+  const [mode, setMode] = useState<"mobile" | "email">("mobile");
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -997,8 +2136,6 @@ export function SignupModal({
         onClick={onClose}
       />
 
-      {/* Outer wrapper scrolls as a last resort on very short screens,
-          so nothing is ever clipped off-screen. */}
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
           <div
@@ -1006,7 +2143,23 @@ export function SignupModal({
             onClick={(e) => e.stopPropagation()}
           >
             {/* LEFT PANEL */}
-            <div className="hidden max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-6 text-white md:flex lg:p-8">
+            <div className="hidden relative max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-8 text-white md:flex lg:p-10">
+              {/* decorative curve */}
+              <svg
+                className="absolute -right-20 -bottom-10 h-80 w-80 opacity-20"
+                viewBox="0 0 200 200"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
+              >
+                <defs>
+                  <radialGradient id="g" cx="30%" cy="30%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.06" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+                <circle cx="100" cy="100" r="100" fill="url(#g)" />
+              </svg>
+
               <div>
                 <img
                   src="/image/logo.png"
@@ -1014,17 +2167,17 @@ export function SignupModal({
                   className="mb-4 h-7 object-contain"
                 />
 
-                <h1 className="text-xl font-bold leading-snug lg:text-2xl">
+                <h1 className="text-2xl font-extrabold leading-snug lg:text-3xl">
                   Your Future.
                   <br />
                   Our Responsibility.
                 </h1>
 
-                <p className="mt-2 text-xs text-red-100 lg:text-sm">
+                <p className="mt-3 max-w-[18rem] text-sm text-red-100 lg:text-base">
                   Find the right university. Build the right career.
                 </p>
 
-                <div className="mt-5 space-y-3">
+                <div className="mt-6 space-y-4">
                   <Feature
                     icon={<GraduationCap size={16} />}
                     title="UGC Recognised Universities"
@@ -1051,7 +2204,7 @@ export function SignupModal({
               <button
                 type="button"
                 onClick={() => setAssuredOptIn((v) => !v)}
-                className={`mt-5 rounded-xl border p-3 text-left transition ${
+                className={`mt-6 rounded-xl border p-3 text-left transition ${
                   assuredOptIn
                     ? "border-yellow-300 bg-white/20"
                     : "border-white/20 bg-white/10"
@@ -1120,65 +2273,154 @@ export function SignupModal({
                   </div>
                 )}
 
+                {/* Segmented control */}
                 {step === "phone" && (
-                  <form onSubmit={handlePhoneContinue} className="mt-4">
-                    <div className="flex overflow-hidden rounded-lg border border-gray-300 transition focus-within:border-black">
-                      <div className="relative flex items-center gap-1 border-r border-gray-300 px-3">
-                        <span className="text-sm">{selectedCountry.flag}</span>
-                        <span className="text-xs font-medium text-black">
-                          {selectedCountry.code}
-                        </span>
-                        <ChevronDown className="h-3 w-3 text-gray-500" />
-                        <select
-                          value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
-                          className="absolute inset-0 w-full cursor-pointer opacity-0"
-                        >
-                          {countryCodes.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.flag} {c.code} ({c.name})
-                            </option>
-                          ))}
-                        </select>
+                  <>
+                    <div className="mt-4 flex items-center justify-center">
+                      <div className="rounded-full bg-red-50 p-1.5 shadow-inner">
+                        <div className="flex rounded-full bg-white/80 p-0.5">
+                          <button
+                            onClick={() => {
+                              setMode("mobile");
+                              setError("");
+                            }}
+                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                              mode === "mobile"
+                                ? "bg-red-600 text-white shadow"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            <svg
+                              className={`h-4 w-4 ${
+                                mode === "mobile"
+                                  ? "text-white"
+                                  : "text-red-600"
+                              }`}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="7"
+                                y="3"
+                                width="10"
+                                height="18"
+                                rx="2"
+                                stroke="currentColor"
+                                strokeWidth="1.2"
+                              />
+                            </svg>
+                            Mobile Number
+                          </button>
+                          <button
+                            onClick={() => {
+                              setMode("email");
+                              setError("");
+                              setStep("email");
+                            }}
+                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                              mode === "email"
+                                ? "bg-red-600 text-white shadow"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            <svg
+                              className={`h-4 w-4 ${
+                                mode === "email" ? "text-white" : "text-red-600"
+                              }`}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M3 8l9 6 9-6"
+                                stroke="currentColor"
+                                strokeWidth="1.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <rect
+                                x="3"
+                                y="5"
+                                width="18"
+                                height="14"
+                                rx="2"
+                                stroke="currentColor"
+                                strokeWidth="1.2"
+                              />
+                            </svg>
+                            Email
+                          </button>
+                        </div>
                       </div>
-                      <input
-                        type="tel"
-                        placeholder="Enter Mobile Number"
-                        value={phone}
-                        onChange={(e) =>
-                          setPhone(e.target.value.replace(/\D/g, ""))
-                        }
-                        maxLength={15}
-                        required
-                        className="flex-1 bg-white p-2.5 text-sm outline-none placeholder-gray-500"
-                      />
                     </div>
 
-                    <Button
-                      type="submit"
-                      disabled={loading || phone.length < 7}
-                      className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
-                    >
-                      {loading ? "Sending..." : "Continue"}
-                    </Button>
+                    <form onSubmit={handlePhoneContinue} className="mt-5">
+                      <label className="text-xs font-medium text-gray-600">
+                        Mobile Number
+                      </label>
+                      <div className="mt-2 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
+                        <div className="relative flex items-center gap-2 border-r border-gray-200 px-3">
+                          <span className="text-sm">
+                            {selectedCountry.flag}
+                          </span>
+                          <span className="text-xs font-medium text-black">
+                            {selectedCountry.code}
+                          </span>
+                          <ChevronDown className="h-3 w-3 text-gray-400" />
+                          <select
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                            className="absolute inset-0 w-full cursor-pointer opacity-0"
+                          >
+                            {countryCodes.map((c) => (
+                              <option key={c.code} value={c.code}>
+                                {c.flag} {c.code} ({c.name})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <input
+                          type="tel"
+                          placeholder="Enter your mobile number"
+                          value={phone}
+                          onChange={(e) =>
+                            setPhone(e.target.value.replace(/\D/g, ""))
+                          }
+                          maxLength={15}
+                          required
+                          className="flex-1 bg-white p-3 text-sm outline-none placeholder-gray-400"
+                        />
+                      </div>
 
-                    <div className="my-4 flex items-center gap-3">
-                      <div className="h-px flex-1 bg-gray-300" />
-                      <span className="text-xs text-gray-500">OR</span>
-                      <div className="h-px flex-1 bg-gray-300" />
-                    </div>
+                      <Button
+                        type="submit"
+                        disabled={loading || phone.length < 7}
+                        className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      >
+                        <span>{loading ? "Sending..." : "Continue"}</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setStep("email");
-                        setError("");
-                      }}
-                      className="w-full rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                    >
-                      Sign up with email
-                    </button>
-                  </form>
+                      <div className="my-4 flex items-center gap-3">
+                        <div className="h-px flex-1 bg-gray-200" />
+                        <span className="text-xs text-gray-400">OR</span>
+                        <div className="h-px flex-1 bg-gray-200" />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStep("email");
+                          setMode("email");
+                          setError("");
+                        }}
+                        className="w-full rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                      >
+                        Sign up with email instead
+                      </button>
+                    </form>
+                  </>
                 )}
 
                 {step === "otp" && (
@@ -1194,14 +2436,14 @@ export function SignupModal({
                       maxLength={6}
                       required
                       autoFocus
-                      className="w-full rounded-lg border border-gray-300 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+                      className="w-full rounded-lg border border-gray-200 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
                     />
 
                     <button
                       type="button"
                       onClick={handleResendOtp}
                       disabled={resendCooldown > 0 || loading}
-                      className="mt-2 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+                      className="mt-3 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
                     >
                       {resendCooldown > 0
                         ? `Resend in ${resendCooldown}s`
@@ -1211,7 +2453,7 @@ export function SignupModal({
                     <Button
                       type="submit"
                       disabled={loading || otp.length !== 6}
-                      className="mt-3 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      className="mt-4 h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
                       {loading ? "Verifying..." : "Continue"}
                     </Button>
@@ -1229,7 +2471,7 @@ export function SignupModal({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
                     />
                     <input
                       type="email"
@@ -1237,7 +2479,7 @@ export function SignupModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
                     />
                     <input
                       type="password"
@@ -1246,12 +2488,12 @@ export function SignupModal({
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
                     />
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      className="h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
                       {loading ? "Creating..." : "Continue"}
                     </Button>
@@ -1262,7 +2504,7 @@ export function SignupModal({
                 <button
                   type="button"
                   onClick={() => setAssuredOptIn((v) => !v)}
-                  className={`mt-4 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
+                  className={`mt-5 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
                     assuredOptIn
                       ? "border-red-300 bg-red-50"
                       : "border-red-100 bg-red-50/60"
@@ -1316,8 +2558,10 @@ function Feature({
   desc: string;
 }) {
   return (
-    <div className="flex items-start gap-2.5">
-      <div className="mt-0.5 rounded-lg bg-white/15 p-1.5">{icon}</div>
+    <div className="flex items-start gap-3">
+      <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+        {icon}
+      </div>
       <div>
         <h3 className="text-sm font-semibold">{title}</h3>
         <p className="text-xs text-red-100">{desc}</p>

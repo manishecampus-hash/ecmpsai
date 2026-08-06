@@ -104,7 +104,7 @@ export default function GGUDoctorateHero() {
                   AI Overview
                 </div>
               </div>
-              <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+              <p className="text-sm leading-relaxed text-slate-600 sm:text-base min-h-[180px]">
                 <span>{aiOverviewText}</span>
                 <span
                   className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
@@ -112,10 +112,6 @@ export default function GGUDoctorateHero() {
                   }`}
                   aria-hidden="true"
                 />
-                {/* Reserves the final space up front so nothing below shifts while typing */}
-                <span className="invisible">
-                  {AI_OVERVIEW_TEXT.slice(aiOverviewText.length)}
-                </span>
               </p>
             </div>
 
@@ -140,8 +136,8 @@ export default function GGUDoctorateHero() {
 
           {/* RIGHT: VIDEO FRAME SECTION (direct YouTube embed, no thumbnail/modal) */}
           <div className="relative">
-            <div className="relative z-10 overflow-hidden  shadow-2xl ring-1 ring-slate-200">
-              <div className="w-full h-[300px] sm:h-[360px] lg:h-[350px]">
+            <div className="relative z-10 overflow-hidden  shadow-2xl ring-1 ring-slate-200 rounded-xl">
+              <div className="w-full h-[260px] sm:h-[320px] md:h-[380px]">
                 <iframe
                   src={`https://www.youtube.com/embed/${youtubeVideoId}`}
                   title="Golden Gate University DBA Program Overview"

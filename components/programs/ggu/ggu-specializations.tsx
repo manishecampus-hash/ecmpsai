@@ -174,7 +174,7 @@ export default function GguTopSpecializations() {
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       {/* Centered Descriptive Copy Context Header */}
       <div className="mx-auto max-w-4xl text-center mb-10">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
           Top <span className="text-red-500">Specializations</span>
         </h2>
       </div>

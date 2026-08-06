@@ -172,7 +172,7 @@ export const quizQuestions: QuizQuestion[] = [
     subtitle: "We'll highlight programs with matching financial aid",
     options: [
       { id: "none", label: "Not needed", emoji: "⏭️" },
-      { id: "any", label: "Any scholarship", emoji: "🏅" },
+      { id: "any", label: "Any scholarship", emoji: "🏅", recommended: true },
       { id: "merit", label: "Merit-based", emoji: "🥇" },
       { id: "need", label: "Need-based", emoji: "🤝" },
       { id: "women", label: "Women Empowerment", emoji: "👩‍🎓" },

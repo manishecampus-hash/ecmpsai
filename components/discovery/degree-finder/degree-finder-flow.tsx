@@ -656,17 +656,20 @@ function QuizStepScreen({
       </div>
 
       <div
-        className={`mx-auto ${isScholarshipStep ? "max-w-md" : "max-w-2xl"}`}
+        className={`mx-auto px-4 sm:px-0 ${
+          isScholarshipStep ? "max-w-xs sm:max-w-sm" : "max-w-2xl"
+        }`}
       >
         {isScholarshipStep ? (
           <div className="space-y-3">
             {q.options.map((opt) => {
               const active = answers[q.id] === opt.id;
+
               return (
                 <button
                   key={opt.id}
                   onClick={() => onAnswer(q.id, opt.id)}
-                  className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
+                  className={`relative w-full p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
                     active
                       ? "border-emerald-500 bg-emerald-50"
                       : "border-gray-100 bg-white hover:border-emerald-200"
@@ -681,11 +684,18 @@ function QuizStepScreen({
                       <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />
                     )}
                   </div>
+
                   <span
                     className={`font-medium ${active ? "text-emerald-700" : "text-gray-700"}`}
                   >
                     {opt.label}
                   </span>
+
+                  {opt.recommended && (
+                    <span className="absolute -top-2 right-4 rounded-full bg-red-500 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">
+                      Recommended
+                    </span>
+                  )}
                 </button>
               );
             })}

@@ -1,137 +1,112 @@
 "use client";
 
-import {
-  Building2,
-  CreditCard,
-  GraduationCap,
-  Landmark,
-  ShieldCheck,
-} from "lucide-react";
+import React from "react";
 
-const feeOptions = [
+const feeCards = [
   {
-    icon: Landmark,
-    title: "Partner Bank EMI",
-    desc: "HDFC, ICICI, Axis Bank - no-cost EMI with instant approval",
+    title: "DBA (without Immersion)",
+    standardFee: "INR 10,65,000",
+    waiverPercent: "upto 20%",
+    monthlyPayment: "INR 22,222/month",
   },
   {
-    icon: CreditCard,
-    title: "NBFC & Fintech",
-    desc: "PaySense, KreditBee, EarlySalary - flexible tenures up to 36 months",
-  },
-  {
-    icon: Building2,
-    title: "Corporate Sponsorship",
-    desc: "Get your employer to sponsor with B2B invoicing and reimbursement support",
-  },
-  {
-    icon: GraduationCap,
-    title: "Scholarship Available",
-    desc: "Merit & need-based scholarships up to Rs.75,000 available",
+    title: "DBA (with Immersion)",
+    standardFee: "INR 12,15,000",
+    waiverPercent: "upto 20%",
+    monthlyPayment: "INR 26,388/month",
   },
 ];
 
-export default function GGUDoctorateFeeSection() {
+export default function GGUDoctorateFeeNew() {
   return (
     <section
       id="fee"
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.08), transparent 35%), #ffffff",
-        fontFamily: "'Inter', sans-serif",
-      }}
-      className="relative w-full px-4 py-10 text-slate-900 sm:px-6"
+      style={{}}
+      className="relative w-full px-4 py-16 text-slate-900 sm:px-6 lg:py-20"
     >
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <div className="mx-auto mb-10 max-w-7xl text-center px-4 sm:px-6 lg:px-8">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-              <ShieldCheck className="h-3.5 w-3.5 text-red-500" />
-              Investment
-            </span>
-
-            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-              Program Fee &<span className="text-red-500"> Financing</span>
+        {/* Header Section */}
+        <div className="">
+          <div className="mx-auto max-w-4xl text-center mb-10">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
+              Golden Gate DBA & MBA
+              <span className="text-red-500"> Course Fee</span>
             </h2>
           </div>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-            Flexible payment options to make a Golden Gate University DBA more
-            accessible for working executives and senior professionals.
-          </p>
+          <div className="flex justify-center mb-4">
+            <span className="inline-block rounded-full bg-red-600 px-6 py-2.5 text-base font-bold text-white shadow-lg shadow-red-200">
+              Limited Time Offer
+            </span>
+          </div>
         </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Fee Highlight Card */}
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 text-slate-900 shadow-[0_6px_18px_rgba(15,23,42,0.08)] sm:p-10">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-red-500/10" />
-            <div className="absolute bottom-0 left-0 h-28 w-28 -translate-x-10 translate-y-10 rounded-full bg-red-500/10 blur-2xl" />
-
-            <div className="relative z-10">
-              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                Total Program Fee
-              </div>
-
-              <div className="mb-2 text-4xl font-extrabold text-red-500 sm:text-5xl">
-                Rs.3,50,000
-              </div>
-
-              <div className="mb-6 text-sm text-slate-600 sm:text-base">
-                Online DBA Program - Golden Gate University
-              </div>
-
-              {/* EMI Box */}
-              <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4">
-                <div className="mb-1 flex items-center gap-2 text-sm font-bold text-red-600">
-                  <CreditCard className="h-4 w-4" />
-                  No-Cost EMI
-                </div>
-
-                <div className="text-sm leading-6 text-slate-700 sm:text-base">
-                  Starting from{" "}
-                  <span className="font-bold text-slate-900">
-                    Rs.9,750/month
-                  </span>{" "}
-                  with flexible payment tenure.
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <button className="w-full rounded-xl bg-red-600 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-[0_12px_28px_rgba(239,68,68,0.25)] sm:text-base">
-                Apply & Secure Seat
-              </button>
-            </div>
-          </div>
-
-          {/* Financing Options */}
-          <div className="flex flex-col gap-4">
-            {feeOptions.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.title}
-                  className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-red-50"
-                >
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600 transition group-hover:bg-red-500 group-hover:text-white">
-                    <Icon className="h-6 w-6" />
-                  </div>
-
-                  <div>
-                    <h3 className="mb-1 text-base font-bold text-slate-900">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-sm leading-6 text-slate-600 sm:text-[15px]">
-                      {item.desc}
-                    </p>
+        {/* Fee Cards Grid */}
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-8 max-w-4xl w-full">
+            {feeCards.map((card, index) => (
+              <div
+                key={index}
+                className="rounded-3xl border-2 border-slate-200 bg-white p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                {/* Title Badge */}
+                <div className="mb-6 flex justify-center">
+                  <div className="inline-block rounded-full border-2 border-slate-900 px-5 py-1.5 text-sm font-bold text-slate-900">
+                    {card.title}
                   </div>
                 </div>
-              );
-            })}
+
+                {/* Fee Details */}
+                <div className="mb-5 space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-semibold text-slate-700">
+                      Standard Fee:
+                    </span>
+                    <span className="text-base font-bold text-red-600">
+                      {card.standardFee}
+                    </span>
+                  </div>
+                  <div className="text-right text-xs text-slate-500">
+                    (Including taxes)
+                  </div>
+                </div>
+
+                {/* Waiver */}
+                <div className="mb-5 flex justify-between items-center">
+                  <span className="text-xs font-semibold text-slate-700">
+                    eCampus Waiver:
+                  </span>
+                  <span className="text-base font-bold text-red-600">
+                    {card.waiverPercent}
+                  </span>
+                </div>
+
+                {/* Divider */}
+                <div className="mb-6 h-px bg-slate-300" />
+
+                {/* Monthly Payment Section */}
+                <div className="text-center">
+                  <p className="mb-2 text-xs font-semibold text-slate-700">
+                    Complete your doctorate starting
+                  </p>
+                  <p className="text-2xl font-bold text-red-600 sm:text-3xl">
+                    {card.monthlyPayment}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-600">*</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="text-center">
+          <p className="text-base font-semibold text-slate-800">
+            <span className="text-slate-700">
+              * Block your seat now with only{" "}
+            </span>
+            <span className="text-red-600 font-bold">₹44,999/-</span>
+          </p>
         </div>
       </div>
     </section>

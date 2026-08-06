@@ -1954,10 +1954,12 @@ import {
   X,
   ArrowLeft,
   ChevronDown,
+  ChevronRight,
   ShieldCheck,
   GraduationCap,
   Users,
   Laptop,
+  Award,
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -2139,34 +2141,44 @@ export function SignupModal({
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
           <div
-            className="relative grid max-h-[88vh] w-full max-w-3xl grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+            className="relative grid w-full max-w-3xl grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl md:grid-cols-2"
             onClick={(e) => e.stopPropagation()}
           >
             {/* LEFT PANEL */}
-            <div className="hidden relative max-h-[88vh] flex-col justify-between overflow-y-auto bg-gradient-to-br from-red-700 via-red-600 to-red-500 p-8 text-white md:flex lg:p-10">
-              {/* decorative curve */}
+            <div className="hidden relative flex-col justify-between overflow-hidden bg-gradient-to-br from-red-800 via-red-600 to-red-500 p-8 text-white md:flex lg:p-10">
+              {/* decorative curved bg overlay */}
               <svg
-                className="absolute -right-20 -bottom-10 h-80 w-80 opacity-20"
-                viewBox="0 0 200 200"
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                viewBox="0 0 400 700"
+                preserveAspectRatio="xMidYMid slice"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden
               >
                 <defs>
-                  <radialGradient id="g" cx="30%" cy="30%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.06" />
+                  <radialGradient id="glowTopRight" cx="30%" cy="30%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.10" />
                     <stop offset="100%" stopColor="#000000" stopOpacity="0" />
                   </radialGradient>
                 </defs>
-                <circle cx="100" cy="100" r="100" fill="url(#g)" />
+                <path
+                  d="M -50 550 C 80 480, 120 620, 260 560 C 380 510, 420 640, 500 600 L 500 750 L -50 750 Z"
+                  fill="#000000"
+                  opacity="0.10"
+                />
+                <path
+                  d="M -50 620 C 100 560, 180 700, 320 630 C 420 585, 460 700, 520 660 L 520 750 L -50 750 Z"
+                  fill="#000000"
+                  opacity="0.14"
+                />
+                <path
+                  d="M 250 -50 C 340 40, 300 150, 420 180 C 480 195, 520 140, 560 200 L 560 -50 Z"
+                  fill="#ffffff"
+                  opacity="0.06"
+                />
+                <circle cx="360" cy="120" r="140" fill="url(#glowTopRight)" />
               </svg>
 
-              <div>
-                <img
-                  src="/image/logo.png"
-                  alt="logo"
-                  className="mb-4 h-7 object-contain"
-                />
-
+              <div className="relative z-10">
                 <h1 className="text-2xl font-extrabold leading-snug lg:text-3xl">
                   Your Future.
                   <br />
@@ -2189,14 +2201,14 @@ export function SignupModal({
                     desc="Learn at your own pace"
                   />
                   <Feature
-                    icon={<Users size={16} />}
-                    title="Career Focused Programs"
-                    desc="Skills that employers value"
+                    icon={<Award size={16} />}
+                    title="Career-Focused Programs"
+                    desc="Skills for a better tomorrow"
                   />
                   <Feature
-                    icon={<ShieldCheck size={16} />}
-                    title="Personal Student Support"
-                    desc="From admission till graduation"
+                    icon={<Users size={16} />}
+                    title="Personalised Student Support"
+                    desc="From admission to graduation"
                   />
                 </div>
               </div>
@@ -2204,7 +2216,7 @@ export function SignupModal({
               <button
                 type="button"
                 onClick={() => setAssuredOptIn((v) => !v)}
-                className={`mt-6 rounded-xl border p-3 text-left transition ${
+                className={`relative z-10 mt-6 rounded-xl border p-3 text-left transition ${
                   assuredOptIn
                     ? "border-yellow-300 bg-white/20"
                     : "border-white/20 bg-white/10"
@@ -2228,7 +2240,7 @@ export function SignupModal({
             </div>
 
             {/* RIGHT PANEL */}
-            <div className="relative flex max-h-[88vh] flex-col overflow-y-auto bg-white p-5 sm:p-6 md:p-8">
+            <div className="relative flex flex-col bg-white p-5 sm:p-6 md:p-8">
               <button
                 onClick={onClose}
                 className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:right-4 sm:top-4"
@@ -2245,30 +2257,30 @@ export function SignupModal({
                 </button>
               )}
 
-              <div className="m-auto w-full max-w-xs py-6">
-                <div className="flex justify-center md:hidden">
+              <div className="m-auto w-full max-w-xs py-4">
+                <div className="flex justify-center">
                   <img
                     src="/image/logo.png"
                     alt="logo"
-                    className="mb-3 h-10 w-10 object-contain"
+                    className="mb-2 h-6 object-contain"
                   />
                 </div>
 
-                <h2 className="text-center text-xl font-bold text-black md:text-left md:text-2xl">
-                  {step === "phone" && "Welcome to eCampus"}
+                <h2 className="text-center text-lg font-bold text-black md:text-left md:text-xl">
+                  {step === "phone" && "Welcome to eCampus!"}
                   {step === "otp" && "Enter OTP"}
                   {step === "email" && "Create Account"}
                 </h2>
 
-                <p className="mt-1.5 text-center text-xs text-gray-500 md:text-left">
+                <p className="mt-1 text-center text-xs text-gray-500 md:text-left">
                   {step === "phone" &&
-                    "Create your account to explore India's best online degrees."}
+                    "Create your account to explore top online programs"}
                   {step === "otp" && `OTP sent to ${fullPhone}`}
                   {step === "email" && "Complete your details to continue."}
                 </p>
 
                 {error && (
-                  <div className="mt-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
+                  <div className="mt-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
                     {error}
                   </div>
                 )}
@@ -2276,90 +2288,90 @@ export function SignupModal({
                 {/* Segmented control */}
                 {step === "phone" && (
                   <>
-                    <div className="mt-4 flex items-center justify-center">
-                      <div className="rounded-full bg-red-50 p-1.5 shadow-inner">
-                        <div className="flex rounded-full bg-white/80 p-0.5">
-                          <button
-                            onClick={() => {
-                              setMode("mobile");
-                              setError("");
-                            }}
-                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                    <div className="mt-3">
+                      <div className="flex rounded-2xl bg-red-50 p-1">
+                        <button
+                          onClick={() => {
+                            setMode("mobile");
+                            setError("");
+                          }}
+                          className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
+                            mode === "mobile"
+                              ? "bg-white text-red-600 shadow-sm"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          <svg
+                            className={`h-4 w-4 shrink-0 ${
                               mode === "mobile"
-                                ? "bg-red-600 text-white shadow"
-                                : "text-gray-600"
+                                ? "text-red-600"
+                                : "text-gray-400"
                             }`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            <svg
-                              className={`h-4 w-4 ${
-                                mode === "mobile"
-                                  ? "text-white"
-                                  : "text-red-600"
-                              }`}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <rect
-                                x="7"
-                                y="3"
-                                width="10"
-                                height="18"
-                                rx="2"
-                                stroke="currentColor"
-                                strokeWidth="1.2"
-                              />
-                            </svg>
-                            Mobile Number
-                          </button>
-                          <button
-                            onClick={() => {
-                              setMode("email");
-                              setError("");
-                              setStep("email");
-                            }}
-                            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                            <rect
+                              x="7"
+                              y="3"
+                              width="10"
+                              height="18"
+                              rx="2"
+                              stroke="currentColor"
+                              strokeWidth="1.2"
+                            />
+                          </svg>
+                          Mobile Number
+                        </button>
+                        <button
+                          onClick={() => {
+                            setMode("email");
+                            setError("");
+                            setStep("email");
+                          }}
+                          className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
+                            mode === "email"
+                              ? "bg-white text-red-600 shadow-sm"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          <svg
+                            className={`h-4 w-4 shrink-0 ${
                               mode === "email"
-                                ? "bg-red-600 text-white shadow"
-                                : "text-gray-600"
+                                ? "text-red-600"
+                                : "text-gray-400"
                             }`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            <svg
-                              className={`h-4 w-4 ${
-                                mode === "email" ? "text-white" : "text-red-600"
-                              }`}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3 8l9 6 9-6"
-                                stroke="currentColor"
-                                strokeWidth="1.2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              <rect
-                                x="3"
-                                y="5"
-                                width="18"
-                                height="14"
-                                rx="2"
-                                stroke="currentColor"
-                                strokeWidth="1.2"
-                              />
-                            </svg>
-                            Email
-                          </button>
-                        </div>
+                            <path
+                              d="M3 8l9 6 9-6"
+                              stroke="currentColor"
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <rect
+                              x="3"
+                              y="5"
+                              width="18"
+                              height="14"
+                              rx="2"
+                              stroke="currentColor"
+                              strokeWidth="1.2"
+                            />
+                          </svg>
+                          Email
+                        </button>
                       </div>
                     </div>
 
-                    <form onSubmit={handlePhoneContinue} className="mt-5">
+                    <form onSubmit={handlePhoneContinue} className="mt-3">
                       <label className="text-xs font-medium text-gray-600">
                         Mobile Number
                       </label>
-                      <div className="mt-2 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
+                      <div className="mt-1.5 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
                         <div className="relative flex items-center gap-2 border-r border-gray-200 px-3">
                           <span className="text-sm">
                             {selectedCountry.flag}
@@ -2389,22 +2401,22 @@ export function SignupModal({
                           }
                           maxLength={15}
                           required
-                          className="flex-1 bg-white p-3 text-sm outline-none placeholder-gray-400"
+                          className="flex-1 bg-white p-2.5 text-sm outline-none placeholder-gray-400"
                         />
                       </div>
 
                       <Button
                         type="submit"
                         disabled={loading || phone.length < 7}
-                        className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                        className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                       >
                         <span>{loading ? "Sending..." : "Continue"}</span>
                         <ArrowRight className="h-4 w-4" />
                       </Button>
 
-                      <div className="my-4 flex items-center gap-3">
+                      <div className="my-3 flex items-center gap-3">
                         <div className="h-px flex-1 bg-gray-200" />
-                        <span className="text-xs text-gray-400">OR</span>
+                        <span className="text-xs text-gray-400">or</span>
                         <div className="h-px flex-1 bg-gray-200" />
                       </div>
 
@@ -2415,7 +2427,7 @@ export function SignupModal({
                           setMode("email");
                           setError("");
                         }}
-                        className="w-full rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                        className="w-full py-0.5 text-center text-sm font-semibold text-gray-800 transition hover:text-red-600"
                       >
                         Sign up with email instead
                       </button>
@@ -2424,7 +2436,7 @@ export function SignupModal({
                 )}
 
                 {step === "otp" && (
-                  <form onSubmit={handleOtpVerify} className="mt-4">
+                  <form onSubmit={handleOtpVerify} className="mt-3">
                     <input
                       type="text"
                       inputMode="numeric"
@@ -2443,7 +2455,7 @@ export function SignupModal({
                       type="button"
                       onClick={handleResendOtp}
                       disabled={resendCooldown > 0 || loading}
-                      className="mt-3 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+                      className="mt-2 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
                     >
                       {resendCooldown > 0
                         ? `Resend in ${resendCooldown}s`
@@ -2453,7 +2465,7 @@ export function SignupModal({
                     <Button
                       type="submit"
                       disabled={loading || otp.length !== 6}
-                      className="mt-4 h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      className="mt-3 h-11 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
                       {loading ? "Verifying..." : "Continue"}
                     </Button>
@@ -2463,7 +2475,7 @@ export function SignupModal({
                 {step === "email" && (
                   <form
                     onSubmit={handleEmailContinue}
-                    className="mt-4 space-y-2.5"
+                    className="mt-3 space-y-2"
                   >
                     <input
                       type="text"
@@ -2493,43 +2505,46 @@ export function SignupModal({
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      className="h-11 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
                       {loading ? "Creating..." : "Continue"}
                     </Button>
                   </form>
                 )}
 
-                {/* Assured banner — mobile only, desktop already shows it in the left panel */}
+                {/* Assured banner — shown in the logo panel (both mobile & desktop), single instance */}
                 <button
                   type="button"
                   onClick={() => setAssuredOptIn((v) => !v)}
-                  className={`mt-5 flex w-full items-center justify-between rounded-xl border p-3 text-left transition md:hidden ${
+                  className={`mt-3 w-full rounded-lg border p-2.5 text-left transition ${
                     assuredOptIn
                       ? "border-red-300 bg-red-50"
                       : "border-red-100 bg-red-50/60"
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="text-red-600" size={22} />
-                    <div>
-                      <h3 className="text-xs font-semibold text-black">
-                        eCampus Assured
-                      </h3>
-                      <p className="text-[11px] text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="text-red-600" size={16} />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-[11px] font-semibold text-black">
+                          eCampus Assured
+                        </h3>
+                        <span className="flex items-center gap-0.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600">
+                          Know More
+                          <ChevronRight size={10} />
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-gray-600">
                         Get up to{" "}
                         <span className="font-bold text-red-600">
-                          100% Refund*
+                          100% Course Fee Refund*
                         </span>
                       </p>
                     </div>
                   </div>
-                  <span className="rounded-full bg-white px-2.5 py-1 text-[11px] text-red-600 shadow">
-                    Know More
-                  </span>
                 </button>
 
-                <p className="mt-4 text-center text-[11px] leading-relaxed text-gray-500">
+                <p className="mt-3 text-center text-[11px] leading-relaxed text-gray-500">
                   By continuing, you agree to our{" "}
                   <a href="/terms" className="text-red-600 hover:underline">
                     Terms

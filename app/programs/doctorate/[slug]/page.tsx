@@ -5,7 +5,7 @@ import GGUDoctorateSpecializations from "@/components/programs/ggu/ggu-specializ
 import GGUDoctorateSyllabus from "@/components/programs/ggu/ggu-syllabus";
 import GguUniversitySection from "@/components/programs/ggu/ggu-university-section";
 import GguReadMore from "@/components/programs/ggu/read-more";
-import GGUDoctorateCurriculum from "@/components/programs/ggu/ggu-curriculum";
+// import GGUDoctorateCurriculum from "@/components/programs/ggu/ggu-curriculum";
 import GGUDoctorateFeeSection from "@/components/programs/ggu/ggu-eligibility-fees";
 import GGUDoctorateCareers from "@/components/programs/ggu/ggu-careers";
 import GGUDoctorateTestimonials from "@/components/programs/ggu/ggu-testimonials-section";
@@ -32,10 +32,6 @@ export default function GguPage() {
           <GguUniversitySection />
           <GguReadMore />
           <GGUCertificate />
-        </div>
-
-        <div id="subject-syllabus">
-          <GGUDoctorateCurriculum />
         </div>
 
         <div id="eligibility-duration">

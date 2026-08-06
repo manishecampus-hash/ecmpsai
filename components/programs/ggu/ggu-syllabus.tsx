@@ -1,142 +1,359 @@
-import React from "react";
-import { BookOpen, GraduationCap, CheckSquare } from "lucide-react";
+"use client";
 
-interface Semester {
+import React, { useRef, useState } from "react";
+import { Download, ChevronRight, ChevronLeft } from "lucide-react";
+
+interface Course {
   id: number;
+  code: string;
   title: string;
-  subjects: string[];
+  description: string;
+  topics: string[];
 }
 
-const semesters: Semester[] = [
+const courses: Course[] = [
   {
     id: 1,
-    title: "Semester 1",
-    subjects: [
-      "Advanced Research Methods",
-      "Organizational Theory & Behavior",
-      "Strategic Leadership",
-      "Quantitative Analysis for Business",
-      "Academic Writing & Doctoral Seminar",
+    code: "DBA 800",
+    title: "Doctoral Writing",
+    description:
+      "Develop advanced research skills to conduct and present doctoral-level research effectively.",
+    topics: [
+      "Introduction to Research",
+      "Identifying the Research Problem",
+      "Conducting Literature Research and Review",
+      "Structuring and Drafting a Literature Review",
+      "Formulating a Research Question and Hypothesis",
+      "Choosing a Research Method",
+      "Collecting and Analyzing Data",
     ],
   },
   {
     id: 2,
-    title: "Semester 2",
-    subjects: [
-      "Applied Statistics & Data Analysis",
-      "Corporate Finance Theory",
-      "Global Business Strategy",
-      "Qualitative Research Methods",
-      "Ethics in Business Research",
+    code: "DBA 801",
+    title: "Quantitative Research Methods",
+    description:
+      "Master quantitative analysis and statistical methods for business research and data-driven decision making.",
+    topics: [
+      "Quantitative Research Design",
+      "Sampling Techniques and Methods",
+      "Questionnaire Development",
+      "Statistical Foundations",
+      "Descriptive Statistics",
+      "Hypothesis Testing",
+      "Regression Analysis",
     ],
   },
   {
     id: 3,
-    title: "Semester 3",
-    subjects: [
-      "Marketing Strategy & Consumer Insights",
-      "Organizational Change & Innovation",
-      "Economic Analysis for Decision Making",
-      "Dissertation Seminar I",
-      "Elective I",
+    code: "DBA 802",
+    title: "Qualitative Research Methods",
+    description:
+      "Explore qualitative research methodologies for in-depth business insights and theory development.",
+    topics: [
+      "Qualitative Research Paradigms",
+      "Interview Techniques",
+      "Focus Group Discussions",
+      "Ethnographic Research",
+      "Case Study Analysis",
+      "Content Analysis",
+      "Thematic Coding and Analysis",
     ],
   },
   {
     id: 4,
-    title: "Semester 4",
-    subjects: [
-      "Advanced Financial Management",
-      "Leadership & Corporate Governance",
-      "Research Design & Proposal Development",
-      "Dissertation Seminar II",
-      "Elective II",
+    code: "DBA 820",
+    title: "Corporate Finance",
+    description:
+      "Analyze corporate finance theories and apply them to strategic business decisions and organizational growth.",
+    topics: [
+      "Financial Statement Analysis",
+      "Capital Budgeting",
+      "Cost of Capital",
+      "Financial Leverage",
+      "Working Capital Management",
+      "Valuation Methods",
+      "Dividend Policy",
     ],
   },
   {
     id: 5,
-    title: "Semester 5",
-    subjects: [
-      "Comprehensive Examination Preparation",
-      "Dissertation Proposal Defense",
-      "Applied Research Project",
-      "Elective: Finance / Marketing / Leadership",
+    code: "DBA 821",
+    title: "Financial Theory",
+    description:
+      "Deep dive into advanced financial theories and their applications in modern business environments.",
+    topics: [
+      "Portfolio Theory",
+      "Asset Pricing Models",
+      "Market Efficiency",
+      "Risk Management",
+      "Derivatives and Hedging",
+      "Behavioral Finance",
+      "Financial Innovation",
     ],
   },
   {
     id: 6,
-    title: "Semester 6",
-    subjects: [
-      "Dissertation Research & Data Collection",
-      "Dissertation Writing",
-      "Final Dissertation Defense",
-      "Doctoral Capstone",
+    code: "DBA 822",
+    title: "International Finance",
+    description:
+      "Understand global financial markets, international business transactions, and cross-border financial management.",
+    topics: [
+      "Exchange Rate Markets",
+      "International Trade Finance",
+      "Foreign Direct Investment",
+      "International Capital Markets",
+      "Sovereign Debt",
+      "International Monetary System",
+      "Cross-Border Valuation",
+    ],
+  },
+  {
+    id: 7,
+    code: "DBA 850",
+    title: "Data as an Asset",
+    description:
+      "Examine how organizations treat data as a strategic asset, covering governance, quality, and value creation.",
+    topics: [
+      "Data Governance Frameworks",
+      "Data Quality Management",
+      "Data as a Strategic Resource",
+      "Data Monetization Strategies",
+      "Master Data Management",
+      "Data Privacy and Compliance",
+      "Building a Data-Driven Culture",
+    ],
+  },
+  {
+    id: 8,
+    code: "DBA 851",
+    title: "Operational Performance",
+    description:
+      "Study frameworks and metrics for measuring and improving organizational operational performance.",
+    topics: [
+      "Operations Strategy",
+      "Process Improvement Methods",
+      "Performance Measurement Systems",
+      "Lean and Six Sigma",
+      "Supply Chain Optimization",
+      "Quality Management",
+      "Benchmarking and KPIs",
+    ],
+  },
+  {
+    id: 9,
+    code: "DBA 852",
+    title: "Application of AI",
+    description:
+      "Explore practical applications of artificial intelligence in business strategy and decision making.",
+    topics: [
+      "AI Fundamentals for Business",
+      "Machine Learning Applications",
+      "AI-Driven Decision Making",
+      "Ethics and Governance of AI",
+      "AI in Business Process Automation",
+      "Data-Driven AI Strategy",
+      "Emerging AI Technologies",
+    ],
+  },
+  {
+    id: 10,
+    code: "DBA 870",
+    title: "Marketing Management",
+    description:
+      "Analyze strategic marketing management principles and their application to competitive business environments.",
+    topics: [
+      "Marketing Strategy Development",
+      "Market Segmentation and Targeting",
+      "Brand Management",
+      "Product Positioning",
+      "Pricing Strategy",
+      "Marketing Analytics",
+      "Competitive Analysis",
+    ],
+  },
+  {
+    id: 11,
+    code: "DBA 871",
+    title: "Consumer Behavior",
+    description:
+      "Investigate the psychological, social, and cultural factors that influence consumer decision making.",
+    topics: [
+      "Consumer Decision Processes",
+      "Psychological Influences on Buying",
+      "Social and Cultural Factors",
+      "Consumer Research Methods",
+      "Brand Perception and Loyalty",
+      "Behavioral Segmentation",
+      "Ethical Considerations in Marketing",
+    ],
+  },
+  {
+    id: 12,
+    code: "DBA 872",
+    title: "Digital Marketing and New Media",
+    description:
+      "Explore digital marketing strategies, new media platforms, and their role in modern business growth.",
+    topics: [
+      "Digital Marketing Strategy",
+      "Social Media Marketing",
+      "Search Engine Optimization",
+      "Content Marketing",
+      "Influencer and New Media Trends",
+      "Digital Analytics and Metrics",
+      "Omnichannel Marketing",
     ],
   },
 ];
 
-export default function GGUDoctorateSyllabus() {
+export default function GGUDoctorateSyllabusNew() {
+  const [selectedCourse, setSelectedCourse] = useState(courses[0]);
+  const [expandedTopics, setExpandedTopics] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollByAmount = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = 200;
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.06), transparent 35%), #ffffff",
-        fontFamily: "'Inter', sans-serif",
-      }}
-      className="relative w-full px-4 py-12 text-slate-900 sm:px-6"
+      style={{}}
+      className="relative w-full px-4 py-14 text-slate-900 sm:px-6 lg:py-16"
     >
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
-            <BookOpen className="h-3.5 w-3.5 text-red-500" />
-            Syllabus
-          </span>
-
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
-            Online DBA
-            <span className="text-red-500"> Syllabus</span>
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
+            Online DBA <span className="text-red-500">Syllabus</span>
           </h2>
-
-          <p className="mt-6 text-lg leading-relaxed text-slate-600">
-            The{" "}
-            <strong className="text-slate-900">
-              Golden Gate University Online DBA syllabus
-            </strong>{" "}
-            is spread across{" "}
-            <strong className="text-slate-900">6 semesters</strong>, covering
-            advanced research methods, strategic leadership, and applied
-            business theory, culminating in an original dissertation.
-          </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {semesters.map((sem) => (
-            <div
-              key={sem.id}
-              className="flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-red-50">
-                  <GraduationCap className="h-5 w-5 text-red-500" />
-                </span>
-                <h3 className="text-lg font-bold text-slate-900">
-                  {sem.title}
-                </h3>
-              </div>
+        {/* Course Cards Carousel */}
+        <div className="relative mb-10">
+          {/* Left arrow */}
+          <button
+            onClick={() => scrollByAmount("left")}
+            aria-label="Scroll left"
+            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white shadow-md hover:bg-slate-50"
+          >
+            <ChevronLeft className="h-5 w-5 text-slate-600" />
+          </button>
 
-              <div className="mt-4 flex-1 space-y-3">
-                {sem.subjects.map((subject) => (
-                  <div key={subject} className="flex items-start gap-2.5">
-                    <CheckSquare className="mt-0.5 h-4 w-4 flex-shrink-0 fill-red-500 text-red-500" />
-                    <p className="text-sm leading-relaxed text-slate-600">
-                      {subject}
-                    </p>
+          <div
+            ref={scrollRef}
+            className="flex gap-3 overflow-x-auto scroll-smooth px-8 pb-2 scrollbar-hide"
+          >
+            {courses.map((course) => (
+              <button
+                key={course.id}
+                onClick={() => setSelectedCourse(course)}
+                className={`flex w-40 flex-shrink-0 flex-col items-start justify-center rounded-2xl px-4 py-4 text-left transition-all sm:w-44 ${
+                  selectedCourse.id === course.id
+                    ? "border-2 border-red-500 bg-white shadow-md"
+                    : "border border-slate-200 bg-slate-50 hover:bg-white"
+                }`}
+              >
+                <div
+                  className={`mb-2 text-xs font-semibold uppercase tracking-wide ${
+                    selectedCourse.id === course.id
+                      ? "text-red-500"
+                      : "text-slate-500"
+                  }`}
+                >
+                  {course.code}
+                </div>
+                <div
+                  className={`text-sm font-bold leading-snug ${
+                    selectedCourse.id === course.id
+                      ? "text-red-600"
+                      : "text-slate-700"
+                  }`}
+                >
+                  {course.title}
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          <button
+            onClick={() => scrollByAmount("right")}
+            aria-label="Scroll right"
+            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white shadow-md hover:bg-slate-50"
+          >
+            <ChevronRight className="h-5 w-5 text-slate-600" />
+          </button>
+        </div>
+
+        {/* Course Details */}
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-10 shadow-lg">
+          {/* Course Title & Description */}
+          <div className="mb-8">
+            <h2 className="mb-4 text-2xl font-bold text-slate-900">
+              {selectedCourse.title} and Research Methods
+            </h2>
+            <p className="text-base leading-relaxed text-slate-600">
+              {selectedCourse.description}
+            </p>
+          </div>
+
+          {/* Topics Section */}
+          <div>
+            <button
+              onClick={() => setExpandedTopics(!expandedTopics)}
+              className="mb-4 flex items-center gap-2 text-base font-bold text-slate-900 hover:text-red-600"
+            >
+              Topics Covered:
+              <ChevronRight
+                className={`h-5 w-5 transition-transform ${
+                  expandedTopics ? "rotate-90" : ""
+                }`}
+              />
+            </button>
+
+            {expandedTopics && (
+              <div className="space-y-3">
+                {selectedCourse.topics.map((topic, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 border-red-500 bg-red-50">
+                      <div className="h-2 w-2 rounded-full bg-red-500" />
+                    </div>
+                    <p className="text-base text-slate-700">{topic}</p>
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
+            )}
+
+            <button className="mt-6 text-base font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+              Read More
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Download Button */}
+        <div className="mt-10 flex justify-center">
+          <button className="flex items-center gap-2 rounded-lg bg-red-600 px-8 py-3.5 font-bold text-white shadow-lg shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg hover:shadow-red-300">
+            <Download className="h-5 w-5" />
+            Download Syllabus
+          </button>
         </div>
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 }

@@ -87,8 +87,8 @@ export default function GguDBAVsPhDSection() {
         .dt-hrow {
           display: grid;
           grid-template-columns: 1.2fr 1fr 1fr;
-          background: #FF5563;
-          border-bottom: 1px solid #FF5563;
+          background: #ef4444;
+          border-bottom: 1px solid #ef4444;
         }
         .dt-hempty { padding: 16px 20px; }
         .dt-hcell {
@@ -149,13 +149,13 @@ export default function GguDBAVsPhDSection() {
           background: inherit;
           border-left: 1px solid #e0e0e0;
         }
-        .dt-dba p { margin: 0; font-size: 13px; color: #333333; line-height: 1.6; }
+        .dt-dba p { margin: 0; font-size: 13px; color: #000; line-height: 1.6; }
         .dt-phd {
           padding: 16px 20px;
           background: inherit;
           border-left: 1px solid #e0e0e0;
         }
-        .dt-phd p { margin: 0; font-size: 13px; color: #666666; line-height: 1.6; }
+        .dt-phd p { margin: 0; font-size: 13px; color: #000; line-height: 1.6; }
 
         /* ── MOBILE CARDS ── */
         .mb-cards {
@@ -179,8 +179,8 @@ export default function GguDBAVsPhDSection() {
           font-size: 14px;
           color: #ffffff;
         }
-        .mb-col-hdr.dba { background: #FF5563; }
-        .mb-col-hdr.phd { background: #FF5563; }
+        .mb-col-hdr.dba { background: #ef4444; }
+        .mb-col-hdr.phd { background: #ef4444; }
 
         .mb-card {
           border-radius: 8px;
@@ -239,9 +239,9 @@ export default function GguDBAVsPhDSection() {
       `}</style>
 
       <section className="dba-wrap">
-        <div className="dba-heading">
-          <h2>
-            Why <span className="red">Choose a DBA</span> Over a PhD?
+        <div className="mx-auto max-w-4xl text-center mb-10">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
+            Why Choose a DBA<span className="text-red-500"> Over a PhD?</span>
           </h2>
         </div>
 

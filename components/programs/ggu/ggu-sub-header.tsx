@@ -344,6 +344,26 @@ export default function GguSubHeader() {
               </Link>
             );
           }
+
+          if (item.id === "specializations") {
+            return (
+              <Link
+                key={item.id}
+                href="/programs/doctorate/ggu/emi-details"
+                style={{
+                  flex: "0 0 auto",
+                  whiteSpace: "nowrap",
+                  padding: "0.5rem 0.25rem",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "#111827",
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </Link>
+            );
+          }
           return (
             <button
               key={item.id}

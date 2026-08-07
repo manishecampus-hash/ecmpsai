@@ -22,7 +22,7 @@ export default function GGUDoctorateFeeNew() {
     <section
       id="fee"
       style={{}}
-      className="relative w-full px-4 py-16 text-slate-900 sm:px-6 lg:py-20"
+      className="relative w-full px-4 pt-4 pb-16 text-slate-900 sm:px-6 lg:pt-6 lg:pb-20"
     >
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
@@ -100,14 +100,6 @@ export default function GGUDoctorateFeeNew() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center">
-          <p className="text-base font-semibold text-slate-800">
-            <span className="text-slate-700">
-              * Block your seat now with only{" "}
-            </span>
-            <span className="text-red-600 font-bold">₹44,999/-</span>
-          </p>
-        </div>
       </div>
     </section>
   );

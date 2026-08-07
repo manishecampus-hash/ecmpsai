@@ -223,7 +223,7 @@ export default function GGUDoctorateSyllabusNew() {
   return (
     <section
       style={{}}
-      className="relative w-full px-4 py-14 text-slate-900 sm:px-6 lg:py-16"
+      className="relative w-full px-4 pt-0 pb-14 -mt-8 text-slate-900 sm:px-6 lg:pb-16"
     >
       <div className="mx-auto max-w-7xl">
         {/* Header */}

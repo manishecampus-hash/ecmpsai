@@ -171,7 +171,7 @@ export default function GguTopSpecializations() {
     /* ============================================================
         TOP SPECIALIZATIONS MATRIX TABLE COMPONENT
        ============================================================ */
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section className="mx-auto max-w-7xl px-4 pt-4 pb-12 sm:px-6 sm:pt-6 sm:pb-16 lg:px-8 lg:pt-8 lg:pb-20">
       {/* Centered Descriptive Copy Context Header */}
       <div className="mx-auto max-w-4xl text-center mb-10">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
@@ -180,7 +180,7 @@ export default function GguTopSpecializations() {
       </div>
 
       {/* Floating Action Filter Row Bar */}
-      <div className="mb-6 flex justify-end">
+      <div className="-mt-6 mb-6 flex justify-end">
         <div className="relative w-full max-w-xs">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
             <Search className="h-4 w-4" />
@@ -199,7 +199,7 @@ export default function GguTopSpecializations() {
       </div>
 
       {/* Structured Responsive Matrix Grid Wrapper Canvas */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
+      <div className="-mt-2 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
         <table className="w-full border-collapse text-left text-sm">
           {/* Custom Header Element Styling mimicking requested layout context */}
           <thead>

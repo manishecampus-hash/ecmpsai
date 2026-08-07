@@ -139,7 +139,7 @@ export default function SpecializationFaq() {
   return (
     <div
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="w-full bg-white px-4 pt-12 pb-12 sm:px-6 lg:px-8 lg:pb-0"
+      className="w-full bg-white px-4 pt-2 pb-12 sm:px-6 lg:px-8 lg:pb-0"
     >
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}

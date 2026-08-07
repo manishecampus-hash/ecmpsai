@@ -9,7 +9,7 @@ const staticSlides = [
   {
     id: "static-1",
     desktop: "/banner/new333.svg",
-    mobile: "/banner/desktop1.png",
+    mobile: "/banner/mobileupdate.svg",
     slug: "",
     title: "",
     category: "",
@@ -18,7 +18,7 @@ const staticSlides = [
   {
     id: "static-2",
     desktop: "/banner/newupdatebanner.svg",
-    mobile: "/banner/mobile2.png",
+    mobile: "/banner/mobileupdate2.svg",
     slug: "",
     title: "",
     category: "",

@@ -82,8 +82,8 @@ export const popularCourses: Offer[] = [
     fee: "₹1,50,000",
     mode: "Online",
     icon: "cpu",
-    href: "/programs/iimk-ai",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    href: "",
+    videoSrc: "https://www.youtube.com/embed/69LDT0bSe3w",
   },
   {
     id: 6,
@@ -124,7 +124,7 @@ export const popularCourses: Offer[] = [
     fee: "₹1,50,000",
     mode: "Online",
     icon: "cpu",
-    href: "/programs/iimk-ai",
+    href: "/",
   },
   {
     id: 9,
@@ -137,7 +137,8 @@ export const popularCourses: Offer[] = [
     fee: "₹1,50,000",
     mode: "Online",
     icon: "cpu",
-    href: "/programs/iimk-ai",
+    href: "/",
+    videoSrc: "https://www.youtube.com/embed/PpEpZrb16FE",
   },
   {
     id: 10,

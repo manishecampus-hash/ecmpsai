@@ -239,7 +239,7 @@ export default function GguDBAVsPhDSection() {
       `}</style>
 
       <section className="dba-wrap">
-        <div className="mx-auto max-w-4xl text-center mb-10">
+        <div className="mx-auto max-w-4xl text-center mb-10 -mt-20">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-4xl">
             Why Choose a DBA<span className="text-red-500"> Over a PhD?</span>
           </h2>

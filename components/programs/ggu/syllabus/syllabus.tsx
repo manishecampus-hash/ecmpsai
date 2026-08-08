@@ -92,7 +92,7 @@ export default function GGUSyllabusPage() {
 
         {/* Syllabus Table */}
         <div className="mt-8 overflow-hidden rounded-xl border border-slate-200">
-          <div className="bg-red-900 px-4 py-3 text-center">
+          <div className="bg-[#ef4444] px-4 py-3 text-center">
             <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
               Online DBA Syllabus
             </h2>
@@ -129,7 +129,7 @@ export default function GGUSyllabusPage() {
 
         {/* Other DBA Courses Table */}
         <div className="mt-10 overflow-hidden rounded-xl border border-slate-200">
-          <div className="bg-red-900 px-4 py-3 text-center">
+          <div className="bg-[#ef4444] px-4 py-3 text-center">
             <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
               Other Doctor of Business Administration [DBA] Courses
             </h2>

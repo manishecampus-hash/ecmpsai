@@ -401,6 +401,10 @@ const LINK_MAP: Record<string, string> = {
   syllabus: "/programs/doctorate/ggu/syllabus",
   "examination-pattern": "/programs/doctorate/ggu/examination-pattern",
   "job-roles": "/programs/doctorate/ggu/job-roles",
+  reviews: "/programs/doctorate/ggu/reviews",
+  coupons: "/programs/doctorate/ggu/coupons",
+  "placement-partners": "/programs/doctorate/ggu/placement-partners",
+  faculty: "/programs/doctorate/ggu/faculty",
 };
 
 export default function GguSubHeader() {

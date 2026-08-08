@@ -1083,11 +1083,6 @@ export default function ProgramsSection() {
                         </li>
                       ))}
                     </ul>
-
-                    <a href={program.slug} className="__overlayBtn">
-                      Know More
-                      <ArrowRight size={13} />
-                    </a>
                   </div>
                 </article>
               ))

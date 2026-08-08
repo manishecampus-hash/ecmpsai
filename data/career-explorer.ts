@@ -72,97 +72,101 @@
 // ];
 
 // Duplicate array removed and all external URL images replaced with local images
+
 export const careerExplorerData = [
   {
     id: 1,
     title: "Software Developer",
-    image: "/career/software-developer.svg",
+    image: "/career/1image.png",
     description:
       "Master programming languages and build scalable applications.",
+    package: "₹6-15 LPA",
   },
   {
     id: 2,
     title: "AI & Machine Learning Engineer",
-    image: "/career/ai-ml-engineer.svg",
+    image: "/career/2image.png",
     description: "Learn AI/ML algorithms, neural networks, and deep learning.",
+    package: "₹6-15 LPA",
   },
   {
     id: 3,
     title: "Data Scientist",
-    image: "/career/data-scientist.svg",
+    image: "/career/3image.png",
     description: "Analyze data and drive business decisions with insights.",
+    package: "₹5-14 LPA",
   },
   {
     id: 4,
     title: "Cyber Security Analyst",
-    image: "/career/cyber-security-analyst.svg",
+    image: "/career/4image.png",
     description: "Protect systems and networks from security threats.",
   },
   {
     id: 5,
     title: "Cloud Engineer",
-    image: "/career/cloud-engineer.svg",
+    image: "/career/5image.png",
     description: "Design and manage cloud infrastructure solutions.",
   },
   {
     id: 6,
     title: "Business Analyst",
-    image: "/career/business-analyst.svg",
+    image: "/career/6image.png",
     description: "Analyze business needs and improve operational efficiency.",
   },
   {
     id: 7,
     title: "Product Manager",
-    image: "/career/product-manager.svg",
+    image: "/career/7image.png",
     description: "Lead product strategy from concept to market launch.",
   },
   {
     id: 8,
     title: "Project Manager",
-    image: "/career/project-manager.svg",
+    image: "/career/8image.png",
     description: "Oversee projects and ensure timely delivery of goals.",
   },
   {
     id: 9,
     title: "Digital Marketing Manager",
-    image: "/career/digital-marketing-manager.svg",
+    image: "/career/9image.png",
     description: "Create and execute digital marketing campaigns.",
   },
   {
     id: 10,
     title: "Financial Analyst",
-    image: "/career/financial-analyst.svg",
+    image: "/career/10image.png",
     description:
       "Analyze financial data and provide investment recommendations.",
   },
   {
     id: 11,
     title: "Human Resources Manager",
-    image: "/career/human-resources-manager.svg",
+    image: "/career/11image.png",
     description: "Manage recruitment, training, and employee relations.",
   },
   {
     id: 12,
     title: "Hospital Administrator",
-    image: "/career/hospital-administrator.svg",
+    image: "/career/12image.png",
     description: "Oversee hospital operations and healthcare services.",
   },
   {
     id: 13,
     title: "UI/UX Designer",
-    image: "/career/ui-ux-designer.svg",
+    image: "/career/13image.png",
     description: "Design intuitive interfaces and user experiences.",
   },
   {
     id: 14,
     title: "Mechanical Engineer",
-    image: "/career/mechanical-engineer.svg",
+    image: "/career/14image.png",
     description: "Design and develop mechanical systems and equipment.",
   },
   {
     id: 15,
     title: "Civil Engineer",
-    image: "/career/civil-engineer.svg",
+    image: "/career/15image.png",
     description: "Plan and build infrastructure projects.",
   },
 ];

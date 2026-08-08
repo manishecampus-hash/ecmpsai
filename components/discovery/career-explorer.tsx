@@ -201,25 +201,387 @@
 
 // 7 AUG
 
+// "use client";
+
+// import { careerExplorerData } from "@/data/career-explorer";
+// import { ArrowRight, Briefcase } from "lucide-react";
+// import Image from "next/image";
+// import React from "react";
+
+// interface RoleColors {
+//   bg: string;
+//   border: string;
+//   text: string;
+// }
+
+// const CareerExplorer = () => {
+//   const getColors = (title: string): RoleColors => {
+//     const colorMap: { [key: string]: RoleColors } = {
+//       "Frontend Developer": {
+//         bg: "bg-blue-50",
+//         border: "border-blue-200",
+//         text: "text-blue-500",
+//       },
+//       "React Developer": {
+//         bg: "bg-blue-50",
+//         border: "border-blue-200",
+//         text: "text-blue-500",
+//       },
+//       "Backend Developer": {
+//         bg: "bg-purple-50",
+//         border: "border-purple-200",
+//         text: "text-purple-500",
+//       },
+//       "Full Stack Developer": {
+//         bg: "bg-indigo-50",
+//         border: "border-indigo-200",
+//         text: "text-indigo-500",
+//       },
+//       "Mobile Developer": {
+//         bg: "bg-pink-50",
+//         border: "border-pink-200",
+//         text: "text-pink-500",
+//       },
+//       "DevOps Engineer": {
+//         bg: "bg-cyan-50",
+//         border: "border-cyan-200",
+//         text: "text-cyan-500",
+//       },
+//       "Database Engineer": {
+//         bg: "bg-emerald-50",
+//         border: "border-emerald-200",
+//         text: "text-emerald-500",
+//       },
+//       "UX Designer": {
+//         bg: "bg-rose-50",
+//         border: "border-rose-200",
+//         text: "text-rose-500",
+//       },
+//       "UI Designer": {
+//         bg: "bg-rose-50",
+//         border: "border-rose-200",
+//         text: "text-rose-500",
+//       },
+//       "Product Designer": {
+//         bg: "bg-pink-50",
+//         border: "border-pink-200",
+//         text: "text-pink-500",
+//       },
+//       "Product Manager": {
+//         bg: "bg-orange-50",
+//         border: "border-orange-200",
+//         text: "text-orange-500",
+//       },
+//       "Business Analyst": {
+//         bg: "bg-amber-50",
+//         border: "border-amber-200",
+//         text: "text-amber-500",
+//       },
+//       "Data Analyst": {
+//         bg: "bg-yellow-50",
+//         border: "border-yellow-200",
+//         text: "text-yellow-500",
+//       },
+//       "Account Manager": {
+//         bg: "bg-lime-50",
+//         border: "border-lime-200",
+//         text: "text-lime-500",
+//       },
+//       "Data Scientist": {
+//         bg: "bg-teal-50",
+//         border: "border-teal-200",
+//         text: "text-teal-500",
+//       },
+//       "AI Engineer": {
+//         bg: "bg-teal-50",
+//         border: "border-teal-200",
+//         text: "text-teal-500",
+//       },
+//       "Solutions Architect": {
+//         bg: "bg-slate-50",
+//         border: "border-slate-200",
+//         text: "text-slate-500",
+//       },
+//       "System Administrator": {
+//         bg: "bg-slate-50",
+//         border: "border-slate-200",
+//         text: "text-slate-500",
+//       },
+//     };
+
+//     return (
+//       colorMap[title] || {
+//         bg: "bg-red-50",
+//         border: "border-red-200",
+//         text: "text-red-500",
+//       }
+//     );
+//   };
+
+//   return (
+//     <section className="px-3 sm:px-4 lg:px-6 py-6 sm:py-8 lg:py-10 relative z-10">
+//       <div className="max-w-6xl mx-auto font-[Inter]">
+//         {/* Header */}
+//         <div className="mb-6 sm:mb-8 text-center">
+//           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1.5 text-xs font-bold text-slate-900 uppercase tracking-wider">
+//             <Briefcase className="h-3.5 w-3.5 text-red-500" />
+//             Skill
+//           </span>
+
+//           <h2 className="mt-3 sm:mt-4 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+//             Enhance Skills by <span className="text-red-500">Job Role</span>
+//           </h2>
+//         </div>
+
+//         {/* Grid */}
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+//           {careerExplorerData.map((item) => {
+//             const colors = getColors(item.title);
+
+//             return (
+//               <div
+//                 key={item.id}
+//                 className="bg-white rounded-lg border border-gray-200 shadow-sm p-3 sm:p-3.5 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105"
+//               >
+//                 {/* Image Container - bigger now */}
+//                 <div
+//                   className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-2 overflow-hidden`}
+//                 >
+//                   <Image
+//                     src={item.image}
+//                     alt={item.title}
+//                     fill
+//                     className="object-contain p-2"
+//                   />
+//                 </div>
+
+//                 {/* Title */}
+//                 <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-1">
+//                   {item.title}
+//                 </h3>
+
+//                 {/* Description removed to save height, or keep 1 line only */}
+//                 <p className="hidden sm:block text-[11px] text-gray-600 mb-3 line-clamp-1">
+//                   {item.description}
+//                 </p>
+
+//                 {/* Button - compact */}
+//                 <button
+//                   type="button"
+//                   className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 font-semibold text-xs transition-colors"
+//                   aria-label={`Explore ${item.title}`}
+//                 >
+//                   Explore
+//                   <ArrowRight size={14} />
+//                 </button>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default CareerExplorer;
+
+// "use client";
+
+// import { careerExplorerData } from "@/data/career-explorer";
+// import { ArrowRight, Briefcase, TrendingUp } from "lucide-react";
+// import Image from "next/image";
+// import React from "react";
+
+// interface RoleColors {
+//   bg: string;
+//   border: string;
+//   text: string;
+// }
+
+// const CareerExplorer = () => {
+//   const getColors = (title: string): RoleColors => {
+//     const colorMap: { [key: string]: RoleColors } = {
+//       "Frontend Developer": {
+//         bg: "bg-blue-50",
+//         border: "border-blue-200",
+//         text: "text-blue-500",
+//       },
+//       "React Developer": {
+//         bg: "bg-blue-50",
+//         border: "border-blue-200",
+//         text: "text-blue-500",
+//       },
+//       "Backend Developer": {
+//         bg: "bg-purple-50",
+//         border: "border-purple-200",
+//         text: "text-purple-500",
+//       },
+//       "Full Stack Developer": {
+//         bg: "bg-indigo-50",
+//         border: "border-indigo-200",
+//         text: "text-indigo-500",
+//       },
+//       "Mobile Developer": {
+//         bg: "bg-pink-50",
+//         border: "border-pink-200",
+//         text: "text-pink-500",
+//       },
+//       "DevOps Engineer": {
+//         bg: "bg-cyan-50",
+//         border: "border-cyan-200",
+//         text: "text-cyan-500",
+//       },
+//       "Database Engineer": {
+//         bg: "bg-emerald-50",
+//         border: "border-emerald-200",
+//         text: "text-emerald-500",
+//       },
+//       "UX Designer": {
+//         bg: "bg-rose-50",
+//         border: "border-rose-200",
+//         text: "text-rose-500",
+//       },
+//       "UI Designer": {
+//         bg: "bg-rose-50",
+//         border: "border-rose-200",
+//         text: "text-rose-500",
+//       },
+//       "Product Designer": {
+//         bg: "bg-pink-50",
+//         border: "border-pink-200",
+//         text: "text-pink-500",
+//       },
+//       "Product Manager": {
+//         bg: "bg-orange-50",
+//         border: "border-orange-200",
+//         text: "text-orange-500",
+//       },
+//       "Business Analyst": {
+//         bg: "bg-amber-50",
+//         border: "border-amber-200",
+//         text: "text-amber-500",
+//       },
+//       "Data Analyst": {
+//         bg: "bg-yellow-50",
+//         border: "border-yellow-200",
+//         text: "text-yellow-500",
+//       },
+//       "Account Manager": {
+//         bg: "bg-lime-50",
+//         border: "border-lime-200",
+//         text: "text-lime-500",
+//       },
+//       "Data Scientist": {
+//         bg: "bg-teal-50",
+//         border: "border-teal-200",
+//         text: "text-teal-500",
+//       },
+//       "AI Engineer": {
+//         bg: "bg-teal-50",
+//         border: "border-teal-200",
+//         text: "text-teal-500",
+//       },
+//       "Solutions Architect": {
+//         bg: "bg-slate-50",
+//         border: "border-slate-200",
+//         text: "text-slate-500",
+//       },
+//       "System Administrator": {
+//         bg: "bg-slate-50",
+//         border: "border-slate-200",
+//         text: "text-slate-500",
+//       },
+//     };
+
+//     return (
+//       colorMap[title] || {
+//         bg: "bg-red-50",
+//         border: "border-red-200",
+//         text: "text-red-500",
+//       }
+//     );
+//   };
+
+//   return (
+//     <section className="px-3 sm:px-4 lg:px-6 py-6 sm:py-8 lg:py-10 relative z-10">
+//       <div className="max-w-6xl mx-auto font-[Inter]">
+//         {/* Header */}
+//         <div className="mb-6 sm:mb-8 text-center">
+//           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1.5 text-xs font-bold text-slate-900 uppercase tracking-wider">
+//             <Briefcase className="h-3.5 w-3.5 text-red-500" />
+//             Skill
+//           </span>
+
+//           <h2 className="mt-3 sm:mt-4 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+//             Enhance Skills by <span className="text-red-500">Job Role</span>
+//           </h2>
+//         </div>
+
+//         {/* Grid */}
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+//           {careerExplorerData.map((item) => {
+//             const colors = getColors(item.title);
+
+//             return (
+//               <div
+//                 key={item.id}
+//                 className="relative bg-white rounded-lg border border-gray-200 shadow-sm p-3 sm:p-3.5 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105"
+//               >
+//                 {/* Highest Package Badge - top */}
+//                 {item.package && (
+//                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+//                     <TrendingUp size={10} />
+//                     Up to {item.package}
+//                   </div>
+//                 )}
+
+//                 {/* Image Container - bigger now */}
+//                 <div
+//                   className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-2 mt-1.5 overflow-hidden`}
+//                 >
+//                   <Image
+//                     src={item.image}
+//                     alt={item.title}
+//                     fill
+//                     className="object-contain p-2"
+//                   />
+//                 </div>
+
+//                 {/* Title */}
+//                 <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-1">
+//                   {item.title}
+//                 </h3>
+
+//                 {/* Description removed to save height, or keep 1 line only */}
+//                 <p className="hidden sm:block text-[11px] text-gray-600 mb-3 line-clamp-1">
+//                   {item.description}
+//                 </p>
+
+//                 {/* Button - compact */}
+//                 <button
+//                   type="button"
+//                   className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 font-semibold text-xs transition-colors"
+//                   aria-label={`Explore ${item.title}`}
+//                 >
+//                   Explore
+//                   <ArrowRight size={14} />
+//                 </button>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default CareerExplorer;
+
 "use client";
 
 import { careerExplorerData } from "@/data/career-explorer";
-import {
-  ArrowRight,
-  Briefcase,
-  Code,
-  Palette,
-  BarChart3,
-  Server,
-  Users,
-  Zap,
-  Brain,
-  Smartphone,
-  Cloud,
-  Database,
-  Target,
-  Settings,
-} from "lucide-react";
+import { ArrowRight, Briefcase, TrendingUp } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 interface RoleColors {
@@ -229,45 +591,8 @@ interface RoleColors {
 }
 
 const CareerExplorer = () => {
-  // Icon mapping - comprehensive for different career types
-  const getIcon = (title: string) => {
-    const iconMap: { [key: string]: React.ReactNode } = {
-      // Tech Roles
-      "Product Manager": <Briefcase className="w-6 h-6" />,
-      "Frontend Developer": <Code className="w-6 h-6" />,
-      "React Developer": <Code className="w-6 h-6" />,
-      "Backend Developer": <Server className="w-6 h-6" />,
-      "Full Stack Developer": <Code className="w-6 h-6" />,
-      "Mobile Developer": <Smartphone className="w-6 h-6" />,
-      "DevOps Engineer": <Cloud className="w-6 h-6" />,
-      "Database Engineer": <Database className="w-6 h-6" />,
-
-      // Design Roles
-      "UX Designer": <Palette className="w-6 h-6" />,
-      "UI Designer": <Palette className="w-6 h-6" />,
-      "Product Designer": <Palette className="w-6 h-6" />,
-
-      // Business Roles
-      "Business Analyst": <BarChart3 className="w-6 h-6" />,
-      "Data Analyst": <BarChart3 className="w-6 h-6" />,
-      "Account Manager": <Users className="w-6 h-6" />,
-
-      // Data & AI
-      "Data Scientist": <Brain className="w-6 h-6" />,
-      "AI Engineer": <Brain className="w-6 h-6" />,
-
-      // Infrastructure
-      "Solutions Architect": <Settings className="w-6 h-6" />,
-      "System Administrator": <Settings className="w-6 h-6" />,
-    };
-
-    return iconMap[title] || <Briefcase className="w-6 h-6" />;
-  };
-
-  // Color mapping - different color per role
   const getColors = (title: string): RoleColors => {
     const colorMap: { [key: string]: RoleColors } = {
-      // Tech - Blue
       "Frontend Developer": {
         bg: "bg-blue-50",
         border: "border-blue-200",
@@ -303,8 +628,6 @@ const CareerExplorer = () => {
         border: "border-emerald-200",
         text: "text-emerald-500",
       },
-
-      // Design - Pink
       "UX Designer": {
         bg: "bg-rose-50",
         border: "border-rose-200",
@@ -320,8 +643,6 @@ const CareerExplorer = () => {
         border: "border-pink-200",
         text: "text-pink-500",
       },
-
-      // Business - Orange
       "Product Manager": {
         bg: "bg-orange-50",
         border: "border-orange-200",
@@ -342,8 +663,6 @@ const CareerExplorer = () => {
         border: "border-lime-200",
         text: "text-lime-500",
       },
-
-      // AI/Data - Teal
       "Data Scientist": {
         bg: "bg-teal-50",
         border: "border-teal-200",
@@ -354,8 +673,6 @@ const CareerExplorer = () => {
         border: "border-teal-200",
         text: "text-teal-500",
       },
-
-      // Infrastructure - Gray
       "Solutions Architect": {
         bg: "bg-slate-50",
         border: "border-slate-200",
@@ -400,33 +717,46 @@ const CareerExplorer = () => {
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105"
+                className="relative bg-white rounded-lg border border-gray-200 shadow-sm p-3 sm:p-3.5 pt-4 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105 overflow-hidden"
               >
-                {/* Icon Container with dynamic colors */}
+                {/* Highest Package Badge */}
+                {item.package && (
+                  <div className="absolute top-2 right-2 z-10 inline-flex items-center gap-0.5 bg-green-500 text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                    <TrendingUp size={9} className="animate-bounce" />
+                    {item.package}
+                  </div>
+                )}
+
+                {/* Image Container */}
                 <div
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-3 sm:mb-4 ${colors.text}`}
+                  className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-2 overflow-hidden`}
                 >
-                  {getIcon(item.title)}
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-contain p-2"
+                  />
                 </div>
 
                 {/* Title */}
-                <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-3 line-clamp-2">
+                <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-1">
                   {item.title}
                 </h3>
 
-                {/* Description - Desktop only */}
-                <p className="hidden sm:block text-xs text-gray-600 mb-4 line-clamp-2 flex-1">
+                {/* Description */}
+                <p className="hidden sm:block text-[11px] text-gray-600 mb-3 line-clamp-1">
                   {item.description}
                 </p>
 
-                {/* Button - uses primary accent color (red) */}
+                {/* Button */}
                 <button
                   type="button"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 font-semibold text-sm transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 font-semibold text-xs transition-colors"
                   aria-label={`Explore ${item.title}`}
                 >
                   Explore
-                  <ArrowRight size={16} />
+                  <ArrowRight size={14} />
                 </button>
               </div>
             );

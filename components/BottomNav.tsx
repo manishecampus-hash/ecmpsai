@@ -51,7 +51,7 @@ export default function BottomNav() {
         }`}
       >
         {/* Main Navbar */}
-        <div className="flex flex-1 items-center justify-around rounded-[22px] border border-gray-200 bg-white px-1.5 py-1.5 shadow-xl">
+        <div className="flex flex-1 items-center justify-around rounded-2xl border border-gray-200 bg-white px-1 py-1 shadow-xl">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon;
             const active = isActive(link.href);
@@ -60,21 +60,21 @@ export default function BottomNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 transition-all duration-300 ${
+                className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-0.5 transition-all duration-300 ${
                   active ? "bg-red-50" : "hover:bg-gray-100 active:scale-95"
                 }`}
               >
                 {/* Icon */}
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-300 ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
                     active
                       ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
                       : "text-black"
                   }`}
                 >
                   <Icon
-                    className={`h-[18px] w-[18px] transition-all duration-300 ${
-                      active ? "scale-110" : ""
+                    className={`h-4 w-4 transition-all duration-300 ${
+                      active ? "scale-105" : ""
                     }`}
                     strokeWidth={2.3}
                   />
@@ -82,7 +82,7 @@ export default function BottomNav() {
 
                 {/* Label */}
                 <span
-                  className={`whitespace-nowrap text-[8px] font-semibold leading-none transition-colors duration-300 ${
+                  className={`whitespace-nowrap text-[10px] font-semibold leading-tight transition-colors duration-300 ${
                     active ? "text-[#ef4444]" : "text-black"
                   }`}
                 >
@@ -96,28 +96,28 @@ export default function BottomNav() {
         {/* Separate AI Tab */}
         <Link
           href={aiLink.href}
-          className={`flex w-16 flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-[22px] border py-1.5 shadow-xl transition-all duration-300 ${
+          className={`flex w-16 flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border py-1 shadow-xl transition-all duration-300 ${
             aiActive
               ? "border-[#ef4444] bg-[#ef4444]/5"
               : "border-gray-200 bg-white active:scale-95"
           }`}
         >
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-300 ${
+            className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
               aiActive
                 ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
                 : "bg-black text-white"
             }`}
           >
             <AiIcon
-              className={`h-[18px] w-[18px] transition-all duration-300 ${
-                aiActive ? "scale-110" : ""
+              className={`h-4 w-4 transition-all duration-300 ${
+                aiActive ? "scale-105" : ""
               }`}
               strokeWidth={2.3}
             />
           </div>
           <span
-            className={`whitespace-nowrap text-[8px] font-semibold leading-none transition-colors duration-300 ${
+            className={`whitespace-nowrap text-[10px] font-semibold leading-tight transition-colors duration-300 ${
               aiActive ? "text-[#ef4444]" : "text-black"
             }`}
           >

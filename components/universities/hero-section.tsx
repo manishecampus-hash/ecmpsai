@@ -660,7 +660,7 @@ export default function UniversityHeroWithStats({
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-white px-4 -mt-2 pt-4 pb-14 sm:px-6 sm:mt-0 lg:px-8 lg:mt-2 lg:pb-20">
+      <section className="bg-white px-4 mt-4 pt-4 pb-14 sm:px-6 sm:mt-0 lg:px-8 lg:mt-2 lg:pb-20">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
             <defs>

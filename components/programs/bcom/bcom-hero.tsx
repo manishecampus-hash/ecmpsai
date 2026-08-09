@@ -204,7 +204,8 @@ export default function BComHero() {
             <iframe
               src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1"
               className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             />
           </div>

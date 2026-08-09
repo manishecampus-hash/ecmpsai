@@ -676,6 +676,7 @@ const OfferCard = ({
                 minHeight: "100%",
               }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerPolicy="strict-origin-when-cross-origin"
               title={offer.imageAlt}
             />
           </div>

@@ -11,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  referrer: "strict-origin-when-cross-origin",
   title: "eCampus — Your Career Starts Here",
   description:
     "AI-powered education discovery for Indian Gen Z. Find your perfect degree, compare universities, and get personalised career guidance in seconds.",

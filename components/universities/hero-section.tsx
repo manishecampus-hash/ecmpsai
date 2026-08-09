@@ -541,9 +541,18 @@ function SuccessState({
 
 function getYoutubeId(url: string) {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  const trimmed = url.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return trimmed;
+  }
+  const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
+  const match = trimmed.match(regExp);
+  if (match && match[1]) {
+    return match[1];
+  }
+  const fallback = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const fallbackMatch = trimmed.match(fallback);
+  return (fallbackMatch && fallbackMatch[2].length === 11) ? fallbackMatch[2] : null;
 }
 
 export default function UniversityHeroWithStats({
@@ -821,7 +830,8 @@ export default function UniversityHeroWithStats({
                         src={`https://www.youtube.com/embed/${youtubeVideoId}`}
                         title={`${uniFullName} Video`}
                         className="h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
                         allowFullScreen
                       />
                     )}

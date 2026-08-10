@@ -638,310 +638,492 @@
 //   );
 // }
 
-"use client";
+// "use client";
+
+// import React from "react";
+// import Link from "next/link";
+// import {
+//   Star,
+//   ChevronRight,
+//   MessageSquare,
+//   BookOpen,
+//   Clock,
+//   Globe,
+//   Users,
+//   Shield,
+// } from "lucide-react";
+
+// type Badge = { alt: string; src?: string; label?: string };
+
+// type Props = {
+//   heroImage?: string;
+//   logoSrc?: string;
+//   title?: string;
+//   badges?: Badge[];
+//   rating?: number;
+//   reviews?: number;
+//   trustedText?: string;
+//   onApplyHref?: string;
+//   onTalkHref?: string;
+// };
+
+// export default function GGUHeroFull({
+//   heroImage = "/images/logoo.webp",
+//   logoSrc = "/images/ggu-logo-square.png",
+//   title = "Golden Gate University",
+//   badges = [
+//     { alt: "Seal", src: "/ggubanner/aiu-logo.jpg", label: "" },
+//     { alt: "WES", src: "/ggubanner/wes-logo.jpg", label: "" },
+//     { alt: "AACSB", src: "/ggubanner/3rd.webp", label: "" },
+//     { alt: "More", src: undefined, label: "More" },
+//   ],
+//   rating = 4.8,
+//   reviews = 44,
+//   trustedText = "Trusted by 10,000+ learners",
+//   onApplyHref = "#apply",
+//   onTalkHref = "#talk",
+// }: Props) {
+//   return (
+//     <header className="relative bg-white">
+//       {/* Banner */}
+//       <div className="relative h-48 sm:h-64 lg:h-96">
+//         <img
+//           src="/ggubanner/ggubnr.webp"
+//           alt="Campus banner"
+//           className="absolute inset-0 h-full w-full object-cover"
+//         />
+//         {/* overlay */}
+//         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
+
+//         {/* Content overlay */}
+//         <div className="absolute inset-0 flex flex-col items-start justify-center pl-4 pr-4 py-6 sm:pl-8 sm:pr-8 sm:py-8 lg:pl-32 lg:pr-12 lg:py-12">
+//           <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-4 w-full">
+//             {/* Logo */}
+//             <div className="flex-shrink-0 bg-blue-900 border-2 border-white rounded-xl p-2">
+//               <img
+//                 src="/ggubanner/logoo.webp"
+//                 alt="GGU Logo"
+//                 className="h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain"
+//               />
+//             </div>
+
+//             {/* Text content */}
+//             <div className="text-white flex-1">
+//               <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold mb-1 sm:mb-2 leading-tight">
+//                 {title}
+//               </h1>
+//               <p className="text-xs sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-3 line-clamp-2">
+//                 A Heritage of Excellence. A Future of Impact.
+//               </p>
+
+//               {/* Location badge */}
+//               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/40 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5">
+//                 <svg
+//                   className="w-3 h-3 sm:w-4 sm:h-4 text-red-400"
+//                   fill="currentColor"
+//                   viewBox="0 0 20 20"
+//                 >
+//                   <path
+//                     fillRule="evenodd"
+//                     d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+//                     clipRule="evenodd"
+//                   />
+//                 </svg>
+//                 <span className="text-white text-xs sm:text-sm font-medium">
+//                   USA
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* carousel dots (visual) */}
+//         <div className="absolute inset-x-0 top-3 sm:top-4 flex justify-center space-x-2">
+//           <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-white/90" />
+//           <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-white/40" />
+//         </div>
+//       </div>
+
+//       {/* Overlapping white card below banner */}
+//       <div className="mx-auto max-w-7xl px-3 sm:px-4">
+//         <div className="relative -mt-8 sm:-mt-12 lg:-mt-16">
+//           <div className="rounded-lg sm:rounded-2xl bg-white px-4 sm:px-6 py-5 sm:py-6 shadow-lg ring-1 ring-slate-100">
+//             {/* TOP ROW: Badges, Rating, Trusted Text | CTAs */}
+//             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 sm:pb-6 border-b">
+//               {/* LEFT: Badges + Rating + Trusted */}
+//               <div className="flex flex-col gap-3 w-full lg:w-auto">
+//                 {/* Badges row */}
+//                 <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+//                   {badges.map((b, i) => (
+//                     <div key={i} className="flex items-center gap-1.5 sm:gap-2">
+//                       {b.src ? (
+//                         <img
+//                           src={b.src}
+//                           alt={b.alt}
+//                           className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-slate-100 bg-white object-contain"
+//                         />
+//                       ) : (
+//                         <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-xs font-bold text-slate-700">
+//                           {b.label?.[0] ?? "i"}
+//                         </div>
+//                       )}
+//                       <span className="text-xs font-medium text-slate-700 hidden sm:inline">
+//                         {b.label}
+//                       </span>
+//                     </div>
+//                   ))}
+//                 </div>
+
+//                 {/* Rating + Trusted */}
+//                 <div className="flex flex-col gap-2 sm:gap-3">
+//                   <div className="flex items-center gap-1 flex-wrap">
+//                     {[...Array(5)].map((_, i) => (
+//                       <Star
+//                         key={i}
+//                         className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-amber-400 text-amber-400"
+//                       />
+//                     ))}
+//                     <span className="ml-1 sm:ml-2 font-semibold text-slate-800 text-sm sm:text-base">
+//                       {rating}
+//                     </span>
+//                     <span className="text-xs sm:text-sm text-slate-600">
+//                       ({reviews})
+//                     </span>
+//                   </div>
+
+//                   <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-700">
+//                     <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-600 flex-shrink-0" />
+//                     <span className="line-clamp-1">{trustedText}</span>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* RIGHT: CTAs */}
+//               <div className="flex flex-col gap-2 w-full sm:w-auto lg:gap-3">
+//                 <div className="flex flex-col gap-2 sm:flex-row lg:gap-3">
+//                   <Link
+//                     href={onApplyHref}
+//                     className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ef4444] px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow hover:bg-red-500 transition whitespace-nowrap"
+//                   >
+//                     Apply
+//                     <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+//                   </Link>
+
+//                   <Link
+//                     href={onTalkHref}
+//                     className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-slate-800 border border-slate-200 hover:bg-slate-50 transition whitespace-nowrap"
+//                   >
+//                     <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+//                     <span className="hidden sm:inline">Download</span>
+//                   </Link>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* FEATURES SECTION: Heading + Grid + Compare Card */}
+//             <div className="pt-5 sm:pt-6">
+//               <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 sm:gap-8">
+//                 {/* LEFT: Why Golden Gate University */}
+//                 <div>
+//                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">
+//                     Why Golden Gate University?
+//                   </h3>
+
+//                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+//                     {/* 100+ Programs */}
+//                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+//                       <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
+//                         <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+//                       </div>
+//                       <div className="min-w-0">
+//                         <div className="text-base sm:text-lg font-bold text-slate-900">
+//                           100+
+//                         </div>
+//                         <div className="text-xs sm:text-sm text-slate-600">
+//                           Programs
+//                         </div>
+//                         <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
+//                           Diverse specializations
+//                         </div>
+//                       </div>
+//                     </div>
+
+//                     {/* 75+ Years */}
+//                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+//                       <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
+//                         <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+//                       </div>
+//                       <div className="min-w-0">
+//                         <div className="text-base sm:text-lg font-bold text-slate-900">
+//                           75+
+//                         </div>
+//                         <div className="text-xs sm:text-sm text-slate-600">
+//                           Years of Legacy
+//                         </div>
+//                         <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
+//                           Experience & excellence
+//                         </div>
+//                       </div>
+//                     </div>
+
+//                     {/* Global */}
+//                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+//                       <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
+//                         <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+//                       </div>
+//                       <div className="min-w-0">
+//                         <div className="text-base sm:text-lg font-bold text-slate-900">
+//                           Global
+//                         </div>
+//                         <div className="text-xs sm:text-sm text-slate-600">
+//                           Community
+//                         </div>
+//                         <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
+//                           Diverse student body
+//                         </div>
+//                       </div>
+//                     </div>
+
+//                     {/* Career Focused */}
+//                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+//                       <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
+//                         <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+//                       </div>
+//                       <div className="min-w-0">
+//                         <div className="text-base sm:text-lg font-bold text-slate-900">
+//                           Career
+//                         </div>
+//                         <div className="text-xs sm:text-sm text-slate-600">
+//                           Focused
+//                         </div>
+//                         <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
+//                           Job-ready learning
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {/* RIGHT: Compare Universities Card */}
+//                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-blue-100 lg:h-fit">
+//                   <h4 className="font-bold text-slate-900 mb-3 sm:mb-4 text-sm sm:text-base">
+//                     Compare Universities
+//                   </h4>
+//                   <p className="text-xs sm:text-sm text-slate-600 mb-4 sm:mb-6">
+//                     Compare GGU with other top universities.
+//                   </p>
+
+//                   {/* University Logos */}
+//                   <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+//                     <div className="flex -space-x-2 sm:-space-x-3">
+//                       <img
+//                         src="/ggubanner/ssbm.png"
+//                         alt="University 1"
+//                         className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+//                       />
+//                       <img
+//                         src="/ggubanner/rushford.png"
+//                         alt="University 2"
+//                         className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+//                       />
+//                       <img
+//                         src="/ggubanner/ei.png"
+//                         alt="University 3"
+//                         className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+//                       />
+//                       <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-blue-600 shadow flex items-center justify-center text-white text-xs sm:text-sm font-bold">
+//                         +3
+//                       </div>
+//                     </div>
+//                   </div>
+
+//                   <Link
+//                     href="#compare"
+//                     className="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs sm:text-sm hover:text-blue-700 transition"
+//                   >
+//                     Compare Now
+//                     <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+//                   </Link>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </header>
+//   );
+// }
+
+// new
 
 import React from "react";
-import Link from "next/link";
 import {
-  Star,
   ChevronRight,
-  MessageSquare,
-  BookOpen,
   Clock,
+  BookOpen,
   Globe,
   Users,
-  Shield,
+  Award,
 } from "lucide-react";
 
-type Badge = { alt: string; src?: string; label?: string };
-
-type Props = {
-  heroImage?: string;
-  logoSrc?: string;
-  title?: string;
-  badges?: Badge[];
-  rating?: number;
-  reviews?: number;
-  trustedText?: string;
-  onApplyHref?: string;
-  onTalkHref?: string;
-};
-
-export default function GGUHeroFull({
-  heroImage = "/images/ggu-campus.jpg",
-  logoSrc = "/images/ggu-logo-square.png",
-  title = "Golden Gate University",
-  badges = [
-    { alt: "Seal", src: "/ggubanner/aiu-logo.jpg", label: "" },
-    { alt: "WES", src: "/ggubanner/wes-logo.jpg", label: "" },
-    { alt: "AACSB", src: "/ggubanner/3rd.webp", label: "" },
-    { alt: "More", src: undefined, label: "More" },
-  ],
-  rating = 4.8,
-  reviews = 44,
-  trustedText = "Trusted by 10,000+ learners",
-  onApplyHref = "#apply",
-  onTalkHref = "#talk",
-}: Props) {
+export default function DBAHero() {
   return (
-    <header className="relative bg-white">
-      {/* Banner */}
-      <div className="relative h-56 sm:h-72 lg:h-96">
+    <section className="bg-white">
+      {/* HERO BANNER SECTION */}
+      <div className="relative h-80 sm:h-[420px] lg:h-[400px] overflow-hidden">
+        {/* Background Image */}
         <img
-          src="/ggubanner/ggubnr.webp"
-          alt="Campus banner"
-          className="absolute inset-0 h-full w-full object-cover"
+          src="/ggubanner/newbnr.png"
+          alt="Hero Banner"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        {/* overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
 
-        {/* Content overlay */}
-        <div className="absolute inset-0 flex flex-col items-start justify-center pl-16 pr-6 py-6 sm:pl-24 sm:pr-8 sm:py-8 lg:pl-32 lg:pr-12 lg:py-12">
-          <div className="flex items-end gap-4">
-            {/* Logo */}
-            <div className="flex-shrink-0 bg-blue-900 border-2 border-white rounded-xl p-2">
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white from-0% via-white/95 via-45% to-transparent to-75%" />
+
+        {/* Content Overlay */}
+        <div className="relative h-full flex flex-col justify-center px-3 py-4 sm:px-8 sm:py-8 lg:px-16 lg:py-10">
+          <div className="text-black space-y-2 sm:space-y-3">
+            {/* Eyebrow */}
+            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-[#ef4444]">
+              Golden Gate University
+            </p>
+
+            {/* Title */}
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold leading-snug sm:leading-tight max-w-2xl">
+              Doctor of Business Administration (DBA)
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xs sm:text-base opacity-90 max-w-xl leading-relaxed">
+              Drive Research. Shape Strategy. Lead Change.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 pb-6 sm:pb-8">
+              <button className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 sm:px-5 py-2.5 sm:py-2.5 rounded-lg transition-colors text-sm sm:text-base active:scale-95">
+                Apply Now
+                <ChevronRight className="h-4 w-4" />
+              </button>
+
+              <button className="inline-flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-black font-semibold px-4 sm:px-5 py-2.5 sm:py-2.5 rounded-lg border border-white/40 transition-colors text-sm sm:text-base active:scale-95">
+                Download Brochure
+              </button>
+            </div>
+
+            {/* Three Individual Logos */}
+            <div className="flex flex-wrap gap-3 sm:gap-6 items-center">
+              {/* Logo 1 - AACSB */}
               <img
-                src={logoSrc}
-                alt="GGU Logo"
-                className="h-16 w-16 sm:h-20 sm:w-20 object-contain"
+                src="/ggubanner/3rd.webp"
+                alt="AACSB Accredited"
+                className="h-8 sm:h-9 lg:h-13 w-auto"
+              />
+
+              {/* Logo 2 - WES */}
+              <img
+                src="/ggubanner/wes-logo.jpg"
+                alt="WES Recognized"
+                className="h-8 sm:h-9 lg:h-13 w-auto"
+              />
+
+              {/* Logo 3 - Years of Legacy */}
+              <img
+                src="/ggubanner/75.png"
+                alt="75+ Years of Legacy"
+                className="h-10 sm:h-11 lg:h-20 w-auto"
               />
             </div>
-
-            {/* Text content */}
-            <div className="text-white">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
-                {title}
-              </h1>
-              <p className="text-base sm:text-lg text-white/90 mb-3">
-                A Heritage of Excellence. A Future of Impact.
-              </p>
-
-              {/* Location badge */}
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/40 rounded-full px-3 py-1.5">
-                <svg
-                  className="w-4 h-4 text-red-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-white text-sm font-medium">USA</span>
-              </div>
-            </div>
           </div>
-        </div>
-
-        {/* carousel dots (visual) */}
-        <div className="absolute inset-x-0 top-4 flex justify-center space-x-2">
-          <span className="h-2 w-2 rounded-full bg-white/90" />
-          <span className="h-2 w-2 rounded-full bg-white/40" />
         </div>
       </div>
 
-      {/* Overlapping white card below banner */}
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="relative -mt-12 sm:-mt-16">
-          <div className="rounded-2xl bg-white px-6 py-6 shadow-lg ring-1 ring-slate-100">
-            {/* TOP ROW: Badges, Rating, Trusted Text | CTAs */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-6 border-b">
-              {/* LEFT: Badges + Rating + Trusted */}
-              <div className="flex flex-col gap-3">
-                {/* Badges row */}
-                <div className="flex items-center gap-4 flex-wrap">
-                  {badges.map((b, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      {b.src ? (
-                        <img
-                          src={b.src}
-                          alt={b.alt}
-                          className="h-10 w-10 rounded-full border border-slate-100 bg-white object-contain"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-xs font-bold text-slate-700">
-                          {b.label?.[0] ?? "i"}
-                        </div>
-                      )}
-                      <span className="text-xs font-medium text-slate-700">
-                        {b.label}
-                      </span>
-                    </div>
-                  ))}
+      {/* BADGES + HIGHLIGHTS SECTION - OVERLAPPING CARD */}
+      <div className="relative -mt-2 sm:-mt-4 lg:-mt-6 px-3 sm:px-8 lg:px-16 pb-6 sm:pb-12 lg:pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm ring-1 ring-slate-50 px-2 sm:px-6 py-4 sm:py-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4 lg:gap-8">
+              {/* Feature 1 */}
+              <div className="flex flex-col items-center text-center space-y-1.5 sm:space-y-3">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                 </div>
-
-                {/* Rating + Trusted */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-4 w-4 fill-amber-400 text-amber-400"
-                      />
-                    ))}
-                    <span className="ml-2 font-semibold text-slate-800">
-                      {rating}
-                    </span>
-                    <span className="text-sm text-slate-600">
-                      ({reviews} Reviews)
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-slate-700">
-                    <Shield className="h-4 w-4 text-sky-600" />
-                    <span>{trustedText}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT: CTAs + Add to Compare */}
-              <div className="flex flex-col gap-2 lg:gap-3">
-                <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
-                  <Link
-                    href={onApplyHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ef4444] px-5 py-3 text-sm font-semibold text-white shadow hover:bg-blue-700 transition"
-                  >
-                    Apply to University
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-
-                  <Link
-                    href={onTalkHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-800 border border-slate-200 hover:bg-slate-50 transition"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Download Brochure
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* FEATURES SECTION: Heading + Grid + Compare Card */}
-            <div className="pt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-                {/* LEFT: Why Golden Gate University */}
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6">
-                    Why Golden Gate University?
-                  </h3>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* 100+ Programs */}
-                    <div className="flex items-start gap-4">
-                      <div className="rounded-lg bg-blue-50 p-3 flex-shrink-0">
-                        <BookOpen className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-slate-900">
-                          100+
-                        </div>
-                        <div className="text-sm text-slate-600">Programs</div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          Diverse specializations
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 75+ Years */}
-                    <div className="flex items-start gap-4">
-                      <div className="rounded-lg bg-blue-50 p-3 flex-shrink-0">
-                        <Clock className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-slate-900">
-                          75+
-                        </div>
-                        <div className="text-sm text-slate-600">
-                          Years of Legacy
-                        </div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          Experience & excellence
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Global */}
-                    <div className="flex items-start gap-4">
-                      <div className="rounded-lg bg-blue-50 p-3 flex-shrink-0">
-                        <Globe className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-slate-900">
-                          Global
-                        </div>
-                        <div className="text-sm text-slate-600">Community</div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          Diverse student body
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Career Focused */}
-                    <div className="flex items-start gap-4">
-                      <div className="rounded-lg bg-blue-50 p-3 flex-shrink-0">
-                        <Users className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-slate-900">
-                          Career
-                        </div>
-                        <div className="text-sm text-slate-600">Focused</div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          Job-ready learning
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* RIGHT: Compare Universities Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 h-fit">
-                  <h4 className="font-bold text-slate-900 mb-4">
-                    Compare Universities
-                  </h4>
-                  <p className="text-sm text-slate-600 mb-6">
-                    Compare GGU with other top universities.
+                  <p className="font-bold text-xs sm:text-base text-slate-900">
+                    36 Months
                   </p>
+                  <p className="text-xs sm:text-xs text-slate-600 leading-snug">
+                    Program Duration
+                  </p>
+                </div>
+              </div>
 
-                  {/* University Logos */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex -space-x-3">
-                      <img
-                        src="/ggubanner/ssbm.png"
-                        alt="University 1"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-                      <img
-                        src="/ggubanner/rushford.png"
-                        alt="University 2"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-                      <img
-                        src="/ggubanner/ei.png"
-                        alt="University 3"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-                      <div className="h-12 w-12 rounded-full border-2 border-white bg-blue-600 shadow flex items-center justify-center text-white text-sm font-bold">
-                        +3
-                      </div>
-                    </div>
-                  </div>
+              {/* Feature 2 */}
+              <div className="flex flex-col items-center text-center space-y-1.5 sm:space-y-3">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs sm:text-base text-slate-900">
+                    100+
+                  </p>
+                  <p className="text-xs sm:text-xs text-slate-600 leading-snug">
+                    Online Learn Anywhere
+                  </p>
+                </div>
+              </div>
 
-                  <Link
-                    href="#compare"
-                    className="inline-flex items-center gap-2 text-blue-600 font-semibold text-sm hover:text-blue-700 transition"
-                  >
-                    Compare Now
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
+              {/* Feature 3 */}
+              <div className="flex flex-col items-center text-center space-y-1.5 sm:space-y-3">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs sm:text-base text-slate-900">
+                    Global
+                  </p>
+                  <p className="text-xs sm:text-xs text-slate-600 leading-snug">
+                    Community 80+ Countries
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="flex flex-col items-center text-center space-y-1.5 sm:space-y-3">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs sm:text-base text-slate-900">
+                    World-class
+                  </p>
+                  <p className="text-xs sm:text-xs text-slate-600 leading-snug">
+                    Faculty & Researchers
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 5 */}
+              <div className="flex flex-col items-center text-center space-y-1.5 sm:space-y-3">
+                <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <Award className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-xs sm:text-base text-slate-900">
+                    AACSB
+                  </p>
+                  <p className="text-xs sm:text-xs text-slate-600 leading-snug">
+                    Globally Recognized
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </header>
+
+      {/* FEATURES GRID SECTION */}
+      <div className="px-3 sm:px-8 lg:px-16 py-0 bg-white"></div>
+    </section>
   );
 }

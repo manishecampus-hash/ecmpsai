@@ -5,16 +5,16 @@ import ProgramsSection from "@/components/home/online-courses";
 import { Footer } from "@/components/layout/footer";
 import FAQ from "@/components/faq";
 import { GraduatesMarquee } from "@/components/graduates-marquee";
+import { MediaSection } from "@/components/home/media";
 
 export default function HomePage() {
   return (
     <main>
       <HeroSearch />
-
       <PopularCoursesSection />
-
       <CareerExplorer />
       <ProgramsSection />
+      <MediaSection />
       <GraduatesMarquee />
 
       <FAQ />

@@ -77,6 +77,7 @@ export const careerExplorerData = [
   {
     id: 1,
     title: "Software Developer",
+    slug: "software-developer",
     image: "/career/1image.png",
     description:
       "Master programming languages and build scalable applications.",

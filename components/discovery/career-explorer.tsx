@@ -579,6 +579,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { careerExplorerData } from "@/data/career-explorer";
 import { ArrowRight, Briefcase, TrendingUp } from "lucide-react";
 import Image from "next/image";
@@ -704,7 +705,7 @@ const CareerExplorer = () => {
             Skill
           </span>
 
-          <h2 className="mt-3 sm:mt-4 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Enhance Skills by <span className="text-red-500">Job Role</span>
           </h2>
         </div>
@@ -750,14 +751,16 @@ const CareerExplorer = () => {
                 </p>
 
                 {/* Button */}
-                <button
-                  type="button"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 text-red-500 hover:bg-red-100 border border-red-200 font-semibold text-xs transition-colors"
-                  aria-label={`Explore ${item.title}`}
-                >
-                  Explore
-                  <ArrowRight size={14} />
-                </button>
+                <Link href={`/careers/${item.slug}`} passHref>
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-transparate-50 text-black-500 hover:bg-transparate-100 border border-transparate-200 font-semibold text-xs transition-colors"
+                    aria-label={`Explore ${item.title}`}
+                  >
+                    Explore
+                    <ArrowRight size={14} />
+                  </button>
+                </Link>
               </div>
             );
           })}

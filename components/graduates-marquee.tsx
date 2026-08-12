@@ -5,30 +5,28 @@ import React, { useEffect, useRef, useState } from "react";
 import { DEFAULT_GRADUATES, GraduateTestimonialT } from "@/data/graduates";
 
 const StarRating = ({ rating }: { rating: number }) => (
-  <div style={{ display: "flex", gap: 2, marginTop: 6 }}>
+  <div style={{ display: "flex", gap: 3, marginTop: 8 }}>
     {Array.from({ length: 5 }).map((_, i) => (
       <Star
         key={i}
-        size={12}
+        size={13}
         fill={i < Math.round(rating) ? "#facc15" : "none"}
-        color={i < Math.round(rating) ? "#facc15" : "#6b7280"}
+        color={i < Math.round(rating) ? "#facc15" : "#d1d5db"}
         strokeWidth={1.5}
       />
     ))}
   </div>
 );
 
-const GraduateTile = ({
+const GraduateCard = ({
   graduate,
-  tall = false,
   onOpen,
 }: {
   graduate: GraduateTestimonialT;
-  tall?: boolean;
   onOpen: (g: GraduateTestimonialT) => void;
 }) => (
   <div
-    className={`__gradTile ${tall ? "__gradTileTall" : ""}`}
+    className="__gradCard"
     onClick={() => onOpen(graduate)}
     role="button"
     tabIndex={0}
@@ -36,100 +34,81 @@ const GraduateTile = ({
       if (e.key === "Enter" || e.key === " ") onOpen(graduate);
     }}
   >
-    {graduate.avatarSrc ? (
-      <img
-        src={graduate.avatarSrc}
-        alt={graduate.name}
-        className="__gradImg"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          objectPosition: "top center",
-          background: "#0b0f19",
-        }}
-      />
-    ) : (
-      <div
-        className="__gradImg"
-        style={{
-          width: "100%",
-          height: "100%",
-          background: graduate.avatarColor,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 32,
-          fontWeight: 800,
-          color: "#fff",
-        }}
-      >
-        {graduate.initials}
-      </div>
-    )}
+    {/* Image */}
+    <div className="__gradCardImage">
+      {graduate.avatarSrc ? (
+        <img
+          src={graduate.avatarSrc}
+          alt={graduate.name}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center top",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            background: graduate.avatarColor,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 28,
+            fontWeight: 800,
+            color: "#fff",
+          }}
+        >
+          {graduate.initials}
+        </div>
+      )}
+    </div>
 
-    {/* Default bottom info - always visible */}
-    <div className="__gradDefault">
-      <p style={{ margin: 0, fontSize: 14, fontWeight: 800 }}>
+    {/* Info overlay on hover */}
+    <div className="__gradCardOverlay">
+      <div className="__gradCardContent">
+        <p className="__gradCardQuote">
+          "
+          {graduate.testimonial ??
+            "This program completely transformed my career path and gave me the confidence to grow."}
+          "
+        </p>
+        <div className="__gradCardMeta">
+          <p
+            style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "#fff" }}
+          >
+            {graduate.name}
+          </p>
+          <p style={{ margin: "3px 0 0", fontSize: 11.5, color: "#cbd5e1" }}>
+            {graduate.role}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Default info (below image) */}
+    <div className="__gradCardInfo">
+      <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#111" }}>
         {graduate.name}
       </p>
-      <p style={{ margin: "2px 0 0", fontSize: 12, opacity: 0.85 }}>
+      <p
+        style={{
+          margin: "2px 0 0",
+          fontSize: 12,
+          color: "#666",
+          fontWeight: 500,
+        }}
+      >
         {graduate.role}
       </p>
       <StarRating rating={graduate.rating} />
     </div>
-
-    {/* Hover overlay (desktop) - same tile size, extra testimonial content */}
-    <div className="__gradOverlay">
-      <p className="__gradQuote">
-        "
-        {graduate.testimonial ??
-          "This program completely transformed my career path and gave me the confidence to grow."}
-        "
-      </p>
-      <div className="__gradOverlayFooter">
-        <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "#fff" }}>
-          {graduate.name}
-        </p>
-        <p style={{ margin: "2px 0 6px", fontSize: 11.5, color: "#cbd5e1" }}>
-          {graduate.role}
-        </p>
-        <StarRating rating={graduate.rating} />
-      </div>
-    </div>
   </div>
 );
 
-const ImageColumn = ({
-  items,
-  reverse = false,
-  offset = 0,
-  onOpen,
-}: {
-  items: GraduateTestimonialT[];
-  reverse?: boolean;
-  offset?: number;
-  onOpen: (g: GraduateTestimonialT) => void;
-}) => (
-  <div className="__gradColumn" style={{ paddingTop: offset }}>
-    <div
-      className={reverse ? "graduate-loop-down" : "graduate-loop-up"}
-      style={{ display: "flex", flexDirection: "column", gap: 12 }}
-    >
-      {[...items, ...items].map((graduate, index) => (
-        <GraduateTile
-          key={`${graduate.name}-${index}`}
-          graduate={graduate}
-          tall={index % 3 === 1}
-          onOpen={onOpen}
-        />
-      ))}
-    </div>
-  </div>
-);
-
-// ---- Mobile horizontal slider ----
-const MobileGraduateSlider = ({
+const GraduateSlider = ({
   graduates,
   onOpen,
 }: {
@@ -140,12 +119,15 @@ const MobileGraduateSlider = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const isInteractingRef = useRef(false);
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
 
   const handleScroll = () => {
     const el = trackRef.current;
     if (!el) return;
     const slideWidth = el.firstElementChild
-      ? (el.firstElementChild as HTMLElement).getBoundingClientRect().width + 14 // gap
+      ? (el.firstElementChild as HTMLElement).getBoundingClientRect().width + 16
       : el.clientWidth;
     const index = Math.round(el.scrollLeft / slideWidth);
     setActiveIndex(Math.min(graduates.length - 1, Math.max(0, index)));
@@ -160,25 +142,32 @@ const MobileGraduateSlider = ({
     }
   };
 
-  // Auto-advance every few seconds, looping back to the start at the end
-  useEffect(() => {
-    if (graduates.length <= 1) return;
+  const startAutoplay = () => {
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
 
-    const interval = setInterval(() => {
+    autoplayIntervalRef.current = setInterval(() => {
       if (isInteractingRef.current) return;
       setActiveIndex((prev) => {
         const next = (prev + 1) % graduates.length;
         scrollToIndex(next);
         return next;
       });
-    }, 3200);
+    }, 4000);
+  };
 
-    return () => clearInterval(interval);
+  // Auto-advance every few seconds
+  useEffect(() => {
+    if (graduates.length <= 1) return;
+    startAutoplay();
+    return () => {
+      if (autoplayIntervalRef.current)
+        clearInterval(autoplayIntervalRef.current);
+    };
   }, [graduates.length]);
 
-  // Pause auto-advance while the user is touching/dragging, resume shortly after
   const pauseAutoplay = () => {
     isInteractingRef.current = true;
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
   };
 
@@ -186,7 +175,8 @@ const MobileGraduateSlider = ({
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = setTimeout(() => {
       isInteractingRef.current = false;
-    }, 4000);
+      startAutoplay();
+    }, 5000);
   };
 
   return (
@@ -199,33 +189,15 @@ const MobileGraduateSlider = ({
         onTouchEnd={resumeAutoplaySoon}
         onPointerDown={pauseAutoplay}
         onPointerUp={resumeAutoplaySoon}
-        style={{
-          display: "flex",
-          gap: 24,
-          overflowX: "auto",
-          scrollSnapType: "x mandatory",
-          WebkitOverflowScrolling: "touch",
-          padding: "4px 40px 12px 40px",
-          margin: "0 -16px",
-          boxSizing: "border-box",
-          scrollbarWidth: "none",
-        }}
       >
         {graduates.map((graduate, index) => (
-          <div
-            className="__gradSlide"
-            key={`${graduate.name}-slide-${index}`}
-            style={{
-              flex: "0 0 calc(100% - 80px)",
-              boxSizing: "border-box",
-              scrollSnapAlign: "start",
-            }}
-          >
-            <GraduateTile graduate={graduate} onOpen={onOpen} />
+          <div className="__gradSlide" key={`${graduate.name}-slide-${index}`}>
+            <GraduateCard graduate={graduate} onOpen={onOpen} />
           </div>
         ))}
       </div>
 
+      {/* Navigation dots */}
       <div className="__gradDots">
         {graduates.map((_, index) => (
           <button
@@ -244,7 +216,6 @@ const MobileGraduateSlider = ({
   );
 };
 
-// Full-size lightbox modal shown on tile click
 const GraduateModal = ({
   graduate,
   onClose,
@@ -254,13 +225,12 @@ const GraduateModal = ({
 }) => {
   const [entered, setEntered] = useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    // trigger the zoom-in transition on the next frame after mount
     const raf = requestAnimationFrame(() => setEntered(true));
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -271,43 +241,56 @@ const GraduateModal = ({
 
   return (
     <div
-      className={`__gradModalBackdrop ${entered ? "__gradModalBackdropShow" : ""}`}
+      className={`__gradModal ${entered ? "__gradModalActive" : ""}`}
       onClick={onClose}
     >
-      <div
-        className={`__gradModalContent ${entered ? "__gradModalContentShow" : ""}`}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="__gradModalBox" onClick={(e) => e.stopPropagation()}>
         <button
           className="__gradModalClose"
           onClick={onClose}
-          aria-label="Close"
+          aria-label="Close modal"
         >
           <X size={20} />
         </button>
 
-        {graduate.avatarSrc ? (
-          <img
-            src={graduate.avatarSrc}
-            alt={graduate.name}
-            className="__gradModalImg"
-          />
-        ) : (
-          <div
-            className="__gradModalImg __gradModalInitials"
-            style={{ background: graduate.avatarColor }}
-          >
-            {graduate.initials}
-          </div>
-        )}
+        <div className="__gradModalImage">
+          {graduate.avatarSrc ? (
+            <img
+              src={graduate.avatarSrc}
+              alt={graduate.name}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                background: graduate.avatarColor,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 48,
+                fontWeight: 800,
+                color: "#fff",
+              }}
+            >
+              {graduate.initials}
+            </div>
+          )}
+        </div>
 
-        <div className="__gradModalInfo">
+        <div className="__gradModalBody">
           <p
-            style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#fff" }}
+            style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#111" }}
           >
             {graduate.name}
           </p>
-          <p style={{ margin: "2px 0 6px", fontSize: 13, color: "#cbd5e1" }}>
+          <p style={{ margin: "4px 0 8px", fontSize: 13.5, color: "#666" }}>
             {graduate.role}
           </p>
           <StarRating rating={graduate.rating} />
@@ -330,340 +313,382 @@ export function GraduatesMarquee({
 }) {
   const [selected, setSelected] = useState<GraduateTestimonialT | null>(null);
 
-  const firstColumn = [graduates[0], graduates[1], graduates[2]];
-  const secondColumn = [graduates[2], graduates[3], graduates[0]];
-  const thirdColumn = [graduates[1], graduates[3], graduates[2]];
-
   return (
-    <section
-      style={{
-        background: "white",
-      }}
-      className="w-full bg-white pt-3 pb-13 lg:pb-5"
-    >
+    <section className="__gradSection">
       <style>{`
-        @keyframes graduateLoopUp {
-          from { transform: translateY(0); }
-          to { transform: translateY(-50%); }
-        }
-        @keyframes graduateLoopDown {
-          from { transform: translateY(-50%); }
-          to { transform: translateY(0); }
-        }
-        .graduate-loop-up {
-          animation: graduateLoopUp 32s linear infinite;
-        }
-        .graduate-loop-down {
-          animation: graduateLoopDown 34s linear infinite;
-        }
-        .graduate-loop-up:hover,
-        .graduate-loop-down:hover {
-          animation-play-state: paused;
+        .__gradSection {
+          background: #ffffff;
+          padding: 60px 20px;
         }
 
-        .__gradColumn {
-          overflow: hidden;
+        @media (max-width: 768px) {
+          .__gradSection {
+            padding: 48px 16px;
+          }
         }
 
-        /* ---- Grid + container (desktop/tablet only, md and up) ---- */
-        .__gradGridWrap {
-          position: relative;
-          height: 700px;
-          overflow: hidden;
-          display: none;
+        .__gradContainer {
+          max-width: 1280px;
+          margin: 0 auto;
         }
-        .__gradGrid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
+
+        /* Header */
+        .__gradHeader {
+          text-align: center;
+          margin-bottom: 48px;
+        }
+
+        @media (max-width: 768px) {
+          .__gradHeader {
+            margin-bottom: 40px;
+          }
+        }
+
+        .__gradBadge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 9999px;
+          padding: 8px 16px;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #111;
+          margin-bottom: 12px;
+        }
+
+        .__gradTitle {
+          font-size: 36px;
+          font-weight: 800;
+          line-height: 1.2;
+          color: #111;
+          margin: 0;
+          letter-spacing: -0.5px;
+        }
+
+        @media (max-width: 1024px) {
+          .__gradTitle {
+            font-size: 28px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .__gradTitle {
+            font-size: 24px;
+          }
+        }
+
+        .__gradTitle .highlight {
+          color: #ef4444;
+        }
+
+        /* Card */
+        .__gradCard {
+          cursor: pointer;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
           height: 100%;
         }
 
-        @media (min-width: 768px) {
-          .__gradGridWrap { display: block; height: 540px; }
+        .__gradCard:hover {
+          border-color: #d1d5db;
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+          transform: translateY(-4px);
         }
 
-        @media (min-width: 1024px) {
-          .__gradGridWrap { height: 700px; }
-        }
-
-        /* ---- Tile sizing (responsive) ---- */
-        .__gradTile {
-          cursor: pointer;
-          height: 340px;
-          border-radius: 10px;
+        .__gradCardImage {
+          width: 100%;
+          height: 240px;
+          background: #f3f4f6;
           overflow: hidden;
           position: relative;
-         
-        }
-        .__gradTileTall {
-          height: 440px;
         }
 
-        @media (max-width: 900px) {
-          .__gradTile { height: 250px; }
-          .__gradTileTall { height: 320px; }
+        .__gradCardImage img {
+          transition: transform 0.4s ease, filter 0.3s ease;
         }
 
-        .__gradImg {
-          transition: transform 0.5s ease, filter 0.4s ease;
-        }
-        .__gradTile:hover .__gradImg {
-          transform: scale(1.04);
-          filter: brightness(0.55);
+        .__gradCard:hover .__gradCardImage img {
+          transform: scale(1.08);
+          filter: brightness(0.7);
         }
 
-        .__gradDefault {
-          position: absolute;
-          inset: auto 0 0;
-          padding: 14px;
-          background: linear-gradient(to top, rgba(5,7,13,0.9), rgba(5,7,13,0));
-          color: #fff;
-          transition: opacity 0.3s ease;
-        }
-        .__gradTile:hover .__gradDefault {
-          opacity: 0;
-        }
-
-        /* ---- Hover overlay (desktop only, click still opens modal on all devices) ---- */
-        .__gradOverlay {
+        /* Overlay on image on hover */
+        .__gradCardOverlay {
           position: absolute;
           inset: 0;
+          background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 100%);
+          padding: 20px;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          padding: 16px;
-          background: linear-gradient(180deg, rgba(5,7,13,0.15) 0%, rgba(5,7,13,0.75) 45%, rgba(5,7,13,0.96) 100%);
           opacity: 0;
-          transform: translateY(14px);
-          transition: opacity 0.35s ease, transform 0.35s ease;
+          transition: opacity 0.35s ease;
           pointer-events: none;
         }
-        .__gradTile:hover .__gradOverlay {
+
+        .__gradCard:hover .__gradCardOverlay {
           opacity: 1;
-          transform: translateY(0);
           pointer-events: auto;
         }
-        .__gradQuote {
-          margin: 0 0 10px;
-          font-size: 12.5px;
-          line-height: 1.55;
-          color: #f1f5f9;
+
+        .__gradCardContent {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .__gradCardQuote {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.6;
+          color: #f3f4f6;
           font-style: italic;
           display: -webkit-box;
-          -webkit-line-clamp: 5;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          opacity: 0;
-          transform: translateY(6px);
-          transition: opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s;
         }
-        .__gradTile:hover .__gradQuote {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .__gradOverlayFooter {
-          border-top: 1px solid rgba(255,255,255,0.15);
+
+        .__gradCardMeta {
+          border-top: 1px solid rgba(255, 255, 255, 0.2);
           padding-top: 8px;
-          opacity: 0;
-          transform: translateY(6px);
-          transition: opacity 0.3s ease 0.16s, transform 0.3s ease 0.16s;
-        }
-        .__gradTile:hover .__gradOverlayFooter {
-          opacity: 1;
-          transform: translateY(0);
         }
 
-        @media (max-width: 900px) {
-          .__gradOverlay { display: none; }
+        .__gradCardMeta p {
+          margin: 0;
         }
 
-        /* ---- Mobile slider (below md) ---- */
-        .__gradSliderWrap {
-          display: block;
-          padding-top: 4px;
-        }
-
-        @media (min-width: 768px) {
-          .__gradSliderWrap { display: none; }
-        }
-
-        .__gradSliderTrack {
+        /* Info below image */
+        .__gradCardInfo {
+          padding: 16px;
+          flex-grow: 1;
           display: flex;
-          gap: 24px;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          padding: 4px 32px 12px;
-          margin: 0 -16px;
-          box-sizing: border-box;
-          scrollbar-width: none;
-        }
-        .__gradSliderTrack::-webkit-scrollbar {
-          display: none;
+          flex-direction: column;
+          justify-content: flex-start;
         }
 
-        .__gradSlide {
-          flex: 0 0 calc(100% - 64px);
-          box-sizing: border-box;
-          scroll-snap-align: start;
-        }
-        @media (max-width: 420px) {
-          .__gradSlide { flex-basis: calc(100% - 56px); }
+        .__gradCardInfo p {
+          margin: 0;
         }
 
-        .__gradSlide .__gradTile {
-          height: 250px;
-        }
-
-        .__gradDots {
-          display: flex;
-          justify-content: center;
-          gap: 8px;
-          margin-top: 4px;
-        }
-        .__gradDot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          border: none;
-          background: rgba(0,0,0,0.2);
-          padding: 0;
-          cursor: pointer;
-          transition: background 0.25s ease, transform 0.25s ease;
-        }
-        .__gradDotActive {
-          background: #ef4444;
-          transform: scale(1.25);
-        }
-
-        /* ---- Full-size click modal ---- */
-        .__gradModalBackdrop {
+        /* Modal */
+        .__gradModal {
           position: fixed;
           inset: 0;
-          background: rgba(5,7,13,0.92);
+          background: rgba(17, 24, 39, 0.92);
           z-index: 1000;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 20px;
           opacity: 0;
-          transition: opacity 0.28s ease;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        .__gradModalBackdropShow {
+
+        .__gradModal.__gradModalActive {
           opacity: 1;
+          visibility: visible;
         }
-        .__gradModalContent {
+
+        .__gradModalBox {
           position: relative;
           width: 100%;
-          max-width: 480px;
+          max-width: 500px;
+          background: #fff;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
           max-height: 90vh;
-          overflow-y: auto;
-          background: #0b0f19;
-          border-radius: 14px;
-          border: 1px solid rgba(255,255,255,0.12);
           display: flex;
           flex-direction: column;
-          transform: scale(0.85);
+          transform: scale(0.95);
           opacity: 0;
-          transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
-        .__gradModalContentShow {
+
+        .__gradModal.__gradModalActive .__gradModalBox {
           transform: scale(1);
           opacity: 1;
         }
-        .__gradModalClose {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  background: #ffffff;
-  border: 1.5px solid rgba(0,0,0,0.1);
-  color: #0b0f19;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
-.__gradModalClose:hover {
-  background: #f1f5f9;
-  border-color: rgba(0,0,0,0.18);
-  transform: scale(1.06);
-}
-        .__gradModalImg {
-          width: 100%;
-          height: 60vh;
-          max-height: 65vh;
-          object-fit: cover;
-          object-position: top center;
-          background: #0b0f19;
-        }
 
-        @media (max-width: 640px) {
-          .__gradModalImg {
-            height: 68vh;
-            max-height: 68vh;
-          }
-        }
-        .__gradModalInitials {
-          height: 220px;
+        .__gradModalClose {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          z-index: 10;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: none;
+          background: #fff;
+          color: #111;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 40px;
-          font-weight: 800;
-          color: #fff;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-        .__gradModalInfo {
-          padding: 16px;
+
+        .__gradModalClose:hover {
+          background: #f3f4f6;
+          transform: scale(1.08);
         }
+
+        .__gradModalImage {
+          width: 100%;
+          height: 320px;
+          background: #f3f4f6;
+          overflow: hidden;
+        }
+
+        .__gradModalImage img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+        }
+
+        .__gradModalBody {
+          padding: 24px;
+          overflow-y: auto;
+          flex-grow: 1;
+        }
+
+        .__gradModalBody p {
+          margin: 0;
+        }
+
         .__gradModalQuote {
-          margin: 10px 0 0;
-          font-size: 13px;
-          line-height: 1.6;
-          color: #e2e8f0;
+          margin-top: 16px;
+          font-size: 14px;
+          line-height: 1.7;
+          color: #374151;
           font-style: italic;
         }
 
-        @media (max-width: 480px) {
-          .__gradModalContent { max-width: 100%; }
+        @media (max-width: 640px) {
+          .__gradModalImage {
+            height: 280px;
+          }
+
+          .__gradModalBody {
+            padding: 20px;
+          }
+
+          .__gradModalBox {
+            max-width: 100%;
+          }
+        }
+
+        /* Slider (now on all devices) */
+        .__gradSliderWrap {
+          display: block;
+        }
+
+        .__gradSliderTrack {
+          display: flex;
+          gap: 16px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          padding: 8px 16px;
+          margin: 0 -16px;
+          box-sizing: border-box;
+          scrollbar-width: none;
+        }
+
+        .__gradSliderTrack::-webkit-scrollbar {
+          display: none;
+        }
+
+        .__gradSlide {
+          flex: 0 0 calc(33.333% - 11px);
+          box-sizing: border-box;
+          scroll-snap-align: start;
+        }
+
+        @media (max-width: 1024px) {
+          .__gradSlide {
+            flex: 0 0 calc(50% - 8px);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .__gradSlide {
+            flex: 0 0 calc(100% - 32px);
+          }
+
+          .__gradSliderTrack {
+            gap: 12px;
+            padding: 8px 16px;
+          }
+        }
+
+        /* Dots */
+        .__gradDots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 20px;
+          padding: 0 16px;
+        }
+
+        .__gradDot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          border: none;
+          background: #d1d5db;
+          padding: 0;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .__gradDot:hover {
+          background: #9ca3af;
+        }
+
+        .__gradDotActive {
+          background: #ef4444;
+          width: 24px;
+          border-radius: 4px;
+        }
+
+        @media (max-width: 1024px) {
+          .__gradDots {
+            margin-top: 16px;
+          }
         }
       `}</style>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 sm:mb-14 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase text-black border border-gray-200">
-            <Handshake className="h-4 w-4 text-red-500" />
+      <div className="__gradContainer">
+        {/* Header */}
+        <div className="__gradHeader">
+          <div className="__gradBadge">
+            <Handshake size={14} style={{ color: "#ef4444" }} />
             Success Stories
-          </span>
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            What Our Graduates <span className="text-red-500">Say</span>
+          </div>
+          <h2 className="__gradTitle">
+            What Our Graduates <span className="highlight">Say</span>
           </h2>
         </div>
 
-        {/* Desktop / tablet: animated column grid */}
-        <div className="__gradGridWrap">
-          <div className="__gradGrid">
-            <ImageColumn items={firstColumn} onOpen={setSelected} />
-            <ImageColumn
-              items={secondColumn}
-              reverse
-              offset={52}
-              onOpen={setSelected}
-            />
-            <ImageColumn items={thirdColumn} offset={24} onOpen={setSelected} />
-          </div>
-        </div>
-
-        {/* Mobile: swipeable slider */}
-        <MobileGraduateSlider graduates={graduates} onOpen={setSelected} />
+        {/* Slider (All Devices) */}
+        <GraduateSlider graduates={graduates} onOpen={setSelected} />
       </div>
 
+      {/* Modal */}
       {selected && (
         <GraduateModal graduate={selected} onClose={() => setSelected(null)} />
       )}

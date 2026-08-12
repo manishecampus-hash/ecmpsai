@@ -1337,8 +1337,8 @@ export function ApplicationForm({
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-6">
       <div className="flex flex-col items-center text-center space-y-1.5 mb-3">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
-          Apply Now
+        <h2 className="text-1xl sm:text-2xl font-extrabold text-gray-900 leading-tight xl:2xl">
+          Download Personalized Report
         </h2>
       </div>
 
@@ -1511,7 +1511,7 @@ export function ApplicationForm({
             <Loader2 className="animate-spin" />
           ) : (
             <>
-              Apply Now
+              Download Now
               <ArrowRight className="ml-2 w-4 h-4" />
             </>
           )}

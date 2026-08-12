@@ -2,29 +2,18 @@
 
 import { pressArticles } from "@/data/press-section";
 import {
-  Handshake,
+  Pin,
   ChevronLeft,
   ChevronRight,
   ArrowUpRight,
+  Handshake,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Expected shape of each item in `pressArticles`:
- * {
- *   image: string;        // photo used in the card (event photo / thumbnail)
- *   name: string;         // outlet name, e.g. "ThePrint", "ANI", "The Tribune"
- *   href: string;         // link to the article
- *   description: string;  // one-line summary shown under the outlet name
- *   headline?: string;    // optional small "as it appeared" strip (only some cards had this in the reference)
- * }
- *
- * If your data file doesn't have `description` / `headline` yet, add them —
- * the card layout below is built around that copy, not just the logo.
- */
+const CARD_WIDTH = 300;
+const GAP = 28;
 
-const CARD_WIDTH = 300; // px, keep in sync with the className width below
-const GAP = 24; // px, keep in sync with gap-6
+const TILTS = [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2, -2.6, 1.9];
 
 export function MediaSection() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -34,7 +23,6 @@ export function MediaSection() {
   const items = pressArticles;
   const pageCount = Math.max(1, items.length - visible + 1);
 
-  // responsive: how many cards are visible at once
   useEffect(() => {
     const computeVisible = () => {
       const w = window.innerWidth;
@@ -63,27 +51,31 @@ export function MediaSection() {
   };
 
   return (
-    <section className="relative w-full bg-white px-4 py-16 text-slate-900 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
+    <section className="relative w-full overflow-hidden px-4 py-8 sm:px-6">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage: "",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Handshake className="h-3.5 w-3.5 text-red-500" />
-            Featured in
+            Media
           </span>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            We&apos;ve been in the <span className="text-red-500">news</span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            The press <span className="text-red-500">wall</span>
           </h2>
         </div>
 
-        {/* Carousel */}
-        <div className="relative">
-          {/* Prev / Next arrows */}
+        <div className="relative py-4">
           <button
             aria-label="Previous"
             onClick={() => scrollToPage(page - 1)}
             disabled={page === 0}
-            className="absolute left-0 top-1/2 z-20 -translate-x-3 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg shadow-slate-900/5 transition hover:border-red-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-slate-700 sm:-translate-x-5"
+            className="absolute left-0 top-1/2 z-20 -translate-x-3 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-[#1B2230]/10 bg-white text-[#1B2230]/70 shadow-lg shadow-slate-900/5 transition hover:border-[#B8912A]/50 hover:text-[#B8912A] disabled:cursor-not-allowed disabled:opacity-20 sm:-translate-x-5"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -91,92 +83,118 @@ export function MediaSection() {
             aria-label="Next"
             onClick={() => scrollToPage(page + 1)}
             disabled={page >= items.length - visible}
-            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 translate-x-3 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg shadow-slate-900/5 transition hover:border-red-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-slate-700 sm:translate-x-5"
+            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 translate-x-3 flex h-11 w-11 items-center justify-center rounded-full border border-[#1B2230]/10 bg-white text-[#1B2230]/70 shadow-lg shadow-slate-900/5 transition hover:border-[#B8912A]/50 hover:text-[#B8912A] disabled:cursor-not-allowed disabled:opacity-20 sm:translate-x-5"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
 
-          {/* Edge fades */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-white to-transparent sm:w-16" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-white to-transparent sm:w-16" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#FBFAF7] to-transparent sm:w-20" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#FBFAF7] to-transparent sm:w-20" />
 
-          {/* Track */}
           <div
             ref={trackRef}
-            className="scrollbar-hide flex gap-6 overflow-x-auto scroll-smooth px-1 py-2"
+            className="scrollbar-hide flex gap-7 overflow-x-auto scroll-smooth px-2 py-4"
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {items.map((article, i) => (
-              <a
-                key={i}
-                href={article.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ scrollSnapAlign: "start", width: CARD_WIDTH }}
-                className="group flex-shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:border-red-200 hover:shadow-xl hover:shadow-red-900/10"
-              >
-                {/* Photo */}
-                <div className="relative h-40 w-full overflow-hidden bg-slate-100">
-                  <img
-                    src={article.image}
-                    alt={article.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/400x200/f8fafc/e2e8f0?text=eCampus";
+            {items.map((article, i) => {
+              const tilt = TILTS[i % TILTS.length];
+              return (
+                <a
+                  key={i}
+                  href={article.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    scrollSnapAlign: "start",
+                    width: CARD_WIDTH,
+                    transform: "rotate(" + tilt + "deg)",
+                  }}
+                  className="group relative flex-shrink-0 bg-white shadow-[0_8px_24px_-8px_rgba(27,34,48,0.18)] transition-all duration-300 hover:z-10 hover:rotate-0 hover:-translate-y-2 hover:shadow-[0_18px_36px_-10px_rgba(27,34,48,0.28)]"
+                >
+                  <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#B33A3A] p-1.5 shadow-md ring-2 ring-white">
+                    <Pin
+                      className="h-3 w-3 rotate-45 text-white"
+                      fill="currentColor"
+                    />
+                  </div>
+
+                  <div
+                    className="h-3 w-full bg-white"
+                    style={{
+                      maskImage:
+                        "repeating-linear-gradient(110deg, transparent 0 3px, black 3px 7px)",
+                      WebkitMaskImage:
+                        "repeating-linear-gradient(110deg, transparent 0 3px, black 3px 7px)",
                     }}
                   />
-                  {article.headline && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-6">
-                      <p className="line-clamp-2 text-xs font-semibold leading-snug text-white">
-                        {article.headline}
-                      </p>
-                    </div>
-                  )}
-                </div>
 
-                {/* Body */}
-                <div className="flex flex-col gap-3 px-5 pb-5 pt-4">
-                  <div className="flex h-8 items-center">
-                    {article.logo ? (
-                      <img
-                        src={article.logo}
-                        alt={`${article.name} logo`}
-                        className="h-6 w-auto object-contain"
-                      />
-                    ) : (
-                      <span className="text-lg font-black tracking-tight text-slate-900">
-                        {article.name}
-                      </span>
+                  <div className="relative h-36 w-full overflow-hidden border-y border-[#1B2230]/5 bg-slate-100 grayscale-[10%]">
+                    <img
+                      src={article.image}
+                      alt={article.name}
+                      className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "https://placehold.co/400x200/F3EEE1/1B2230?text=eCampus";
+                      }}
+                    />
+                    {article.headline && (
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-6">
+                        <p className="line-clamp-2 text-xs font-semibold leading-snug text-white">
+                          {article.headline}
+                        </p>
+                      </div>
                     )}
                   </div>
 
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    {article.description}
-                  </p>
+                  <div className="flex flex-col gap-2.5 px-5 pb-6 pt-4">
+                    <div className="flex items-center justify-between">
+                      {article.logo ? (
+                        <img
+                          src={article.logo}
+                          alt={article.name + " logo"}
+                          className="h-5 w-auto object-contain"
+                        />
+                      ) : (
+                        <span
+                          className="text-base font-black tracking-tight text-[#1B2230]"
+                          style={{ fontFamily: "'Newsreader', Georgia, serif" }}
+                        >
+                          {article.name}
+                        </span>
+                      )}
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#1B2230]/35">
+                        Press
+                      </span>
+                    </div>
 
-                  <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-red-500 transition-transform group-hover:translate-x-0.5">
-                    Read More
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </span>
-                </div>
-              </a>
-            ))}
+                    <p className="text-sm leading-relaxed text-[#1B2230]/65">
+                      {article.description}
+                    </p>
+
+                    <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[#B33A3A] transition-transform group-hover:translate-x-0.5">
+                      Read clipping
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </div>
 
-        {/* Dots */}
-        <div className="mt-8 flex items-center justify-center gap-2">
+        <div className="mt-2 flex items-center justify-center gap-2">
           {Array.from({ length: pageCount }).map((_, i) => (
             <button
               key={i}
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={"Go to slide " + (i + 1)}
               onClick={() => scrollToPage(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === page
-                  ? "w-6 bg-red-500"
-                  : "w-2 bg-slate-200 hover:bg-slate-300"
-              }`}
+              className={
+                "h-1.5 rounded-full transition-all duration-300 " +
+                (i === page
+                  ? "w-6 bg-[#B8912A]"
+                  : "w-1.5 bg-[#1B2230]/15 hover:bg-[#1B2230]/25")
+              }
             />
           ))}
         </div>

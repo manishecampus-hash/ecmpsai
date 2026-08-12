@@ -43,15 +43,14 @@ export default function BottomNav() {
   const AiIcon = aiLink.icon;
 
   return (
-    <>
-
-      <div
-        className={`fixed bottom-2 left-3 right-3 z-50 flex items-center gap-2 md:hidden transition-all duration-300 ${
-          isVisible ? "translate-y-0" : "translate-y-24"
-        }`}
-      >
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-slate-300 bg-slate-100 px-1.5 py-2 transition-all duration-300 ${
+        isVisible ? "translate-y-0" : "translate-y-24"
+      }`}
+    >
+      <div className="flex w-full items-center gap-1.5">
         {/* Main Navbar */}
-        <div className="flex flex-1 items-center justify-around rounded-2xl border border-gray-200 bg-white px-1 py-1 shadow-xl">
+        <div className="flex flex-1 items-center justify-around rounded-2xl border border-slate-300 bg-white/90 px-1 py-1 shadow-sm">
           {bottomNavLinks.map((link) => {
             const Icon = link.icon;
             const active = isActive(link.href);
@@ -64,7 +63,6 @@ export default function BottomNav() {
                   active ? "bg-red-50" : "hover:bg-gray-100 active:scale-95"
                 }`}
               >
-                {/* Icon */}
                 <div
                   className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
                     active
@@ -80,7 +78,6 @@ export default function BottomNav() {
                   />
                 </div>
 
-                {/* Label */}
                 <span
                   className={`whitespace-nowrap text-[10px] font-semibold leading-tight transition-colors duration-300 ${
                     active ? "text-[#ef4444]" : "text-black"
@@ -96,14 +93,14 @@ export default function BottomNav() {
         {/* Separate AI Tab */}
         <Link
           href={aiLink.href}
-          className={`flex w-16 flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border py-1 shadow-xl transition-all duration-300 ${
+          className={`flex w-[68px] flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border py-1 shadow-sm transition-all duration-300 ${
             aiActive
               ? "border-[#ef4444] bg-[#ef4444]/5"
-              : "border-gray-200 bg-white active:scale-95"
+              : "border-slate-300 bg-white/90 active:scale-95"
           }`}
         >
           <div
-            className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
+            className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-300 ${
               aiActive
                 ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
                 : "bg-black text-white"
@@ -116,6 +113,7 @@ export default function BottomNav() {
               strokeWidth={2.3}
             />
           </div>
+
           <span
             className={`whitespace-nowrap text-[10px] font-semibold leading-tight transition-colors duration-300 ${
               aiActive ? "text-[#ef4444]" : "text-black"
@@ -125,6 +123,6 @@ export default function BottomNav() {
           </span>
         </Link>
       </div>
-    </>
+    </div>
   );
 }

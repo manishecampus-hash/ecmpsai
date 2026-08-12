@@ -1028,7 +1028,7 @@ function SearchPage() {
             <ArrowLeft size={16} />
           </button>
 
-          <form
+          {/* <form
             onSubmit={handleSubmit}
             style={{
               flex: 1,
@@ -1095,7 +1095,7 @@ function SearchPage() {
             >
               <ArrowUp size={14} color="#fff" />
             </button>
-          </form>
+          </form> */}
         </div>
       </header>
 
@@ -1146,7 +1146,11 @@ function SearchPage() {
                   flexShrink: 0,
                 }}
               >
-                <Sparkles size={14} color="#fff" />
+                <img
+                  src="aiimage/newai.png"
+                  alt="AI Logo"
+                  className="h-4 w-4 object-contain"
+                />
               </div>
               <span
                 style={{ fontWeight: 600, fontSize: 14, color: T.textPrim }}

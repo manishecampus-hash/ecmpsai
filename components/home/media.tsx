@@ -8,12 +8,65 @@ import {
   ArrowUpRight,
   Handshake,
 } from "lucide-react";
+import type { CSSProperties, SyntheticEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
 const CARD_WIDTH = 300;
 const GAP = 28;
 
 const TILTS = [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2, -2.6, 1.9];
+
+const preventFocusScroll = (e: SyntheticEvent) => {
+  e.preventDefault();
+};
+
+const leftArrowStyle = (visible: boolean): CSSProperties => ({
+  position: "absolute",
+  left: 0,
+  top: 0,
+  bottom: 0,
+  margin: "auto 0",
+  zIndex: 40,
+  background: "#666666",
+  border: "none",
+  borderRadius: "0 8px 8px 0",
+  padding: 0,
+  cursor: visible ? "pointer" : "default",
+  color: "#ffffff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  opacity: visible ? 1 : 0,
+  pointerEvents: visible ? "auto" : "none",
+  transition: "opacity 0.2s, background 0.2s",
+  flexShrink: 0,
+  width: 24,
+  height: 64,
+});
+
+const rightArrowStyle = (visible: boolean): CSSProperties => ({
+  position: "absolute",
+  right: 0,
+  top: 0,
+  bottom: 0,
+  margin: "auto 0",
+  zIndex: 40,
+  background: "#666666",
+  border: "none",
+  borderRadius: "8px 0 0 8px",
+  padding: 0,
+  cursor: visible ? "pointer" : "default",
+  color: "#ffffff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  opacity: visible ? 1 : 0,
+  pointerEvents: visible ? "auto" : "none",
+  transition: "opacity 0.2s, background 0.2s",
+  flexShrink: 0,
+  width: 24,
+  height: 64,
+});
 
 export function MediaSection() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -62,30 +115,36 @@ export function MediaSection() {
       <div className="relative mx-auto max-w-7xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            <Handshake className="h-3.5 w-3.5 text-[#ef4444]" />
             Media
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            The press <span className="text-red-500">wall</span>
+            The press <span className="text-[#ef4444]">wall</span>
           </h2>
         </div>
 
         <div className="relative py-4">
           <button
+            type="button"
             aria-label="Previous"
+            onMouseDown={preventFocusScroll}
             onClick={() => scrollToPage(page - 1)}
             disabled={page === 0}
-            className="absolute left-0 top-1/2 z-20 -translate-x-3 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-[#1B2230]/10 bg-white text-[#1B2230]/70 shadow-lg shadow-slate-900/5 transition hover:border-[#B8912A]/50 hover:text-[#B8912A] disabled:cursor-not-allowed disabled:opacity-20 sm:-translate-x-5"
+            className="__carArrow"
+            style={leftArrowStyle(page !== 0)}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft size={16} />
           </button>
           <button
+            type="button"
             aria-label="Next"
+            onMouseDown={preventFocusScroll}
             onClick={() => scrollToPage(page + 1)}
             disabled={page >= items.length - visible}
-            className="absolute right-0 top-1/2 z-20 -translate-y-1/2 translate-x-3 flex h-11 w-11 items-center justify-center rounded-full border border-[#1B2230]/10 bg-white text-[#1B2230]/70 shadow-lg shadow-slate-900/5 transition hover:border-[#B8912A]/50 hover:text-[#B8912A] disabled:cursor-not-allowed disabled:opacity-20 sm:translate-x-5"
+            className="__carArrow"
+            style={rightArrowStyle(page < items.length - visible)}
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight size={16} />
           </button>
 
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#FBFAF7] to-transparent sm:w-20" />
@@ -111,9 +170,9 @@ export function MediaSection() {
                   }}
                   className="group relative flex-shrink-0 bg-white shadow-[0_8px_24px_-8px_rgba(27,34,48,0.18)] transition-all duration-300 hover:z-10 hover:rotate-0 hover:-translate-y-2 hover:shadow-[0_18px_36px_-10px_rgba(27,34,48,0.28)]"
                 >
-                  <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#B33A3A] p-1.5 shadow-md ring-2 ring-white">
+                  <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 shadow-md ring-2 ring-white">
                     <Pin
-                      className="h-3 w-3 rotate-45 text-white"
+                      className="h-3 w-3 rotate-45 text-red-500"
                       fill="currentColor"
                     />
                   </div>
@@ -192,7 +251,7 @@ export function MediaSection() {
               className={
                 "h-1.5 rounded-full transition-all duration-300 " +
                 (i === page
-                  ? "w-6 bg-[#B8912A]"
+                  ? "w-6 bg-red-500 text-red-500"
                   : "w-1.5 bg-[#1B2230]/15 hover:bg-[#1B2230]/25")
               }
             />
@@ -201,6 +260,19 @@ export function MediaSection() {
       </div>
 
       <style jsx global>{`
+        .__carArrow:hover {
+          background: #333333 !important;
+        }
+
+        @media (max-width: 640px) {
+          .__carArrow {
+            top: 115px !important;
+            bottom: auto !important;
+            margin: 0 !important;
+            transform: translateY(-50%) !important;
+          }
+        }
+
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }

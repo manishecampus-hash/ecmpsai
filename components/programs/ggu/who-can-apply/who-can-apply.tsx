@@ -14,10 +14,6 @@ export default function Page() {
     <section className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-white">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1 text-sm font-semibold text-red-600">
-            Admissions
-          </span>
-
           <h1 className="mt-4 text-3xl sm:text-4xl font-bold text-gray-900">
             Who Can <span className="text-red-500">Apply?</span>
           </h1>

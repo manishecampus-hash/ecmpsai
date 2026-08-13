@@ -144,11 +144,6 @@ export default function SpecializationFaq() {
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
-            FAQ
-          </span>
-
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
             Frequently Asked
             <span className="text-red-500"> Questions</span>

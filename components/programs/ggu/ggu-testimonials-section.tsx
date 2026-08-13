@@ -69,20 +69,10 @@ export default function GGUDoctorateTestimonials({
         <div className="mx-auto mb-10 max-w-3xl text-center">
           {/* Section Header */}
           <div className="mx-auto mb-10 max-w-7xl text-center px-4 sm:px-6 lg:px-8">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-              <GraduationCap className="h-3.5 w-3.5 text-red-500" />
-              Scholar Stories
-            </span>
             <h2 className="mt-2 text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl md:text-4xl">
               DBA Scholar <span className="text-red-500">Testimonials</span>
             </h2>
           </div>
-
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-            Hear from working executives who chose the flexible Online DBA at
-            Golden Gate University and built advanced research and leadership
-            capabilities.
-          </p>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">

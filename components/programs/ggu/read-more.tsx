@@ -49,24 +49,6 @@ export default function GguReadMore() {
               ))}
             </div>
 
-            {open && (
-              <div className="mt-5 space-y-4 border-l-2 border-red-200 pl-5 text-sm leading-7 text-gray-700 sm:text-base">
-                <p>
-                  The Online DBA offers the flexibility to learn from anywhere
-                  while providing access to live and recorded sessions, faculty
-                  mentorship, and a peer cohort of fellow executives throughout
-                  the program.
-                </p>
-
-                <p>
-                  It helps learners develop advanced capabilities in strategic
-                  leadership, corporate finance, organizational research, and
-                  applied business decision-making while preparing for senior
-                  executive, consulting, and academic careers.
-                </p>
-              </div>
-            )}
-
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
@@ -82,6 +64,24 @@ export default function GguReadMore() {
             </button>
           </div>
         </div>
+
+        {open && (
+          <div className="mx-auto mt-7 max-w-3xl space-y-4 text-center text-sm leading-7 text-gray-700 sm:text-base">
+            <p>
+              The Online DBA offers the flexibility to learn from anywhere while
+              providing access to live and recorded sessions, faculty
+              mentorship, and a peer cohort of fellow executives throughout the
+              program.
+            </p>
+
+            <p>
+              It helps learners develop advanced capabilities in strategic
+              leadership, corporate finance, organizational research, and
+              applied business decision-making while preparing for senior
+              executive, consulting, and academic careers.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

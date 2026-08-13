@@ -89,63 +89,67 @@ export default function GGUCoupons() {
   const [activeCoupon, setActiveCoupon] = useState(null);
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-white">
+    <section className="w-full bg-white px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-          <span className="text-red-500">Golden Gate University</span> Online
-          DBA - Coupons
+        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+          Golden Gate University Online
+          <span className="text-red-500"> DBA - Coupons</span>
         </h1>
-        <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed max-w-4xl">
+        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
           Apply a coupon code below to unlock cashback and discounts on the
           Golden Gate University Online DBA program.
         </p>
 
         {/* Coupons Table */}
-        <div className="mt-8 overflow-hidden rounded-xl border border-slate-200">
-          <div className="bg-[#ef4444]grid grid-cols-[1fr,auto] sm:grid-cols-2">
-            <div className="px-4 py-3">
-              <h2 className="text-xs sm:text-sm font-bold text-white">
+        <div className="mt-6 w-full overflow-hidden rounded-xl border border-slate-200">
+          <div className="grid grid-cols-2 bg-[#ef4444]">
+            <div className="px-3 py-3.5 sm:px-5 sm:py-4">
+              <h2 className="text-xs font-bold text-white sm:text-sm">
                 Golden Gate University Online DBA - Specializations
               </h2>
             </div>
-            <div className="px-4 py-3 text-right sm:text-left border-l border-red-800">
-              <h2 className="text-xs sm:text-sm font-bold text-white">
+            <div className="border-l border-red-400 px-3 py-3.5 text-right sm:px-5 sm:py-4 sm:text-left">
+              <h2 className="text-xs font-bold text-white sm:text-sm">
                 Coupon Code (GGU Cashback)
               </h2>
             </div>
           </div>
 
-          {coupons.map((coupon, index) => (
-            <div
-              key={coupon.id}
-              className={`grid grid-cols-[1fr,auto] sm:grid-cols-2 border-b border-slate-200 last:border-b-0 ${
-                index % 2 === 0 ? "bg-white" : "bg-red-50/40"
-              }`}
-            >
-              <div className="px-4 py-4">
-                <p className="text-sm font-semibold text-slate-900">
-                  {coupon.plan}
-                </p>
-                <p className="text-xs text-slate-500 mt-0.5">{coupon.note}</p>
+          {coupons.map((coupon, index) => {
+            const reverseIndex = coupons.length - 1 - index;
+            const isTinted = reverseIndex % 2 === 0;
+            return (
+              <div
+                key={coupon.id}
+                className={`grid grid-cols-2 items-center border-b border-slate-200 last:border-b-0 ${
+                  isTinted ? "bg-red-50/40" : "bg-white"
+                }`}
+              >
+                <div className="min-w-0 px-3 py-5 sm:px-5 sm:py-6">
+                  <p className="text-sm font-semibold text-slate-900">
+                    {coupon.plan}
+                  </p>
+                  <p className="mt-1.5 text-xs text-slate-500">{coupon.note}</p>
+                </div>
+                <div className="flex min-w-0 items-center justify-end border-l border-slate-200 px-3 py-5 sm:justify-start sm:px-5 sm:py-6">
+                  <button
+                    type="button"
+                    onClick={() => setActiveCoupon(coupon)}
+                    className="inline-flex h-10 w-full max-w-[128px] items-center justify-center rounded-[13px] bg-[#ef4444] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(239,68,68,0.24)] transition hover:bg-red-600 active:scale-[0.99] sm:w-auto sm:max-w-none sm:px-5"
+                  >
+                    APPLY CODE
+                  </button>
+                </div>
               </div>
-              <div className="px-4 py-4 flex items-center sm:items-start border-l border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setActiveCoupon(coupon)}
-                  className="text-sm font-bold text-red-600 hover:text-red-700 hover:underline transition-colors"
-                >
-                  APPLY CODE
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-7 text-center">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#ef4444] px-6 py-3 text-sm font-bold text-white hover:bg-red-800 transition-colors duration-200"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-[13px] bg-[#ef4444] px-6 text-sm font-bold text-white shadow-[0_10px_18px_rgba(239,68,68,0.24)] transition hover:bg-red-600 active:scale-[0.99]"
           >
             <Tag className="h-4 w-4" />
             View Other University Coupons
@@ -189,18 +193,18 @@ export default function GGUCoupons() {
           <ConfettiBurst burstKey={activeCoupon.id + activeCoupon.code} />
 
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 backdrop-blur-sm"
             onClick={() => setActiveCoupon(null)}
           >
             <div
               onClick={(e) => e.stopPropagation()}
               style={{ animation: "modal-pop 0.25s ease-out" }}
-              className="relative w-full max-w-sm rounded-2xl bg-white p-6 sm:p-7 text-center shadow-2xl"
+              className="relative w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl sm:p-7"
             >
               <button
                 type="button"
                 onClick={() => setActiveCoupon(null)}
-                className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-4 top-4 text-slate-400 transition-colors hover:text-slate-600"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -218,7 +222,7 @@ export default function GGUCoupons() {
                 Only valid for {activeCoupon.validityDays} days
               </span>
 
-              <div className="mt-5 rounded-xl bg-red-50 border border-red-100 p-6 flex flex-col items-center gap-2">
+              <div className="mt-5 flex flex-col items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-6">
                 <GraduationCap className="h-10 w-10 text-red-400" />
                 <p className="text-xs text-slate-500">
                   Golden Gate University Admissions Team

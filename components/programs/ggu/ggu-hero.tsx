@@ -3,7 +3,6 @@ import {
   Award,
   BookOpenCheck,
   CalendarDays,
-  ChevronRight,
   Download,
   Globe2,
   GraduationCap,
@@ -37,8 +36,9 @@ export default function DBAHero() {
                 <p className="text-sm font-bold uppercase tracking-wide text-red-600">
                   Doctorate Program
                 </p>
-                <h1 className="mt-2 max-w-4xl text-3xl font-black leading-tight text-slate-950 sm:text-4xl lg:text-3xl">
-                  Doctor of Business Administration from Golden Gate University
+                <h1 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900  sm:text-3xl md:text-4xl ">
+                  Doctor of Business Administration from Golden Gate{" "}
+                  <span className="text-red-500">University</span>
                 </h1>
                 <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
                   A flexible online DBA designed for professionals who want to
@@ -52,15 +52,14 @@ export default function DBAHero() {
               </div>
             </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <button className="inline-flex items-center justify-center gap-2 rounded-md bg-red-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-700 active:scale-[0.99]">
+            <div className="mt-7 flex flex-col gap-4 sm:flex-row">
+              <button className="inline-flex h-11 w-fit items-center justify-center self-start rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
                 Apply Now
-                <ChevronRight className="h-4 w-4" />
               </button>
 
-              <button className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
+              <button className="inline-flex h-11 w-[170px] items-center justify-center gap-2 whitespace-nowrap rounded-[13px] border border-[#dfe5ee] bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
                 <Download className="h-4 w-4" />
-                Download Brochure
+                Explore Courses
               </button>
             </div>
 

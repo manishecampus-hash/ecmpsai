@@ -47,6 +47,54 @@ const recognitionData: RecognitionItem[] = [
   },
 ];
 
+const preventFocusScroll = (e: React.SyntheticEvent) => {
+  e.preventDefault();
+};
+
+const leftArrowStyle = (): React.CSSProperties => ({
+  position: "absolute",
+  left: 0,
+  top: 0,
+  bottom: 0,
+  margin: "auto 0",
+  zIndex: 40,
+  background: "#666666",
+  border: "none",
+  borderRadius: "0 8px 8px 0",
+  padding: 0,
+  cursor: "pointer",
+  color: "#ffffff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "background 0.2s",
+  flexShrink: 0,
+  width: 24,
+  height: 64,
+});
+
+const rightArrowStyle = (): React.CSSProperties => ({
+  position: "absolute",
+  right: 0,
+  top: 0,
+  bottom: 0,
+  margin: "auto 0",
+  zIndex: 40,
+  background: "#666666",
+  border: "none",
+  borderRadius: "8px 0 0 8px",
+  padding: 0,
+  cursor: "pointer",
+  color: "#ffffff",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "background 0.2s",
+  flexShrink: 0,
+  width: 24,
+  height: 64,
+});
+
 export default function GguAprovel({ university }: ApSectionProps) {
   const accData = university?.details?.accreditation || {};
   const list = accData.list?.length ? accData.list : recognitionData;
@@ -127,25 +175,44 @@ export default function GguAprovel({ university }: ApSectionProps) {
 
           {/* Left scroll arrow */}
           <button
+            type="button"
+            onMouseDown={preventFocusScroll}
             onClick={scrollLeft}
             aria-label="Scroll left"
-            className="absolute -left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center text-slate-400 hover:text-slate-700 sm:flex"
+            className="__carArrow"
+            style={leftArrowStyle()}
           >
-            <ChevronLeft className="h-7 w-7" />
+            <ChevronLeft size={16} />
           </button>
 
           {/* Right scroll arrow */}
           <button
+            type="button"
+            onMouseDown={preventFocusScroll}
             onClick={scrollRight}
             aria-label="Scroll right"
-            className="absolute -right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center text-slate-400 hover:text-slate-700 sm:flex"
+            className="__carArrow"
+            style={rightArrowStyle()}
           >
-            <ChevronRight className="h-7 w-7" />
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
       <style jsx>{`
+        .__carArrow:hover {
+          background: #333333 !important;
+        }
+
+        @media (max-width: 640px) {
+          .__carArrow {
+            top: 115px !important;
+            bottom: auto !important;
+            margin: 0 !important;
+            transform: translateY(-50%) !important;
+          }
+        }
+
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }

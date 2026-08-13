@@ -1,5 +1,4 @@
 import { Footer } from "@/components/layout/footer";
-import GGUDoctorateHero from "@/components/programs/ggu/ggu-hero";
 import GguSubHeader from "@/components/programs/ggu/ggu-sub-header";
 import GGUDoctorateTestimonials from "@/components/programs/ggu/ggu-testimonials-section";
 import DoctorateUniversitySection from "@/components/programs/ggu/ggu-university-section";
@@ -10,7 +9,7 @@ export default function Page() {
   return (
     <>
       <GguSubHeader />
-      <GGUDoctorateHero />
+
       <GGUWhoCanApply />
       <WhoFaq />
       <DoctorateUniversitySection />

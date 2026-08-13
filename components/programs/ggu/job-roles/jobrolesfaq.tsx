@@ -58,10 +58,6 @@ export default function JobRolesFAQ() {
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             Job Roles <span className="text-red-500">FAQs</span>
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
-            Common questions about career outcomes, hiring partners, and salary
-            packages for Golden Gate University Online DBA graduates.
-          </p>
         </div>
 
         {/* FAQ Accordion */}

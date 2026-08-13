@@ -57,10 +57,6 @@ export default function GGUReviewsFAQ() {
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             Reviews <span className="text-red-500">FAQs</span>
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
-            Common questions about student reviews and ratings for the Online
-            DBA program at Golden Gate University.
-          </p>
         </div>
 
         {/* FAQ Accordion */}

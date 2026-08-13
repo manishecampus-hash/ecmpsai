@@ -45,10 +45,6 @@ export default function GGUDoctorateCareers() {
       <div className="mx-auto max-w-7xl">
         {/* Center Header */}
         <div className="mx-auto mb-5 max-w-3xl border-b border-slate-100 pb-3 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
-            <BriefcaseBusiness className="h-3.5 w-3.5 text-red-500" />
-            Career Pathways
-          </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             After Online <span className="text-red-500">DBA</span>
           </h2>

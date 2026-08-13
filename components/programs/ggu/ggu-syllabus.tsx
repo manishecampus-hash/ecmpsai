@@ -338,8 +338,8 @@ export default function GGUDoctorateSyllabusNew() {
 
         {/* Download Button */}
         <div className="mt-10 flex justify-center">
-          <button className="flex items-center gap-2 rounded-lg bg-red-600 px-8 py-3.5 font-bold text-white shadow-lg shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg hover:shadow-red-300">
-            <Download className="h-5 w-5" />
+          <button className="inline-flex h-11 w-fit items-center justify-center gap-2 self-start whitespace-nowrap rounded-[13px] bg-red-600 px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(239,68,68,0.28)] transition hover:bg-red-700 active:scale-[0.99]">
+            <Download className="h-4 w-4" />
             Download Syllabus
           </button>
         </div>

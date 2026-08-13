@@ -45,19 +45,10 @@ export default function DoctorateUniversitySection() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-10 max-w-3xl text-center">
-          <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-red-600">
-            Top Doctorate Universities
-          </span>
-
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
             Compare Universities for
             <span className="text-red-500"> Online DBA</span>
           </h2>
-
-          <p className="mx-auto mt-3 max-w-2xl text-sm font-medium leading-6 text-slate-500">
-            Shortlist AACSB-accredited universities based on location,
-            specialization portfolio, and online learning flexibility.
-          </p>
         </div>
 
         <div className="relative">
@@ -137,10 +128,10 @@ export default function DoctorateUniversitySection() {
 
                     <button
                       type="button"
-                      className="mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-red-500 text-sm font-black text-white transition-all duration-200 hover:bg-red-600 group-hover:shadow-[0_12px_26px_rgba(239,68,68,0.28)]"
+                      className="mt-4 mx-auto inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-red-500 px-4 text-xs font-bold text-white transition-all duration-200 hover:bg-red-600 group-hover:shadow-[0_10px_22px_rgba(239,68,68,0.24)] active:scale-[0.99]"
                     >
                       View Details
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                     </button>
                   </div>
                 </article>

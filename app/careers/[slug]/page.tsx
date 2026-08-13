@@ -7,6 +7,13 @@ import {
 
 import { CareerHero } from "@/components/careers-pages/career-hero";
 import { LearnFromSection } from "@/components/careers-pages/learn-from";
+import { CareerComparisonSection } from "@/components/careers-pages/career-comparison-section";
+import { CareerJourneySection } from "@/components/careers-pages/career-journey-section";
+import { CareerOutcomes } from "@/components/careers-pages/career-outcomes";
+
+import { CareerMentor } from "@/components/careers-pages/career-mentor";
+import { Footer } from "@/components/layout/footer";
+import { CareerCourses } from "@/components/careers-pages/career-courses";
 
 type Props = {
   params: Promise<{
@@ -35,6 +42,12 @@ export default async function CareerPage({ params }: Props) {
 
       {/* Learn From Section */}
       <LearnFromSection />
+      <CareerComparisonSection />
+      <CareerJourneySection />
+      <CareerOutcomes />
+      <CareerMentor />
+      <CareerCourses />
+      <Footer />
     </main>
   );
 }

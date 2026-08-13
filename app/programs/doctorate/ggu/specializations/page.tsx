@@ -11,8 +11,8 @@ export default function Page() {
       <GguSubHeader />
       <GGUSpecializationsCarousel />;
       <SpecializationFaq />
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection /> */}
+      {/* <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

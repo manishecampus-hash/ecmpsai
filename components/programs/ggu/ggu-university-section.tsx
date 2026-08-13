@@ -70,9 +70,9 @@ export default function DoctorateUniversitySection() {
                   key={university.slug || university.name}
                   className="group relative flex min-h-[390px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.10)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_50px_rgba(15,23,42,0.14)]"
                 >
-                  <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-br from-red-50 via-white to-slate-50" />
+                  <div className="absolute inset-x-0 top-0 h-24  from-red-50 via-white to-slate-50" />
 
-                  <div className="absolute right-4 top-4 rounded-full bg-white/80 px-3 py-1 text-[11px] font-black text-red-500 shadow-sm ring-1 ring-red-100">
+                  <div className="absolute right-4 top-4 rounded-full bg-white px-3 py-1 text-[11px] font-black text-red-500 shadow-sm ring-1 ring-red-100">
                     #{actualIndex + 1}
                   </div>
 

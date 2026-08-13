@@ -12,8 +12,8 @@ export default function Page() {
 
       <GGUWhoCanApply />
       <WhoFaq />
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection /> */}
+      {/* <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

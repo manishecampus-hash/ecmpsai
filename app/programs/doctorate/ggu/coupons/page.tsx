@@ -12,8 +12,8 @@ export default function Page() {
 
       <GGUCoupons />
       <GGUCouponsFAQ />
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection />
+      <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

@@ -12,8 +12,8 @@ export default function Page() {
       <GguSubHeader />
       <GGUReviews />
       <GGUReviewsFAQ />
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection />
+      <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

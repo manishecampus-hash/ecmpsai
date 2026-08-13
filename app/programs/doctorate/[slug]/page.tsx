@@ -14,6 +14,7 @@ import GguSubHeader from "@/components/programs/ggu/ggu-sub-header";
 import GGUCertificate from "@/components/programs/ggu/ggucertificate";
 import GguAprovel from "@/components/programs/ggu/gguaprovel";
 import GguDBAVsPhDSection from "@/components/programs/ggu/dba-vs-phd-section";
+import GGUDoctorateAbout from "@/components/programs/ggu/ggu-about";
 
 export default function GguPage() {
   return (
@@ -23,23 +24,20 @@ export default function GguPage() {
       <main className="bg-white">
         <GGUDoctorateHero />
         <div id="about">
+          <GGUDoctorateAbout />
           <GGUDoctorateSpecializations />
         </div>
+        <GGUDoctorateSyllabus />
 
         <GguDBAVsPhDSection />
-
-        <div id="university-section">
-          <GguUniversitySection />
-          <GguReadMore />
-          <GGUCertificate />
-        </div>
-
+        <GguReadMore />
+        <GguAprovel />
         <div id="eligibility-duration">
           <GGUDoctorateFeeSection />
         </div>
-
-        <GGUDoctorateSyllabus />
-        <GguAprovel />
+        <div id="university-section">
+          <GGUCertificate />
+        </div>
 
         <div id="program-fees" className="scroll-mt-20" />
 
@@ -52,7 +50,7 @@ export default function GguPage() {
         </div>
 
         <GGUDoctorateTestimonials />
-
+        <GguUniversitySection />
         <div id="faqs">
           <GGUDoctorateFAQ />
         </div>

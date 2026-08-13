@@ -13,8 +13,8 @@ export default function Page() {
       <GGUPlacementPartners />
       <PlacementPartnersFAQ />
 
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection />
+      <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

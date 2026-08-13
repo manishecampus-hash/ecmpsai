@@ -13,8 +13,8 @@ export default function Page() {
       <GGUSyllabusPage />
       <SyllabusFAQ />
 
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection /> */}
+      {/* <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

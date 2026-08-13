@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import {
   Award,
   BookOpenCheck,
@@ -10,6 +12,7 @@ import {
   ShieldCheck,
   Star,
   UsersRound,
+  Sparkles,
 } from "lucide-react";
 
 const stats = [
@@ -25,7 +28,30 @@ const points = [
   "Specializations across strategy, finance, marketing, HR and leadership",
 ];
 
+const recognitionLogos = [
+  { src: "/ggubanner/3rd.webp", alt: "AACSB Accredited" },
+  { src: "/ggubanner/wes-logo.jpg", alt: "WES Recognized" },
+  { src: "/ggubanner/75.png", alt: "75+ Years of Legacy" },
+];
+
+const descriptionText =
+  "A flexible online DBA designed for professionals who want to strengthen research capability, strategic thinking and executive leadership. Gain advanced business insights, develop data-driven decision-making skills, and learn to lead innovation and organizational transformation in a rapidly evolving global business environment.";
+
 export default function DBAHero() {
+  const [aiText, setAiText] = useState("");
+  const [isTypingDone, setIsTypingDone] = useState(false);
+
+  useEffect(() => {
+    if (aiText.length < descriptionText.length) {
+      const timer = setTimeout(() => {
+        setAiText(descriptionText.slice(0, aiText.length + 1));
+      }, 30);
+      return () => clearTimeout(timer);
+    } else {
+      setIsTypingDone(true);
+    }
+  }, [aiText]);
+
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
@@ -40,15 +66,29 @@ export default function DBAHero() {
                   Doctor of Business Administration from Golden Gate{" "}
                   <span className="text-red-500">University</span>
                 </h1>
-                <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
-                  A flexible online DBA designed for professionals who want to
-                  strengthen research capability, strategic thinking and
-                  executive leadership. Gain advanced business insights, develop
-                  data-driven decision-making skills, and learn to lead
-                  innovation and organizational transformation in a rapidly
-                  evolving global business environment.
-                  <br />
-                </p>
+
+                <div className="mt-4">
+                  <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <div className="text-[#1e293b] text-[14px] font-medium">
+                      AI Overview
+                    </div>
+                  </div>
+
+                  <p className="max-w-3xl text-base leading-7 text-slate-600">
+                    <span>{aiText}</span>
+                    <span
+                      className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
+                        isTypingDone ? "animate-pulse" : ""
+                      }`}
+                      aria-hidden="true"
+                    />
+                    {/* Reserves the final space up front so nothing below shifts while typing */}
+                    <span className="invisible">
+                      {descriptionText.slice(aiText.length)}
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -116,35 +156,47 @@ export default function DBAHero() {
                 </h2>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                <div className="flex h-16 items-center justify-center rounded-md border border-slate-200 bg-slate-50 p-2">
-                  <img
-                    src="/ggubanner/3rd.webp"
-                    alt="AACSB Accredited"
-                    className="max-h-12 w-auto object-contain"
-                  />
-                </div>
+              <div className="relative mt-4 overflow-hidden">
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent" />
 
-                <div className="flex h-16 items-center justify-center rounded-md border border-slate-200 bg-slate-50 p-2">
-                  <img
-                    src="/ggubanner/wes-logo.jpg"
-                    alt="WES Recognized"
-                    className="max-h-12 w-auto object-contain"
-                  />
-                </div>
-
-                <div className="flex h-16 items-center justify-center rounded-md border border-slate-200 bg-slate-50 p-2">
-                  <img
-                    src="/ggubanner/75.png"
-                    alt="75+ Years of Legacy"
-                    className="max-h-14 w-auto object-contain"
-                  />
+                <div className="recognition-track flex w-max flex-nowrap items-center gap-2">
+                  {[...recognitionLogos, ...recognitionLogos].map((logo, i) => (
+                    <div
+                      key={`${logo.alt}-${i}`}
+                      className="flex h-16 w-[132px] flex-none items-center justify-center rounded-md border border-slate-200 bg-slate-50 p-2"
+                    >
+                      <img
+                        src={logo.src}
+                        alt={logo.alt}
+                        className="max-h-12 w-auto object-contain"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </aside>
         </div>
       </div>
+
+      <style>{`
+        @keyframes recognition-scroll {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+        .recognition-track {
+          animation: recognition-scroll 14s linear infinite;
+          will-change: transform;
+        }
+        .recognition-track:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 }

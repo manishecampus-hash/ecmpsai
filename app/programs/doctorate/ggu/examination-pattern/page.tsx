@@ -12,8 +12,8 @@ export default function Page() {
 
       <ExamPattern />
       <ExamPatternFAQ />
-      <DoctorateUniversitySection />
-      <GGUDoctorateTestimonials />
+      {/* <DoctorateUniversitySection />
+      <GGUDoctorateTestimonials /> */}
       <Footer />
     </>
   );

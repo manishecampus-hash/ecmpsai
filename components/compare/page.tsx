@@ -79,7 +79,7 @@ export default function UniversitySlider() {
               // Mobile: nearly full width, single card per view
               // Tablet (sm): ~half width, two cards visible
               // Desktop (lg): one-third width, three cards visible (original behavior)
-              className="w-[85%] sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] flex-shrink-0 bg-white rounded-2xl border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col snap-start"
+              className="w-[100%] sm:w-[calc(50%-0.75rem)] lg:w-[calc(44.333%-1rem)] flex-shrink-0 bg-white rounded-2xl border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col snap-start"
             >
               {/* Combined VS Banner Image */}
               <div className="relative h-36 overflow-hidden rounded-t-2xl">

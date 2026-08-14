@@ -29,7 +29,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     image: "/compare/amity-vs-mn.png",
     a: {
       id: "amity",
-      name: "MBA",
+      name: "",
       short: "AMITY",
       university: "Amity",
       courses: ["BBA", "MBA", "B.Tech", "Law", "Commerce", "Arts"],

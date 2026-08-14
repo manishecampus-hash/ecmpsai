@@ -92,8 +92,8 @@ export default function ScrollBallEffect() {
   ];
 
   return (
-    <section ref={effectSectionRef} className="w-full pt-4 pb-2 md:py-12">
-      <div className="relative mx-auto h-28 sm:h-48 md:h-56 w-full max-w-6xl px-2 sm:px-4 md:px-6">
+    <section ref={effectSectionRef} className="w-full py-4 md:py-6">
+      <div className="relative mx-auto h-20 md:h-32 w-full max-w-6xl px-2 md:px-6">
         <svg
           className="h-full w-full"
           viewBox="0 0 1000 180"
@@ -141,15 +141,15 @@ export default function ScrollBallEffect() {
               className="absolute flex flex-col items-center text-center"
               style={{
                 left: `${12.5 + index * 25}%`,
-                top: "35%",
+                top: "30%",
                 transform: "translate(-50%, -50%)",
               }}
             >
-              <div className="mb-1 sm:mb-2 flex h-8 w-8 sm:h-12 sm:w-12 md:h-16 md:w-16 items-center justify-center rounded-full border border-orange-100 bg-white text-sm sm:text-xl md:text-3xl shadow-lg">
+              <div className="mb-1 flex h-7 w-7 md:h-10 md:w-10 items-center justify-center rounded-full border border-orange-100 bg-white text-xs md:text-lg shadow-md">
                 {item.icon}
               </div>
 
-              <h4 className="max-w-[60px] sm:max-w-[100px] md:max-w-none text-[8px] sm:text-xs md:text-sm font-semibold leading-tight text-slate-900">
+              <h4 className="max-w-[50px] md:max-w-[80px] text-[7px] md:text-xs font-semibold leading-tight text-slate-900">
                 {item.title}
               </h4>
             </div>
@@ -158,7 +158,7 @@ export default function ScrollBallEffect() {
 
         {/* Moving Ball */}
         <div
-          className="absolute h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded-full bg-orange-500 shadow-lg transition-all duration-100"
+          className="absolute h-2 w-2 md:h-4 md:w-4 rounded-full bg-orange-500 shadow-lg transition-all duration-100"
           style={{
             left: `${x}%`,
             top: `${y}%`,

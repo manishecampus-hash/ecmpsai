@@ -862,6 +862,7 @@ import {
   Globe,
   Users,
   Shield,
+  Download,
 } from "lucide-react";
 
 type Badge = { alt: string; src?: string; label?: string };
@@ -910,7 +911,7 @@ export default function UniversityHeroWithStats({
         <div className="absolute inset-0 flex flex-col items-start justify-center pl-4 pr-4 py-6 sm:pl-8 sm:pr-8 sm:py-8 lg:pl-32 lg:pr-12 lg:py-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-4 w-full">
             {/* Logo */}
-            <div className="flex-shrink-0 bg-blue-900 border-2 border-white rounded-xl p-2">
+            <div className="flex-shrink-0  border-2 border-white rounded-xl p-2">
               <img
                 src="/ggubanner/logoo.webp"
                 alt="GGU Logo"
@@ -957,7 +958,7 @@ export default function UniversityHeroWithStats({
 
       {/* Overlapping white card below banner */}
       <div className="mx-auto max-w-7xl px-3 sm:px-4">
-        <div className="relative -mt-8 sm:-mt-12 lg:-mt-16">
+        <div className="relative -mt-8 sm:-mt-12 lg:-mt-16 mb-16 sm:mb-24 lg:mb-32">
           <div className="rounded-lg sm:rounded-2xl bg-white px-4 sm:px-6 py-5 sm:py-6 shadow-lg ring-1 ring-slate-100">
             {/* TOP ROW: Badges, Rating, Trusted Text | CTAs */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 sm:pb-6 border-b">
@@ -1011,22 +1012,15 @@ export default function UniversityHeroWithStats({
 
               {/* RIGHT: CTAs */}
               <div className="flex flex-col gap-2 w-full sm:w-auto lg:gap-3">
-                <div className="flex flex-col gap-2 sm:flex-row lg:gap-3">
-                  <Link
-                    href={onApplyHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ef4444] px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow hover:bg-red-500 transition whitespace-nowrap"
-                  >
-                    Apply
-                    <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Link>
+                <div className="mt-7 flex flex-col gap-4 sm:flex-row">
+                  <button className="inline-flex h-11 w-fit items-center justify-center self-start rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
+                    Apply Now
+                  </button>
 
-                  <Link
-                    href={onTalkHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-slate-800 border border-slate-200 hover:bg-slate-50 transition whitespace-nowrap"
-                  >
-                    <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    <span className="hidden sm:inline">Download</span>
-                  </Link>
+                  <button className="inline-flex h-11 w-[170px] items-center justify-center gap-2 whitespace-nowrap rounded-[13px] border border-[#dfe5ee] bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
+                    <Download className="h-4 w-4" />
+                    Explore Courses
+                  </button>
                 </div>
               </div>
             </div>
@@ -1043,8 +1037,8 @@ export default function UniversityHeroWithStats({
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {/* 100+ Programs */}
                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
-                        <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                        <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
                       </div>
                       <div className="min-w-0">
                         <div className="text-base sm:text-lg font-bold text-slate-900">
@@ -1061,8 +1055,8 @@ export default function UniversityHeroWithStats({
 
                     {/* 75+ Years */}
                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
-                        <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                        <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
                       </div>
                       <div className="min-w-0">
                         <div className="text-base sm:text-lg font-bold text-slate-900">
@@ -1079,8 +1073,8 @@ export default function UniversityHeroWithStats({
 
                     {/* Global */}
                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
-                        <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                        <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
                       </div>
                       <div className="min-w-0">
                         <div className="text-base sm:text-lg font-bold text-slate-900">
@@ -1097,8 +1091,8 @@ export default function UniversityHeroWithStats({
 
                     {/* Career Focused */}
                     <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-blue-50 p-2 sm:p-3 flex-shrink-0">
-                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
                       </div>
                       <div className="min-w-0">
                         <div className="text-base sm:text-lg font-bold text-slate-900">
@@ -1116,16 +1110,18 @@ export default function UniversityHeroWithStats({
                 </div>
 
                 {/* RIGHT: Compare Universities Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-blue-100 lg:h-fit">
-                  <h4 className="font-bold text-slate-900 mb-3 sm:mb-4 text-sm sm:text-base">
-                    Compare Universities
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-600 mb-4 sm:mb-6">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-blue-100 lg:h-fit">
+                  <div className="flex items-center justify-between gap-2 mb-1 sm:mb-2">
+                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                      Compare Universities
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 mb-2 sm:mb-3">
                     Compare GGU with other top universities.
                   </p>
 
                   {/* University Logos */}
-                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="flex -space-x-2 sm:-space-x-3">
                       <img
                         src="/ggubanner/ssbm.png"
@@ -1147,14 +1143,6 @@ export default function UniversityHeroWithStats({
                       </div>
                     </div>
                   </div>
-
-                  <Link
-                    href="#compare"
-                    className="inline-flex items-center gap-2 text-blue-600 font-semibold text-xs sm:text-sm hover:text-blue-700 transition"
-                  >
-                    Compare Now
-                    <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Link>
                 </div>
               </div>
             </div>

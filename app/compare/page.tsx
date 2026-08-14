@@ -116,6 +116,7 @@ export default function ComparePage() {
 
   return (
     <>
+      <CTA />
       <UniversitySlider />
       <main className="font-sans bg-[#f8f8f8] min-h-screen pb-14 sm:pb-16">
         {/* Hero */}
@@ -259,7 +260,6 @@ export default function ComparePage() {
           </button>
         </div>
       </main>
-      <CTA />
     </>
   );
 }

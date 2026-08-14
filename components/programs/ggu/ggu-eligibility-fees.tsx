@@ -34,10 +34,10 @@ export default function GGUDoctorateFeeNew() {
             </h2>
           </div>
 
-          <div className="flex justify-center mb-4">
-            <span className="inline-block rounded-full bg-red-600 px-6 py-2.5 text-base font-bold text-white shadow-lg shadow-red-200">
+          <div className="mb-4 flex justify-center">
+            <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-red-600">
               Limited Time Offer
-            </span>
+            </p>
           </div>
         </div>
 

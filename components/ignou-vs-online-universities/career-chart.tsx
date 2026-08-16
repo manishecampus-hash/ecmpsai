@@ -91,13 +91,9 @@ export function CareerMomentumChart() {
             </span>
           </div>
 
-          <h2 className="max-w-3xl mx-auto text-[36px] font-bold leading-[1.15] tracking-[-1.8px] text-[#0f1f3d] sm:text-[42px] lg:text-[48px]">
-            Career Growth Trajectory
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            Career Growth <span className="text-red-500"> Trajectory</span>
           </h2>
-
-          <p className="mt-4 text-[16px] leading-7 text-slate-600 sm:text-[17px] max-w-2xl mx-auto">
-            Based on 1.25L+ learner career progression data
-          </p>
         </div>
 
         {/* Stats Cards */}

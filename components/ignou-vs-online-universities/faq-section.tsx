@@ -62,25 +62,20 @@ export default function IgnouOnlineFAQ() {
   return (
     <section
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="w-full bg-white px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+      className="w-full bg-white px-4 py-8 sm:px-6 lg:px-8 lg:py-12"
     >
       <div className="mx-auto max-w-7xl">
         {/* ================= SECTION HEADER ================= */}
 
-        <div className="mx-auto mb-10 max-w-3xl text-center">
+        <div className="mx-auto mb-8 max-w-3xl text-center">
           <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-[#ff3b4d]">
             Frequently Asked Questions
           </span>
 
-          <h2 className="mt-4 text-[28px] font-extrabold tracking-[-0.8px] text-[#0f1f3d] sm:text-4xl md:text-[42px]">
-            IGNOU vs Online Universities
-            <span className="text-[#ff3b4d]"> FAQs</span>
+          <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            IGNOU vs Online Universities{" "}
+            <span className="text-red-500">FAQs</span>
           </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-slate-500 sm:text-[16px]">
-            Get answers to the most common questions before choosing between
-            IGNOU and an online university.
-          </p>
         </div>
 
         {/* ================= FAQ ACCORDION ================= */}

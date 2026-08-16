@@ -110,8 +110,9 @@ export function ComparisonSection() {
             </span>
           </div>
 
-          <h2 className="max-w-3xl mx-auto text-[36px] font-bold leading-[1.15] tracking-[-1.8px] text-[#0f1f3d] sm:text-[42px] lg:text-[48px]">
-            Why Success Rates Differ So Drastically
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            Why Success Rates Differ So{" "}
+            <span className="text-red-500">Drastically</span>
           </h2>
 
           <p className="mt-5 text-[16px] leading-7 text-slate-600 sm:text-[17px] max-w-2xl mx-auto">

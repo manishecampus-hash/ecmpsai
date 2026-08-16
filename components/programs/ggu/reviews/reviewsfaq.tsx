@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
@@ -47,61 +47,66 @@ const faqs = [
 ];
 
 export default function GGUReviewsFAQ() {
-  const [openFaq, setOpenFaq] = useState(0);
+  const [openIndexes, setOpenIndexes] = useState<number[]>(
+    faqs.map((_, index) => index),
+  );
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-white">
-      <div className="mx-auto max-w-3xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-            Reviews <span className="text-red-500">FAQs</span>
-          </h1>
+    <div
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="w-full bg-white px-4 pt-12 pb-12 sm:px-6 lg:px-8 lg:pb-0"
+    >
+      <div className="mx-auto max-w-7xl">
+        {/* Section Header */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-8">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
+            Reviews
+            <span className="text-red-500"> FAQs</span>
+          </h2>
         </div>
 
         {/* FAQ Accordion */}
-        <div className="space-y-3">
+        <div className="mx-auto max-w-4xl space-y-4">
           {faqs.map((faq, index) => {
-            const isOpen = openFaq === index;
+            const isOpen = openIndexes.includes(index);
+
             return (
               <div
-                key={index}
-                className={`rounded-2xl bg-slate-50 border transition-colors duration-200 ${
-                  isOpen ? "border-red-200" : "border-slate-100"
-                }`}
+                key={faq.question}
+                className="rounded-2xl border border-slate-200 bg-white shadow-[0_6px_18px_rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)]"
               >
                 <button
-                  type="button"
-                  onClick={() => setOpenFaq(isOpen ? -1 : index)}
-                  aria-expanded={isOpen}
-                  className="w-full flex items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 text-left"
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full flex items-center justify-between p-5 text-left"
                 >
-                  <span className="text-sm sm:text-base font-bold text-slate-900">
+                  <h3 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.3px] text-slate-950 pr-4">
                     {faq.question}
-                  </span>
-                  <span
-                    className={`flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
-                      isOpen
-                        ? "bg-red-500 border-red-500 rotate-45"
-                        : "bg-white border-slate-200"
+                  </h3>
+
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 ${
+                      isOpen ? "rotate-180 bg-red-50" : ""
                     }`}
                   >
-                    <Plus
-                      className={`h-4 w-4 transition-colors duration-300 ${
-                        isOpen ? "text-white" : "text-slate-900"
-                      }`}
-                    />
-                  </span>
+                    <ChevronDown className="h-5 w-5 text-red-500" />
+                  </div>
                 </button>
+
                 <div
-                  className={`grid overflow-hidden transition-all duration-200 ease-in-out ${
+                  className={`grid transition-all duration-300 ease-in-out ${
                     isOpen
                       ? "grid-rows-[1fr] opacity-100"
                       : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 sm:px-6 pb-5 text-sm text-slate-600 leading-relaxed">
+                    <p className="px-5 pb-5 text-[14px] leading-6 text-slate-600">
                       {faq.answer}
                     </p>
                   </div>
@@ -110,17 +115,7 @@ export default function GGUReviewsFAQ() {
             );
           })}
         </div>
-
-        {/* Contact strip */}
-        <div className="mt-10 rounded-xl border border-red-200 bg-red-50 p-5 sm:p-6 text-center">
-          <p className="text-sm text-slate-700">
-            Have a question about student reviews?{" "}
-            <a href="#" className="text-red-600 font-medium hover:underline">
-              Contact our admissions team
-            </a>
-          </p>
-        </div>
       </div>
-    </section>
+    </div>
   );
 }

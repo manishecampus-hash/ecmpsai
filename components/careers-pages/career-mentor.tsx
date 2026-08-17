@@ -36,51 +36,56 @@ const companies = [
   { name: "MAERSK", className: "text-sky-500 tracking-wide" },
   { name: "ORACLE", className: "text-red-600 tracking-wide" },
   { name: "intel", className: "text-blue-600 lowercase" },
-  { name: "Standard Chartered", className: "text-emerald-600 text-xs" },
+  {
+    name: "Standard Chartered",
+    className: "text-emerald-600 text-xs",
+  },
   { name: "Deloitte", className: "text-slate-900" },
 ];
 
 export function CareerMentor() {
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="bg-white py-6 md:py-8 overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-1.5 text-xs font-bold tracking-widest text-red-600 border border-red-100">
-            YOUR FUTURE
-          </span>
-          <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900">
+        {/* Heading */}
+        <div className="mx-auto mb-5 max-w-2xl text-center">
+          <h2 className="mt-2 text-3xl font-bold text-slate-900 md:text-4xl">
             Career growth &amp; earning potential
           </h2>
-          <p className="mt-4 text-base text-gray-600 leading-7">
+
+          <p className="mt-2 text-base leading-6 text-gray-600">
             The roles our graduates step into once they've done the work.
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto rounded-2xl border border-gray-200 p-8 md:p-10">
-          <h3 className="text-lg font-bold text-slate-900 mb-6">
+        {/* Career Roles */}
+        <div className="mx-auto max-w-5xl rounded-2xl border border-gray-200 p-5 md:p-7">
+          <h3 className="mb-4 text-lg font-bold text-slate-900">
             Careers in Software Engineering
           </h3>
 
-          <div className="grid sm:grid-cols-2 gap-x-10 gap-y-3">
+          <div className="grid gap-x-10 gap-y-1.5 sm:grid-cols-2">
             {[...softwareRoles, ...infraRoles].map((role) => (
               <div key={role} className="flex items-start gap-3">
                 <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-600" />
-                <span className="text-sm text-slate-700 leading-6">{role}</span>
+
+                <span className="text-sm leading-6 text-slate-700">{role}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto mt-14">
-          <p className="text-sm font-semibold text-gray-500 mb-6">
+        {/* Companies */}
+        <div className="mx-auto mt-5 max-w-5xl">
+          <p className="mb-4 text-sm font-semibold text-gray-500">
             Our alumni work at top companies
           </p>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-x-8 gap-y-8 items-center">
+          <div className="grid grid-cols-3 items-center gap-x-8 gap-y-5 sm:grid-cols-4 md:grid-cols-8">
             {companies.map((company) => (
               <span
                 key={company.name}
-                className={`text-lg font-bold text-center ${company.className}`}
+                className={`text-center text-lg font-bold ${company.className}`}
               >
                 {company.name}
               </span>

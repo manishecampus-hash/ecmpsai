@@ -5,14 +5,38 @@ const universities = [
     name: "McCombs School of Business",
     sub: "The University of Texas at Austin",
   },
-  { name: "Great Lakes", sub: "Executive Learning" },
-  { name: "Northwestern", sub: "School of Professional Studies" },
-  { name: "IDSS · MIT", sub: "" },
-  { name: "Deakin University", sub: "" },
-  { name: "MIT Professional Education", sub: "" },
-  { name: "Johns Hopkins", sub: "Whiting School of Engineering" },
-  { name: "Walsh College", sub: "" },
-  { name: "IIT", sub: "" },
+  {
+    name: "Great Lakes",
+    sub: "Executive Learning",
+  },
+  {
+    name: "Northwestern",
+    sub: "School of Professional Studies",
+  },
+  {
+    name: "IDSS · MIT",
+    sub: "",
+  },
+  {
+    name: "Deakin University",
+    sub: "",
+  },
+  {
+    name: "MIT Professional Education",
+    sub: "",
+  },
+  {
+    name: "Johns Hopkins",
+    sub: "Whiting School of Engineering",
+  },
+  {
+    name: "Walsh College",
+    sub: "",
+  },
+  {
+    name: "IIT",
+    sub: "",
+  },
 ];
 
 const ratings = [
@@ -24,34 +48,35 @@ const ratings = [
 
 export function LearnFromSection() {
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        {/* Top: heading + logo grid */}
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-16 items-start">
+    <section className="w-full bg-white py-16">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
+        {/* Top: Heading + Logo Grid */}
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-16">
+          {/* Left Content */}
           <div>
-            <span className="text-sm font-bold tracking-widest text-red-600">
-              LEARN FROM
-            </span>
-            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+            <h2 className="mt-3 text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
               The world&apos;s best universities
             </h2>
-            <p className="mt-4 text-base text-gray-600 leading-7">
+
+            <p className="mt-4 text-base leading-7 text-gray-600">
               We partner with the world&apos;s most respected universities so
               that you can get top-notch education.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-10">
+          {/* University Grid */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
             {universities.map((uni) => (
               <div
                 key={uni.name}
-                className="flex flex-col items-start justify-center min-h-[56px]"
+                className="flex min-h-[56px] flex-col items-start justify-center"
               >
                 <span className="text-lg font-semibold text-slate-800">
                   {uni.name}
                 </span>
+
                 {uni.sub && (
-                  <span className="text-xs text-gray-500 mt-0.5">
+                  <span className="mt-0.5 text-xs text-gray-500">
                     {uni.sub}
                   </span>
                 )}
@@ -63,9 +88,9 @@ export function LearnFromSection() {
         {/* Divider */}
         <div className="mt-14 border-t border-gray-200" />
 
-        {/* Bottom: trust badges */}
+        {/* Bottom: Trust Badges */}
         <div className="mt-12 text-center">
-          <h3 className="text-2xl md:text-3xl font-bold text-slate-900">
+          <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
             Empowering millions through professional learning
           </h3>
 
@@ -78,7 +103,9 @@ export function LearnFromSection() {
                 <span className="text-lg font-bold text-slate-900">
                   {r.score}
                 </span>
+
                 <Star className="h-5 w-5 fill-red-500 text-red-500" />
+
                 <span className="text-sm font-semibold text-gray-700">
                   {r.source}
                 </span>

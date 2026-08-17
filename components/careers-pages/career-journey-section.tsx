@@ -29,39 +29,40 @@ const steps = [
 
 export function CareerJourneySection() {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-1.5 text-xs font-bold tracking-widest text-red-600 border border-red-100">
-            YOUR PATH FORWARD
-          </span>
-          <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900">
+    <section className="w-full bg-white py-8 md:py-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
+        {/* Section Heading */}
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <h2 className="text-3xl font-bold text-slate-900 md:text-4xl">
             From enrolling to getting hired
           </h2>
-          <p className="mt-4 text-base text-gray-600 leading-7">
+
+          <p className="mt-3 text-base leading-6 text-gray-600">
             Every eCampus learner moves through the same four milestones —
             here&apos;s exactly what that path looks like.
           </p>
         </div>
 
+        {/* Journey */}
         <div className="relative">
-          {/* connecting rail - desktop */}
-          <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gray-200">
+          {/* Connecting Rail - Desktop */}
+          <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-gray-200 md:block">
             <div className="h-full w-full bg-gradient-to-r from-red-600 via-red-500 to-red-200" />
           </div>
 
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-4 md:gap-6">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-4 md:gap-6">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const isLast = index === steps.length - 1;
 
               return (
-                <div key={step.title} className="relative flex md:block gap-4">
-                  {/* connecting rail - mobile (vertical) */}
+                <div key={step.title} className="relative flex gap-4 md:block">
+                  {/* Connecting Rail - Mobile */}
                   {!isLast && (
-                    <div className="md:hidden absolute left-8 top-16 bottom-[-2.5rem] w-0.5 bg-gray-200" />
+                    <div className="absolute bottom-[-1.75rem] left-8 top-16 w-0.5 bg-gray-200 md:hidden" />
                   )}
 
+                  {/* Icon */}
                   <div className="relative z-10 flex-shrink-0">
                     <div
                       className={`flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-md ${
@@ -74,13 +75,16 @@ export function CareerJourneySection() {
                     </div>
                   </div>
 
-                  <div className="pt-1 md:pt-6">
+                  {/* Content */}
+                  <div className="pt-1 md:pt-5">
                     <span className="text-xs font-bold text-red-600">
                       STEP {index + 1}
                     </span>
+
                     <h3 className="mt-1 text-lg font-semibold text-slate-900">
                       {step.title}
                     </h3>
+
                     <p className="mt-2 text-sm leading-6 text-gray-600">
                       {step.description}
                     </p>

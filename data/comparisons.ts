@@ -26,16 +26,15 @@ export interface UniversityPair {
 export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
   {
     id: "amity-vs-manipal",
-    image: "/compare/amity-vs-mn.png",
+    image: "/compare/amitynew.png",
     a: {
       id: "amity",
       name: "",
       short: "AMITY",
       university: "Amity",
       courses: ["BBA", "MBA", "B.Tech", "Law", "Commerce", "Arts"],
-      image: "/compare/amity-vs-mn.png",
-
-      location: " Noida, UP",
+      image: "/compare/amitynew.png",
+      location: "Noida, UP",
       established: 2002,
       ranking: "NIRF Rank: 76 (Overall)",
       affiliations: ["NAAC Accredited", "UGC Recognized", "AICTE Approved"],
@@ -53,7 +52,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "manipal-jaipur",
       name: "MBA",
       short: "MUJ",
-      university: "manipal",
+      university: "Manipal",
       courses: [
         "Engineering",
         "Commerce",
@@ -62,7 +61,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
         "Management",
         "Law",
       ],
-      image: "/compare/manipal.png",
+      image: "/compare/manipalnew.png",
       location: "Jaipur, Rajasthan",
       established: 2016,
       ranking: "Not Ranked",
@@ -113,7 +112,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "chandigarh-online",
       name: "BBA",
       short: "CU",
-      university: "CU",
+      university: "Chandigarh University",
       courses: ["BCA", "MBA", "B.Tech", "MCA", "B.Com", "MA", "Diploma"],
       image:
         "https://images.unsplash.com/photo-1516534775068-bb57ad17166b?w=500&h=400&fit=crop",
@@ -140,7 +139,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "gla-online",
       name: "BCA",
       short: "GLA",
-      university: "GLA",
+      university: "GLA University",
       courses: ["MBA", "MCA", "B.Tech", "BCA", "Diploma", "Certificate"],
       image:
         "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=400&fit=crop",
@@ -163,7 +162,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "amity-online",
       name: "BCA",
       short: "AMITY",
-      university: "Amity",
+      university: "Amity Online",
       courses: [
         "MBA",
         "M.Tech",
@@ -197,7 +196,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "manipal-full",
       name: "DBA",
       short: "MANIPAL",
-      university: "Manipal",
+      university: "Manipal University",
       courses: ["B.Tech", "MBA", "Medicine", "Law", "Engineering", "Commerce"],
       image:
         "https://images.unsplash.com/photo-1441239372925-51cff79fb247?w=500&h=400&fit=crop",
@@ -220,7 +219,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "rushford-full",
       name: "DBA",
       short: "RUSH",
-      university: "Rushford",
+      university: "Rushford University",
       courses: ["MBA", "Executive MBA", "PGDM", "Doctorate", "Short Courses"],
       image:
         "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
@@ -269,6 +268,7 @@ export function searchUniversities(query: string): ComparisonItem[] {
   return getAllUniversities().filter(
     (uni) =>
       uni.name.toLowerCase().includes(lowercaseQuery) ||
+      uni.university.toLowerCase().includes(lowercaseQuery) ||
       uni.location.toLowerCase().includes(lowercaseQuery) ||
       uni.courses.some((course) =>
         course.toLowerCase().includes(lowercaseQuery),

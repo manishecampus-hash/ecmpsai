@@ -36,31 +36,34 @@ const rows = [
 
 export function CareerComparisonSection() {
   return (
-    <section className="py-16 bg-white">
+    <section className="bg-white py-8 md:py-10">
       <div className="container mx-auto px-4">
-        <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-900">
+        {/* Heading */}
+        <h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
           Upskill with the best programs in the world
         </h2>
 
-        <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.3fr_1fr] gap-0 md:gap-4">
-          {/* Row label column header spacer (desktop only) */}
+        {/* Comparison Table */}
+        <div className="mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-0 md:grid-cols-[1fr_1.3fr_1fr] md:gap-4">
+          {/* Row label column header spacer */}
           <div className="hidden md:block" />
 
-          {/* eCampus header */}
+          {/* eCampus Header */}
           <div className="relative">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-md">
+            <div className="absolute -top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-md">
               <Sparkles className="h-3 w-3" />
               Recommended
             </div>
-            <div className="rounded-t-2xl border-2 border-b-0 border-red-600 bg-red-50/60 px-6 pt-8 pb-4 text-center">
+
+            <div className="rounded-t-2xl border-2 border-b-0 border-red-600 bg-red-50/60 px-6 pb-3 pt-7 text-center">
               <span className="text-xl font-bold text-red-600">
                 eCampus Programs
               </span>
             </div>
           </div>
 
-          {/* Other courses header */}
-          <div className="flex items-center justify-center px-6 py-4 md:pt-8">
+          {/* Other Courses Header */}
+          <div className="flex items-center justify-center px-6 py-3 md:pt-6">
             <span className="text-xl font-bold text-slate-900">
               Other Courses
             </span>
@@ -71,35 +74,34 @@ export function CareerComparisonSection() {
             <Fragment key={row.label}>
               {/* Label */}
               <div
-                key={`label-${row.label}`}
-                className={`flex items-center px-6 py-6 font-semibold text-slate-800 ${
+                className={`flex items-center px-6 py-5 font-semibold text-slate-800 ${
                   i % 2 === 0 ? "bg-gray-50" : "bg-white"
-                } md:rounded-none`}
+                }`}
               >
                 {row.label}
               </div>
 
-              {/* eCampus value */}
+              {/* eCampus Value */}
               <div
-                key={`us-${row.label}`}
-                className={`flex items-start gap-2 border-x-2 border-red-600 px-6 py-6 bg-red-50/40 ${
+                className={`flex items-start gap-2 border-x-2 border-red-600 bg-red-50/40 px-6 py-5 ${
                   i === rows.length - 1 ? "rounded-b-2xl border-b-2" : ""
                 }`}
               >
                 <ThumbsUp className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+
                 <span className="text-sm leading-6 text-slate-800">
                   {row.us}
                 </span>
               </div>
 
-              {/* Other courses value */}
+              {/* Other Courses Value */}
               <div
-                key={`them-${row.label}`}
-                className={`flex items-start gap-2 px-6 py-6 ${
+                className={`flex items-start gap-2 px-6 py-5 ${
                   i % 2 === 0 ? "bg-gray-50" : "bg-white"
                 }`}
               >
                 <ThumbsDown className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
+
                 <span className="text-sm leading-6 text-gray-500">
                   {row.them}
                 </span>

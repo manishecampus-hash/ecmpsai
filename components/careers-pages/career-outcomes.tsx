@@ -39,18 +39,16 @@ const stats = [
 
 export function CareerOutcomes() {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.3fr] items-start">
-          {/* Left: context copy */}
-          <div>
-            <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-1.5 text-xs font-bold tracking-widest text-red-600 border border-red-100">
-              THE NUMBERS
-            </span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+    <section className="w-full bg-white py-20">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
+        <div className="grid items-start gap-10 lg:grid-cols-[0.9fr_1.3fr] lg:gap-14">
+          {/* LEFT: CONTEXT COPY */}
+          <div className="w-full max-w-xl">
+            <h2 className="mt-4 text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
               Outcomes that speak for themselves
             </h2>
-            <p className="mt-4 text-base text-gray-600 leading-7">
+
+            <p className="mt-4 text-base leading-7 text-gray-600">
               We measure success the same way you will — by whether learners
               actually move forward in their careers. Here&apos;s what that has
               looked like so far.
@@ -58,34 +56,41 @@ export function CareerOutcomes() {
 
             <a
               href="#"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:text-red-700"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 transition-colors hover:text-red-700"
             >
               See the full outcomes report
               <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
 
-          {/* Right: stat cards */}
+          {/* RIGHT: STAT CARDS */}
           <div className="grid gap-5 sm:grid-cols-2">
             {stats.map((stat) => {
               const Icon = stat.icon;
+
               return (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-gray-200 bg-gray-50/60 p-6 hover:border-red-200 hover:bg-red-50/40 transition-colors"
+                  className="rounded-2xl border border-gray-200 bg-gray-50/60 p-6 transition-colors hover:border-red-200 hover:bg-red-50/40"
                 >
+                  {/* Icon */}
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600 text-white">
                     <Icon className="h-5 w-5" />
                   </div>
 
+                  {/* Value */}
                   <div className="mt-4 flex items-baseline gap-2">
                     <span className="text-3xl font-bold text-slate-900">
                       {stat.value}
                     </span>
                   </div>
+
+                  {/* Label */}
                   <span className="mt-1 block text-sm font-semibold text-slate-700">
                     {stat.label}
                   </span>
+
+                  {/* Description */}
                   <p className="mt-2 text-sm leading-6 text-gray-500">
                     {stat.description}
                   </p>

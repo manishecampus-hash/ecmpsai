@@ -711,14 +711,14 @@ const CareerExplorer = () => {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
           {careerExplorerData.map((item) => {
             const colors = getColors(item.title);
 
             return (
               <div
                 key={item.id}
-                className="relative bg-white rounded-lg border border-gray-200 shadow-sm p-3 sm:p-3.5 pt-4 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105 overflow-hidden"
+                className="relative bg-white rounded-lg border border-gray-200 shadow-sm p-2 sm:p-3.5 pt-3 sm:pt-4 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:border-gray-300 hover:scale-105 overflow-hidden"
               >
                 {/* Highest Package Badge */}
                 {item.package && (
@@ -730,7 +730,7 @@ const CareerExplorer = () => {
 
                 {/* Image Container */}
                 <div
-                  className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-2 overflow-hidden`}
+                  className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center mb-2 overflow-hidden`}
                 >
                   <Image
                     src={item.image}
@@ -741,12 +741,12 @@ const CareerExplorer = () => {
                 </div>
 
                 {/* Title */}
-                <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-1">
+                <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-1 sm:mb-2 line-clamp-1">
                   {item.title}
                 </h3>
 
                 {/* Description */}
-                <p className="hidden sm:block text-[11px] text-gray-600 mb-3 line-clamp-1">
+                <p className="hidden sm:block text-[11px] text-gray-600 mb-2 sm:mb-3 line-clamp-1">
                   {item.description}
                 </p>
 
@@ -754,11 +754,11 @@ const CareerExplorer = () => {
                 <Link href={`/careers/${item.slug}`} passHref>
                   <button
                     type="button"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-transparate-50 text-black-500 hover:bg-transparate-100 border border-transparate-200 font-semibold text-xs transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md bg-transparate-50 text-black-500 hover:bg-transparate-100 border border-transparate-200 font-semibold text-[11px] sm:text-xs transition-colors"
                     aria-label={`Explore ${item.title}`}
                   >
                     Explore
-                    <ArrowRight size={14} />
+                    <ArrowRight size={12} className="sm:h-3.5 sm:w-3.5" />
                   </button>
                 </Link>
               </div>

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="w-full px-4">
+    <section className="w-full px-4 mt-6 md:mt-10 mb-10 md:mb-14">
       {/* mx-auto: Centers the div horizontally
         max-w-5xl: Sets a maximum width (adjust to 4xl or 3xl for narrower)
       */}

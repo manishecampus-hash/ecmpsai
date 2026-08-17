@@ -68,11 +68,11 @@ export default function IgnouOnlineFAQ() {
         {/* ================= SECTION HEADER ================= */}
 
         <div className="mx-auto mb-8 max-w-3xl text-center">
-          <span className="inline-flex items-center rounded-full bg-red-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-[#ff3b4d]">
+          <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#ff3b4d] sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.15em]">
             Frequently Asked Questions
           </span>
 
-          <h2 className="mt-1 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-[22px] font-bold leading-tight tracking-tight text-gray-900 sm:mt-1 sm:text-3xl md:text-4xl">
             IGNOU vs Online Universities{" "}
             <span className="text-red-500">FAQs</span>
           </h2>
@@ -80,7 +80,7 @@ export default function IgnouOnlineFAQ() {
 
         {/* ================= FAQ ACCORDION ================= */}
 
-        <div className="mx-auto max-w-4xl space-y-4">
+        <div className="mx-auto max-w-4xl space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => {
             const isOpen = openIndexes.includes(index);
 
@@ -99,19 +99,19 @@ export default function IgnouOnlineFAQ() {
                   type="button"
                   onClick={() => toggleFAQ(index)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-5 p-5 text-left sm:p-6"
+                  className="flex w-full items-center justify-between gap-3 p-4 text-left sm:gap-5 sm:p-6"
                 >
-                  <h3 className="pr-2 text-[16px] font-semibold leading-[1.4] tracking-[-0.2px] text-[#0f1f3d] sm:text-[17px]">
+                  <h3 className="pr-1 text-[14.5px] font-semibold leading-[1.4] tracking-[-0.1px] text-[#0f1f3d] sm:pr-2 sm:text-[17px] sm:tracking-[-0.2px]">
                     {faq.question}
                   </h3>
 
                   <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 sm:h-9 sm:w-9 ${
                       isOpen ? "rotate-180 bg-red-50" : "bg-slate-50"
                     }`}
                   >
                     <ChevronDown
-                      className={`h-5 w-5 transition-colors duration-300 ${
+                      className={`h-4 w-4 transition-colors duration-300 sm:h-5 sm:w-5 ${
                         isOpen ? "text-[#ff3b4d]" : "text-slate-500"
                       }`}
                     />
@@ -128,8 +128,8 @@ export default function IgnouOnlineFAQ() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <div className="border-t border-red-50 px-5 pb-6 pt-4 sm:px-6">
-                      <p className="text-[14px] leading-7 text-slate-600 sm:text-[15px]">
+                    <div className="border-t border-red-50 px-4 pb-5 pt-3 sm:px-6 sm:pb-6 sm:pt-4">
+                      <p className="text-[13.5px] leading-6 text-slate-600 sm:text-[15px] sm:leading-7">
                         {faq.answer}
                       </p>
                     </div>
@@ -142,8 +142,8 @@ export default function IgnouOnlineFAQ() {
 
         {/* ================= BOTTOM NOTE ================= */}
 
-        <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-red-100 bg-red-50/50 px-5 py-4 text-center">
-          <p className="text-[13px] leading-6 text-slate-600">
+        <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-red-100 bg-red-50/50 px-4 py-4 text-center sm:px-5">
+          <p className="text-[12.5px] leading-6 text-slate-600 sm:text-[13px]">
             Still confused about which option is right for you? Compare
             universities based on your career goals, learning preferences,
             flexibility, and program requirements before making a decision.

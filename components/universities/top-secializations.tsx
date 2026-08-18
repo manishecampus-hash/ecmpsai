@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   Search,
   Download,
@@ -173,14 +173,30 @@ function feeToNumber(fee: string) {
   return parseInt(fee.replace(/[^\d]/g, ""), 10) || 0;
 }
 
+function formatINR(amount: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+function calculateEMI(fee: number, durationStr: string) {
+  const years = parseInt(durationStr) || 2;
+  const months = years * 12;
+  const emi = Math.round(fee / months);
+  return `INR ${emi.toLocaleString("en-IN")}/mo*`;
+}
+
 export default function TopSpecializations({
   university,
 }: TopSpecializationsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeCategory, setActiveCategory] = useState<"ug" | "pg" | "top">(
-    "ug",
-  );
+  const [dbCourses, setDbCourses] = useState<any[]>([]);
+  const [categoriesList, setCategoriesList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeCategory, setActiveCategory] = useState<string>("top");
   const itemsPerPage = 10;
 
   const uniLabel = university?.name
@@ -204,34 +220,99 @@ export default function TopSpecializations({
         }))
       : DEFAULT_SPECIALIZATIONS_DATA;
 
-  const groupedCourses = useMemo(() => {
-    const groups: Record<string, SpecializationRow[]> = {};
-    specializationsData.forEach((row) => {
-      if (!groups[row.course]) groups[row.course] = [];
-      groups[row.course].push(row);
-    });
+  useEffect(() => {
+    if (!university?.id) {
+      setIsLoading(false);
+      return;
+    }
 
-    return Object.entries(groups).map(([course, rows], idx) => {
-      const feeNumbers = rows.map((r) => feeToNumber(r.fees));
-      const allFeesEqual = feeNumbers.every((f) => f === feeNumbers[0]);
-      const minFeeIdx = feeNumbers.indexOf(Math.min(...feeNumbers));
+    const backendUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
 
-      return {
-        course,
-        category: categorize(course),
-        image: CARD_IMAGES[idx % CARD_IMAGES.length],
-        specializationsCount: rows.length,
-        duration: rows[0].duration,
-        feesLabel: allFeesEqual ? "Total Fees" : "Fees Start",
-        fees: rows[minFeeIdx].fees,
-        emi: rows[minFeeIdx].emi,
-      };
-    });
-  }, [specializationsData]);
+    const fetchCoursesAndCategories = async () => {
+      try {
+        setIsLoading(true);
+        const coursesUrl = `${backendUrl}/api/courses?universityId=${university.id}`;
+        const coursesRes = await fetch(coursesUrl);
+        let coursesData = [];
+        if (coursesRes.ok) {
+          const resJson = await coursesRes.json();
+          coursesData = Array.isArray(resJson) ? resJson : (resJson.courses || []);
+        }
 
-  const visibleCourses = groupedCourses.filter(
-    (c) => c.category === activeCategory,
-  );
+        const categoriesUrl = `${backendUrl}/api/course-meta?type=category`;
+        const categoriesRes = await fetch(categoriesUrl);
+        let categoriesData = [];
+        if (categoriesRes.ok) {
+          categoriesData = await categoriesRes.json();
+        }
+
+        setDbCourses(coursesData);
+        setCategoriesList(categoriesData);
+      } catch (err) {
+        console.error("Failed to fetch courses or categories:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCoursesAndCategories();
+  }, [university?.id]);
+
+  const categoryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    if (Array.isArray(categoriesList)) {
+      categoriesList.forEach((cat: any) => {
+        if (cat.id && cat.name) {
+          map[cat.id] = cat.name;
+        }
+      });
+    }
+    return map;
+  }, [categoriesList]);
+
+  const showOnlyTopTab = useMemo(() => {
+    if (isLoading) return false;
+    if (dbCourses.length === 0) return true;
+    const hasCourseWithoutCategory = dbCourses.some(
+      (course) => !course.category || !categoryMap[course.category]
+    );
+    return hasCourseWithoutCategory;
+  }, [dbCourses, categoryMap, isLoading]);
+
+  const categoryTabs = useMemo(() => {
+    if (isLoading) {
+      return [{ key: "top", label: "Top Specializations" }];
+    }
+    if (showOnlyTopTab) {
+      return [{ key: "top", label: "Top Specializations" }];
+    }
+
+    const uniqueCategoryIds = Array.from(
+      new Set(dbCourses.map((c) => c.category).filter(Boolean))
+    );
+
+    const dynamicTabs = uniqueCategoryIds.map((catId) => ({
+      key: catId,
+      label: categoryMap[catId] || "Category",
+    }));
+
+    return [...dynamicTabs, { key: "top", label: "Top Specializations" }];
+  }, [dbCourses, categoryMap, showOnlyTopTab, isLoading]);
+
+  useEffect(() => {
+    if (categoryTabs.length > 0) {
+      const exists = categoryTabs.some((t) => t.key === activeCategory);
+      if (!exists) {
+        setActiveCategory(categoryTabs[0].key);
+      }
+    }
+  }, [categoryTabs, activeCategory]);
+
+  const visibleCourses = useMemo(() => {
+    if (activeCategory === "top") return [];
+    return dbCourses.filter((c) => c.category === activeCategory);
+  }, [dbCourses, activeCategory]);
 
   const filteredRows = specializationsData.filter(
     (row) =>
@@ -247,12 +328,6 @@ export default function TopSpecializations({
   const handleDownload = (specialization: string) => {
     alert(`Downloading Brochure for: ${specialization}`);
   };
-
-  const categoryTabs: { key: "ug" | "pg" | "top"; label: string }[] = [
-    { key: "ug", label: "UG Courses" },
-    { key: "pg", label: "PG Courses" },
-    { key: "top", label: "Top Specializations" },
-  ];
 
   return (
     <section
@@ -277,150 +352,176 @@ export default function TopSpecializations({
         </h2>
       </div>
 
-      {/* Category Tabs - Compact centered buttons */}
-      <div className="mb-6 sm:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-        {categoryTabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => {
-              setActiveCategory(tab.key);
-              setCurrentPage(1);
-            }}
-            className={`w-[170px] sm:w-[200px] rounded-lg border px-6 py-2 text-xs sm:text-sm font-semibold transition whitespace-nowrap text-center ${
-              activeCategory === tab.key
-                ? "border-red-500 bg-red-500 text-white shadow-md shadow-red-100"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Card Grid Section */}
-      {(activeCategory === "ug" || activeCategory === "pg") && (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20 w-full">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
+        </div>
+      ) : (
         <>
-          <div className="flex justify-center overflow-hidden">
-            <div className="__cards-container flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full overflow-x-auto pb-2 snap-x snap-mandatory">
-              <style>{`
-                @media (max-width: 640px) {
-                  .__cards-container > * {
-                    min-width: calc(85% - 8px);
-                    flex-shrink: 0;
-                    snap-align: start;
-                  }
-                }
-              `}</style>
-              {visibleCourses.length > 0 ? (
-                visibleCourses.map((card) => (
-                  <div
-                    key={card.course}
-                    className="__card-container flex flex-col h-full w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:shadow-lg"
-                  >
-                    {/* Image Section */}
-                    <div className="__card-image-wrapper relative overflow-hidden h-44 sm:h-48 rounded-t-2xl">
-                      <img
-                        src={card.image}
-                        alt={`${card.course} ${uniLabel}`}
-                        className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                      />
-
-                      {/* Badge - Yellow/Amber at bottom-left */}
-                      <div className="__card-badge absolute bottom-3 left-3 rounded-lg bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-md">
-                        {card.course} ({uniLabel})
-                      </div>
-
-                      {/* Rating - Top right */}
-                      <div className="__card-rating absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg">
-                        <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                        4.7
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="__card-content flex flex-col flex-grow p-5">
-                      {/* Title */}
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
-                        Online {card.course} Degree
-                      </h3>
-
-                      {/* Info List */}
-                      <ul className="space-y-3 text-sm mb-5 flex-grow">
-                        {/* Specializations */}
-                        <li className="flex items-center gap-3">
-                          <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                            <BookOpen className="h-5 w-5 text-blue-700" />
-                          </div>
-                          <span className="text-slate-700 font-medium">
-                            Specializations:
-                          </span>
-                          <span className="font-bold text-slate-900 ml-auto">
-                            {card.specializationsCount}
-                          </span>
-                        </li>
-
-                        {/* Duration */}
-                        <li className="flex items-center gap-3">
-                          <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                            <Clock className="h-5 w-5 text-blue-700" />
-                          </div>
-                          <span className="text-slate-700 font-medium">
-                            Duration:
-                          </span>
-                          <span className="font-bold text-slate-900 ml-auto">
-                            {card.duration}
-                          </span>
-                        </li>
-
-                        {/* Fees */}
-                        <li className="flex items-center gap-3">
-                          <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                            <IndianRupee className="h-5 w-5 text-blue-700" />
-                          </div>
-                          <span className="text-slate-700 font-medium">
-                            {card.feesLabel}:
-                          </span>
-                          <span className="font-bold text-slate-900 ml-auto">
-                            {card.fees}
-                          </span>
-                        </li>
-
-                        {/* EMI */}
-                        <li className="flex items-center gap-3">
-                          <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                            <CreditCard className="h-5 w-5 text-blue-700" />
-                          </div>
-                          <span className="text-slate-700 font-medium">
-                            EMI/month:
-                          </span>
-                          <span className="font-bold text-slate-900 ml-auto">
-                            {card.emi}
-                          </span>
-                        </li>
-                      </ul>
-
-                      {/* Button */}
-                      <button
-                        type="button"
-                        className="__explore-btn w-full flex items-center justify-center gap-2 rounded-xl border-2 border-red-500 py-3 text-sm font-bold text-red-500 transition duration-300 hover:bg-red-50 active:bg-red-100"
-                      >
-                        Explore More
-                        <ArrowRight className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center text-slate-400 font-medium">
-                  No {activeCategory === "ug" ? "UG" : "PG"} courses available
-                  yet.
-                </div>
-              )}
-            </div>
+          {/* Category Tabs - Compact centered buttons */}
+          <div className="mb-6 sm:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            {categoryTabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => {
+                  setActiveCategory(tab.key);
+                  setCurrentPage(1);
+                }}
+                className={`w-[170px] sm:w-[200px] rounded-lg border px-6 py-2 text-xs sm:text-sm font-semibold transition whitespace-nowrap text-center ${
+                  activeCategory === tab.key
+                    ? "border-red-500 bg-red-500 text-white shadow-md shadow-red-100"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-        </>
-      )}
+
+          {/* Card Grid Section */}
+          {activeCategory !== "top" && (
+            <>
+              <div className="flex justify-center overflow-hidden">
+                <div className="__cards-container flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full overflow-x-auto pb-2 snap-x snap-mandatory">
+                  <style>{`
+                    @media (max-width: 640px) {
+                      .__cards-container > * {
+                        min-width: calc(85% - 8px);
+                        flex-shrink: 0;
+                        snap-align: start;
+                      }
+                    }
+                  `}</style>
+                  {visibleCourses.length > 0 ? (
+                    visibleCourses.map((card, idx) => {
+                      const cardImage = CARD_IMAGES[idx % CARD_IMAGES.length];
+                      return (
+                        <div
+                          key={card.id || card.slug}
+                          className="__card-container flex flex-col h-full w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:shadow-lg"
+                        >
+                          {/* Image Section */}
+                          <div className="__card-image-wrapper relative overflow-hidden h-44 sm:h-48 rounded-t-2xl">
+                            <img
+                              src={cardImage}
+                              alt={`${card.name} ${uniLabel}`}
+                              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                            />
+
+                            {/* Badge - Yellow/Amber at bottom-left */}
+                            <div className="__card-badge absolute bottom-3 left-3 rounded-lg bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-md">
+                              {card.name} ({uniLabel})
+                            </div>
+
+                            {/* Rating - Top right */}
+                            <div className="__card-rating absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg">
+                              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                              {card.rating || 4.7}
+                            </div>
+                          </div>
+
+                          {/* Content Section */}
+                          <div className="__card-content flex flex-col flex-grow p-5">
+                            {/* Title */}
+                            <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
+                              {card.name.toLowerCase().startsWith("online")
+                                ? card.name
+                                : `Online ${card.name} Degree`}
+                            </h3>
+
+                            {/* Info List */}
+                            <ul className="space-y-3 text-sm mb-5 flex-grow">
+                              {/* Type */}
+                              <li className="flex items-center gap-3">
+                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                                  <BookOpen className="h-5 w-5 text-blue-700" />
+                                </div>
+                                <span className="text-slate-700 font-medium">
+                                  Type:
+                                </span>
+                                <span className="font-bold text-slate-900 ml-auto">
+                                  {card.type || "Semester"}
+                                </span>
+                              </li>
+
+                              {/* Mode */}
+                              <li className="flex items-center gap-3">
+                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                                  <GraduationCap className="h-5 w-5 text-blue-700" />
+                                </div>
+                                <span className="text-slate-700 font-medium">
+                                  Mode:
+                                </span>
+                                <span className="font-bold text-slate-900 ml-auto">
+                                  {card.mode || "Online"}
+                                </span>
+                              </li>
+
+                              {/* Duration */}
+                              <li className="flex items-center gap-3">
+                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                                  <Clock className="h-5 w-5 text-blue-700" />
+                                </div>
+                                <span className="text-slate-700 font-medium">
+                                  Duration:
+                                </span>
+                                <span className="font-bold text-slate-900 ml-auto">
+                                  {card.duration}
+                                </span>
+                              </li>
+
+                              {/* Fees */}
+                              <li className="flex items-center gap-3">
+                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                                  <IndianRupee className="h-5 w-5 text-blue-700" />
+                                </div>
+                                <span className="text-slate-700 font-medium">
+                                  {card.feeRange?.start === card.feeRange?.end
+                                    ? "Total Fees"
+                                    : "Fees Start"}
+                                  :
+                                </span>
+                                <span className="font-bold text-slate-900 ml-auto">
+                                  {formatINR(card.feeRange?.start || 0)}
+                                </span>
+                              </li>
+
+                              {/* EMI */}
+                              <li className="flex items-center gap-3">
+                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                                  <CreditCard className="h-5 w-5 text-blue-700" />
+                                </div>
+                                <span className="text-slate-700 font-medium">
+                                  EMI/month:
+                                </span>
+                                <span className="font-bold text-slate-900 ml-auto">
+                                  {calculateEMI(card.feeRange?.start || 0, card.duration)}
+                                </span>
+                              </li>
+                            </ul>
+
+                            {/* Button */}
+                            <button
+                              type="button"
+                              className="__explore-btn w-full flex items-center justify-center gap-2 rounded-xl border-2 border-red-500 py-3 text-sm font-bold text-red-500 transition duration-300 hover:bg-red-50 active:bg-red-100"
+                            >
+                              Explore More
+                              <ArrowRight className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center text-slate-400 font-medium w-full">
+                      No courses available under this category yet.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
 
       {/* Top Specializations Section */}
       {activeCategory === "top" && (
@@ -601,6 +702,8 @@ export default function TopSpecializations({
               </button>
             </div>
           )}
+        </>
+      )}
         </>
       )}
     </section>

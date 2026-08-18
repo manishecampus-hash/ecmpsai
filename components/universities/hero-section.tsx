@@ -877,6 +877,31 @@ type Props = {
   trustedText?: string;
   onApplyHref?: string;
   onTalkHref?: string;
+  university?: any;
+};
+
+const iconMap: Record<string, React.ComponentType<any>> = {
+  BookOpen,
+  Clock,
+  Globe,
+  Users,
+  Shield,
+  Download,
+};
+
+const renderPointerIcon = (iconStr: string, alt: string) => {
+  if (!iconStr) return <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
+  
+  const LucideIcon = iconMap[iconStr] || iconMap[iconStr.charAt(0).toUpperCase() + iconStr.slice(1)] || iconMap[iconStr.toLowerCase()];
+  if (LucideIcon) {
+    return <LucideIcon className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
+  }
+
+  if (iconStr.startsWith("http") || iconStr.startsWith("/") || iconStr.includes(".")) {
+    return <img src={iconStr} alt={alt} className="h-5 w-5 sm:h-6 sm:w-6 object-contain" />;
+  }
+
+  return <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
 };
 
 export default function UniversityHeroWithStats({
@@ -894,13 +919,48 @@ export default function UniversityHeroWithStats({
   trustedText = "Trusted by 10,000+ learners",
   onApplyHref = "#apply",
   onTalkHref = "#talk",
+  university,
 }: Props) {
+  const banner = university?.details?.banner || {};
+  const bannerHeading = banner.heading || university?.name || title;
+  const bannerSubheading = banner.subheading || "A Heritage of Excellence. A Future of Impact.";
+  const bannerLocation = university?.location || "USA";
+  const bannerLogo = banner.icon || university?.logoUrl || logoSrc;
+  const bannerBg = banner.image || "/ggubanner/ggubnr.webp";
+
+  const bannerRating = banner.rating !== undefined ? Number(banner.rating) : rating;
+  const bannerReviews = banner.reviewsCount !== undefined ? Number(banner.reviewsCount) : reviews;
+  const bannerTrustedText = banner.trustedText || trustedText;
+
+  const dbLogos = banner.accreditationLogos || [];
+  const dynamicBadges = dbLogos.length > 0
+    ? [
+        ...dbLogos
+          .filter((logo: string) => logo && logo.trim() !== "")
+          .map((logo: string, idx: number) => ({
+            alt: `Accreditation Logo ${idx + 1}`,
+            src: logo,
+            label: "",
+          })),
+        { alt: "More", src: undefined, label: "More" }
+      ]
+    : badges;
+
+  const pointers = banner.pointers || {};
+  const pointersTitle = pointers.title || `Why ${university?.name || title}?`;
+  const pointersItems = pointers.items && pointers.items.length > 0 ? pointers.items : [
+    { mainText: "100+", heading: "Programs", subheading: "Diverse specializations", icon: "BookOpen" },
+    { mainText: "75+", heading: "Years of Legacy", subheading: "Experience & excellence", icon: "Clock" },
+    { mainText: "Global", heading: "Community", subheading: "Diverse student body", icon: "Globe" },
+    { mainText: "Career", heading: "Focused", subheading: "Job-ready learning", icon: "Users" }
+  ];
+
   return (
     <header className="relative bg-white">
       {/* Banner */}
       <div className="relative h-48 sm:h-64 lg:h-96">
         <img
-          src="/ggubanner/ggubnr.webp"
+          src={bannerBg}
           alt="Campus banner"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -911,10 +971,10 @@ export default function UniversityHeroWithStats({
         <div className="absolute inset-0 flex flex-col items-start justify-center pl-4 pr-4 py-6 sm:pl-8 sm:pr-8 sm:py-8 lg:pl-32 lg:pr-12 lg:py-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-4 w-full">
             {/* Logo */}
-            <div className="flex-shrink-0  border-2 border-white rounded-xl p-2">
+            <div className="flex-shrink-0  border-2 border-white rounded-xl p-2 bg-white">
               <img
-                src="/ggubanner/logoo.webp"
-                alt="GGU Logo"
+                src={bannerLogo}
+                alt={`${bannerHeading} Logo`}
                 className="h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain"
               />
             </div>
@@ -922,10 +982,10 @@ export default function UniversityHeroWithStats({
             {/* Text content */}
             <div className="text-white flex-1">
               <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold mb-1 sm:mb-2 leading-tight">
-                {title}
+                {bannerHeading}
               </h1>
               <p className="text-xs sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-3 line-clamp-2">
-                A Heritage of Excellence. A Future of Impact.
+                {bannerSubheading}
               </p>
 
               {/* Location badge */}
@@ -942,7 +1002,7 @@ export default function UniversityHeroWithStats({
                   />
                 </svg>
                 <span className="text-white text-xs sm:text-sm font-medium">
-                  USA
+                  {bannerLocation}
                 </span>
               </div>
             </div>
@@ -966,7 +1026,7 @@ export default function UniversityHeroWithStats({
               <div className="flex flex-col gap-3 w-full lg:w-auto">
                 {/* Badges row */}
                 <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                  {badges.map((b, i) => (
+                  {dynamicBadges.map((b, i) => (
                     <div key={i} className="flex items-center gap-1.5 sm:gap-2">
                       {b.src ? (
                         <img
@@ -992,20 +1052,24 @@ export default function UniversityHeroWithStats({
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-amber-400 text-amber-400"
+                        className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                          i < Math.floor(bannerRating)
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-slate-300"
+                        }`}
                       />
                     ))}
                     <span className="ml-1 sm:ml-2 font-semibold text-slate-800 text-sm sm:text-base">
-                      {rating}
+                      {bannerRating}
                     </span>
                     <span className="text-xs sm:text-sm text-slate-600">
-                      ({reviews})
+                      ({bannerReviews})
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-700">
                     <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-600 flex-shrink-0" />
-                    <span className="line-clamp-1">{trustedText}</span>
+                    <span className="line-clamp-1">{bannerTrustedText}</span>
                   </div>
                 </div>
               </div>
@@ -1014,12 +1078,12 @@ export default function UniversityHeroWithStats({
               <div className="flex flex-col gap-2 w-full sm:w-auto lg:gap-3">
                 <div className="mt-7 flex flex-col gap-4 sm:flex-row">
                   <button className="inline-flex h-11 w-fit items-center justify-center self-start rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
-                    Apply Now
+                    {banner.ctas?.[0]?.buttonText || "Apply Now"}
                   </button>
 
                   <button className="inline-flex h-11 w-[170px] items-center justify-center gap-2 whitespace-nowrap rounded-[13px] border border-[#dfe5ee] bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
                     <Download className="h-4 w-4" />
-                    Explore Courses
+                    {banner.ctas?.[1]?.buttonText || "Explore Courses"}
                   </button>
                 </div>
               </div>
@@ -1031,81 +1095,28 @@ export default function UniversityHeroWithStats({
                 {/* LEFT: Why Golden Gate University */}
                 <div>
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">
-                    Why Golden Gate University?
+                    {pointersTitle}
                   </h3>
 
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {/* 100+ Programs */}
-                    <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
-                        <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-base sm:text-lg font-bold text-slate-900">
-                          100+
+                    {pointersItems.map((item: any, idx: number) => (
+                      <div key={idx} className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+                        <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                          {renderPointerIcon(item.icon, item.heading)}
                         </div>
-                        <div className="text-xs sm:text-sm text-slate-600">
-                          Programs
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
-                          Diverse specializations
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 75+ Years */}
-                    <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
-                        <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-base sm:text-lg font-bold text-slate-900">
-                          75+
-                        </div>
-                        <div className="text-xs sm:text-sm text-slate-600">
-                          Years of Legacy
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
-                          Experience & excellence
+                        <div className="min-w-0">
+                          <div className="text-base sm:text-lg font-bold text-slate-900">
+                            {item.mainText}
+                          </div>
+                          <div className="text-xs sm:text-sm text-slate-600">
+                            {item.heading}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
+                            {item.subheading}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Global */}
-                    <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
-                        <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-base sm:text-lg font-bold text-slate-900">
-                          Global
-                        </div>
-                        <div className="text-xs sm:text-sm text-slate-600">
-                          Community
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
-                          Diverse student body
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Career Focused */}
-                    <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                      <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
-                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-base sm:text-lg font-bold text-slate-900">
-                          Career
-                        </div>
-                        <div className="text-xs sm:text-sm text-slate-600">
-                          Focused
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
-                          Job-ready learning
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
 

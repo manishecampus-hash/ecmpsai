@@ -133,10 +133,10 @@ export default function UniversitySlider() {
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex justify-center">
         <Link
           href="/comparisons"
-          className="inline-flex items-center gap-2 text-orange-600 font-medium text-sm hover:underline"
+          className="inline-flex items-center gap-2 text-orange-600 font-medium text-sm underline"
         >
           View All University Comparisons
           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 text-white">

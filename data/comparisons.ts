@@ -26,14 +26,14 @@ export interface UniversityPair {
 export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
   {
     id: "amity-vs-manipal",
-    image: "/compare/amitynew.png",
+    image: "/compare/rushford.png",
     a: {
       id: "amity",
       name: "",
-      short: "AMITY",
-      university: "Amity",
+      short: "Rushford",
+      university: "Rushford",
       courses: ["BBA", "MBA", "B.Tech", "Law", "Commerce", "Arts"],
-      image: "/compare/amitynew.png",
+      image: "/compare/rush.png",
       location: "Noida, UP",
       established: 2002,
       ranking: "NIRF Rank: 76 (Overall)",
@@ -51,8 +51,8 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     b: {
       id: "manipal-jaipur",
       name: "MBA",
-      short: "MUJ",
-      university: "Manipal",
+      short: " EIMT",
+      university: "EIMT",
       courses: [
         "Engineering",
         "Commerce",
@@ -61,7 +61,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
         "Management",
         "Law",
       ],
-      image: "/compare/manipalnew.png",
+      image: "/compare/eimt.png",
       location: "Jaipur, Rajasthan",
       established: 2016,
       ranking: "Not Ranked",

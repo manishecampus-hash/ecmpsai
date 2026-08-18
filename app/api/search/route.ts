@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
-import { ECAMPUS_SEARCH_PROMPT } from "@/lib/system-prompt";
+import { buildEcampusSearchPrompt } from "@/lib/system-prompt";
 
 export async function GET(req: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       messages: [
         {
           role: "system",
-          content: ECAMPUS_SEARCH_PROMPT,
+          content: buildEcampusSearchPrompt(query),
         },
         {
           role: "user",

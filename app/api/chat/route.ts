@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { NextRequest } from "next/server";
-import { ECAMPUS_CHAT_PROMPT } from "@/lib/system-prompt";
+import { buildEcampusChatPrompt } from "@/lib/system-prompt";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     const result = streamText({
       model: openai(process.env.OPENAI_MODEL || "gpt-4o-mini"),
-      system: ECAMPUS_CHAT_PROMPT,
+      system: buildEcampusChatPrompt(query),
       messages: messages ?? [{ role: "user", content: query }],
       maxOutputTokens: 2000,
       temperature: 0.5,

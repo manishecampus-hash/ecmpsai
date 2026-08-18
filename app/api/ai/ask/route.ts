@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
-import { ECAMPUS_ASK_PROMPT } from "@/lib/system-prompt";
+import { buildEcampusAskPrompt } from "@/lib/system-prompt";
 
 export async function POST(req: Request) {
   try {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     const result = await generateText({
       model: openai(process.env.OPENAI_MODEL || "gpt-4o-mini"),
-      system: ECAMPUS_ASK_PROMPT,
+      system: buildEcampusAskPrompt(query),
       prompt: `User asked: ${query}`,
     });
 

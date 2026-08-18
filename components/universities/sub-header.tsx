@@ -594,7 +594,8 @@ export default function SubHeader() {
           maxWidth: "1280px",
           margin: "0 auto",
           padding: "0.75rem 1rem",
-          justifyContent: "flex-start",
+
+          justifyContent: "center",
         }}
       >
         {NAV_ITEMS.map((item) => {

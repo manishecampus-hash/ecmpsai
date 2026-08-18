@@ -226,21 +226,20 @@ export default function TopSpecializations({
       return;
     }
 
-    const backendUrl =
-      process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
     const fetchCoursesAndCategories = async () => {
       try {
         setIsLoading(true);
-        const coursesUrl = `${backendUrl}/api/courses?universityId=${university.id}`;
+        const coursesUrl = `${apiUrl}/universities/${university.id}/courses`;
         const coursesRes = await fetch(coursesUrl);
         let coursesData = [];
         if (coursesRes.ok) {
-          const resJson = await coursesRes.json();
-          coursesData = Array.isArray(resJson) ? resJson : (resJson.courses || []);
+          coursesData = await coursesRes.json();
         }
 
-        const categoriesUrl = `${backendUrl}/api/course-meta?type=category`;
+        const categoriesUrl = `${apiUrl}/universities/course-meta?type=category`;
         const categoriesRes = await fetch(categoriesUrl);
         let categoriesData = [];
         if (categoriesRes.ok) {

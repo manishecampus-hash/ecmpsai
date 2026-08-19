@@ -20,58 +20,12 @@ const preventFocusScroll = (e: SyntheticEvent) => {
   e.preventDefault();
 };
 
-const leftArrowStyle = (visible: boolean): CSSProperties => ({
-  position: "absolute",
-  left: 0,
-  top: 0,
-  bottom: 0,
-  margin: "auto 0",
-  zIndex: 40,
-  background: "#666666",
-  border: "none",
-  borderRadius: "0 8px 8px 0",
-  padding: 0,
-  cursor: visible ? "pointer" : "default",
-  color: "#ffffff",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  opacity: visible ? 1 : 0,
-  pointerEvents: visible ? "auto" : "none",
-  transition: "opacity 0.2s, background 0.2s",
-  flexShrink: 0,
-  width: 24,
-  height: 64,
-});
-
-const rightArrowStyle = (visible: boolean): CSSProperties => ({
-  position: "absolute",
-  right: 0,
-  top: 0,
-  bottom: 0,
-  margin: "auto 0",
-  zIndex: 40,
-  background: "#666666",
-  border: "none",
-  borderRadius: "8px 0 0 8px",
-  padding: 0,
-  cursor: visible ? "pointer" : "default",
-  color: "#ffffff",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  opacity: visible ? 1 : 0,
-  pointerEvents: visible ? "auto" : "none",
-  transition: "opacity 0.2s, background 0.2s",
-  flexShrink: 0,
-  width: 24,
-  height: 64,
-});
-
 export function MediaSection() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
   const [visible, setVisible] = useState(4);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(true);
 
   const items = pressArticles;
   const pageCount = Math.max(1, items.length - visible + 1);
@@ -94,6 +48,28 @@ export function MediaSection() {
     setPage((p) => Math.min(p, Math.max(0, items.length - visible)));
   }, [visible, items.length]);
 
+  const checkScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 5);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
+  };
+
+  useEffect(() => {
+    checkScroll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, items.length]);
+
+  const scroll = (direction: "left" | "right") => {
+    const el = trackRef.current;
+    if (!el) return;
+    const amount = CARD_WIDTH + GAP;
+    el.scrollBy({
+      left: direction === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
+  };
+
   const scrollToPage = (index: number) => {
     const clamped = Math.max(0, Math.min(index, items.length - visible));
     setPage(clamped);
@@ -105,13 +81,6 @@ export function MediaSection() {
 
   return (
     <section className="relative w-full overflow-hidden px-4 py-8 sm:px-6">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage: "",
-        }}
-      />
-
       <div className="relative mx-auto max-w-7xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
@@ -124,34 +93,36 @@ export function MediaSection() {
         </div>
 
         <div className="relative py-4">
-          <button
-            type="button"
-            aria-label="Previous"
-            onMouseDown={preventFocusScroll}
-            onClick={() => scrollToPage(page - 1)}
-            disabled={page === 0}
-            className="__carArrow"
-            style={leftArrowStyle(page !== 0)}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            type="button"
-            aria-label="Next"
-            onMouseDown={preventFocusScroll}
-            onClick={() => scrollToPage(page + 1)}
-            disabled={page >= items.length - visible}
-            className="__carArrow"
-            style={rightArrowStyle(page < items.length - visible)}
-          >
-            <ChevronRight size={16} />
-          </button>
+          {showLeft && (
+            <button
+              type="button"
+              aria-label="Previous"
+              onMouseDown={preventFocusScroll}
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          )}
+
+          {showRight && (
+            <button
+              type="button"
+              aria-label="Next"
+              onMouseDown={preventFocusScroll}
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          )}
 
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#FBFAF7] to-transparent sm:w-20" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#FBFAF7] to-transparent sm:w-20" />
 
           <div
             ref={trackRef}
+            onScroll={checkScroll}
             className="scrollbar-hide flex gap-7 overflow-x-auto scroll-smooth px-2 py-4"
             style={{ scrollSnapType: "x mandatory" }}
           >
@@ -260,19 +231,6 @@ export function MediaSection() {
       </div>
 
       <style jsx global>{`
-        .__carArrow:hover {
-          background: #333333 !important;
-        }
-
-        @media (max-width: 640px) {
-          .__carArrow {
-            top: 115px !important;
-            bottom: auto !important;
-            margin: 0 !important;
-            transform: translateY(-50%) !important;
-          }
-        }
-
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }

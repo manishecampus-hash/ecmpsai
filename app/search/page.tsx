@@ -972,7 +972,7 @@ function SearchPage() {
               cursor: "pointer",
             }}
           >
-            Create free account
+            Signup
           </button>
         </div>
       )}
@@ -986,49 +986,8 @@ function SearchPage() {
       )}
 
       {/* ══ Sticky header ══ */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          background: "rgba(248,250,253,0.96)",
-          backdropFilter: "blur(12px)",
-          borderBottom: `1px solid ${T.border}`,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: isMobile ? "0 12px" : "0 24px",
-            height: isMobile ? 56 : 62,
-            display: "flex",
-            alignItems: "center",
-            gap: isMobile ? 8 : 16,
-          }}
-        >
-          <button
-            type="button"
-            onClick={handleBack}
-            aria-label="Go back"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              border: `1px solid ${T.border}`,
-              background: T.surface,
-              color: T.btnGray,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <ArrowLeft size={16} />
-          </button>
 
-          {/* <form
+      {/* <form
             onSubmit={handleSubmit}
             style={{
               flex: 1,
@@ -1096,8 +1055,6 @@ function SearchPage() {
               <ArrowUp size={14} color="#fff" />
             </button>
           </form> */}
-        </div>
-      </header>
 
       {/* ══ Main body ══ */}
       <main

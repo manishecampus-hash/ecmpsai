@@ -13,7 +13,6 @@ import { CareerOutcomes } from "@/components/careers-pages/career-outcomes";
 
 import { CareerMentor } from "@/components/careers-pages/career-mentor";
 import { Footer } from "@/components/layout/footer";
-import { CareerCourses } from "@/components/careers-pages/career-courses";
 
 type Props = {
   params: Promise<{
@@ -46,7 +45,7 @@ export default async function CareerPage({ params }: Props) {
       <CareerJourneySection />
       <CareerOutcomes />
       <CareerMentor />
-      <CareerCourses />
+      {/* <CareerCourses /> */}
       <Footer />
     </main>
   );

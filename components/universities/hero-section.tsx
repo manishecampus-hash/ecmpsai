@@ -852,17 +852,15 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import {
   Star,
-  ChevronRight,
-  MessageSquare,
   BookOpen,
   Clock,
   Globe,
   Users,
   Shield,
   Download,
+  MapPin,
 } from "lucide-react";
 
 type Badge = { alt: string; src?: string; label?: string };
@@ -890,23 +888,39 @@ const iconMap: Record<string, React.ComponentType<any>> = {
 };
 
 const renderPointerIcon = (iconStr: string, alt: string) => {
-  if (!iconStr) return <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
-  
-  const LucideIcon = iconMap[iconStr] || iconMap[iconStr.charAt(0).toUpperCase() + iconStr.slice(1)] || iconMap[iconStr.toLowerCase()];
+  if (!iconStr) {
+    return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
+  }
+
+  const LucideIcon =
+    iconMap[iconStr] ||
+    iconMap[iconStr.charAt(0).toUpperCase() + iconStr.slice(1)] ||
+    iconMap[iconStr.toLowerCase()];
+
   if (LucideIcon) {
-    return <LucideIcon className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
+    return <LucideIcon className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
   }
 
-  if (iconStr.startsWith("http") || iconStr.startsWith("/") || iconStr.includes(".")) {
-    return <img src={iconStr} alt={alt} className="h-5 w-5 sm:h-6 sm:w-6 object-contain" />;
+  if (
+    iconStr.startsWith("http") ||
+    iconStr.startsWith("/") ||
+    iconStr.includes(".")
+  ) {
+    return (
+      <img
+        src={iconStr}
+        alt={alt}
+        className="h-5 w-5 object-contain sm:h-6 sm:w-6"
+      />
+    );
   }
 
-  return <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#f83d46]" />;
+  return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
 };
 
 export default function UniversityHeroWithStats({
-  heroImage = "/images/logoo.webp",
-  logoSrc = "/images/ggu-logo-square.png",
+  heroImage = "/newuniversities/amitybanner.webp",
+  logoSrc = "/ggubanner/ggu-logo-square.png",
   title = "Golden Gate University",
   badges = [
     { alt: "Seal", src: "/ggubanner/aiu-logo.jpg", label: "" },
@@ -917,239 +931,247 @@ export default function UniversityHeroWithStats({
   rating = 4.8,
   reviews = 44,
   trustedText = "Trusted by 10,000+ learners",
-  onApplyHref = "#apply",
-  onTalkHref = "#talk",
   university,
 }: Props) {
   const banner = university?.details?.banner || {};
   const bannerHeading = banner.heading || university?.name || title;
-  const bannerSubheading = banner.subheading || "A Heritage of Excellence. A Future of Impact.";
+  const bannerSubheading =
+    banner.subheading || "A Heritage of Excellence. A Future of Impact.";
   const bannerLocation = university?.location || "USA";
   const bannerLogo = banner.icon || university?.logoUrl || logoSrc;
-  const bannerBg = banner.image || "/ggubanner/ggubnr.webp";
+  const bannerBg = banner.image || heroImage || "/ggubanner/ggubnr.webp";
 
-  const bannerRating = banner.rating !== undefined ? Number(banner.rating) : rating;
-  const bannerReviews = banner.reviewsCount !== undefined ? Number(banner.reviewsCount) : reviews;
+  const bannerRating =
+    banner.rating !== undefined ? Number(banner.rating) : rating;
+  const bannerReviews =
+    banner.reviewsCount !== undefined ? Number(banner.reviewsCount) : reviews;
   const bannerTrustedText = banner.trustedText || trustedText;
 
   const dbLogos = banner.accreditationLogos || [];
-  const dynamicBadges = dbLogos.length > 0
-    ? [
-        ...dbLogos
-          .filter((logo: string) => logo && logo.trim() !== "")
-          .map((logo: string, idx: number) => ({
-            alt: `Accreditation Logo ${idx + 1}`,
-            src: logo,
-            label: "",
-          })),
-        { alt: "More", src: undefined, label: "More" }
-      ]
-    : badges;
+  const dynamicBadges =
+    dbLogos.length > 0
+      ? [
+          ...dbLogos
+            .filter((logo: string) => logo && logo.trim() !== "")
+            .map((logo: string, idx: number) => ({
+              alt: `Accreditation Logo ${idx + 1}`,
+              src: logo,
+              label: "",
+            })),
+          { alt: "More", src: undefined, label: "More" },
+        ]
+      : badges;
 
   const pointers = banner.pointers || {};
   const pointersTitle = pointers.title || `Why ${university?.name || title}?`;
-  const pointersItems = pointers.items && pointers.items.length > 0 ? pointers.items : [
-    { mainText: "100+", heading: "Programs", subheading: "Diverse specializations", icon: "BookOpen" },
-    { mainText: "75+", heading: "Years of Legacy", subheading: "Experience & excellence", icon: "Clock" },
-    { mainText: "Global", heading: "Community", subheading: "Diverse student body", icon: "Globe" },
-    { mainText: "Career", heading: "Focused", subheading: "Job-ready learning", icon: "Users" }
-  ];
+  const pointersItems =
+    pointers.items && pointers.items.length > 0
+      ? pointers.items
+      : [
+          {
+            mainText: "100+",
+            heading: "Programs",
+            subheading: "Diverse specializations",
+            icon: "BookOpen",
+          },
+          {
+            mainText: "75+",
+            heading: "Years of Legacy",
+            subheading: "Experience & excellence",
+            icon: "Clock",
+          },
+          {
+            mainText: "Global",
+            heading: "Community",
+            subheading: "Diverse student body",
+            icon: "Globe",
+          },
+          {
+            mainText: "Career",
+            heading: "Focused",
+            subheading: "Job-ready learning",
+            icon: "Users",
+          },
+        ];
 
   return (
     <header className="relative bg-white">
-      {/* Banner */}
-      <div className="relative h-48 sm:h-64 lg:h-96">
+      <div className="relative h-64 overflow-hidden sm:h-72 lg:h-96">
         <img
           src={bannerBg}
           alt="Campus banner"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20" />
 
-        {/* Content overlay */}
-        <div className="absolute inset-0 flex flex-col items-start justify-center pl-4 pr-4 py-6 sm:pl-8 sm:pr-8 sm:py-8 lg:pl-32 lg:pr-12 lg:py-12">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-4 w-full">
-            {/* Logo */}
-            <div className="flex-shrink-0  border-2 border-white rounded-xl p-2 bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 to-black/20" />
+
+        <div className="absolute inset-0 flex items-center px-4 py-6 sm:px-8 lg:px-32 lg:py-12">
+          <div className="flex w-full items-end gap-4">
+            <div className="shrink-0 rounded-xl border-2 border-white bg-white p-2">
               <img
                 src={bannerLogo}
                 alt={`${bannerHeading} Logo`}
-                className="h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 object-contain"
+                className="h-16 w-16 object-contain sm:h-20 sm:w-20"
               />
             </div>
 
-            {/* Text content */}
-            <div className="text-white flex-1">
-              <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold mb-1 sm:mb-2 leading-tight">
+            <div className="min-w-0 flex-1 text-white">
+              <h1 className="mb-1 text-2xl font-bold leading-tight sm:text-3xl lg:text-5xl">
                 {bannerHeading}
               </h1>
-              <p className="text-xs sm:text-base lg:text-lg text-white/90 mb-2 sm:mb-3 line-clamp-2">
+
+              <p className="mb-3 line-clamp-2 text-sm text-white/90 sm:text-base lg:text-lg">
                 {bannerSubheading}
               </p>
 
-              {/* Location badge */}
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/40 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5">
-                <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 text-red-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-white text-xs sm:text-sm font-medium">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/20 px-3 py-1.5 backdrop-blur-sm">
+                <MapPin className="h-4 w-4 shrink-0 text-red-400" />
+                <span className="text-sm font-medium text-white">
                   {bannerLocation}
                 </span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* carousel dots (visual) */}
-        <div className="absolute inset-x-0 top-3 sm:top-4 flex justify-center space-x-2">
-          <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-white/90" />
-          <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-white/40" />
-        </div>
       </div>
 
-      {/* Overlapping white card below banner */}
       <div className="mx-auto max-w-7xl px-3 sm:px-4">
-        <div className="relative -mt-8 sm:-mt-12 lg:-mt-16 mb-16 sm:mb-24 lg:mb-32">
-          <div className="rounded-lg sm:rounded-2xl bg-white px-4 sm:px-6 py-5 sm:py-6 shadow-lg ring-1 ring-slate-100">
-            {/* TOP ROW: Badges, Rating, Trusted Text | CTAs */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 sm:pb-6 border-b">
-              {/* LEFT: Badges + Rating + Trusted */}
-              <div className="flex flex-col gap-3 w-full lg:w-auto">
-                {/* Badges row */}
-                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        <div className="relative -mt-10 mb-16 sm:-mt-12 sm:mb-24 lg:-mt-16 lg:mb-32">
+          <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100 sm:p-6">
+            <div className="grid gap-5 border-b border-slate-200 pb-5 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-3">
                   {dynamicBadges.map((b, i) => (
-                    <div key={i} className="flex items-center gap-1.5 sm:gap-2">
+                    <div key={i} className="flex items-center gap-2">
                       {b.src ? (
                         <img
                           src={b.src}
                           alt={b.alt}
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-slate-100 bg-white object-contain"
+                          className="h-10 w-10 rounded-full border border-slate-100 bg-white object-contain"
                         />
                       ) : (
-                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-xs font-bold text-slate-700">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-700">
                           {b.label?.[0] ?? "i"}
                         </div>
                       )}
-                      <span className="text-xs font-medium text-slate-700 hidden sm:inline">
-                        {b.label}
-                      </span>
+
+                      {b.label && (
+                        <span className="text-xs font-medium text-slate-700">
+                          {b.label}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
 
-                {/* Rating + Trusted */}
-                <div className="flex flex-col gap-2 sm:gap-3">
-                  <div className="flex items-center gap-1 flex-wrap">
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                        className={`h-4 w-4 ${
                           i < Math.floor(bannerRating)
                             ? "fill-amber-400 text-amber-400"
                             : "text-slate-300"
                         }`}
                       />
                     ))}
-                    <span className="ml-1 sm:ml-2 font-semibold text-slate-800 text-sm sm:text-base">
+
+                    <span className="ml-1 text-sm font-semibold text-slate-800 sm:text-base">
                       {bannerRating}
                     </span>
-                    <span className="text-xs sm:text-sm text-slate-600">
+
+                    <span className="text-xs text-slate-600 sm:text-sm">
                       ({bannerReviews})
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-700">
-                    <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-600 flex-shrink-0" />
-                    <span className="line-clamp-1">{bannerTrustedText}</span>
+                  <div className="flex min-w-0 items-center gap-2 text-xs text-slate-700 sm:text-sm">
+                    <Shield className="h-4 w-4 shrink-0 text-sky-600" />
+                    <span className="truncate">{bannerTrustedText}</span>
                   </div>
                 </div>
               </div>
 
-              {/* RIGHT: CTAs */}
-              <div className="flex flex-col gap-2 w-full sm:w-auto lg:gap-3">
-                <div className="mt-7 flex flex-col gap-4 sm:flex-row">
-                  <button className="inline-flex h-11 w-fit items-center justify-center self-start rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
+              <div className="grid grid-cols-2 gap-3 lg:flex lg:justify-end">
+                <button className="inline-flex h-11 min-w-0 items-center justify-center rounded-[13px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm">
+                  <span className="truncate">
                     {banner.ctas?.[0]?.buttonText || "Apply Now"}
-                  </button>
+                  </span>
+                </button>
 
-                  <button className="inline-flex h-11 w-[170px] items-center justify-center gap-2 whitespace-nowrap rounded-[13px] border border-[#dfe5ee] bg-white px-5 text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
-                    <Download className="h-4 w-4" />
+                <button className="inline-flex h-11 min-w-0 items-center justify-center gap-2 rounded-[13px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm">
+                  <Download className="h-4 w-4 shrink-0" />
+
+                  <span className="truncate">
                     {banner.ctas?.[1]?.buttonText || "Explore Courses"}
-                  </button>
-                </div>
+                  </span>
+                </button>
               </div>
             </div>
 
-            {/* FEATURES SECTION: Heading + Grid + Compare Card */}
             <div className="pt-5 sm:pt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 sm:gap-8">
-                {/* LEFT: Why Golden Gate University */}
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px] lg:gap-8">
+                <div className="min-w-0">
+                  <h3 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
                     {pointersTitle}
                   </h3>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
                     {pointersItems.map((item: any, idx: number) => (
-                      <div key={idx} className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
-                        <div className="rounded-lg bg-red-50 p-2 sm:p-3 flex-shrink-0">
+                      <div key={idx} className="min-w-0">
+                        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 sm:h-12 sm:w-12">
                           {renderPointerIcon(item.icon, item.heading)}
                         </div>
-                        <div className="min-w-0">
-                          <div className="text-base sm:text-lg font-bold text-slate-900">
-                            {item.mainText}
-                          </div>
-                          <div className="text-xs sm:text-sm text-slate-600">
-                            {item.heading}
-                          </div>
-                          <div className="text-xs text-slate-500 mt-0.5 sm:mt-1 line-clamp-2">
-                            {item.subheading}
-                          </div>
+
+                        <div className="truncate text-base font-bold text-slate-900 sm:text-lg">
+                          {item.mainText}
+                        </div>
+
+                        <div className="text-xs text-slate-600 sm:text-sm">
+                          {item.heading}
+                        </div>
+
+                        <div className="mt-0.5 line-clamp-2 text-xs text-slate-500 sm:mt-1">
+                          {item.subheading}
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* RIGHT: Compare Universities Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-blue-100 lg:h-fit">
-                  <div className="flex items-center justify-between gap-2 mb-1 sm:mb-2">
-                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <h4 className="text-sm font-bold text-slate-900 sm:text-base">
                       Compare Universities
                     </h4>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-600 mb-2 sm:mb-3">
+
+                  <p className="mb-3 text-xs text-slate-600 sm:text-sm">
                     Compare GGU with other top universities.
                   </p>
 
-                  {/* University Logos */}
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="flex -space-x-2 sm:-space-x-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-3">
                       <img
                         src="/ggubanner/ssbm.png"
                         alt="University 1"
-                        className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
                       />
+
                       <img
                         src="/ggubanner/rushford.png"
                         alt="University 2"
-                        className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
                       />
+
                       <img
                         src="/ggubanner/ei.png"
                         alt="University 3"
-                        className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-white shadow"
+                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
                       />
-                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 border-white bg-blue-600 shadow flex items-center justify-center text-white text-xs sm:text-sm font-bold">
+
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white shadow">
                         +3
                       </div>
                     </div>

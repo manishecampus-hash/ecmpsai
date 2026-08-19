@@ -200,7 +200,10 @@ const modeTabs = [
   { id: "offline", label: "Offline" },
 ];
 
-function useScrollState(ref: React.RefObject<HTMLDivElement | null>) {
+function useScrollState(
+  ref: React.RefObject<HTMLDivElement | null>,
+  deps: React.DependencyList = [],
+) {
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
 
@@ -224,10 +227,54 @@ function useScrollState(ref: React.RefObject<HTMLDivElement | null>) {
   }, [ref, update]);
 
   useEffect(() => {
-    setTimeout(update, 80);
-  }, [update]);
+    const raf1 = requestAnimationFrame(() => {
+      requestAnimationFrame(update);
+    });
+    return () => cancelAnimationFrame(raf1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [update, ...deps]);
 
   return { canLeft, canRight };
+}
+
+// More reliable than scrollLeft/scrollWidth math (which can get stuck
+// "always true" due to padding/subpixel rounding). Places a 1px sentinel
+// at the very start and very end of the scrollable content and uses
+// IntersectionObserver to detect whether each one is actually visible
+// inside the scroll container right now. Automatically re-checks when
+// the container's content changes size (tab/mode switch) because
+// IntersectionObserver keeps watching, it isn't a one-shot measurement.
+function useEdgeVisibility(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+) {
+  const startRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(true);
+
+  useEffect(() => {
+    const root = containerRef.current;
+    const startEl = startRef.current;
+    const endEl = endRef.current;
+    if (!root || !startEl || !endEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === startEl) setAtStart(entry.isIntersecting);
+          if (entry.target === endEl) setAtEnd(entry.isIntersecting);
+        });
+      },
+      { root, threshold: 0 },
+    );
+
+    observer.observe(startEl);
+    observer.observe(endEl);
+
+    return () => observer.disconnect();
+  }, [containerRef]);
+
+  return { startRef, endRef, canLeft: !atStart, canRight: !atEnd };
 }
 const preventFocusScroll = (e: React.SyntheticEvent) => {
   e.preventDefault();
@@ -246,54 +293,6 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   pointerEvents: visible ? "auto" : "none",
   transition: "opacity 0.2s",
   flexShrink: 0,
-});
-
-const leftArrowStyle = (visible: boolean): React.CSSProperties => ({
-  position: "absolute",
-  left: 0,
-  top: 0,
-  bottom: 0,
-  margin: "auto 0",
-  zIndex: 40,
-  background: "#666666",
-  border: "none",
-  borderRadius: "0 8px 8px 0",
-  padding: 0,
-  cursor: visible ? "pointer" : "default",
-  color: "#ffffff",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  opacity: visible ? 1 : 0,
-  pointerEvents: visible ? "auto" : "none",
-  transition: "opacity 0.2s, background 0.2s",
-  flexShrink: 0,
-  width: 24,
-  height: 64,
-});
-
-const rightArrowStyle = (visible: boolean): React.CSSProperties => ({
-  position: "absolute",
-  right: 0,
-  top: 0,
-  bottom: 0,
-  margin: "auto 0",
-  zIndex: 40,
-  background: "#666666",
-  border: "none",
-  borderRadius: "8px 0 0 8px",
-  padding: 0,
-  cursor: visible ? "pointer" : "default",
-  color: "#ffffff",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  opacity: visible ? 1 : 0,
-  pointerEvents: visible ? "auto" : "none",
-  transition: "opacity 0.2s, background 0.2s",
-  flexShrink: 0,
-  width: 24,
-  height: 64,
 });
 
 export default function ProgramsSection() {
@@ -352,7 +351,12 @@ export default function ProgramsSection() {
     }, 50);
   };
 
-  const { canLeft: carLeft, canRight: carRight } = useScrollState(carouselRef);
+  const {
+    startRef: carStartRef,
+    endRef: carEndRef,
+    canLeft: carLeft,
+    canRight: carRight,
+  } = useEdgeVisibility(carouselRef);
   const { canLeft: tabLeft, canRight: tabRight } = useScrollState(tabsRef);
 
   const scrollCarousel = (dir: number) => {
@@ -377,18 +381,14 @@ export default function ProgramsSection() {
            strip fits fine within its own horizontal scroll without them. */
         .__tabArrow { display: none !important; }
 
-        .__carArrow:hover { background: #333333 !important; }
         @media (max-width: 640px) { .__modeToggle { display: none !important; } }
 
-        /* On mobile, center the arrows on the image area (160px tall)
-           instead of the whole card, so they sit a bit higher than the
-           full-card vertical center. */
+        /* On mobile, center the carousel arrows on the image area (160px
+           tall) instead of the whole card, so they sit a bit higher than
+           the full-card vertical center. */
         @media (max-width: 640px) {
-          .__carArrow {
-            top: 115px !important;
-            bottom: auto !important;
-            margin: 0 !important;
-            transform: translateY(-50%) !important;
+          .__carArrowBtn {
+            top: 80px !important;
           }
         }
 
@@ -787,16 +787,20 @@ export default function ProgramsSection() {
 
         {/* Carousel Row */}
         <div ref={carouselWrapRef} style={{ position: "relative" }}>
-          <button
-            type="button"
-            className="__carArrow"
-            onMouseDown={preventFocusScroll}
-            onClick={() => scrollCarousel(-1)}
-            style={leftArrowStyle(carLeft)}
-            aria-label="Scroll carousel left"
-          >
-            <ChevronLeft size={16} />
-          </button>
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:w-20" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:w-20" />
+
+          {carLeft && (
+            <button
+              type="button"
+              aria-label="Scroll carousel left"
+              onMouseDown={preventFocusScroll}
+              onClick={() => scrollCarousel(-1)}
+              className="__carArrowBtn absolute left-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          )}
 
           <div
             ref={carouselRef}
@@ -811,6 +815,11 @@ export default function ProgramsSection() {
               alignItems: "stretch",
             }}
           >
+            <div
+              ref={carStartRef}
+              aria-hidden="true"
+              style={{ width: 1, flexShrink: 0, alignSelf: "stretch" }}
+            />
             {filteredPrograms.length === 0 ? (
               <div
                 style={{
@@ -1087,18 +1096,24 @@ export default function ProgramsSection() {
                 </article>
               ))
             )}
+            <div
+              ref={carEndRef}
+              aria-hidden="true"
+              style={{ width: 1, flexShrink: 0, alignSelf: "stretch" }}
+            />
           </div>
 
-          <button
-            type="button"
-            className="__carArrow"
-            onMouseDown={preventFocusScroll}
-            onClick={() => scrollCarousel(1)}
-            style={rightArrowStyle(carRight)}
-            aria-label="Scroll carousel right"
-          >
-            <ChevronRight size={16} />
-          </button>
+          {carRight && (
+            <button
+              type="button"
+              aria-label="Scroll carousel right"
+              onMouseDown={preventFocusScroll}
+              onClick={() => scrollCarousel(1)}
+              className="__carArrowBtn absolute right-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          )}
         </div>
       </div>
     </section>

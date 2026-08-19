@@ -761,24 +761,17 @@ export const OfferCarousel = ({
         {showLeft && (
           <button
             onClick={() => scroll("left")}
-            className="absolute left-0 top-1/2 z-40 -translate-y-1/2 flex h-24 w-4 items-center justify-center rounded-r-full bg-[#666666] text-white hover:bg-[#333] transition-colors"
+            className="absolute left-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-6 h-6" />
           </button>
         )}
 
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className={cn(
-            "flex gap-4 overflow-x-auto py-6 scroll-smooth",
-            showLeft && showRight
-              ? "px-0 md:mx-10 md:px-0"
-              : showLeft
-                ? "pl-0 pr-2 md:mx-10 md:px-0"
-                : "pl-0 pr-7 md:mx-10 md:px-0",
-          )}
+          className="flex gap-4 overflow-x-auto py-6 scroll-smooth px-0 md:mx-10 md:px-0"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {offers.map((offer, index) => (
@@ -794,10 +787,10 @@ export const OfferCarousel = ({
         {showRight && (
           <button
             onClick={() => scroll("right")}
-            className="absolute right-0 top-1/2 z-40 -translate-y-1/2 flex h-24 w-4 items-center justify-center rounded-l-full bg-[#666666] text-white hover:bg-[#333] transition-colors"
+            className="absolute right-0 top-1/2 z-40 -translate-y-1/2 flex h-28 w-6 items-center justify-center rounded-[10px] bg-[#444444] text-white hover:bg-[#333] transition-colors shadow-lg"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-6 h-6" />
           </button>
         )}
       </div>

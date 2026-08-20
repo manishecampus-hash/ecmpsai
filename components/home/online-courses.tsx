@@ -430,7 +430,7 @@ export default function ProgramsSection() {
         .__cardOverlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(160deg, #0b1178 0%, #0a0f5e 55%, #080b46 100%);
+          background: linear-gradient(160deg, #ff3b4f 0%, #e02035 55%, #c41e3a 100%);
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
@@ -473,7 +473,7 @@ export default function ProgramsSection() {
           overflow: hidden;
         }
         .__overlayText {
-          color: #cbd2ff;
+          color: #fdd0d7;
           font-size: 11px;
           line-height: 1.5;
           margin: 0 0 10px;
@@ -512,7 +512,7 @@ export default function ProgramsSection() {
         }
         .__overlayLabel {
           font-size: 9.5px;
-          color: #9aa3ff;
+          color: #ffc4ce;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -549,7 +549,7 @@ export default function ProgramsSection() {
           justify-content: center;
           gap: 6px;
           background: #ffffff;
-          color: #0b1178;
+          color: #ff3b4f;
           font-size: 12px;
           font-weight: 700;
           padding: 8px 14px;
@@ -561,7 +561,7 @@ export default function ProgramsSection() {
           transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, background 0.2s;
         }
         .__overlayBtn:hover {
-          background: #eef1ff;
+          background: #fef1f3;
         }
         /* Overlay itself stays pointer-events:none always (base rule
            above) so the mouse never actually leaves .__imgWrap while
@@ -1046,7 +1046,7 @@ export default function ProgramsSection() {
                     </a>
                   </div>
 
-                  {/* Full-card overlay - navy card style with icon rows.
+                  {/* Full-card overlay - RED THEME with icon rows.
                       Desktop: reveals on real mouse hover of the image
                       (see the (hover:hover) media query above).
                       Mobile/touch: controlled by activeCardId state -
@@ -1066,7 +1066,7 @@ export default function ProgramsSection() {
                     <div className="__overlayInfoRow">
                       <div className="__overlayInfoItem">
                         <div className="__overlayIconCircle">
-                          <Users size={12} color="#c7d2fe" />
+                          <Users size={12} color="#ffc4ce" />
                         </div>
                         <div>
                           <p className="__overlayLabel">Students</p>
@@ -1075,7 +1075,7 @@ export default function ProgramsSection() {
                       </div>
                       <div className="__overlayInfoItem">
                         <div className="__overlayIconCircle">
-                          <Clock size={12} color="#c7d2fe" />
+                          <Clock size={12} color="#ffc4ce" />
                         </div>
                         <div>
                           <p className="__overlayLabel">Duration</p>

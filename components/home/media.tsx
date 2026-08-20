@@ -20,6 +20,53 @@ const preventFocusScroll = (e: SyntheticEvent) => {
   e.preventDefault();
 };
 
+// Modern attractive logo designs with gradients
+const LOGO_STYLES: Record<
+  string,
+  {
+    bgGradient: string;
+    textColor: string;
+    borderColor?: string;
+    glowColor?: string;
+  }
+> = {
+  "Lokmat Times": {
+    bgGradient: "linear-gradient(135deg, #0F3460 0%, #533483 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(83, 52, 131, 0.4)",
+  },
+  "Hindustan Times": {
+    bgGradient: "linear-gradient(135deg, #C41E3A 0%, #FF6B6B 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(196, 30, 58, 0.4)",
+  },
+  ThePrint: {
+    bgGradient: "linear-gradient(135deg, #1A1A2E 0%, #16213E 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(26, 26, 46, 0.4)",
+  },
+  ANI: {
+    bgGradient: "linear-gradient(135deg, #E63946 0%, #FF8C42 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(230, 57, 70, 0.4)",
+  },
+  Digpu: {
+    bgGradient: "linear-gradient(135deg, #2E86AB 0%, #A23B72 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(46, 134, 171, 0.4)",
+  },
+  LatestLY: {
+    bgGradient: "linear-gradient(135deg, #F77F00 0%, #FCBF49 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(247, 127, 0, 0.4)",
+  },
+  "Daily Hunt": {
+    bgGradient: "linear-gradient(135deg, #06A77D 0%, #2DD36F 100%)",
+    textColor: "#FFFFFF",
+    glowColor: "rgba(6, 168, 125, 0.4)",
+  },
+};
+
 export function MediaSection() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
@@ -128,6 +175,11 @@ export function MediaSection() {
           >
             {items.map((article, i) => {
               const tilt = TILTS[i % TILTS.length];
+              const logoStyle = LOGO_STYLES[article.name] || {
+                bg: "bg-[#1B2230]",
+                text: "text-white",
+              };
+
               return (
                 <a
                   key={i}
@@ -178,7 +230,7 @@ export function MediaSection() {
                   </div>
 
                   <div className="flex flex-col gap-2.5 px-5 pb-6 pt-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-center">
                       {article.logo ? (
                         <img
                           src={article.logo}
@@ -186,16 +238,29 @@ export function MediaSection() {
                           className="h-5 w-auto object-contain"
                         />
                       ) : (
-                        <span
-                          className="text-base font-black tracking-tight text-[#1B2230]"
-                          style={{ fontFamily: "'Newsreader', Georgia, serif" }}
+                        // Modern attractive gradient badge - centered
+                        <div
+                          className="__logo-badge relative flex items-center gap-1.5 px-4 py-2 rounded-lg overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 group-hover:-translate-y-0.5"
+                          style={{
+                            background: logoStyle.bgGradient,
+                            boxShadow: `0 8px 16px ${logoStyle.glowColor}`,
+                          }}
                         >
-                          {article.name}
-                        </span>
+                          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity" />
+                          <div className="relative flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                            <span
+                              className="text-[9px] font-black uppercase tracking-widest"
+                              style={{
+                                color: logoStyle.textColor,
+                                letterSpacing: "0.8px",
+                              }}
+                            >
+                              {article.name}
+                            </span>
+                          </div>
+                        </div>
                       )}
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#1B2230]/35">
-                        Press
-                      </span>
                     </div>
 
                     <p className="text-sm leading-relaxed text-[#1B2230]/65">
@@ -237,6 +302,12 @@ export function MediaSection() {
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+
+        .__logo-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
         }
       `}</style>
     </section>

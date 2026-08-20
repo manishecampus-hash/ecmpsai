@@ -15,6 +15,7 @@ import {
   BookOpen,
   Users,
 } from "lucide-react";
+
 import { universities, type University } from "@/data/universities";
 
 const stats = [
@@ -30,9 +31,11 @@ const iconMap: Record<string, React.ElementType> = {
 
 function chunkIntoPairs(list: University[]): University[][] {
   const pairs: University[][] = [];
+
   for (let i = 0; i < list.length; i += 2) {
     pairs.push(list.slice(i, i + 2));
   }
+
   return pairs;
 }
 
@@ -40,11 +43,14 @@ export default function LmsAccessPage(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>("");
   const [query, setQuery] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+
   const searchWrapperRef = useRef<HTMLDivElement>(null);
 
   const filteredUniversities = useMemo(() => {
     const q = query.trim().toLowerCase();
+
     if (!q) return universities;
+
     return universities.filter(
       (u) =>
         u.name.toLowerCase().includes(q) ||
@@ -60,9 +66,11 @@ export default function LmsAccessPage(): JSX.Element {
 
   const suggestions = useMemo(() => {
     const q = inputValue.trim().toLowerCase();
+
     const source = !q
       ? universities
       : universities.filter((u) => u.name.toLowerCase().includes(q));
+
     return source.slice(0, 8);
   }, [inputValue]);
 
@@ -75,8 +83,12 @@ export default function LmsAccessPage(): JSX.Element {
         setIsDropdownOpen(false);
       }
     }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   function handleSubmit(e: React.FormEvent) {
@@ -98,42 +110,46 @@ export default function LmsAccessPage(): JSX.Element {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 px-4 py-8 sm:py-12">
+    <section className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-50 to-gray-100 px-4 py-8 sm:py-12">
       <div className="mx-auto w-full max-w-4xl">
-        {/* Header Section */}
-        <div className="text-center mb-8 sm:mb-12">
+        {/* Header */}
+        <div className="mb-8 text-center sm:mb-12">
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            Access Your University<span className="text-red-500"> LMS</span>
+            Access Your University
+            <span className="text-red-500"> LMS</span>
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">
+
+          <p className="mt-2 text-sm text-gray-600 sm:text-base">
             Find and connect to your institution's learning platform in seconds
           </p>
         </div>
 
-        {/* Stats Strip */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-10 sm:mb-12">
+        {/* Stats */}
+        <div className="mb-10 flex flex-wrap justify-center gap-3 sm:mb-12 sm:gap-6">
           {stats.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md hover:shadow-lg border border-gray-100 transition-shadow duration-200"
+              className="flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:px-5 sm:py-3"
             >
-              <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 shrink-0" />
-              <span className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">
+              <item.icon className="h-4 w-4 shrink-0 text-red-500 sm:h-5 sm:w-5" />
+
+              <span className="whitespace-nowrap text-xs font-semibold text-gray-700 sm:text-sm">
                 {item.label}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Search Bar */}
+        {/* Search */}
         <div
           ref={searchWrapperRef}
-          className="relative w-full max-w-xs sm:max-w-lg md:max-w-xl mx-auto mb-12 sm:mb-16"
+          className="relative mx-auto mb-10 w-full max-w-xs sm:mb-12 sm:max-w-lg md:max-w-xl"
         >
           <form onSubmit={handleSubmit} className="relative">
             <label htmlFor="university-search" className="sr-only">
               Search for your university
             </label>
+
             <input
               id="university-search"
               name="q"
@@ -148,48 +164,57 @@ export default function LmsAccessPage(): JSX.Element {
               onFocus={() => setIsDropdownOpen(true)}
               placeholder="Search for your university..."
               aria-label="Search for your university"
-              className="w-full h-12 sm:h-16 pl-4 sm:pl-6 pr-24 sm:pr-44 rounded-2xl border-0 shadow-lg ring-1 ring-gray-200 focus:ring-2 focus:ring-red-500 outline-none transition-all text-xs sm:text-lg [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+              className="h-12 w-full rounded-2xl border-0 pl-4 pr-24 text-xs shadow-lg outline-none ring-1 ring-gray-200 transition-all focus:ring-2 focus:ring-red-500 sm:h-16 sm:pl-6 sm:pr-44 sm:text-lg"
             />
 
-            <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
+            <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1.5 sm:right-3 sm:gap-2">
               {inputValue && (
                 <button
                   type="button"
                   aria-label="Clear search"
                   onClick={handleClear}
-                  className="bg-white text-gray-500 h-8 sm:h-10 w-8 sm:w-10 rounded-full shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:text-gray-700 transition-all flex items-center justify-center shrink-0"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:text-gray-700 sm:h-10 sm:w-10"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </button>
               )}
 
               <button
                 type="submit"
                 aria-label="Search"
-                className="bg-red-600 text-white h-8 sm:h-10 px-2 sm:px-3 rounded-full font-medium text-xs sm:text-base hover:bg-red-700 transition-all flex items-center gap-2 shrink-0 shadow-md hover:shadow-lg"
+                className="flex h-8 shrink-0 items-center gap-2 rounded-full bg-red-600 px-2 text-xs font-medium text-white shadow-md transition-all hover:bg-red-700 hover:shadow-lg sm:h-10 sm:px-3 sm:text-base"
               >
-                <span className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20">
-                  <Search className="w-4 h-4" />
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 sm:h-7 sm:w-7">
+                  <Search className="h-4 w-4" />
                 </span>
+
                 <span className="hidden sm:inline">Search</span>
               </button>
             </div>
           </form>
 
-          {/* Suggestions Dropdown */}
+          {/* Suggestions */}
           {isDropdownOpen && suggestions.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl ring-1 ring-gray-200 overflow-hidden z-20 max-h-72 overflow-y-auto">
+            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-y-auto overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-200">
               <ul>
                 {suggestions.map((u) => (
                   <li key={u.slug}>
                     <button
                       type="button"
                       onClick={() => handleSuggestionClick(u.name)}
-                      className="w-full text-left px-4 sm:px-6 py-2.5 text-gray-900 text-sm sm:text-base font-medium hover:bg-red-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      className="w-full border-b border-gray-100 px-4 py-3 text-left text-sm font-medium text-gray-900 transition-colors last:border-b-0 hover:bg-red-50 sm:px-6 sm:text-base"
                     >
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-red-500 shrink-0" />
-                        {u.name}
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50">
+                          <Building2 className="h-4 w-4 text-red-500" />
+                        </div>
+
+                        <div>
+                          <p>{u.name}</p>
+                          <p className="mt-0.5 text-xs font-normal text-gray-400">
+                            {u.location}
+                          </p>
+                        </div>
                       </div>
                     </button>
                   </li>
@@ -199,94 +224,111 @@ export default function LmsAccessPage(): JSX.Element {
           )}
         </div>
 
-        {/* University Cards Grid */}
-        <div className="grid gap-6 sm:gap-8">
+        {/* University Cards */}
+        <div className="grid gap-3 sm:gap-4">
           {pairs.length === 0 ? (
-            <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-md border border-gray-100 text-center">
-              <Search className="h-12 w-12 mx-auto text-gray-300 mb-4" />
+            <div className="rounded-3xl border border-gray-100 bg-white p-8 text-center shadow-sm sm:p-12">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50">
+                <Search className="h-6 w-6 text-red-400" />
+              </div>
+
               <p className="text-lg font-semibold text-gray-600">
                 No universities found for "{query}"
               </p>
-              <p className="text-sm text-gray-400 mt-2">
+
+              <p className="mt-2 text-sm text-gray-400">
                 Try a different keyword or clear the search.
               </p>
+
+              <button
+                type="button"
+                onClick={handleClear}
+                className="mt-5 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                Clear Search
+              </button>
             </div>
           ) : (
             pairs.map((pair, pairIdx) => (
               <div
                 key={pairIdx}
-                className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-xl border border-gray-100 transition-shadow duration-300"
+                className="group/card relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_2px_10px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
               >
-                <div
-                  className={`relative grid ${
-                    pair.length === 2 ? "md:grid-cols-2" : "md:grid-cols-1"
-                  } divide-y md:divide-y-0 md:divide-x-2 divide-gray-200 gap-8 md:gap-0`}
-                >
-                  {pair.map((university, uniIdx) => {
-                    const LocationIcon =
-                      iconMap[university.locationIcon] ?? MapPin;
-                    return (
-                      <div
-                        key={university.slug}
-                        className={`group flex flex-col gap-4 sm:gap-5 pt-8 first:pt-0 md:pt-0 transition-transform duration-300 ${
-                          uniIdx === 0 && pair.length === 2
-                            ? "md:pr-10"
-                            : uniIdx === 1
-                              ? "md:pl-10"
-                              : ""
-                        }`}
-                      >
-                        {/* Header: Logo + Location */}
-                        <div className="flex justify-between items-start gap-4">
-                          {/* Logo Container */}
-                          <div className="h-14 w-32 sm:h-16 sm:w-40 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center p-3 border border-gray-200 shadow-sm hover:shadow-md transition-shadow shrink-0">
-                            <Image
-                              src={university.image}
-                              alt={university.name}
-                              width={140}
-                              height={50}
-                              className="object-contain"
-                            />
-                          </div>
+                <div className="p-4 sm:p-5">
+                  <div
+                    className={`grid ${
+                      pair.length === 2 ? "md:grid-cols-2" : "md:grid-cols-1"
+                    } divide-y divide-gray-100 md:divide-x md:divide-y-0`}
+                  >
+                    {pair.map((university, uniIdx) => {
+                      const LocationIcon =
+                        iconMap[university.locationIcon] ?? MapPin;
 
-                          {/* Location Badge */}
-                          <div className="bg-gradient-to-r from-red-50 to-orange-50 text-red-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 border border-red-200 shadow-sm">
-                            <LocationIcon className="h-3.5 w-3.5 text-red-600" />
-                            <span>{university.location}</span>
-                          </div>
-                        </div>
-
-                        {/* University Name */}
-                        <h3 className="font-bold text-gray-900 text-lg sm:text-xl leading-tight tracking-tight group-hover:text-red-600 transition-colors duration-200">
-                          {university.name}
-                        </h3>
-
-                        {/* Meta Info Badges */}
-                        <div className="flex flex-wrap items-center gap-2.5">
-                          {/* Courses Badge */}
-                          <div className="flex items-center gap-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-indigo-200 shadow-sm">
-                            <BookOpen className="h-3.5 w-3.5" />
-                            {university.courses}
-                          </div>
-
-                          {/* Region Badge */}
-                          <div className="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200">
-                            <Users className="h-3.5 w-3.5" />
-                            {university.region}
-                          </div>
-                        </div>
-
-                        {/* CTA Button */}
-                        <Link
-                          href={`http://localhost:3000/apply?university=${university.slug}`}
-                          className="mt-2 sm:mt-4 inline-flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold text-sm hover:from-red-700 hover:to-red-800 hover:shadow-lg transition-all duration-200 group/btn w-fit"
+                      return (
+                        <div
+                          key={university.slug}
+                          className={`group flex min-w-0 flex-col ${
+                            uniIdx === 0 && pair.length === 2
+                              ? "pb-4 md:pb-0 md:pr-6 lg:pr-7"
+                              : uniIdx === 1
+                                ? "pt-4 md:pt-0 md:pl-6 lg:pl-7"
+                                : ""
+                          }`}
                         >
-                          <span>Access LMS</span>
-                          <ChevronRight className="h-4 w-4 ml-1.5 group-hover/btn:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
-                    );
-                  })}
+                          {/* Logo + Location */}
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex h-11 w-24 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-gray-50 p-2 transition-all duration-300 group-hover:bg-white group-hover:shadow-sm sm:h-12 sm:w-28">
+                              <Image
+                                src={university.image}
+                                alt={university.name}
+                                width={120}
+                                height={40}
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            </div>
+
+                            <div className="flex min-w-0 items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600 sm:px-3 sm:text-xs">
+                              <LocationIcon className="h-3 w-3 shrink-0" />
+
+                              <span className="truncate">
+                                {university.location}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* University Name */}
+                          <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug tracking-tight text-gray-900 transition-colors duration-300 group-hover:text-red-600 sm:text-lg">
+                            {university.name}
+                          </h3>
+
+                          {/* Meta */}
+                          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 rounded-lg bg-indigo-50/70 px-2.5 py-1.5 text-[11px] font-semibold text-indigo-700 sm:text-xs">
+                              <BookOpen className="h-3 w-3" />
+                              <span>{university.courses}</span>
+                            </div>
+
+                            <div className="flex min-w-0 items-center gap-1.5 rounded-lg bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-600 sm:text-xs">
+                              <Users className="h-3 w-3 shrink-0" />
+
+                              <span className="truncate">
+                                {university.region}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* CTA */}
+                          <Link
+                            href={`/apply?university=${university.slug}`}
+                            className="mt-3.5 inline-flex w-fit items-center gap-1.5 rounded-[6px] bg-red-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-red-700 hover:shadow-md sm:text-sm"
+                          >
+                            <span>Access LMS</span>
+                            <ChevronRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))

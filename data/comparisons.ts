@@ -26,14 +26,14 @@ export interface UniversityPair {
 export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
   {
     id: "amity-vs-manipal",
-    image: "/compare/rushford.png",
+    image: "/compare/testttt.png",
     a: {
       id: "amity",
       name: "",
       short: "Rushford",
       university: "Rushford",
       courses: ["BBA", "MBA", "B.Tech", "Law", "Commerce", "Arts"],
-      image: "/compare/rush.png",
+      image: "/compare/new.png",
       location: "Noida, UP",
       established: 2002,
       ranking: "NIRF Rank: 76 (Overall)",
@@ -61,7 +61,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
         "Management",
         "Law",
       ],
-      image: "/compare/eimt.png",
+      image: "/compare/eimtnew.png",
       location: "Jaipur, Rajasthan",
       established: 2016,
       ranking: "Not Ranked",
@@ -85,10 +85,9 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
       id: "rushford",
       name: "BBA",
       short: "RBS",
-      university: "Rushford",
+      university: "SSBM",
       courses: ["MBA", "Executive MBA", "PGDM", "Diploma", "Certification"],
-      image:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=400&fit=crop",
+      image: "/compare/ssbm.png",
       location: "New Delhi & International",
       established: 1997,
       ranking: "Global MBA Rankings: Top 500",
@@ -111,11 +110,10 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     b: {
       id: "chandigarh-online",
       name: "BBA",
-      short: "CU",
-      university: "Chandigarh University",
+      short: "ESGC",
+      university: "ESGC",
       courses: ["BCA", "MBA", "B.Tech", "MCA", "B.Com", "MA", "Diploma"],
-      image:
-        "https://images.unsplash.com/photo-1516534775068-bb57ad17166b?w=500&h=400&fit=crop",
+      image: "/compare/esgc.png",
       location: "Chandigarh (Online Mode)",
       established: 2012,
       ranking: "NIRF Rank: 51 (Overall)",
@@ -138,11 +136,10 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     a: {
       id: "gla-online",
       name: "BCA",
-      short: "GLA",
-      university: "GLA University",
+      short: "GGU",
+      university: "GGU",
       courses: ["MBA", "MCA", "B.Tech", "BCA", "Diploma", "Certificate"],
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=400&fit=crop",
+      image: "/compare/ggu.png",
       location: "Mathura, UP (Online)",
       established: 1998,
       ranking: "NIRF Rank: 201+ (Overall)",
@@ -161,8 +158,8 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     b: {
       id: "amity-online",
       name: "BCA",
-      short: "AMITY",
-      university: "Amity Online",
+      short: "Edgewood",
+      university: " Edgewood",
       courses: [
         "MBA",
         "M.Tech",
@@ -171,8 +168,7 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
         "Executive Programs",
         "Certification",
       ],
-      image:
-        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=400&fit=crop",
+      image: "/compare/e.png",
       location: "Noida (Online Platform)",
       established: 2002,
       ranking: "NIRF Rank: 76 (Overall)",
@@ -190,16 +186,15 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     },
   },
   {
-    id: "manipal-vs-rushford",
+    id: "LSMT",
     image: "/compare/mu-vs-ru.png",
     a: {
       id: "manipal-full",
       name: "DBA",
-      short: "MANIPAL",
-      university: "Manipal University",
+      short: "LSMT",
+      university: "LSMT",
       courses: ["B.Tech", "MBA", "Medicine", "Law", "Engineering", "Commerce"],
-      image:
-        "https://images.unsplash.com/photo-1441239372925-51cff79fb247?w=500&h=400&fit=crop",
+      image: "/compare/lsmt.png",
       location: "Manipal, Karnataka",
       established: 1953,
       ranking: "NIRF Rank: 29 (Overall)",
@@ -218,11 +213,10 @@ export const UNIVERSITY_COMPARISONS: UniversityPair[] = [
     b: {
       id: "rushford-full",
       name: "DBA",
-      short: "RUSH",
-      university: "Rushford University",
+      short: "Birchwood",
+      university: "Birchwood",
       courses: ["MBA", "Executive MBA", "PGDM", "Doctorate", "Short Courses"],
-      image:
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
+      image: "/compare/b.png",
       location: "Global (Online & Offline)",
       established: 1997,
       ranking: "Global Rankings: Top 300",

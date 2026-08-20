@@ -1,7 +1,7 @@
 export const pressArticles = [
   {
     name: "Lokmat Times",
-    image: "/press/lokmat.webp",
+    image: "/press/lok.png",
     logo: "",
     href: "https://www.lokmattimes.com/business/ecampus-edu-launches-ai-to-help-students-find-the-right-online-degree-program-in-under-60-seconds",
     description:
@@ -10,7 +10,7 @@ export const pressArticles = [
   },
   {
     name: "Hindustan Times",
-    image: "/press/hindustan-times.webp",
+    image: "/press/hindustannew.png",
     logo: "",
     href: "https://www.hindustantimes.com/",
     description:
@@ -19,7 +19,7 @@ export const pressArticles = [
   },
   {
     name: "ThePrint",
-    image: "/press/theprint.png",
+    image: "/press/print.png",
     logo: "",
     href: "https://theprint.in/ani-press-releases/ecampus-edu-launches-ai-to-help-students-find-the-right-online-degree-program-in-under-60-seconds/2910429/",
     description:
@@ -28,7 +28,7 @@ export const pressArticles = [
   },
   {
     name: "ANI",
-    image: "/press/ani.webp",
+    image: "/press/aninew.png",
     logo: "",
     href: "https://www.aninews.in/news/business/ecampus-edu-launches-ai-to-help-students-find-the-right-online-degree-program-in-under-60-seconds20260421160827/",
     description:
@@ -37,7 +37,7 @@ export const pressArticles = [
   },
   {
     name: "Digpu",
-    image: "/press/digpu.webp",
+    image: "/press/digpu.png",
     logo: "",
     href: "https://digpu.com/press-releases/ecampus-edu-launches-ai-to-help-students-find-the-right-online-degree-program-in-under-60-seconds",
     description:
@@ -46,7 +46,7 @@ export const pressArticles = [
   },
   {
     name: "LatestLY",
-    image: "/press/latestly.webp",
+    image: "/press/ly.png",
     logo: "",
     href: "https://www.latestly.com/agency-news/business-news-ecampus-edu-launches-ai-to-help-students-find-the-right-online-degree-program-in-under-60-seconds-7401650.html",
     description:
@@ -55,7 +55,7 @@ export const pressArticles = [
   },
   {
     name: "Daily Hunt",
-    image: "/press/dailyhunt.webp",
+    image: "/press/daillyhunt.png",
     logo: "",
     href: "https://m.dailyhunt.in/news/india/english/ani%2Benglish-epaper-anieng/ecampus%2Bedu%2Blaunches%2Bai%2Bto%2Bhelp%2Bstudents%2Bfind%2Bthe%2Bright%2Bonline%2Bdegree%2Bprogram%2Bin%2Bunder%2B60%2Bseconds-newsid-n709296675?sm=Y",
     description:

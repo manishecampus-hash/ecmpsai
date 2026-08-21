@@ -2944,30 +2944,11 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                         className="flex h-full flex-col gap-2"
                       >
                         <input
-                          type="text"
-                          placeholder="Full Name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
-                        />
-
-                        <input
                           type="email"
                           placeholder="Email Address"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
-                        />
-
-                        <input
-                          type="password"
-                          placeholder="Password (min. 8 characters)"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          minLength={8}
                           className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
                         />
 

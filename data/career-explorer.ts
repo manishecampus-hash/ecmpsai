@@ -76,18 +76,18 @@
 export const careerExplorerData = [
   {
     id: 1,
+    title: "AI & ML Engineer",
+    image: "/career/2image.png",
+    description: "Learn AI/ML algorithms, neural networks, and deep learning.",
+    package: "₹6-15 LPA",
+  },
+  {
+    id: 2,
     title: "Software Developer",
     slug: "software-developer",
     image: "/career/1image.png",
     description:
       "Master programming languages and build scalable applications.",
-    package: "₹6-15 LPA",
-  },
-  {
-    id: 2,
-    title: "AI & Machine Learning Engineer",
-    image: "/career/2image.png",
-    description: "Learn AI/ML algorithms, neural networks, and deep learning.",
     package: "₹6-15 LPA",
   },
   {

@@ -172,7 +172,7 @@ const calculators = [
     cardTitle: "Meters to Feet Converter",
     description: "Convert meters to feet instantly.",
     icon: Ruler,
-    image: "",
+    image: "/tools/meters.png",
   },
   {
     slug: "percentage",

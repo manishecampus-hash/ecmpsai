@@ -42,17 +42,16 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
   } catch (error) {
     console.error("Failed to fetch university details from database:", error);
   }
+  if (!dbUniversity) {
+    notFound();
+  }
 
   const localUniversity = universities.find(
     (item) =>
       item.slug === slug ||
-      (item.slug === `amity-university-online` &&
-        slug === `amity-university-online`),
+      item.name.toLowerCase().replace(/ online$/i, "").trim() === dbUniversity.name.toLowerCase().replace(/ online$/i, "").trim() ||
+      (dbUniversity.slug && item.slug === dbUniversity.slug.split("/").pop())
   );
-
-  if (!dbUniversity && !localUniversity) {
-    notFound();
-  }
 
   // Merge database university data with static fallbacks
   const university = {

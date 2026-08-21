@@ -86,6 +86,15 @@ export function Footer() {
     const apiUrl =
       process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
       "http://localhost:5000";
+
+    const normalizeUrl = (url: string) => {
+      if (!url) return "/";
+      if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("#") || url.startsWith("/")) {
+        return url;
+      }
+      return `/${url}`;
+    };
+
     fetch(`${apiUrl}/menus/footer`)
       .then((res) => {
         if (!res.ok) throw new Error("Footer menu not found");
@@ -98,7 +107,7 @@ export function Footer() {
             name: sec.label,
             items: (sec.children || []).map((item: any) => ({
               name: item.label,
-              href: item.url || "#",
+              href: normalizeUrl(item.url || "#"),
             })),
           }));
           setFooterSections(sections);

@@ -188,7 +188,9 @@ export default function UniversitySection() {
         if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map((u: any) => {
             let slug = "";
-            if (u.seoSettings?.rewriteUrl) {
+            if (u.slug) {
+              slug = u.slug.split("/").pop() || "";
+            } else if (u.seoSettings?.rewriteUrl) {
               slug = u.seoSettings.rewriteUrl.split("/").pop() || "";
             }
             if (!slug) {

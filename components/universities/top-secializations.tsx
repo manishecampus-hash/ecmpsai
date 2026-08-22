@@ -503,7 +503,7 @@ export default function TopSpecializations({
                             {/* Button */}
                             <button
                               type="button"
-                              className="__explore-btn w-full flex items-center justify-center gap-2 rounded-xl border-2 border-red-500 py-3 text-sm font-bold text-red-500 transition duration-300 hover:bg-red-50 active:bg-red-100"
+                              className="__explore-btn w-60 flex items-center justify-center gap-2 rounded-xl border-2 border-red-500 py-3 text-sm font-bold text-red-500 transition duration-300 hover:bg-red-50 active:bg-red-100"
                             >
                               Explore More
                               <ArrowRight className="h-4 w-4" />

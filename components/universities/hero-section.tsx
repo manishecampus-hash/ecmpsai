@@ -1362,7 +1362,7 @@ export default function UniversityHeroWithStats({
 
   return (
     <header className="relative bg-white">
-      <div className="relative  overflow-hidden sm:h-72 max-height:40vh">
+     <div className="relative h-48 overflow-hidden sm:h-72">
         <img
           src={bannerBg}
           alt="Campus banner"
@@ -1378,6 +1378,7 @@ export default function UniversityHeroWithStats({
             {/* Logo with rating and trusted text on same row */}
             <div className="mb-6 flex flex-col gap-4 sm:items-start sm:justify-between sm:gap-4 lg:flex-row">
               <div className="flex flex-wrap items-start gap-3">
+                
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-2 shadow-md ring-1 ring-slate-100 sm:h-20 sm:w-20">
                   <img
                     src={bannerLogo}
@@ -1385,6 +1386,7 @@ export default function UniversityHeroWithStats({
                     className="h-full w-full object-contain"
                   />
                 </div>
+               {/* <div className="h-20 w-[3px] shrink-0 rounded-full bg-[#000]" /> */}
 
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -1441,82 +1443,95 @@ export default function UniversityHeroWithStats({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <button className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm">
-                    <Send className="h-4 w-4 shrink-0" fill="currentColor" />
-                    <span className="truncate">
-                      {" "}
-                      {banner.ctas?.[0]?.buttonText || "Apply to University"}
-                    </span>
-                  </button>
+             <div className="flex flex-col gap-3">
+  {/* Top Buttons */}
+  <div className="grid grid-cols-2 gap-3">
+    <button
+      className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm"
+    >
+      <Send className="h-4 w-4 shrink-0" fill="currentColor" />
+      <span className="truncate">
+        {banner.ctas?.[0]?.buttonText || "Apply to University"}
+      </span>
+    </button>
 
-                  <button
-                    onClick={() => {
-                      document.getElementById("courses")?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }}
-                    className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
-                  >
-                    <Download className="h-4 w-4 shrink-0" />
+    <button
+      onClick={() => {
+        document.getElementById("courses")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }}
+      className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
+    >
+      <Download className="h-4 w-4 shrink-0" />
+      <span className="truncate">
+        {banner.ctas?.[1]?.buttonText || "Explore Courses"}
+      </span>
+    </button>
+  </div>
 
-                    <span className="truncate">
-                      {banner.ctas?.[1]?.buttonText || "Explore Courses"}
-                    </span>
-                  </button>
-                </div>
+  {/* Bottom Buttons */}
+  <div className="grid grid-cols-2 gap-3">
+    <button
+      onClick={() => {
+        document.getElementById("courses")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }}
+      className="inline-flex h-10 w-full items-center justify-start gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
+    >
+      <WhatsAppIcon className="h-4 w-4 shrink-0 text-green-500" />
+      <span className="whitespace-nowrap">Chat with University</span>
+    </button>
 
-                <button
-                  onClick={() => {
-                    document.getElementById("courses")?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                  className="mx-auto flex h-10 w-fit items-center justify-center gap-2 bg-transparent text-xs font-bold text-[#25D366] transition hover:opacity-80 sm:text-sm"
-                >
-                  <WhatsAppIcon className="h-4 w-4 shrink-0" />
-
-                  <span className="underline">Connect to Whatsapp</span>
-                </button>
-              </div>
-            </div>
+    <button
+      onClick={() => {
+        document.getElementById("courses")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }}
+      className="inline-flex h-10 w-full items-center justify-end gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
+    >
+      <Download className="h-4 w-4 shrink-0" />
+      <span className="whitespace-nowrap">Download Brochure</span>
+    </button>
+  </div>
+</div>
+     </div>
 
             <div className="pt-5 sm:pt-6">
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px] lg:gap-8">
                 <div className="min-w-0">
-                  <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
-                    {pointersTitle}
-                  </h1>
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {pointersItems.map((item: any, idx: number) => (
-                      <div key={idx} className="flex min-w-0 items-start gap-3">
-                        {/* Icon */}
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 sm:h-12 sm:w-12">
-                          {renderPointerIcon(item.icon, item.heading)}
-                        </div>
+  <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
+    {pointersTitle}
+  </h1>
+  <div className="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {pointersItems.map((item: any, idx: number) => (
+      <div key={idx} className="flex w-full min-w-0 items-start gap-3">
+        {/* Icon */}
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 sm:h-12 sm:w-12">
+          {renderPointerIcon(item.icon, item.heading)}
+        </div>
 
-                        {/* Text */}
-                        <div className="min-w-0">
-                          <div className="text-base font-bold text-slate-900 sm:text-lg">
-                            {item.mainText}
-                          </div>
+        {/* Text */}
+        <div className="min-w-0 flex-1">
+          <div className="text-base font-bold text-slate-900 sm:text-lg">
+            {item.mainText}
+          </div>
 
-                          <div className="text-xs text-slate-600 sm:text-sm">
-                            {item.heading}
-                          </div>
+          <div className="text-xs text-slate-600 sm:text-sm">
+            {item.heading}
+          </div>
 
-                          <div className="mt-0.5 line-clamp-2 text-xs text-slate-500 sm:mt-1">
-                            {item.subheading}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>{" "}
-                </div>
-
+         
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
                 <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <h4 className="text-sm font-bold text-slate-900 sm:text-base">

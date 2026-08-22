@@ -1312,6 +1312,13 @@ export default function UniversityHeroWithStats({
   const bannerReviews =
     banner.reviewsCount !== undefined ? Number(banner.reviewsCount) : reviews;
   const bannerTrustedText = banner.trustedText || trustedText;
+  const bannerTrustedIcon = banner.trustedIcon || "";
+
+  const compareData = banner.compareSection;
+  const compareHeading = compareData?.heading || "";
+  const compareSubheading = compareData?.subheading || "";
+  const compareLogos = (compareData?.logos || []).filter((logo: string) => logo && logo.trim() !== "");
+  const showCompareSection = !!(compareHeading && compareLogos.length > 0);
 
   const dbLogos = banner.accreditationLogos || [];
   const dynamicBadges =
@@ -1402,7 +1409,7 @@ export default function UniversityHeroWithStats({
                           </div>
                         )}
 
-                        {b.label && (
+                        {b.label && b.label !== "More" && (
                           <span className="text-xs font-medium text-slate-700">
                             {b.label}
                           </span>
@@ -1434,7 +1441,15 @@ export default function UniversityHeroWithStats({
                     </div>
 
                     <div className="flex min-w-0 items-center gap-2 text-xs text-slate-700 sm:text-sm">
-                      <Shield className="h-4 w-4 shrink-0 text-sky-600" />
+                      {bannerTrustedIcon ? (
+                        <img
+                          src={bannerTrustedIcon}
+                          alt="Trusted Icon"
+                          className="h-4 w-4 shrink-0 object-contain"
+                        />
+                      ) : (
+                        <Shield className="h-4 w-4 shrink-0 text-sky-600" />
+                      )}
                       <span className="truncate">{bannerTrustedText}</span>
                     </div>
                   </div>
@@ -1517,43 +1532,39 @@ export default function UniversityHeroWithStats({
                   </div>{" "}
                 </div>
 
-                <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
-                  <div className="mb-2 flex items-center justify-between gap-2">
-                    <h4 className="text-sm font-bold text-slate-900 sm:text-base">
-                      Compare Universities with AI
-                    </h4>
-                  </div>
+                {showCompareSection && (
+                  <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <h4 className="text-sm font-bold text-slate-900 sm:text-base">
+                        {compareHeading}
+                      </h4>
+                    </div>
 
-                  <p className="mb-3 text-xs text-slate-600 sm:text-sm">
-                    Compare with other top universities.
-                  </p>
+                    {compareSubheading && (
+                      <p className="mb-3 text-xs text-slate-600 sm:text-sm">
+                        {compareSubheading}
+                      </p>
+                    )}
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex -space-x-3">
-                      <img
-                        src="/ggubanner/ssbm.png"
-                        alt="University 1"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-
-                      <img
-                        src="/ggubanner/rushford.png"
-                        alt="University 2"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-
-                      <img
-                        src="/ggubanner/ei.png"
-                        alt="University 3"
-                        className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-                      />
-
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white shadow">
-                        +3
+                    <div className="flex items-center gap-3">
+                      <div className="flex -space-x-3">
+                        {compareLogos.slice(0, 3).map((logo, idx) => (
+                          <img
+                            key={idx}
+                            src={logo}
+                            alt={`University ${idx + 1}`}
+                            className="h-12 w-12 rounded-full border-2 border-white bg-white shadow object-contain"
+                          />
+                        ))}
+                        {compareLogos.length > 3 && (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white shadow">
+                            +{compareLogos.length - 3}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

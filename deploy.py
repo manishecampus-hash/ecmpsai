@@ -77,7 +77,7 @@ def main():
     ])
 
     print(f"\n{GREEN}{BOLD}Deployment completed successfully!{RESET}")
-    print(f"{BOLD}Access the website at:{RESET} http://localhost:4001")
+    # print(f"{BOLD}Access the website at:{RESET} http://localhost:4001")
 
 if __name__ == "__main__":
     main()

@@ -16,28 +16,28 @@ import {
 } from "lucide-react";
 
 const stats = [
-  { label: "Duration", value: "36 Months", icon: CalendarDays },
+  { label: "Duration", value: "24 Months", icon: CalendarDays },
   { label: "Learning Mode", value: "100% Online", icon: BookOpenCheck },
-  { label: "Program Level", value: "Doctoral", icon: GraduationCap },
+  { label: "Program Level", value: "Master's", icon: GraduationCap },
   { label: "Community", value: "80+ Countries", icon: Globe2 },
 ];
 
 const points = [
-  "Built for working professionals and senior managers",
-  "Research-focused doctoral learning with practical business application",
+  "Built for working professionals looking to accelerate their careers",
+  "Industry-aligned curriculum with real-world business application",
   "Specializations across strategy, finance, marketing, HR and leadership",
 ];
 
 const recognitionLogos = [
-  { src: "/ggubanner/3rd.webp", alt: "AACSB Accredited" },
-  { src: "/ggubanner/wes-logo.jpg", alt: "WES Recognized" },
-  { src: "/ggubanner/75.png", alt: "75+ Years of Legacy" },
+  { src: "/ggubanner/amity-online-university-logo_2.webp", alt: "AACSB Accredited" },
+  { src: "/ggubanner/cu-online.webp", alt: "WES Recognized" },
+  { src: "/ggubanner/sharda-university-online-up-logo.webp", alt: "75+ Years of Legacy" },
 ];
 
 const descriptionText =
-  "A flexible online DBA designed for professionals who want to strengthen research capability, strategic thinking and executive leadership. Gain advanced business insights, develop data-driven decision-making skills, and learn to lead innovation and organizational transformation in a rapidly evolving global business environment.";
+  "A flexible online MBA designed for working professionals who want to build core business skills, sharpen strategic thinking and grow into leadership roles. Gain practical management insights, develop data-driven decision-making skills, and learn to lead teams and drive results in a rapidly evolving global business environment.";
 
-export default function DBAHero() {
+export default function MbaHeroSection() {
   const [aiText, setAiText] = useState("");
   const [isTypingDone, setIsTypingDone] = useState(false);
 
@@ -60,11 +60,11 @@ export default function DBAHero() {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
               <div className="min-w-0">
                 <p className="text-sm font-bold uppercase tracking-wide text-red-600">
-                  Doctorate Program
+                  Master's Program
                 </p>
                 <h1 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900  sm:text-3xl md:text-4xl ">
-                  Doctor of Business Administration from Golden Gate{" "}
-                  <span className="text-red-500">University</span>
+                  Compare & Apply from 100+{" "}
+                  <span className="text-red-500">Online MBA Universities</span>
                 </h1>
 
                 <div className="mt-4">
@@ -123,13 +123,25 @@ export default function DBAHero() {
                 </div>
               ))}
             </div>
+
+            <ul className="mt-6 grid gap-2.5 sm:grid-cols-1">
+              {points.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-start gap-2.5 text-sm leading-6 text-slate-600"
+                >
+                  <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-red-500" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <aside className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="relative h-[198px] bg-slate-100 sm:h-[218px] lg:h-[235px]">
               <img
                 src="/ggubanner/newbnr.png"
-                alt="Golden Gate University DBA program"
+                alt="Online MBA program"
                 className="h-full w-full object-cover"
               />
 
@@ -138,7 +150,7 @@ export default function DBAHero() {
               <div className="absolute bottom-3 left-4 right-4">
                 <p className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-black/35 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-black backdrop-blur-md">
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                  Online Doctorate
+                  Online MBA
                 </p>
                 <h2 className="mt-0.5 text-xl font-black leading-tight text-white">
                   Learn from anywhere. Lead everywhere.

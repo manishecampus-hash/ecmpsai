@@ -402,11 +402,19 @@ export default function TopSpecializations({
                         >
                           {/* Image Section */}
                           <div className="__card-image-wrapper relative overflow-hidden h-44 sm:h-48 rounded-t-2xl">
-                            <img
-                              src={cardImage}
-                              alt={`${card.name} ${uniLabel}`}
-                              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                            />
+                            {card.thumbnail ? (
+                              <img
+                                src={card.thumbnail}
+                                alt={`${card.name} ${uniLabel}`}
+                                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center bg-gray-200 p-6 text-center select-none">
+                                <span className="text-sm sm:text-base font-bold text-gray-600 line-clamp-3">
+                                  {card.name}
+                                </span>
+                              </div>
+                            )}
 
                             {/* Badge - Yellow/Amber at bottom-left */}
                             <div className="__card-badge absolute bottom-3 left-3 rounded-lg bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-md">

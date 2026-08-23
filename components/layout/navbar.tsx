@@ -965,6 +965,14 @@ export function Navbar() {
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
+    const normalizeUrl = (url: string) => {
+      if (!url) return "/";
+      if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("#") || url.startsWith("/")) {
+        return url;
+      }
+      return `/${url}`;
+    };
+
     // Fetch Header Links
     fetch(`${apiUrl}/menus/header`)
       .then((res) => {
@@ -975,7 +983,7 @@ export function Navbar() {
         if (data && data.items && data.items.length > 0) {
           const links = data.items.map((item: any) => ({
             label: item.label,
-            href: item.url,
+            href: normalizeUrl(item.url),
             target: item.target
           }));
           setHeaderNavLinks(links);
@@ -999,7 +1007,7 @@ export function Navbar() {
               tag: child.type || "",
               name: child.label,
               duration: child.duration || "",
-              href: child.url || "#",
+              href: normalizeUrl(child.url || "#"),
               image: child.icon || "",
               target: child.target || "_self",
             }))

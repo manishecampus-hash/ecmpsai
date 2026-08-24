@@ -1383,7 +1383,7 @@ export default function UniversityHeroWithStats({
         <div className="relative -mt-10 mb-16 sm:-mt-12 sm:mb-24 lg:-mt-16 lg:mb-32">
           <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100 sm:p-6">
             {/* Logo with rating and trusted text on same row */}
-            <div className="mb-6 flex flex-col gap-4 sm:items-start sm:justify-between sm:gap-4 lg:flex-row">
+           <div className="mb-2 flex flex-col gap-4 sm:items-start sm:justify-between sm:gap-4 lg:flex-row">
               <div className="flex flex-wrap items-start gap-3">
                 
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-2 shadow-md ring-1 ring-slate-100 sm:h-20 sm:w-20">
@@ -1517,7 +1517,7 @@ export default function UniversityHeroWithStats({
 </div>
      </div>
 
-            <div className="pt-5 sm:pt-6">
+            <div className="pt-2 sm:pt-3">
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px] lg:gap-8">
                 <div className="min-w-0">
   <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
@@ -1548,13 +1548,9 @@ export default function UniversityHeroWithStats({
   </div>
 </div>
                 <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
-                  <div className="mb-2 flex items-center justify-between gap-2">
-                    <h4 className="text-sm font-bold text-slate-900 sm:text-base">
-                      Compare Universities with AI
-                    </h4>
-                  </div>
+                  
                 {showCompareSection && (
-                  <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
+                  <div className="">
                     <div className="mb-2 flex items-center justify-between gap-2">
                       <h4 className="text-sm font-bold text-slate-900 sm:text-base">
                         {compareHeading}

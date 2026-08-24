@@ -2587,6 +2587,7 @@
 
 // 19 aug
 
+
 import { useState, useEffect, type FormEvent } from "react";
 import {
   X,
@@ -2799,13 +2800,13 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
           <div
-            className="relative h-[560px] max-h-[calc(100vh-24px)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl sm:h-[580px]"
+            className="relative h-auto max-h-[calc(100vh-24px)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex h-full flex-col overflow-y-auto bg-white p-5 sm:p-6 md:p-8">
+            <div className="relative flex h-full flex-col overflow-y-auto bg-white p-4 sm:p-5">
               <button
                 onClick={onClose}
-                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:right-4 sm:top-4"
+                className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -2813,18 +2814,18 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
               {step === "otp" && (
                 <button
                   onClick={handleBack}
-                  className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black sm:left-4 sm:top-4"
+                  className="absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
               )}
 
-              <div className="mx-auto flex h-full w-full max-w-xs flex-col justify-center py-4">
+              <div className="mx-auto flex w-full max-w-xs flex-col justify-center py-2">
                 <div className="flex justify-center">
                   <img
                     src="/image/logo.png"
                     alt="logo"
-                    className="mb-2 h-6 object-contain"
+                    className="mb-1 h-6 object-contain"
                   />
                 </div>
 
@@ -2836,7 +2837,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                       : "Welcome to eCampus!"}
                 </h2>
 
-                <p className="mt-1 text-center text-xs text-gray-500">
+                <p className="mt-0.5 text-center text-xs text-gray-500">
                   {step === "otp"
                     ? `OTP sent to ${fullPhone}`
                     : mode === "email"
@@ -2845,18 +2846,18 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 </p>
 
                 {error && (
-                  <div className="mt-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900">
+                  <div className="mt-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900">
                     {error}
                   </div>
                 )}
 
                 {step === "phone" && (
-                  <div className="mt-3">
+                  <div className="mt-2">
                     <div className="flex rounded-2xl bg-red-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleModeChange("mobile")}
-                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
+                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-1.5 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
                           mode === "mobile"
                             ? "bg-white text-red-600 shadow-sm"
                             : "text-gray-500"
@@ -2868,7 +2869,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                       <button
                         type="button"
                         onClick={() => handleModeChange("email")}
-                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
+                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-1.5 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
                           mode === "email"
                             ? "bg-white text-red-600 shadow-sm"
                             : "text-gray-500"
@@ -2881,17 +2882,13 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 )}
 
                 {step === "phone" && (
-                  <div className="mt-3 h-[196px]">
+                  <div className="mt-2">
                     {mode === "mobile" && (
                       <form
                         onSubmit={handlePhoneContinue}
-                        className="flex h-full flex-col"
+                        className="flex flex-col gap-2"
                       >
-                        <label className="text-xs font-medium text-gray-600">
-                          Mobile Number
-                        </label>
-
-                        <div className="mt-1.5 flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
+                        <div className="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
                           <div className="relative flex items-center gap-2 border-r border-gray-200 px-3">
                             <span className="text-sm">
                               {selectedCountry.flag}
@@ -2923,14 +2920,14 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                             }
                             maxLength={15}
                             required
-                            className="flex-1 bg-white p-2.5 text-sm outline-none placeholder-gray-400"
+                            className="flex-1 bg-white p-2 text-sm outline-none placeholder-gray-400"
                           />
                         </div>
 
                         <Button
                           type="submit"
                           disabled={loading || phone.length < 7}
-                          className="mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                          className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                         >
                           <span>{loading ? "Sending..." : "Continue"}</span>
                           <ArrowRight className="h-4 w-4" />
@@ -2941,7 +2938,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                     {mode === "email" && (
                       <form
                         onSubmit={handleEmailContinue}
-                        className="flex h-full flex-col gap-2"
+                        className="flex flex-col gap-2"
                       >
                         <input
                           type="email"
@@ -2949,13 +2946,13 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                          className="w-full rounded-lg border border-gray-200 p-2 text-sm outline-none transition placeholder-gray-500 focus:border-black"
                         />
 
                         <Button
                           type="submit"
                           disabled={loading}
-                          className="mt-auto h-11 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                          className="h-10 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                         >
                           {loading ? "Creating..." : "Continue"}
                         </Button>
@@ -2965,7 +2962,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 )}
 
                 {step === "otp" && (
-                  <form onSubmit={handleOtpVerify} className="mt-3">
+                  <form onSubmit={handleOtpVerify} className="mt-2">
                     <input
                       type="text"
                       inputMode="numeric"
@@ -2977,14 +2974,14 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                       maxLength={6}
                       required
                       autoFocus
-                      className="w-full rounded-lg border border-gray-200 p-3 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
                     />
 
                     <button
                       type="button"
                       onClick={handleResendOtp}
                       disabled={resendCooldown > 0 || loading}
-                      className="mt-2 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+                      className="mt-1.5 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
                     >
                       {resendCooldown > 0
                         ? `Resend in ${resendCooldown}s`
@@ -2994,7 +2991,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                     <Button
                       type="submit"
                       disabled={loading || otp.length !== 6}
-                      className="mt-3 h-11 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      className="mt-2 h-10 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
                     >
                       {loading ? "Verifying..." : "Continue"}
                     </Button>
@@ -3004,7 +3001,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                 <button
                   type="button"
                   onClick={() => setAssuredOptIn((v) => !v)}
-                  className={`mt-3 w-full rounded-lg border p-2.5 text-left transition ${
+                  className={`mt-2 w-full rounded-lg border p-2 text-left transition ${
                     assuredOptIn
                       ? "border-red-300 bg-red-50"
                       : "border-red-100 bg-red-50/60"
@@ -3035,7 +3032,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   </div>
                 </button>
 
-                <p className="mt-3 text-center text-[11px] leading-relaxed text-gray-500">
+                <p className="mt-2 text-center text-[11px] leading-relaxed text-gray-500">
                   By continuing, you agree to our{" "}
                   <a href="/terms" className="text-red-600 hover:underline">
                     Terms

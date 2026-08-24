@@ -269,7 +269,7 @@ export default function UniversitySection() {
         </div>
 
         {/* Result count */}
-        <p className="text-[11px] text-gray-400">
+        <p className="text-[11px] text-gray-400 text-center">
           {filtered.length}{" "}
           {filtered.length === 1 ? "university" : "universities"} found
         </p>

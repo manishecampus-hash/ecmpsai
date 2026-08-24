@@ -1,0 +1,305 @@
+"use client";
+
+import React, { ReactNode } from "react";
+
+interface DataPoint {
+  year: number;
+  value: number;
+}
+
+interface StatTileProps {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  border?: boolean;
+}
+
+const DATA: DataPoint[] = [
+  { year: 2024, value: 9.87 },
+  { year: 2026, value: 12.4 },
+  { year: 2028, value: 15.1 },
+  { year: 2030, value: 17.0 },
+  { year: 2033, value: 19.13 },
+];
+
+const CAGR = "7.63%";
+
+// Chart dimensions
+const W = 640;
+const H = 280;
+const PAD_L = 56;
+const PAD_R = 24;
+const PAD_T = 28;
+const PAD_B = 40;
+const PLOT_W = W - PAD_L - PAD_R;
+const PLOT_H = H - PAD_T - PAD_B;
+
+const Y_MIN = 0;
+const Y_MAX = 20;
+const Y_TICKS = [0, 5, 10, 15, 20];
+
+function xForIndex(i: number): number {
+  return PAD_L + (i / (DATA.length - 1)) * PLOT_W;
+}
+
+function yForValue(v: number): number {
+  return PAD_T + PLOT_H - ((v - Y_MIN) / (Y_MAX - Y_MIN)) * PLOT_H;
+}
+
+const points = DATA.map((d, i) => ({
+  ...d,
+  x: xForIndex(i),
+  y: yForValue(d.value),
+}));
+
+const linePath = points
+  .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+  .join(" ");
+
+const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${(
+  PAD_T + PLOT_H
+).toFixed(1)} L ${points[0].x.toFixed(1)} ${(PAD_T + PLOT_H).toFixed(1)} Z`;
+
+export default function MBAOverview() {
+  return (
+    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
+      {/* Heading */}
+      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+        <span className="text-red-500">Online MBA</span> Course Overview
+      </h2>
+
+      <p className="mt-4 text-slate-600 leading-relaxed text-base sm:text-lg">
+        An online MBA is a 2-year postgraduate program that covers the same
+        core disciplines as a campus MBA — strategy, leadership, finance,
+        marketing, and more — without requiring you to pause your career.
+        Whether you&apos;re targeting an entry-level role, switching industries,
+        or building toward entrepreneurship, an online MBA can be the pivot
+        point your career needs.
+      </p>
+
+      <p className="mt-4 text-slate-600 leading-relaxed text-base sm:text-lg">
+        Flexibility is the biggest draw. Students access recorded lectures,
+        join live virtual sessions, submit assignments online, and engage
+        with faculty and peers through discussion forums and group projects.
+        This model works especially well for working professionals balancing
+        a full-time job with career growth. Most programs also layer in
+        industry-aligned curricula, case studies, internships, and
+        networking opportunities to build real-world readiness.
+      </p>
+
+      {/* Signature panel */}
+      <div className="mt-8 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
+        <div className="px-6 pt-5 pb-2 flex items-start justify-between flex-wrap gap-2">
+          <div>
+            <span className="inline-block text-xs font-bold tracking-wider text-red-500 uppercase">
+              Market Insights
+            </span>
+            <h3 className="mt-1 text-lg md:text-xl font-bold text-slate-900">
+              India&apos;s Online MBA Market, 2024–2033
+            </h3>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-red-500 border border-red-100 px-3 py-1.5 text-sm font-bold">
+            {CAGR} CAGR
+          </span>
+        </div>
+
+        <div className="px-4 sm:px-6 pt-2 pb-1">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="w-full h-auto"
+            role="img"
+            aria-label="Market size chart"
+          >
+            <defs>
+              <linearGradient id="redFade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+
+            {/* horizontal gridlines + y-axis labels */}
+            {Y_TICKS.map((t) => {
+              const y = yForValue(t);
+              return (
+                <g key={t}>
+                  <line
+                    x1={PAD_L}
+                    y1={y}
+                    x2={W - PAD_R}
+                    y2={y}
+                    stroke="#f1f5f9"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x={PAD_L - 12}
+                    y={y + 4}
+                    textAnchor="end"
+                    fontSize="11"
+                    fontWeight="600"
+                    className="fill-slate-400"
+                  >
+                    ${t}B
+                  </text>
+                </g>
+              );
+            })}
+
+            {/* baseline */}
+            <line
+              x1={PAD_L}
+              y1={PAD_T + PLOT_H}
+              x2={W - PAD_R}
+              y2={PAD_T + PLOT_H}
+              stroke="#e2e8f0"
+              strokeWidth="1.5"
+            />
+
+            {/* area + line */}
+            <path d={areaPath} fill="url(#redFade)" />
+            <path
+              d={linePath}
+              fill="none"
+              stroke="#ef4444"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            {/* points + labels */}
+            {points.map((p, i) => {
+              const isEndpoint = i === 0 || i === points.length - 1;
+              return (
+                <g key={p.year}>
+                  <circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={isEndpoint ? 6 : 4.5}
+                    fill="#fff"
+                    stroke="#ef4444"
+                    strokeWidth={isEndpoint ? 3 : 2.5}
+                  />
+                  <text
+                    x={p.x}
+                    y={p.y - 16}
+                    textAnchor="middle"
+                    fontSize={isEndpoint ? 13 : 12}
+                    fontWeight="800"
+                    className="fill-slate-900"
+                  >
+                    ${p.value.toFixed(2)}B
+                  </text>
+                  <text
+                    x={p.x}
+                    y={PAD_T + PLOT_H + 22}
+                    textAnchor="middle"
+                    fontSize="11"
+                    fontWeight="600"
+                    className="fill-slate-400"
+                  >
+                    {p.year}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* stat tile row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-slate-100">
+          <StatTile icon={<TrendUpIcon />} label="Market Size 2024" value={`$${DATA[0].value.toFixed(2)}B`} />
+          <StatTile icon={<TargetIcon />} label="Market Size 2033" value={`$${DATA[DATA.length - 1].value.toFixed(2)}B`} border />
+          <StatTile icon={<BoltIcon />} label="Growth Rate" value={CAGR} border />
+          <StatTile icon={<PulseIcon />} label="Momentum" value="Accelerating" border />
+        </div>
+
+        <div className="px-6 py-3 border-t border-slate-100 text-xs text-slate-400 italic">
+          Source: Custom Market Insights
+        </div>
+      </div>
+
+      <p className="mt-8 text-slate-600 leading-relaxed text-base sm:text-lg">
+        Demand for online MBAs has climbed steadily as employer acceptance of
+        online credentials grows and program technology matures. Accredited
+        online MBA degrees are recognized worldwide and can meaningfully
+        improve career prospects, leadership readiness, and earning
+        potential.
+      </p>
+
+      <p className="mt-4 text-slate-600 leading-relaxed text-base sm:text-lg">
+        The hard part is choosing where to study. Right now you&apos;re weighing
+        modules, formats, and outcomes — and that&apos;s exactly what we help
+        with. Compare 100+ universities for free in under 2 minutes using
+        our tool: fees, accreditation, specialization, placement record, and
+        student reviews, all in one place.
+      </p>
+
+      <div className="mt-6 flex items-center gap-3">
+        <button className="inline-flex items-center gap-2 rounded-full bg-red-500 hover:bg-red-600 transition-colors text-white font-semibold px-6 py-3 shadow-[0_8px_20px_-6px_rgba(239,68,68,0.55)]">
+          Apply Now
+        </button>
+        <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 hover:border-slate-300 transition-colors text-slate-700 font-semibold px-6 py-3">
+          <DownloadIcon />
+          Explore Courses
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function StatTile({ icon, label, value, border }: StatTileProps) {
+  return (
+    <div className={`flex items-center gap-3 px-4 sm:px-6 py-4 ${border ? "sm:border-l border-slate-100" : ""}`}>
+      <div className="h-9 w-9 shrink-0 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+        {icon}
+      </div>
+      <div>
+        <div className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+          {label}
+        </div>
+        <div className="text-sm font-bold text-slate-900">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function TrendUpIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M3 17l6-6 4 4 8-8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 7h6v6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TargetIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2.2" />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2.2" />
+    </svg>
+  );
+}
+
+function BoltIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PulseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h4l2 7 4-14 2 7h6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

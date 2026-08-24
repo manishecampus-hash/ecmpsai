@@ -8,7 +8,7 @@ import Link from "next/link";
 const staticSlides = [
   {
     id: "static-1",
-    desktop: "/banner/new333.svg",
+    desktop: "/banner/newwww.svg",
     mobile: "/banner/mobileupdate.svg",
     slug: "",
     title: "",

@@ -22,11 +22,7 @@ const stats = [
   { label: "Community", value: "80+ Countries", icon: Globe2 },
 ];
 
-const points = [
-  "Built for working professionals looking to accelerate their careers",
-  "Industry-aligned curriculum with real-world business application",
-  "Specializations across strategy, finance, marketing, HR and leadership",
-];
+
 
 const recognitionLogos = [
   { src: "/ggubanner/amity-online-university-logo_2.webp", alt: "AACSB Accredited" },
@@ -124,17 +120,7 @@ export default function MbaHeroSection() {
               ))}
             </div>
 
-            <ul className="mt-6 grid gap-2.5 sm:grid-cols-1">
-              {points.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-start gap-2.5 text-sm leading-6 text-slate-600"
-                >
-                  <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-red-500" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
+          
           </div>
 
           <aside className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">

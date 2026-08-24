@@ -287,7 +287,7 @@ export default function LmsAccessPage(): JSX.Element {
                               />
                             </div>
 
-                            <div className="flex min-w-0 items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600 sm:px-3 sm:text-xs">
+                            <div className="flex min-w-0 items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600 sm:px-3 sm:text-xs text-center">
                               <LocationIcon className="h-3 w-3 shrink-0" />
 
                               <span className="truncate">
@@ -297,7 +297,7 @@ export default function LmsAccessPage(): JSX.Element {
                           </div>
 
                           {/* University Name */}
-                          <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug tracking-tight text-gray-900 transition-colors duration-300 group-hover:text-red-600 sm:text-lg">
+                          <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug tracking-tight text-gray-900 transition-colors duration-300 group-hover:text-red-600 sm:text-lg text-center">
                             {university.name}
                           </h3>
 
@@ -320,7 +320,7 @@ export default function LmsAccessPage(): JSX.Element {
                           {/* CTA */}
                           <Link
                             href={`/apply?university=${university.slug}`}
-                            className="mt-3.5 inline-flex w-fit items-center gap-1.5 rounded-[6px] bg-red-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-red-700 hover:shadow-md sm:text-sm"
+                            className="mt-3.5 inline-flex w-fit items-center gap-1.5 rounded-[6px] bg-red-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:bg-red-700 hover:shadow-md sm:text-sm text-center"
                           >
                             <span>Access LMS</span>
                             <ChevronRight className="h-3.5 w-3.5" />

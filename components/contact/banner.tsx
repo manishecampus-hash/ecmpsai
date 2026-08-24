@@ -16,7 +16,7 @@ const Banner = () => {
       <div className="mx-auto max-w-7xl px-6 pt-0 pb-12 lg:px-8 lg:pb-16 lg:pt-0">
         <div className="grid items-center gap-12 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="relative z-10">
-            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-slate-900 md:text-5xl lg:text-[62px]">
+            <h1 className="px-3 sm:px-4 lg:px-6 py-6 sm:py-8 lg:py-10 relative z-10">
               Let&apos;s Start a
               <br />
               <span className="text-red-600">Conversation</span>

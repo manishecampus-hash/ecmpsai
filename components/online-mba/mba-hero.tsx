@@ -124,7 +124,7 @@ export default function MbaHeroSection() {
           </div>
 
           <aside className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div className="relative h-[198px] bg-slate-100 sm:h-[218px] lg:h-[235px]">
+            <div className="relative h-[198px] bg-slate-100 sm:h-[218px] lg:h-[246px]">
               <img
                 src="/ggubanner/newbnr.png"
                 alt="Online MBA program"

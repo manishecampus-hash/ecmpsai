@@ -1214,6 +1214,8 @@ import {
   Download,
   MapPin,
   Send,
+  Search,
+  Volume2,
 } from "lucide-react";
 
 type Badge = { alt: string; src?: string; label?: string };
@@ -1479,7 +1481,7 @@ export default function UniversityHeroWithStats({
       }}
       className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
     >
-      <Download className="h-4 w-4 shrink-0" />
+      <Search className="h-4 w-4 shrink-0" />
       <span className="truncate">
         {banner.ctas?.[1]?.buttonText || "Explore Courses"}
       </span>
@@ -1508,10 +1510,10 @@ export default function UniversityHeroWithStats({
           block: "start",
         });
       }}
-      className="inline-flex h-10 w-full items-center justify-end gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
+   className="relative -left-8 inline-flex h-10 w-full items-center justify-end gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
     >
-      <Download className="h-4 w-4 shrink-0" />
-      <span className="whitespace-nowrap">Download Brochure</span>
+      <Volume2 className="h-4 w-4 shrink-0" />
+      <span className="whitespace-nowrap">Speak to AI</span>
     </button>
   </div>
 </div>

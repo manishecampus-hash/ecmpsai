@@ -2,11 +2,6 @@
 
 import React from "react";
 
-/**
- * Online MBA Specializations Component
- * Aligned with MBA Overview and other sections for container width, spacing, and typography.
- */
-
 type Spec = {
   name: string;
   about: string;
@@ -95,73 +90,81 @@ const SPECIALIZATIONS: Spec[] = [
 
 export default function Specializations() {
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
-      {/* Heading */}
-      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-        What <span className="text-red-500">specializations</span> does an online MBA offer?
-      </h2>
-
-      <p className="mt-4 text-slate-600 leading-relaxed text-base sm:text-lg">
-        Indian universities offer 95+ online MBA specializations to choose
-        from, with good opportunities for dual specializations too. Here are
-        the top picks by career scope and demand.
-      </p>
-
-      {/* Specializations Table Card */}
-      <div className="mt-8 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
-        <div className="bg-red-600 px-6 py-4">
-          <h3 className="text-sm sm:text-base font-bold text-white text-center">
-            Top Online MBA Specializations
-          </h3>
+    <section className="relative mx-auto w-full max-w-6xl px-4 py-8 font-sans text-black sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl font-[Inter]">
+        {/* Header */}
+        <div className="mb-6 text-center sm:mb-8">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Online MBA{" "}
+            <span className="text-[#ee2c3c]">Specializations</span>
+          </h2>
         </div>
 
-        {SPECIALIZATIONS.map((spec, i) => (
-          <div
-            key={spec.name}
-            className={`grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 md:gap-6 px-6 py-5 ${
-              i % 2 === 0 ? "bg-red-50/40" : "bg-white"
-            } ${i !== SPECIALIZATIONS.length - 1 ? "border-b border-slate-100" : ""}`}
-          >
-            <a
-              href="#"
-              className="text-sm sm:text-base font-semibold text-red-500 underline decoration-red-200 hover:decoration-red-500 transition-colors self-start"
-            >
-              {spec.name}
-            </a>
+      
 
-            <div className="space-y-3">
-              <div className="flex items-start gap-2.5">
-                <CheckBubble />
-                <span className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  {spec.about}
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckBubble />
-                <span className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  {spec.careers}
-                </span>
+        {/* Specializations Table Card */}
+        <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="bg-[#ee2c3c] px-6 py-4">
+            <h3 className="text-center text-sm font-bold text-white sm:text-base">
+              Popular Online MBA Specializations
+            </h3>
+          </div>
+
+          {SPECIALIZATIONS.map((spec, i) => (
+            <div
+              key={spec.name}
+              className={`grid grid-cols-1 gap-4 px-6 py-5 md:grid-cols-[260px_1fr] md:gap-6 ${
+                i % 2 === 0 ? "bg-red-50/40" : "bg-white"
+              } ${
+                i !== SPECIALIZATIONS.length - 1
+                  ? "border-b border-slate-100"
+                  : ""
+              }`}
+            >
+              <a
+                href="#"
+                className="self-start text-sm font-semibold text-red-500 underline decoration-red-200 transition-colors hover:decoration-red-500 sm:text-base"
+              >
+                {spec.name}
+              </a>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <CheckBubble />
+                  <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                    {spec.about}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <CheckBubble />
+                  <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                    {spec.careers}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Bottom Link */}
-      <a
-        href="#"
-        className="mt-6 inline-flex items-center gap-1.5 text-sm sm:text-base font-semibold text-red-500 hover:text-red-600 transition-colors"
-      >
-        View list of all online MBA specializations
-        <ArrowIcon />
-      </a>
+        {/* Bottom Link */}
+        <div className="mt-6 text-center">
+          <a
+            href="#"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-red-500 transition-colors hover:text-red-600 sm:text-base"
+          >
+            View all Online MBA specializations
+            <ArrowIcon />
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
 
 function CheckBubble() {
   return (
-    <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"

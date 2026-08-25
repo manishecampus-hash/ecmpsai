@@ -1,94 +1,166 @@
+"use client";
+
 import React from "react";
 
-/**
- * Why Are So Many Professionals Choosing an Online MBA Right Now?
- * Same container/heading system as the other sections
- * (max-w-4xl, text-3xl md:text-4xl, red-500 accent, red-50 check bubbles).
- */
-
-type Reason = { title: string; detail: string };
+type Reason = {
+  title: string;
+  detail: string;
+};
 
 const REASONS: Reason[] = [
   {
-    title: "No fixed classroom hours:",
+    title: "Flexible learning",
     detail:
-      "Study when and where it works for you, through recorded lectures and self-paced coursework.",
+      "Study when and where it works for you through live or recorded classes and self-paced coursework.",
   },
   {
-    title: "You learn and still earn:",
+    title: "Learn while you earn",
     detail:
-      "Most students stay employed through the program and apply what they learn on the job the very next day.",
+      "Many working professionals continue their jobs while studying and apply new management concepts directly at work.",
   },
   {
-    title: "Much more affordable:",
+    title: "More affordable",
     detail:
-      "Online MBA programs in India typically cost ₹30,000 to ₹5,00,000 — a fraction of on-campus fees, with no relocation or hostel costs.",
+      "Online MBA programmes can cost less than traditional on-campus options, while also reducing relocation and hostel expenses.",
   },
   {
-    title: "You build real connections:",
+    title: "Build your network",
     detail:
-      "Virtual events, alumni groups, mentors, and collaborative projects keep your network growing without a physical campus.",
+      "Virtual events, peer discussions, alumni communities, mentors and collaborative projects can help expand your professional network.",
   },
   {
-    title: "It opens the door to bigger roles:",
+    title: "Career growth",
     detail:
-      "GMAC data shows online MBA graduates see larger pay increases than those with only a bachelor's degree — and the gap widens over time.",
+      "An MBA can help professionals build management knowledge and prepare for leadership, strategy and other higher-responsibility roles.",
   },
 ];
 
 export default function WhyChooseOnlineMBA() {
   return (
-    <section className="max-w-4xl mx-auto px-4 py-10 font-sans text-slate-800">
-      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-        Why are so many professionals choosing an <span className="text-red-500">Online MBA</span> right now?
-      </h2>
+    <section className="relative mx-auto w-full max-w-6xl px-4 py-8 font-sans text-black sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl font-[Inter]">
+        {/* Header */}
+        <div className="mb-6 text-center sm:mb-8">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Why Choose an <span className="text-[#ee2c3c]">Online MBA?</span>
+          </h2>
+        </div>
 
-      <p className="mt-4 text-slate-500 leading-relaxed">
-        A traditional campus MBA usually means fixed office hours. An
-        online MBA hands that control back to you — early mornings, lunch
-        breaks, or late nights, whenever you can focus. There's no need to
-        relocate, quit your job, or disrupt your cash flow. And the career
-        payoff is real: employers increasingly recognize online degrees
-        from accredited universities.
-      </p>
+        {/* Introduction */}
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="text-base leading-relaxed text-slate-600 sm:text-lg">
+            An Online MBA gives working professionals the flexibility to
+            continue learning without putting their careers on hold. You can
+            study around your schedule while building valuable business and
+            management skills.
+          </p>
 
-      <p className="mt-4 text-slate-500 leading-relaxed">
-        Here's why so many professionals pick an online MBA every year — it
-        works around your schedule, not the other way round.
-      </p>
+          <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+            From flexible learning and affordability to career growth, here
+            are some of the main reasons professionals choose an Online MBA.
+          </p>
+        </div>
 
-      <div className="mt-6 rounded-2xl border border-slate-200 shadow-sm bg-white p-6">
-        <ul className="space-y-4">
-          {REASONS.map((reason) => (
-            <li key={reason.title} className="flex items-start gap-3">
-              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-                <CheckIcon />
+        {/* Reasons */}
+        <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                <BriefcaseIcon />
               </span>
-              <span className="text-sm md:text-[15px] text-slate-600 leading-relaxed">
-                <span className="font-bold text-slate-900">{reason.title}</span>{" "}
-                {reason.detail}
-              </span>
-            </li>
-          ))}
-        </ul>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 sm:text-lg">
+                  Benefits for Working Professionals
+                </h3>
+                <p className="mt-0.5 text-sm text-slate-500">
+                  Learn without stepping away from your career
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <ul className="divide-y divide-slate-100">
+            {REASONS.map((reason, index) => (
+              <li
+                key={reason.title}
+                className="group flex items-start gap-4 px-6 py-5 transition-colors hover:bg-red-50/30 sm:px-8"
+              >
+                {/* Number */}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-red-500">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+
+                <div className="min-w-0">
+                  <h4 className="text-sm font-bold text-slate-900 sm:text-base">
+                    {reason.title}
+                  </h4>
+
+                  <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-base">
+                    {reason.detail}
+                  </p>
+                </div>
+
+                <span className="ml-auto mt-1 hidden h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500 sm:flex">
+                  <CheckIcon />
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Bottom Summary */}
+        <div className="mt-6 rounded-xl border border-red-100 bg-red-50/60 px-5 py-5 text-center sm:px-8">
+          <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
+            <span className="font-bold text-slate-900">
+              The bottom line:
+            </span>{" "}
+            An Online MBA can be a practical way to strengthen your management
+            skills and work towards career growth without putting everything
+            else in your professional life on pause.
+          </p>
+        </div>
       </div>
-
-      <p className="mt-6 text-slate-500 leading-relaxed">
-        If you want to move your career forward without pressing pause on
-        everything else in your life, an online MBA is probably the
-        smartest move you can make.
-      </p>
     </section>
   );
 }
 
 function CheckIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
       <path
         d="M20 6L9 17l-5-5"
         stroke="currentColor"
         strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function BriefcaseIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <rect
+        x="3"
+        y="7"
+        width="18"
+        height="13"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M3 12h18M10 12v2h4v-2"
+        stroke="currentColor"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

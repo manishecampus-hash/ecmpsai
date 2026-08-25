@@ -2,107 +2,274 @@
 
 import React from "react";
 
-/**
- * Online MBA Syllabus Component
- * Aligned with MBA Overview and other sections for container width, spacing, and typography.
- */
-
 const CORE_SUBJECTS: string[] = [
   "Entrepreneurial Practice",
-  "Business Communication (WAC)",
+  "Business Communication",
   "Managerial Economics",
   "Financial Accounting",
-  "Data Visualisation (Excel/Tableau)",
+  "Data Visualisation",
   "Organizational Behaviour",
   "Marketing Management",
-  "Business Research Methods (R/SPSS/Python)",
+  "Business Research Methods",
   "Operations Management",
   "Human Resource Management",
   "Management Accounting",
   "Financial Management",
-  "Legal Aspects of Business",
-  "Business Communication (VAC)",
 ];
 
 const SPECIALIZATIONS: string[] = [
-  "HR",
+  "Human Resource Management",
   "Business Analytics",
-  "Operations",
-  "IT",
-  "Marketing",
+  "Operations Management",
+  "Information Technology",
+  "Marketing Management",
   "Data Analytics",
   "Finance",
 ];
 
+const SEMESTERS = [
+  {
+    number: "01",
+    title: "Semester 1",
+    text: "Build a strong foundation in management, communication, economics and accounting.",
+  },
+  {
+    number: "02",
+    title: "Semester 2",
+    text: "Develop deeper knowledge of marketing, operations, finance and business research.",
+  },
+  {
+    number: "03",
+    title: "Semester 3",
+    text: "Begin your chosen specialization with advanced and industry-focused subjects.",
+  },
+  {
+    number: "04",
+    title: "Semester 4",
+    text: "Complete advanced specialization courses, projects and practical learning.",
+  },
+];
+
 export default function Syllabus() {
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
-      {/* Section Heading */}
-      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-        What subjects are covered in the{" "}
-        <span className="text-red-500">Online MBA syllabus?</span>
-      </h2>
-
-      <p className="mt-4 text-slate-600 leading-relaxed text-base sm:text-lg">
-        The syllabus varies from university to university, but the program
-        typically runs for 2 years, split into 4 semesters. The first two
-        semesters build the same core foundation across most universities —
-        here&apos;s what&apos;s usually covered.
-      </p>
-
-      {/* Core subjects checklist, sem 1 & 2 */}
-      <div className="mt-8 rounded-2xl border border-slate-200 shadow-sm bg-white p-6 sm:p-8">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">
-            Semester 1 &amp; 2 — Core Foundation
-          </h3>
-          <span className="inline-flex text-xs font-bold text-red-500 bg-red-50 border border-red-100 rounded-full px-3 py-1">
-            Common to all specializations
-          </span>
+    <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans text-black">
+      <div className="max-w-6xl mx-auto font-[Inter]">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 text-center">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+            Online MBA{" "}
+            <span className="text-[#ee2c3c]">Syllabus</span>
+          </h2>
         </div>
 
-        <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3.5">
-          {CORE_SUBJECTS.map((subject) => (
-            <li key={subject} className="flex items-start gap-2.5">
-              <CheckBubble />
-              <span className="text-sm sm:text-base font-medium text-slate-700">
-                {subject}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+     
 
-      {/* Semester 3 & 4 specialization note */}
-      <div className="mt-6 rounded-2xl border border-red-100 bg-red-50/60 p-6 sm:p-8">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 h-6 w-6 shrink-0 rounded-full bg-red-500 text-white flex items-center justify-center">
-            <ArrowIcon />
-          </span>
-          <div>
-            <h4 className="text-base sm:text-lg font-bold text-slate-900">
-              Semester 3 &amp; 4 — Your Specialization
-            </h4>
-            <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed">
-              From the third semester, the curriculum shifts to the
-              specialization you choose. Pick from options like{" "}
-              {SPECIALIZATIONS.map((s, i) => (
-                <span key={s}>
-                  <span className="font-semibold text-slate-800">{s}</span>
-                  {i < SPECIALIZATIONS.length - 1 ? ", " : ", and more."}
-                </span>
-              ))}
+        {/* Quick Overview */}
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <InfoCard
+            icon={<CalendarIcon />}
+            label="Programme Duration"
+            value="2 Years"
+            description="Usually divided into 4 semesters"
+          />
+
+          <InfoCard
+            icon={<BookIcon />}
+            label="Learning Structure"
+            value="Core + Electives"
+            description="Foundation followed by specialization"
+          />
+
+          <InfoCard
+            icon={<GradCapIcon />}
+            label="Specialization"
+            value="Choose Your Path"
+            description="Focus on your preferred domain"
+          />
+        </div>
+
+        {/* Semester Journey */}
+        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                Programme Structure
+              </p>
+              <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
+                Your 4-Semester MBA Journey
+              </h3>
+            </div>
+
+            <p className="text-sm text-slate-500">
+              From business foundations to specialization
             </p>
           </div>
+
+          <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SEMESTERS.map((semester) => (
+              <div
+                key={semester.number}
+                className="group relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50/60 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-red-200 hover:bg-white hover:shadow-md"
+              >
+                <span className="text-3xl font-bold tracking-tight text-red-100">
+                  {semester.number}
+                </span>
+
+                <h4 className="mt-3 text-base font-bold text-slate-900">
+                  {semester.title}
+                </h4>
+
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  {semester.text}
+                </p>
+
+                <div className="mt-4 h-1 w-10 rounded-full bg-red-500 transition-all duration-200 group-hover:w-16" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Core Subjects */}
+        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8 sm:py-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                  <BookIcon />
+                </span>
+
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
+                    Core Subjects
+                  </h3>
+                  <p className="mt-0.5 text-sm text-slate-500">
+                    Usually covered during Semester 1 &amp; 2
+                  </p>
+                </div>
+              </div>
+
+              <span className="rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-500">
+                Foundation Learning
+              </span>
+            </div>
+          </div>
+
+          <div className="p-6 sm:p-8">
+            <p className="max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
+              The first year focuses on essential business and management
+              concepts that create a strong foundation before students move
+              into their chosen specialization.
+            </p>
+
+            <ul className="mt-7 grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
+              {CORE_SUBJECTS.map((subject) => (
+                <li
+                  key={subject}
+                  className="flex items-center gap-3 rounded-lg border border-transparent px-3 py-2 transition-colors hover:border-red-100 hover:bg-red-50/40"
+                >
+                  <CheckBubble />
+
+                  <span className="text-sm font-medium text-slate-700 sm:text-base">
+                    {subject}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Specializations */}
+        <div className="mt-6 rounded-2xl border border-red-100 bg-red-50/50 p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-xl">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white">
+                  <TargetIcon />
+                </span>
+
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                    Semester 3 &amp; 4
+                  </p>
+                  <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
+                    Choose Your Specialization
+                  </h3>
+                </div>
+              </div>
+
+              <p className="mt-5 text-sm leading-relaxed text-slate-600 sm:text-base">
+                During the second year, the curriculum becomes more focused on
+                your selected area of expertise. Subjects and elective options
+                may differ depending on the university.
+              </p>
+            </div>
+
+            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:max-w-xl">
+              {SPECIALIZATIONS.map((specialization) => (
+                <div
+                  key={specialization}
+                  className="flex items-center gap-2.5 rounded-xl border border-white bg-white/80 px-4 py-3 shadow-sm"
+                >
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
+
+                  <span className="text-sm font-semibold text-slate-700">
+                    {specialization}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Important Note */}
+        <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
+            i
+          </span>
+
+          <p className="text-sm leading-relaxed text-slate-600">
+            <span className="font-semibold text-slate-900">Note:</span>{" "}
+            The exact syllabus, subject names, credits, electives and
+            specialization options can vary between universities. Always check
+            the official programme curriculum before applying.
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
+function InfoCard({
+  icon,
+  label,
+  value,
+  description,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+        {icon}
+      </span>
+
+      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+        {label}
+      </p>
+
+      <h3 className="mt-1 text-lg font-bold text-slate-900">{value}</h3>
+
+      <p className="mt-1 text-sm text-slate-500">{description}</p>
+    </div>
+  );
+}
+
 function CheckBubble() {
   return (
-    <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"
@@ -116,15 +283,89 @@ function CheckBubble() {
   );
 }
 
-function ArrowIcon() {
+function CalendarIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M5 12h14M13 5l7 7-7 7"
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="16"
+        rx="2"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
+      />
+      <path
+        d="M8 3v4M16 3v4M3 10h18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function BookIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 014 16.5v-11z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4 16.5A2.5 2.5 0 016.5 14H20"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function GradCapIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M2 9l10-5 10 5-10 5-10-5z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"
+        stroke="currentColor"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function TargetIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M12 2v2M22 12h-2M12 22v-2M2 12h2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

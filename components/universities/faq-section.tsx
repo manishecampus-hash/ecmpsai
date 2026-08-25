@@ -1,13 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  HelpCircle,
-  ChevronDown,
-  ChevronUp,
-  MessageSquare,
-  CircleHelp,
-} from "lucide-react";
+import React from "react";
+import { HelpCircle, ChevronUp, MessageSquare, CircleHelp } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
 interface FAQItem {
@@ -20,9 +14,6 @@ interface FAQSectionProps {
 }
 
 export default function FAQSection({ university }: FAQSectionProps) {
-  // Track open state for multiple accordion items independently using indices
-  const [openIndex, setOpenIndex] = useState<number | null>(0); // opens first item by default
-
   const universityName = university?.name || "IIM K";
   const sdData = university?.details?.supportDesk || {};
 
@@ -63,10 +54,6 @@ export default function FAQSection({ university }: FAQSectionProps) {
   if (!rawFaqs || rawFaqs.length === 0) {
     return null;
   }
-
-  const toggleAccordion = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
 
   return (
     /* ============================================================
@@ -110,62 +97,32 @@ export default function FAQSection({ university }: FAQSectionProps) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Interactive Accordion Matrix (Span 8) */}
+        {/* RIGHT COLUMN: Always-Expanded FAQ Matrix (Span 8) */}
         <div className="space-y-4 lg:col-span-8">
-          {rawFaqs.map((faq: FAQItem, index: number) => {
-            const isOpen = openIndex === index;
-
-            return (
-              <div
-                key={index}
-                className={`overflow-hidden rounded-2xl border transition-all duration-200 ${
-                  isOpen
-                    ? "border-red-200 bg-red-50/10 shadow-sm"
-                    : "border-slate-200 bg-white hover:border-slate-300"
-                }`}
-              >
-                {/* Accordion Trigger Header Trigger */}
-                <button
-                  type="button"
-                  onClick={() => toggleAccordion(index)}
-                  className="flex w-full items-start justify-between p-5 text-left transition"
-                >
-                  <div className="flex gap-3.5 pr-4">
-                    <HelpCircle
-                      className={`mt-0.5 h-5 w-5 shrink-0 transition-colors ${
-                        isOpen ? "text-red-500" : "text-slate-400"
-                      }`}
-                    />
-                    <span className="text-base font-bold text-gray-900 sm:text-lg">
-                      {faq.question}
-                    </span>
-                  </div>
-                  <div className="mt-1 shrink-0 rounded-lg bg-slate-50 p-1 text-slate-500 border border-slate-100">
-                    {isOpen ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </div>
-                </button>
-
-                {/* Animated Inner Collapsible Content Body */}
-                <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
-                  }`}
-                >
-                  <div className="overflow-hidden">
-                    <div className="border-t border-slate-100/80 p-5 pt-0 text-sm text-gray-600 leading-relaxed sm:text-base">
-                      {faq.answer}
-                    </div>
-                  </div>
+          {rawFaqs.map((faq: FAQItem, index: number) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-2xl border border-red-200 bg-red-50/10 shadow-sm"
+            >
+              {/* Header */}
+              <div className="flex w-full items-start justify-between p-5 text-left">
+                <div className="flex gap-3.5 pr-4">
+                  <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+                  <span className="text-base font-bold text-gray-900 sm:text-lg">
+                    {faq.question}
+                  </span>
+                </div>
+                <div className="mt-1 shrink-0 rounded-lg bg-slate-50 p-1 text-slate-500 border border-slate-100">
+                  <ChevronUp className="h-4 w-4" />
                 </div>
               </div>
-            );
-          })}
+
+              {/* Always visible content body */}
+              <div className="border-t border-slate-100/80 p-5 pt-0 text-sm text-gray-600 leading-relaxed sm:text-base">
+                {faq.answer}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

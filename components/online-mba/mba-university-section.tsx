@@ -47,7 +47,7 @@ export default function MbaUniversitySection() {
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
             AI Compare for 
-            <span className="text-red-500"> Online MBA</span>
+            <span className="text-[#ee2c3c]"> Online MBA</span>
           </h2>
         </div>
 

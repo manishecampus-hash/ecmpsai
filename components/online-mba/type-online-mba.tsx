@@ -1,12 +1,6 @@
-import React from "react";
+"use client";
 
-/**
- * Types of Online MBA
- * Same container/heading system as the other sections
- * (max-w-4xl, text-3xl md:text-4xl, red-500 accent).
- * Table header re-themed navy -> red-600; two-column table (course link
- * left, checklist details right) matches the reference format.
- */
+import React from "react";
 
 type MBAType = {
   name: string;
@@ -83,71 +77,81 @@ const TYPES: MBAType[] = [
 
 export default function TypesOfOnlineMBA() {
   return (
-    <section className="max-w-4xl mx-auto px-4 py-10 font-sans text-slate-800">
-      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-        Types of <span className="text-red-500">Online MBA</span>
-      </h2>
-
-      <p className="mt-4 text-slate-500 leading-relaxed">
-        "Online MBA" isn't a single format — the pace, cost, and eligibility
-        shift depending on which route you pick. Here's a breakdown of the
-        main types on offer in India.
-      </p>
-
-      <div className="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
-        <div className="bg-red-600 px-6 py-4">
-          <h3 className="text-sm font-bold text-white text-center">
-            Types of Online MBA
-          </h3>
+    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
+      <div className="max-w-6xl mx-auto font-[Inter]">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8 text-center">
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+            Types of <span className="text-[#ee2c3c]">Online MBA</span>
+          </h2>
         </div>
 
-        <div className="hidden md:grid grid-cols-[240px_1fr] bg-red-50/60 border-b border-slate-100">
-          <div className="px-6 py-3">
-            <h4 className="text-sm font-bold text-slate-900">Courses</h4>
-          </div>
-          <div className="px-6 py-3 border-l border-slate-100">
-            <h4 className="text-sm font-bold text-slate-900">Details</h4>
-          </div>
-        </div>
+     
 
-        {TYPES.map((type, i) => (
-          <div
-            key={type.name}
-            className={`grid md:grid-cols-[240px_1fr] gap-4 md:gap-0 px-6 py-5 ${
-              i % 2 === 0 ? "bg-red-50/40" : "bg-white"
-            } ${i !== TYPES.length - 1 ? "border-b border-slate-100" : ""}`}
-          >
-            <a
-              href="#"
-              className="text-sm font-semibold text-red-500 underline decoration-red-200 hover:decoration-red-500 self-start"
-            >
-              {type.name}
-            </a>
+        <div className="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
+          <div className="bg-[#ee2c3c] px-6 py-4">
+            <h3 className="text-sm font-bold text-white text-center">
+              Types of Online MBA
+            </h3>
+          </div>
 
-            <div className="md:pl-6 md:border-l border-slate-100 space-y-3">
-              <div className="flex items-start gap-2.5">
-                <CheckBubble />
-                <span className="text-sm text-slate-600 leading-relaxed">
-                  {type.about}
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckBubble />
-                <span className="text-sm text-slate-600 leading-relaxed">
-                  <span className="font-bold text-slate-900 italic">Duration — </span>
-                  {type.duration}
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckBubble />
-                <span className="text-sm text-slate-600 leading-relaxed">
-                  <span className="font-bold text-slate-900 italic">Fees — </span>
-                  {type.fees}
-                </span>
-              </div>
+          <div className="hidden md:grid grid-cols-[240px_1fr] bg-red-50/60 border-b border-slate-100">
+            <div className="px-6 py-3">
+              <h4 className="text-sm font-bold text-slate-900">Courses</h4>
+            </div>
+
+            <div className="px-6 py-3 border-l border-slate-100">
+              <h4 className="text-sm font-bold text-slate-900">Details</h4>
             </div>
           </div>
-        ))}
+
+          {TYPES.map((type, i) => (
+            <div
+              key={type.name}
+              className={`grid md:grid-cols-[240px_1fr] gap-4 md:gap-0 px-6 py-5 ${
+                i % 2 === 0 ? "bg-red-50/40" : "bg-white"
+              } ${
+                i !== TYPES.length - 1 ? "border-b border-slate-100" : ""
+              }`}
+            >
+              <a
+                href="#"
+                className="text-sm font-semibold text-red-500 underline decoration-red-200 hover:decoration-red-500 self-start"
+              >
+                {type.name}
+              </a>
+
+              <div className="md:pl-6 md:border-l border-slate-100 space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <CheckBubble />
+                  <span className="text-sm text-slate-600 leading-relaxed">
+                    {type.about}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <CheckBubble />
+                  <span className="text-sm text-slate-600 leading-relaxed">
+                    <span className="font-bold text-slate-900 italic">
+                      Duration —{" "}
+                    </span>
+                    {type.duration}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <CheckBubble />
+                  <span className="text-sm text-slate-600 leading-relaxed">
+                    <span className="font-bold text-slate-900 italic">
+                      Fees —{" "}
+                    </span>
+                    {type.fees}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -157,7 +161,13 @@ function CheckBubble() {
   return (
     <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-        <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M20 6L9 17l-5-5"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   );

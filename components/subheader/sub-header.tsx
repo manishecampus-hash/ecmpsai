@@ -11,19 +11,17 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "about", label: "About" },
-  { id: "who-can-apply", label: "Who Can Apply" },
-  { id: "specializations", label: "Specializations" },
-  { id: "fees", label: "Course Fees" },
-  { id: "emi-details", label: "Education Loan/EMI" },
-  { id: "admission-process", label: "Admission Open 2026" },
-  { id: "syllabus", label: "Syllabus/Curriculum" },
-  { id: "examination-pattern", label: "Examination Pattern" },
-  { id: "job-roles", label: "Job Roles" },
-  { id: "reviews", label: "Reviews" },
-  { id: "coupons", label: "Coupons" },
-  { id: "placement-partners", label: "Placement Partners" },
-  { id: "faculty", label: "Faculty" },
+  { id: "about", label: "Program Overview" },
+  { id: "who-can-apply", label: "Subjects/Syllabus" },
+  { id: "specializations", label: "Eligibility & Duration" },
+  { id: "fees", label: "Program Fees" },
+  { id: "emi-details", label: "Admission Procedure" },
+  { id: "admission-process", label: "Top Specializations" },
+  { id: "syllabus", label: "EducationLoan/EMIs" },
+  { id: "examination-pattern", label: "Worth It?" },
+  { id: "job-roles", label: "Career Scope" },
+  { id: "reviews", label: "Coupons" },
+ 
 ];
 const BASE_PATH = "/programs/doctorate/ggu";
 

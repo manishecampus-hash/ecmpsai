@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import {
   Search,
   Download,
@@ -16,181 +16,25 @@ import {
 } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
-interface SpecializationRow {
-  id: string;
-  course: string;
-  specialization: string;
-  duration: string;
-  fees: string;
-  emi: string;
-  brochure?: string;
-}
+
+import { EXPLORE_LINKS } from "@/data/explore-course";
+import { DEFAULT_SPECIALIZATIONS_DATA, SpecializationRow } from "@/data/specializations";
+import { CARD_IMAGES, UG_COURSES } from "@/data/constant";
+import { feeToNumber, formatINR, calculateEMI } from "@/lib/course-helpers";
+
+/* TopSpecializations is intentionally compact: all large arrays & helpers
+   are imported from data/ and lib/. Only rendering and fetch logic live here. */
 
 interface TopSpecializationsProps {
   university?: any;
 }
-
-const DEFAULT_SPECIALIZATIONS_DATA: SpecializationRow[] = [
-  {
-    id: "1",
-    course: "B.Tech",
-    specialization: "Cloud & Cyber Security",
-    duration: "4 Years",
-    fees: "₹2,80,000",
-    emi: "INR 7,775/mo*",
-  },
-  {
-    id: "2",
-    course: "B.Tech",
-    specialization: "Artificial Intelligence & Data Science",
-    duration: "4 Years",
-    fees: "₹3,20,000",
-    emi: "INR 8,888/mo*",
-  },
-  {
-    id: "3",
-    course: "B.Com",
-    specialization: "General Accountancy",
-    duration: "3 Years",
-    fees: "₹99,000",
-    emi: "INR 2,750/mo*",
-  },
-  {
-    id: "4",
-    course: "B.Com",
-    specialization: "Honours & Corporate Finance",
-    duration: "3 Years",
-    fees: "₹1,50,000",
-    emi: "INR 4,166/mo*",
-  },
-  {
-    id: "5",
-    course: "B.Com",
-    specialization: "International Accounting & Finance",
-    duration: "3 Years",
-    fees: "₹2,25,000",
-    emi: "INR 6,250/mo*",
-  },
-  {
-    id: "6",
-    course: "BA",
-    specialization: "Liberal Arts & Economics",
-    duration: "3 Years",
-    fees: "₹99,000",
-    emi: "INR 2,750/mo*",
-  },
-  {
-    id: "7",
-    course: "BA",
-    specialization: "Sociology & Human Behavior",
-    duration: "3 Years",
-    fees: "₹99,000",
-    emi: "INR 2,750/mo*",
-  },
-  {
-    id: "8",
-    course: "BA",
-    specialization: "Journalism & Digital Media",
-    duration: "3 Years",
-    fees: "₹1,70,000",
-    emi: "INR 4,722/mo*",
-  },
-  {
-    id: "9",
-    course: "BA",
-    specialization: "Political Science & Governance",
-    duration: "3 Years",
-    fees: "₹99,000",
-    emi: "INR 2,750/mo*",
-  },
-  {
-    id: "10",
-    course: "BA",
-    specialization: "English Literature",
-    duration: "3 Years",
-    fees: "₹85,000",
-    emi: "INR 2,361/mo*",
-  },
-  {
-    id: "11",
-    course: "MCA",
-    specialization: "Advanced Software Engineering",
-    duration: "2 Years",
-    fees: "₹1,70,000",
-    emi: "INR 7,083/mo*",
-  },
-  {
-    id: "12",
-    course: "MCA",
-    specialization: "Blockchain Systems & Management",
-    duration: "2 Years",
-    fees: "₹1,70,000",
-    emi: "INR 7,083/mo*",
-  },
-  {
-    id: "13",
-    course: "MCA",
-    specialization: "FinTech Systems & Cloud Architecture",
-    duration: "2 Years",
-    fees: "₹2,75,000",
-    emi: "INR 11,458/mo*",
-  },
-  {
-    id: "14",
-    course: "MBA",
-    specialization: "Strategic Marketing & Analytics",
-    duration: "2 Years",
-    fees: "₹2,50,000",
-    emi: "INR 10,416/mo*",
-  },
-  {
-    id: "15",
-    course: "MBA",
-    specialization: "Human Resource Transformation",
-    duration: "2 Years",
-    fees: "₹2,50,000",
-    emi: "INR 10,416/mo*",
-  },
-];
-
-const UG_COURSES = ["B.Tech", "B.Com", "BA", "BBA", "BCA", "B.Sc"];
 
 function categorize(course: string): "ug" | "pg" {
   if (UG_COURSES.includes(course)) return "ug";
   return course.trim().toUpperCase().startsWith("B") ? "ug" : "pg";
 }
 
-const CARD_IMAGES = [
-  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&auto=format&fit=crop&q=80",
-];
-
-function feeToNumber(fee: string) {
-  return parseInt(fee.replace(/[^\d]/g, ""), 10) || 0;
-}
-
-function formatINR(amount: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
-function calculateEMI(fee: number, durationStr: string) {
-  const years = parseInt(durationStr) || 2;
-  const months = years * 12;
-  const emi = Math.round(fee / months);
-  return `INR ${emi.toLocaleString("en-IN")}/mo*`;
-}
-
-export default function TopSpecializations({
-  university,
-}: TopSpecializationsProps) {
+export default function TopSpecializations({ university }: TopSpecializationsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [dbCourses, setDbCourses] = useState<any[]>([]);
@@ -199,26 +43,20 @@ export default function TopSpecializations({
   const [activeCategory, setActiveCategory] = useState<string>("top");
   const itemsPerPage = 10;
 
-  const uniLabel = university?.name
-    ? `${university.name} Online`
-    : "Amity Online";
+  const cardsScrollRef = useRef<HTMLDivElement>(null);
 
-  const specData =
-    university?.details?.specializations ||
-    university?.details?.inDemandSpecializations ||
-    {};
-  const specializationsData: SpecializationRow[] =
-    specData.list && specData.list.length > 0
-      ? specData.list.map((item: any, idx: number) => ({
-          id: item.id || String(idx),
-          course: item.course || "",
-          specialization: item.specialization || "",
-          duration: item.duration || "",
-          fees: item.fees || "",
-          emi: item.emi || "",
-          brochure: item.brochure || "",
-        }))
-      : DEFAULT_SPECIALIZATIONS_DATA;
+  const scrollCards = (direction: "left" | "right") => {
+    if (!cardsScrollRef.current) return;
+    const scrollAmount = 280; // approx one card width + gap
+    cardsScrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  const uniLabel = university?.name ? `${university.name} Online` : "Amity Online";
+
+  const normalize = (val?: string) => (val || "").toLowerCase().trim().replace(/[\s_-]+/g, "");
 
   useEffect(() => {
     if (!university?.id) {
@@ -226,8 +64,7 @@ export default function TopSpecializations({
       return;
     }
 
-    const apiUrl =
-      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
     const fetchCoursesAndCategories = async () => {
       try {
@@ -284,7 +121,10 @@ export default function TopSpecializations({
       return [{ key: "top", label: "Top Specializations" }];
     }
     if (showOnlyTopTab) {
-      return [{ key: "top", label: "Top Specializations" }];
+      return [
+        { key: "top", label: "Top Specializations" },
+        { key: "explore", label: "Explore Online Courses" },
+      ];
     }
 
     const uniqueCategoryIds = Array.from(
@@ -296,7 +136,11 @@ export default function TopSpecializations({
       label: categoryMap[catId] || "Category",
     }));
 
-    return [...dynamicTabs, { key: "top", label: "Top Specializations" }];
+    return [
+      ...dynamicTabs,
+      { key: "top", label: "Top Specializations" },
+      { key: "explore", label: "Explore Online Courses" },
+    ];
   }, [dbCourses, categoryMap, showOnlyTopTab, isLoading]);
 
   useEffect(() => {
@@ -310,13 +154,33 @@ export default function TopSpecializations({
 
   const visibleCourses = useMemo(() => {
     if (activeCategory === "top") return [];
+    if (activeCategory === "explore") {
+      return dbCourses.length > 0 ? dbCourses : [];
+    }
     return dbCourses.filter((c) => c.category === activeCategory);
   }, [dbCourses, activeCategory]);
+
+  const specData =
+    university?.details?.specializations ||
+    university?.details?.inDemandSpecializations ||
+    {};
+  const specializationsData: SpecializationRow[] =
+    specData.list && specData.list.length > 0
+      ? specData.list.map((item: any, idx: number) => ({
+          id: item.id || String(idx),
+          course: item.course || "",
+          specialization: item.specialization || "",
+          duration: item.duration || "",
+          fees: item.fees || "",
+          emi: item.emi || "",
+          brochure: item.brochure || "",
+        }))
+      : DEFAULT_SPECIALIZATIONS_DATA;
 
   const filteredRows = specializationsData.filter(
     (row) =>
       row.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.specialization.toLowerCase().includes(searchTerm.toLowerCase()),
+      row.specialization.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
@@ -328,12 +192,59 @@ export default function TopSpecializations({
     alert(`Downloading Brochure for: ${specialization}`);
   };
 
+  /* Render explore table using EXPLORE_LINKS (keeps TopSpecializations tidy) */
+  const renderExploreTable = () => {
+    const pairs: { left: any; right?: any }[] = [];
+    for (let i = 0; i < EXPLORE_LINKS.length; i += 2) {
+      pairs.push({ left: EXPLORE_LINKS[i], right: EXPLORE_LINKS[i + 1] });
+    }
+
+    return (
+      <div className="mx-auto w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div className="text-center bg-black text-white font-bold border-b border-red-200 py-3 font-semibold text-lg text-black-700">
+         Explore Top Online Courses in India
+        </div>
+
+        <div className="hidden sm:block">
+          <table className="w-full border-collapse">
+            <tbody>
+              {pairs.map((p, i) => (
+                <tr key={i} className="even:bg-slate-50">
+                  <td className="px-4 py-4 border-b border-slate-200 align-top w-1/2">
+                    <a href={p.left.url} className="text-black-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                      {p.left.label}
+                    </a>
+                  </td>
+                  <td className="px-4 py-4 border-b border-slate-200 align-top w-1/2">
+                    {p.right ? (
+                      <a href={p.right.url} className="text-black-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                        {p.right.label}
+                      </a>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="block sm:hidden">
+          <div className="divide-y divide-slate-200">
+            {EXPLORE_LINKS.map((link, idx) => (
+              <div key={idx} className="px-4 py-3 bg-white">
+                <a href={link.url} className="text-black hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <section
-      id="courses"
-      className="mx-auto max-w-7xl px-3 pt-1 pb-8 sm:px-6 sm:pt-3 sm:pb-12 lg:px-8 lg:pt-5 lg:pb-16"
-    >
-      {/* Header Section */}
+    <section id="courses" className="mx-auto max-w-7xl px-3 pt-1 pb-8 sm:px-6 sm:pt-3 sm:pb-12 lg:px-8 lg:pt-5 lg:pb-16">
       <div className="mx-auto max-w-7xl px-0 sm:px-0 lg:px-0 text-center mb-6 sm:mb-8">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-2.5 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
           <GraduationCap className="h-3 w-3 text-red-500" />
@@ -341,23 +252,14 @@ export default function TopSpecializations({
         </span>
 
         <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-          {specData.heading ? (
-            <HighlightedText text={specData.heading} />
-          ) : (
-            <>
-              {uniLabel} <span className="text-red-500">Programs</span>
-            </>
-          )}
+          {specData.heading ? <HighlightedText text={specData.heading} /> : <>{uniLabel} <span className="text-red-500">Programs</span></>}
         </h2>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center py-20 w-full">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
-        </div>
+        <div className="flex justify-center items-center py-20 w-full"><div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div></div>
       ) : (
         <>
-          {/* Category Tabs - Compact centered buttons */}
           <div className="mb-6 sm:mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             {categoryTabs.map((tab) => (
               <button
@@ -368,9 +270,7 @@ export default function TopSpecializations({
                   setCurrentPage(1);
                 }}
                 className={`w-[170px] sm:w-[200px] rounded-lg border px-6 py-2 text-xs sm:text-sm font-semibold transition whitespace-nowrap text-center ${
-                  activeCategory === tab.key
-                    ? "border-red-500 bg-red-500 text-white shadow-md shadow-red-100"
-                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  activeCategory === tab.key ? "border-red-500 bg-red-500 text-white shadow-md shadow-red-100" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                 }`}
               >
                 {tab.label}
@@ -378,339 +278,180 @@ export default function TopSpecializations({
             ))}
           </div>
 
-          {/* Card Grid Section */}
           {activeCategory !== "top" && (
             <>
-              <div className="flex justify-center overflow-hidden">
-                <div className="__cards-container flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full overflow-x-auto pb-2 snap-x snap-mandatory">
-                  <style>{`
-                    @media (max-width: 640px) {
-                      .__cards-container > * {
-                        min-width: calc(85% - 8px);
-                        flex-shrink: 0;
-                        snap-align: start;
-                      }
-                    }
-                  `}</style>
-                  {visibleCourses.length > 0 ? (
-                    visibleCourses.map((card, idx) => {
-                      const cardImage = CARD_IMAGES[idx % CARD_IMAGES.length];
-                      return (
-                        <div
-                          key={card.id || card.slug}
-                          className="__card-container flex flex-col h-full w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:shadow-lg"
-                        >
-                          {/* Image Section */}
-                          <div className="__card-image-wrapper relative overflow-hidden h-44 sm:h-48 rounded-t-2xl">
-                            {card.thumbnail ? (
-                              <img
-                                src={card.thumbnail}
-                                alt={`${card.name} ${uniLabel}`}
-                                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center bg-gray-200 p-6 text-center select-none">
-                                <span className="text-sm sm:text-base font-bold text-gray-600 line-clamp-3">
-                                  {card.name}
-                                </span>
+              {activeCategory === "explore" ? (
+                <div className="mx-auto w-full max-w-7xl overflow-hidden px-0">{renderExploreTable()}</div>
+              ) : (
+                /* card slider with arrows */
+                <div className="mx-auto w-full max-w-7xl overflow-hidden px-0">
+                  <div className="relative">
+                    {visibleCourses.length > 0 && (
+                      <>
+                       <button
+  type="button"
+  onClick={() => scrollCards("left")}
+  className="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-md backdrop-blur-sm transition hover:bg-white hover:text-red-500"
+  aria-label="Scroll left"
+>
+  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+</button>
+
+<button
+  type="button"
+  onClick={() => scrollCards("right")}
+  className="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-md backdrop-blur-sm transition hover:bg-white hover:text-red-500"
+  aria-label="Scroll right"
+>
+  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+</button>
+                      </>
+                    )}
+
+                    <div
+                      ref={cardsScrollRef}
+                      className="__cards-container flex flex-nowrap gap-3 sm:gap-4 w-full mx-auto pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-8 sm:px-10"
+                    >
+                      {visibleCourses.length > 0 ? (
+                        visibleCourses.map((card, idx) => {
+                          const cardImage = CARD_IMAGES[idx % CARD_IMAGES.length];
+                          return (
+                            <div key={card.id || card.slug} className="__card-container snap-start flex flex-col h-full flex-shrink-0 w-[85%] sm:w-[260px] lg:w-[270px] overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:shadow-md">
+                              <div className="__card-image-wrapper relative overflow-hidden h-24 sm:h-28 rounded-t-xl">
+                                {card.thumbnail ? (
+                                  <img src={card.thumbnail} alt={`${card.name} ${uniLabel}`} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                                ) : (
+                                  <img src={cardImage} alt={`${card.name} ${uniLabel}`} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                                )}
+
+                                <div className="__card-rating absolute right-2 top-2 flex items-center gap-1 rounded-full bg-white px-1.5 py-1 text-[10px] font-bold text-slate-900 shadow-md">
+                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                                  {card.rating || 4.7}
+                                </div>
                               </div>
-                            )}
 
-                            {/* Badge - Yellow/Amber at bottom-left */}
-                            <div className="__card-badge absolute bottom-3 left-3 rounded-lg bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-md">
-                              {card.name} ({uniLabel})
+                              <div className="__card-content flex flex-col flex-grow p-3.5">
+                                <h3 className="text-sm font-bold text-slate-900 mb-2.5 line-clamp-2 leading-snug">
+                                  {card.name.toLowerCase().startsWith("online") ? card.name : `Online ${card.name}`}
+                                </h3>
+
+                                <ul className="space-y-2 text-xs mb-3.5 border-t border-slate-100 pt-2.5">
+                                  <li className="flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5 text-slate-500"><Clock className="h-3.5 w-3.5 text-blue-700 flex-shrink-0" />Duration</span>
+                                    <span className="font-semibold text-slate-800">{card.duration}</span>
+                                  </li>
+                                  <li className="flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5 text-slate-500"><IndianRupee className="h-3.5 w-3.5 text-blue-700 flex-shrink-0" />Fees</span>
+                                    <span className="font-bold text-slate-900">{formatINR(card.feeRange?.start || 0)}</span>
+                                  </li>
+                                </ul>
+
+                                <button type="button" className="__explore-btn w-full flex items-center justify-center gap-1.5 text-xs py-1.5 mt-auto">
+                                  Explore More
+                                  <ArrowRight className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
                             </div>
-
-                            {/* Rating - Top right */}
-                            <div className="__card-rating absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg">
-                              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                              {card.rating || 4.7}
-                            </div>
-                          </div>
-
-                          {/* Content Section */}
-                          <div className="__card-content flex flex-col flex-grow p-5">
-                            {/* Title */}
-                            <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
-                              {card.name.toLowerCase().startsWith("online")
-                                ? card.name
-                                : `Online ${card.name} Degree`}
-                            </h3>
-
-                            {/* Info List */}
-                            <ul className="space-y-3 text-sm mb-5 flex-grow">
-                              {/* Type */}
-                              <li className="flex items-center gap-3">
-                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                                  <BookOpen className="h-5 w-5 text-blue-700" />
-                                </div>
-                                <span className="text-slate-700 font-medium">
-                                  Type:
-                                </span>
-                                <span className="font-bold text-slate-900 ml-auto">
-                                  {card.type || "Semester"}
-                                </span>
-                              </li>
-
-                              {/* Mode */}
-                              <li className="flex items-center gap-3">
-                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                                  <GraduationCap className="h-5 w-5 text-blue-700" />
-                                </div>
-                                <span className="text-slate-700 font-medium">
-                                  Mode:
-                                </span>
-                                <span className="font-bold text-slate-900 ml-auto">
-                                  {card.mode || "Online"}
-                                </span>
-                              </li>
-
-                              {/* Duration */}
-                              <li className="flex items-center gap-3">
-                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                                  <Clock className="h-5 w-5 text-blue-700" />
-                                </div>
-                                <span className="text-slate-700 font-medium">
-                                  Duration:
-                                </span>
-                                <span className="font-bold text-slate-900 ml-auto">
-                                  {card.duration}
-                                </span>
-                              </li>
-
-                              {/* Fees */}
-                              <li className="flex items-center gap-3">
-                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                                  <IndianRupee className="h-5 w-5 text-blue-700" />
-                                </div>
-                                <span className="text-slate-700 font-medium">
-                                  {card.feeRange?.start === card.feeRange?.end
-                                    ? "Total Fees"
-                                    : "Fees Start"}
-                                  :
-                                </span>
-                                <span className="font-bold text-slate-900 ml-auto">
-                                  {formatINR(card.feeRange?.start || 0)}
-                                </span>
-                              </li>
-
-                              {/* EMI */}
-                              <li className="flex items-center gap-3">
-                                <div className="__icon-box flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                                  <CreditCard className="h-5 w-5 text-blue-700" />
-                                </div>
-                                <span className="text-slate-700 font-medium">
-                                  EMI/month:
-                                </span>
-                                <span className="font-bold text-slate-900 ml-auto">
-                                  {calculateEMI(card.feeRange?.start || 0, card.duration)}
-                                </span>
-                              </li>
-                            </ul>
-
-                            {/* Button */}
-                            <button
-                              type="button"
-                              className="__explore-btn w-60 flex items-center justify-center gap-2 rounded-xl border-2 border-red-500 py-3 text-sm font-bold text-red-500 transition duration-300 hover:bg-red-50 active:bg-red-100"
-                            >
-                              Explore More
-                              <ArrowRight className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center text-slate-400 font-medium w-full">
-                      No courses available under this category yet.
+                          );
+                        })
+                      ) : (
+                        <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center text-slate-400 font-medium w-full">No courses available under this category yet.</div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
 
-      {/* Top Specializations Section */}
-      {activeCategory === "top" && (
-        <>
-          {/* Search Bar */}
-          <div className="mb-4 sm:mb-6 flex justify-end">
-            <div className="relative w-full max-w-xs">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                <Search className="h-4 w-4" />
+          {activeCategory === "top" && (
+            <div className="mx-auto w-full max-w-5xl">
+              <div className="mb-4 sm:mb-6 flex justify-end">
+                <div className="relative w-full max-w-xs">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><Search className="h-4 w-4" /></div>
+                  <input type="text" placeholder="Search Course / Spec..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-slate-400 outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500" />
+                </div>
               </div>
-              <input
-                type="text"
-                placeholder="Search Course / Spec..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-slate-400 outline-none transition focus:border-red-500 focus:ring-1 focus:ring-red-500"
-              />
-            </div>
-          </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
-            <table className="w-full border-collapse text-left text-xs sm:text-sm">
-              <thead>
-                <tr className="bg-red-500 text-white font-bold">
-                  <th className="p-3 sm:p-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <BookOpen className="h-4 w-4" /> Course
-                    </div>
-                  </th>
-                  <th className="p-3 sm:p-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <BookOpen className="h-4 w-4" /> Specializations
-                    </div>
-                  </th>
-                  <th className="p-3 sm:p-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-4 w-4" /> Duration
-                    </div>
-                  </th>
-                  <th className="p-3 sm:p-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <IndianRupee className="h-4 w-4" /> Fees
-                    </div>
-                  </th>
-                  <th className="p-3 sm:p-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <CreditCard className="h-4 w-4" /> EMI Option
-                    </div>
-                  </th>
-                  <th className="p-3 sm:p-4 text-center whitespace-nowrap">
-                    Brochure
-                  </th>
-                </tr>
-              </thead>
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
+                <table className="w-full border-collapse text-left text-xs sm:text-sm">
+                  <thead>
+                    <tr className="bg-black text-white font-bold">
+                      <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Course</div></th>
+                      <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Specializations</div></th>
+                      <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> Duration</div></th>
+                      <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><IndianRupee className="h-4 w-4" /> Fees</div></th>
+                      <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><CreditCard className="h-4 w-4" /> EMI Option</div></th>
+                      <th className="p-3 sm:p-4 text-center whitespace-nowrap">Brochure</th>
+                    </tr>
+                  </thead>
 
-              <tbody className="divide-y divide-slate-200 text-gray-700">
-                {currentRows.length > 0 ? (
-                  currentRows.map((row, idx) => {
-                    const isFirstCourseOccurrence =
-                      idx === 0 || currentRows[idx - 1].course !== row.course;
+                  <tbody className="divide-y divide-slate-200 text-gray-700">
+                    {currentRows.length > 0 ? (
+                      currentRows.map((row, idx) => {
+                        const isFirstCourseOccurrence = idx === 0 || currentRows[idx - 1].course !== row.course;
 
-                    return (
-                      <tr
-                        key={row.id}
-                        className="hover:bg-slate-50/70 transition-colors"
-                      >
-                        <td className="p-3 sm:p-4 font-bold text-gray-900 border-r border-slate-100 bg-slate-50/20 max-w-[100px] sm:max-w-[120px] text-xs sm:text-sm">
-                          {isFirstCourseOccurrence ? row.course : ""}
-                        </td>
-
-                        <td className="p-3 sm:p-4 text-gray-600 font-medium border-r border-slate-100 max-w-xs text-xs sm:text-sm">
-                          {row.specialization}
-                        </td>
-
-                        <td className="p-3 sm:p-4 text-slate-500 whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">
-                          {row.duration}
-                        </td>
-
-                        <td className="p-3 sm:p-4 text-gray-900 font-medium whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">
-                          {row.fees}
-                        </td>
-
-                        <td className="p-3 sm:p-4 text-gray-900 font-bold whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">
-                          {row.emi}
-                        </td>
-
-                        <td className="p-2 sm:p-3 text-center whitespace-nowrap">
-                          {row.brochure ? (
-                            <a
-                              href={row.brochure}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500"
-                            >
-                              <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                              <span className="hidden sm:inline">Download</span>
-                              <span className="sm:hidden">DL</span>
-                            </a>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => handleDownload(row.specialization)}
-                              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500"
-                            >
-                              <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                              <span className="hidden sm:inline">Download</span>
-                              <span className="sm:hidden">DL</span>
-                            </button>
-                          )}
-                        </td>
+                        return (
+                          <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
+                            <td className="p-3 sm:p-4 font-bold text-gray-900 border-r border-slate-100 bg-slate-50/20 max-w-[100px] sm:max-w-[120px] text-xs sm:text-sm">{isFirstCourseOccurrence ? row.course : ""}</td>
+                            <td className="p-3 sm:p-4 text-gray-600 font-medium border-r border-slate-100 max-w-xs text-xs sm:text-sm">{row.specialization}</td>
+                            <td className="p-3 sm:p-4 text-slate-500 whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">{row.duration}</td>
+                            <td className="p-3 sm:p-4 text-gray-900 font-medium whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">{row.fees}</td>
+                            <td className="p-3 sm:p-4 text-gray-900 font-bold whitespace-nowrap border-r border-slate-100 text-xs sm:text-sm">{row.emi}</td>
+                            <td className="p-2 sm:p-3 text-center whitespace-nowrap">
+                              {row.brochure ? (
+                                <a href={row.brochure} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500">
+                                  <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                  <span className="hidden sm:inline">Download</span>
+                                  <span className="sm:hidden">DL</span>
+                                </a>
+                              ) : (
+                                <button type="button" onClick={() => handleDownload(row.specialization)} className="inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl border border-slate-200 bg-white px-2 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-red-500 hover:text-red-500">
+                                  <Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                  <span className="hidden sm:inline">Download</span>
+                                  <span className="sm:hidden">DL</span>
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="p-8 sm:p-12 text-center text-slate-400 font-medium text-xs sm:text-sm">No courses or specializations found matching your criteria.</td>
                       </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={6}
-                      className="p-8 sm:p-12 text-center text-slate-400 font-medium text-xs sm:text-sm"
-                    >
-                      No courses or specializations found matching your
-                      criteria.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-4 sm:mt-6 flex items-center justify-end gap-1 sm:gap-2">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                if (totalPages <= 5) return i + 1;
-                if (currentPage <= 3) return i + 1;
-                if (currentPage >= totalPages - 2) return totalPages - 4 + i;
-                return currentPage - 2 + i;
-              }).map((page, idx, arr) => (
-                <React.Fragment key={page}>
-                  {idx > 0 && arr[idx - 1] !== page - 1 && (
-                    <span className="text-slate-400 px-1">...</span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage(page)}
-                    className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-sm transition ${
-                      currentPage === page
-                        ? "bg-red-500 text-white"
-                        : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    {page}
+              {totalPages > 1 && (
+                <div className="mt-4 sm:mt-6 flex items-center justify-end gap-1 sm:gap-2">
+                  <button type="button" disabled={currentPage === 1} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white">
+                    <ChevronLeft className="h-4 w-4" />
                   </button>
-                </React.Fragment>
-              ))}
 
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    if (totalPages <= 5) return i + 1;
+                    if (currentPage <= 3) return i + 1;
+                    if (currentPage >= totalPages - 2) return totalPages - 4 + i;
+                    return currentPage - 2 + i;
+                  }).map((page, idx, arr) => (
+                    <React.Fragment key={page}>
+                      {idx > 0 && arr[idx - 1] !== page - 1 && <span className="text-slate-400 px-1">...</span>}
+                      <button type="button" onClick={() => setCurrentPage(page)} className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold shadow-sm transition ${currentPage === page ? "bg-red-500 text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                        {page}
+                      </button>
+                    </React.Fragment>
+                  ))}
+
+                  <button type="button" disabled={currentPage === totalPages} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white">
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
-        </>
-      )}
         </>
       )}
     </section>

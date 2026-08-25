@@ -24,13 +24,13 @@ const DATA: DataPoint[] = [
 
 const CAGR = "7.63%";
 
-// Chart dimensions
-const W = 640;
-const H = 280;
-const PAD_L = 56;
-const PAD_R = 24;
-const PAD_T = 28;
-const PAD_B = 40;
+// Chart dimensions (reduced)
+const W = 520;
+const H = 190;
+const PAD_L = 44;
+const PAD_R = 16;
+const PAD_T = 20;
+const PAD_B = 28;
 const PLOT_W = W - PAD_L - PAD_R;
 const PLOT_H = H - PAD_T - PAD_B;
 
@@ -88,22 +88,22 @@ export default function MBAOverview() {
       </p>
 
       {/* Signature panel */}
-      <div className="mt-8 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
-        <div className="px-6 pt-5 pb-2 flex items-start justify-between flex-wrap gap-2">
+      <div className="mt-8 max-w-md mx-auto rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
+        <div className="px-4 pt-4 pb-1 flex items-start justify-between flex-wrap gap-2">
           <div>
-            <span className="inline-block text-xs font-bold tracking-wider text-red-500 uppercase">
+            <span className="inline-block text-[10px] font-bold tracking-wider text-red-500 uppercase">
               Market Insights
             </span>
-            <h3 className="mt-1 text-lg md:text-xl font-bold text-slate-900">
+            <h3 className="mt-0.5 text-base font-bold text-slate-900">
               India&apos;s Online MBA Market, 2024–2033
             </h3>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-red-500 border border-red-100 px-3 py-1.5 text-sm font-bold">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-red-500 border border-red-100 px-2.5 py-1 text-xs font-bold">
             {CAGR} CAGR
           </span>
         </div>
 
-        <div className="px-4 sm:px-6 pt-2 pb-1">
+        <div className="px-3 sm:px-4 pt-1 pb-0.5">
           <svg
             viewBox={`0 0 ${W} ${H}`}
             className="w-full h-auto"
@@ -131,10 +131,10 @@ export default function MBAOverview() {
                     strokeWidth="1"
                   />
                   <text
-                    x={PAD_L - 12}
-                    y={y + 4}
+                    x={PAD_L - 10}
+                    y={y + 3}
                     textAnchor="end"
-                    fontSize="11"
+                    fontSize="9"
                     fontWeight="600"
                     className="fill-slate-400"
                   >
@@ -160,7 +160,7 @@ export default function MBAOverview() {
               d={linePath}
               fill="none"
               stroke="#ef4444"
-              strokeWidth="3"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -173,16 +173,16 @@ export default function MBAOverview() {
                   <circle
                     cx={p.x}
                     cy={p.y}
-                    r={isEndpoint ? 6 : 4.5}
+                    r={isEndpoint ? 4.5 : 3.5}
                     fill="#fff"
                     stroke="#ef4444"
-                    strokeWidth={isEndpoint ? 3 : 2.5}
+                    strokeWidth={isEndpoint ? 2.5 : 2}
                   />
                   <text
                     x={p.x}
-                    y={p.y - 16}
+                    y={p.y - 11}
                     textAnchor="middle"
-                    fontSize={isEndpoint ? 13 : 12}
+                    fontSize={isEndpoint ? 10.5 : 9.5}
                     fontWeight="800"
                     className="fill-slate-900"
                   >
@@ -190,9 +190,9 @@ export default function MBAOverview() {
                   </text>
                   <text
                     x={p.x}
-                    y={PAD_T + PLOT_H + 22}
+                    y={PAD_T + PLOT_H + 16}
                     textAnchor="middle"
-                    fontSize="11"
+                    fontSize="9"
                     fontWeight="600"
                     className="fill-slate-400"
                   >
@@ -212,7 +212,7 @@ export default function MBAOverview() {
           <StatTile icon={<PulseIcon />} label="Momentum" value="Accelerating" border />
         </div>
 
-        <div className="px-6 py-3 border-t border-slate-100 text-xs text-slate-400 italic">
+        <div className="px-4 py-2 border-t border-slate-100 text-[10px] text-slate-400 italic">
           Source: Custom Market Insights
         </div>
       </div>
@@ -248,15 +248,15 @@ export default function MBAOverview() {
 
 function StatTile({ icon, label, value, border }: StatTileProps) {
   return (
-    <div className={`flex items-center gap-3 px-4 sm:px-6 py-4 ${border ? "sm:border-l border-slate-100" : ""}`}>
-      <div className="h-9 w-9 shrink-0 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+    <div className={`flex items-center gap-2 px-3 sm:px-4 py-3 ${border ? "sm:border-l border-slate-100" : ""}`}>
+      <div className="h-7 w-7 shrink-0 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
         {icon}
       </div>
       <div>
-        <div className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+        <div className="text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
           {label}
         </div>
-        <div className="text-sm font-bold text-slate-900">{value}</div>
+        <div className="text-xs font-bold text-slate-900">{value}</div>
       </div>
     </div>
   );
@@ -264,7 +264,7 @@ function StatTile({ icon, label, value, border }: StatTileProps) {
 
 function TrendUpIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <path d="M3 17l6-6 4 4 8-8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M15 7h6v6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -273,7 +273,7 @@ function TrendUpIcon() {
 
 function TargetIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2.2" />
       <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2.2" />
     </svg>
@@ -282,7 +282,7 @@ function TargetIcon() {
 
 function BoltIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
@@ -290,7 +290,7 @@ function BoltIcon() {
 
 function PulseIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <path d="M3 12h4l2 7 4-14 2 7h6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );

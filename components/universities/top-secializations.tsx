@@ -211,13 +211,14 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
               {pairs.map((p, i) => (
                 <tr key={i} className="even:bg-slate-50">
                   <td className="px-4 py-4 border-b border-slate-200 align-top w-1/2">
-                    <a href={p.left.url} className="text-black-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                    <a href={p.left.url} className="text-black-600 
+                    underline font-medium" target="_blank" rel="noopener noreferrer">
                       {p.left.label}
                     </a>
                   </td>
                   <td className="px-4 py-4 border-b border-slate-200 align-top w-1/2">
                     {p.right ? (
-                      <a href={p.right.url} className="text-black-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                      <a href={p.right.url} className="text-black-600 underline font-medium" target="_blank" rel="noopener noreferrer">
                         {p.right.label}
                       </a>
                     ) : null}
@@ -232,7 +233,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
           <div className="divide-y divide-slate-200">
             {EXPLORE_LINKS.map((link, idx) => (
               <div key={idx} className="px-4 py-3 bg-white">
-                <a href={link.url} className="text-black hover:underline font-medium" target="_blank" rel="noopener noreferrer">
+                <a href={link.url} className="text-black underline font-medium" target="_blank" rel="noopener noreferrer">
                   {link.label}
                 </a>
               </div>

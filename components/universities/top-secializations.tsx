@@ -201,7 +201,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
 
     return (
       <div className="mx-auto w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="text-center bg-black text-white font-bold border-b border-red-200 py-3 font-semibold text-lg text-black-700">
+        <div className="text-center bg-[#ee2c3c] text-white font-bold border-b border-red-200 py-3 font-semibold text-lg text-black-700">
          Explore Top Online Courses in India
         </div>
 
@@ -377,7 +377,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
               <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
                 <table className="w-full border-collapse text-left text-xs sm:text-sm">
                   <thead>
-                    <tr className="bg-black text-white font-bold">
+                    <tr className="bg-[#ee2c3c] text-white font-bold">
                       <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Course</div></th>
                       <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Specializations</div></th>
                       <th className="p-3 sm:p-4 whitespace-nowrap"><div className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> Duration</div></th>

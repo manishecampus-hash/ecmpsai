@@ -80,41 +80,8 @@ export default function FeesAndEnrollment() {
           </table>
         </div>
 
-        {/* Enrollment Section */}
-        <div className="mt-14">
-          {/* Enrollment Header */}
-          <div className="mb-6 sm:mb-8 text-center">
-            <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              How to <span className="text-red-500">Enrol</span> for an Online
-              MBA?
-            </h2>
-          </div>
-
-          <p className="mx-auto max-w-5xl text-center text-base leading-relaxed text-slate-600 sm:text-lg">
-            Enrolment is quick and fully online. Most universities take you
-            from registration to confirmation in just five simple steps.
-          </p>
-
-          {/* Enrollment Steps */}
-          <div className="mx-auto mt-8 max-w-4xl">
-            <ol className="space-y-4">
-              {ENROLL_STEPS.map((step, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-4 rounded-xl border border-slate-100 bg-white p-4 transition-all duration-200 hover:border-red-100 hover:shadow-sm"
-                >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-sm">
-                    {i + 1}
-                  </span>
-
-                  <span className="pt-0.5 text-sm leading-relaxed text-slate-600 sm:text-base">
-                    {step}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+       
+    
       </div>
     </section>
   );

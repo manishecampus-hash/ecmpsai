@@ -2,11 +2,75 @@
 
 import React from "react";
 
+const data = [
+  {
+    category: "Basic Requirement",
+    eligibility: (
+      <>
+        A <strong>Bachelor&apos;s degree</strong> from a recognized university,
+        institution, or college.
+      </>
+    ),
+    duration: (
+      <>
+        The programme has a minimum duration of <strong>2 years</strong> and is
+        generally divided into <strong>4 semesters.</strong>
+      </>
+    ),
+  },
+  {
+    category: "Academic Criteria",
+    eligibility: (
+      <>
+        Most universities require at least{" "}
+        <strong>50% aggregate marks</strong> at the undergraduate level.
+      </>
+    ),
+    duration: (
+      <>
+        Students complete the programme progressively across{" "}
+        <strong>Semester 1, 2, 3 and 4.</strong>
+      </>
+    ),
+  },
+  {
+    category: "Admission Process",
+    eligibility: (
+      <>
+        Many Online MBA programmes offer <strong>direct admission</strong> and
+        may not require an entrance examination.
+      </>
+    ),
+    duration: (
+      <>
+        Many universities allow students additional time, often up to{" "}
+        <strong>4 years</strong>, to complete the programme.
+      </>
+    ),
+  },
+  {
+    category: "Flexibility",
+    eligibility: (
+      <>
+        <strong>Work experience</strong> is usually not mandatory, although
+        requirements can vary by university.
+      </>
+    ),
+    duration: (
+      <>
+        Depending on university rules, students may be able to{" "}
+        <strong>pause and resume</strong> their studies within the permitted
+        completion period.
+      </>
+    ),
+  },
+];
+
 export default function EligibilityDuration() {
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
       <div className="max-w-6xl mx-auto font-[Inter]">
-        {/* Header */}
+        {/* Heading - kept same */}
         <div className="mb-6 sm:mb-8 text-center">
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Eligibility Duration of an Online
@@ -14,202 +78,116 @@ export default function EligibilityDuration() {
           </h2>
         </div>
 
-      
-
-        {/* Table */}
-        <div className="mt-8 overflow-x-auto">
-          <div className="min-w-[700px] border border-slate-200">
-            {/* Table Header */}
-            <div className="grid grid-cols-[190px_1fr_1fr] border-b border-slate-200 bg-slate-50">
-              <div className="border-r border-slate-200 px-6 py-5">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Category
-                </span>
-              </div>
-
-              <div className="border-r border-slate-200 px-6 py-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-500">
-                    <GradCapIcon />
-                  </span>
-
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      Eligibility
-                    </h3>
-                    <p className="text-xs text-slate-500">Who can apply?</p>
-                  </div>
+        {/* Main Premium Layout */}
+        <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.06)]">
+          {/* Top Labels */}
+          <div className="grid grid-cols-1 border-b border-slate-200 md:grid-cols-2">
+            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 md:border-b-0 md:border-r">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                  <GradCapIcon />
                 </div>
-              </div>
 
-              <div className="px-6 py-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-500">
-                    <ClockIcon />
-                  </span>
-
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      Duration
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      2 Years · 4 Semesters
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Eligibility
+                  </h3>
+                  <p className="text-xs text-slate-500">Who can apply?</p>
                 </div>
               </div>
             </div>
 
-            {/* Row 1 */}
-            <div className="grid grid-cols-[190px_1fr_1fr] border-b border-slate-200">
-              <div className="border-r border-slate-200 bg-slate-50/50 px-6 py-5">
-                <p className="font-semibold text-slate-900">
-                  Basic Requirement
-                </p>
-              </div>
-
-              <div className="border-r border-slate-200 px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    A{" "}
-                    <span className="font-semibold text-slate-900">
-                      Bachelor&apos;s degree
-                    </span>{" "}
-                    from a recognized university, institution, or college.
-                  </p>
+            <div className="bg-white px-6 py-5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+                  <ClockIcon />
                 </div>
-              </div>
 
-              <div className="px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    The programme has a minimum duration of{" "}
-                    <span className="font-semibold text-slate-900">
-                      2 years
-                    </span>{" "}
-                    and is generally divided into{" "}
-                    <span className="font-semibold text-slate-900">
-                      4 semesters.
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-[190px_1fr_1fr] border-b border-slate-200">
-              <div className="border-r border-slate-200 bg-slate-50/50 px-6 py-5">
-                <p className="font-semibold text-slate-900">
-                  Academic Criteria
-                </p>
-              </div>
-
-              <div className="border-r border-slate-200 px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    Most universities require at least{" "}
-                    <span className="font-semibold text-slate-900">
-                      50% aggregate marks
-                    </span>{" "}
-                    at the undergraduate level.
-                  </p>
-                </div>
-              </div>
-
-              <div className="px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    Students complete the programme progressively across{" "}
-                    <span className="font-semibold text-slate-900">
-                      Semester 1, 2, 3 and 4.
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 3 */}
-            <div className="grid grid-cols-[190px_1fr_1fr] border-b border-slate-200">
-              <div className="border-r border-slate-200 bg-slate-50/50 px-6 py-5">
-                <p className="font-semibold text-slate-900">
-                  Admission Process
-                </p>
-              </div>
-
-              <div className="border-r border-slate-200 px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    Many Online MBA programmes offer{" "}
-                    <span className="font-semibold text-slate-900">
-                      direct admission
-                    </span>{" "}
-                    and may not require an entrance examination.
-                  </p>
-                </div>
-              </div>
-
-              <div className="px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    Many universities allow students additional time, often up
-                    to{" "}
-                    <span className="font-semibold text-slate-900">
-                      4 years
-                    </span>
-                    , to complete the programme.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 4 */}
-            <div className="grid grid-cols-[190px_1fr_1fr]">
-              <div className="border-r border-slate-200 bg-slate-50/50 px-6 py-5">
-                <p className="font-semibold text-slate-900">Flexibility</p>
-              </div>
-
-              <div className="border-r border-slate-200 px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    <span className="font-semibold text-slate-900">
-                      Work experience
-                    </span>{" "}
-                    is usually not mandatory, although requirements can vary by
-                    university.
-                  </p>
-                </div>
-              </div>
-
-              <div className="px-6 py-5">
-                <div className="flex gap-3">
-                  <CheckBubble />
-                  <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    Depending on university rules, students may be able to{" "}
-                    <span className="font-semibold text-slate-900">
-                      pause and resume
-                    </span>{" "}
-                    their studies within the permitted completion period.
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Duration
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    2 Years · 4 Semesters
                   </p>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Comparison Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            {/* Eligibility Column */}
+            <div className="divide-y divide-slate-200 md:border-r md:border-slate-200">
+              {data.map((item, index) => (
+                <div
+                  key={item.category}
+                  className="relative px-6 py-6 sm:px-7"
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                      0{index + 1}
+                    </span>
+
+                    <p className="font-semibold text-slate-900">
+                      {item.category}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 pl-1">
+                    <CheckBubble />
+
+                    <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                      {item.eligibility}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Duration Column */}
+            <div className="divide-y divide-slate-200">
+              {data.map((item, index) => (
+                <div
+                  key={item.category}
+                  className="relative px-6 py-6 sm:px-7"
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500">
+                      0{index + 1}
+                    </span>
+
+                    <p className="font-semibold text-slate-900">
+                      {item.category}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 pl-1">
+                    <CheckBubble />
+
+                    <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                      {item.duration}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Note */}
-        <p className="mt-5 text-sm leading-relaxed text-slate-500">
-          <span className="font-semibold text-red-500">Note:</span>{" "}
-          Eligibility and programme duration may vary by university. Always
-          check the official admission and programme guidelines before
-          applying.
-        </p>
+        <div className="mt-5 flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/50 px-5 py-4">
+          <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
+            !
+          </div>
+
+          <p className="text-sm leading-relaxed text-slate-500">
+            <span className="font-semibold text-red-500">Note:</span>{" "}
+            Eligibility and programme duration may vary by university. Always
+            check the official admission and programme guidelines before
+            applying.
+          </p>
+        </div>
       </div>
     </section>
   );

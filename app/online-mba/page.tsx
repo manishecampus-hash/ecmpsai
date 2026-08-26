@@ -9,12 +9,12 @@ import WhatDoesOnlineMBAOffer from "@/components/online-mba/mba-offer";
 import MBAOverview from "@/components/online-mba/mba-overview";
 import Specializations from "@/components/online-mba/mba-specializations";
 import Syllabus from "@/components/online-mba/mba-syllabus";
-import WhyChooseOnlineMBA from "@/components/online-mba/mba-why-choose-online";
 import Professionals from "@/components/online-mba/professionals";
 import TypesOfOnlineMBA from "@/components/online-mba/type-online-mba";
 import UgcValidity from "@/components/online-mba/ugc-validity";
 import SubHeader from "@/components/subheader/sub-header";
 import MbaUniversitySection from "@/components/online-mba/mba-university-section";
+import MbaEnrolNew from "@/components/online-mba/mba-enrol";
 
 export default function OnlineMbaPage() {
   return (
@@ -26,12 +26,11 @@ export default function OnlineMbaPage() {
       <KeyHighlights/>
       <EligibilityDuration/>
       <Syllabus/>
-      
       <FeesAndEnrollment/>
+      <MbaEnrolNew/>
       <Specializations/>
       <UgcValidity/>
       <OnlineVsRegular/>
-      <WhyChooseOnlineMBA/>
       <TypesOfOnlineMBA/>
       <WhatDoesOnlineMBAOffer/>
       <Professionals/>

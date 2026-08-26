@@ -12,32 +12,33 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: "about", label: "Program Overview" },
-  { id: "who-can-apply", label: "Subjects/Syllabus" },
-  { id: "specializations", label: "Eligibility & Duration" },
-  { id: "fees", label: "Program Fees" },
-  { id: "emi-details", label: "Admission Procedure" },
-  { id: "admission-process", label: "Top Specializations" },
-  { id: "syllabus", label: "EducationLoan/EMIs" },
-  { id: "examination-pattern", label: "Worth It?" },
-  { id: "job-roles", label: "Career Scope" },
-  { id: "reviews", label: "Coupons" },
+  { id: "subject-syllabus", label: "Subjects/Syllabus" },
+  { id: "eligibility-duration", label: "Eligibility & Duration" },
+  { id: "program-fees", label: "Program Fees" },
+  { id: "admission-procedure", label: "Admission Procedure" },
+  { id: "top-specializations", label: "Top Specializations" },
+  { id: "education-loans", label: "EducationLoan/EMIs" },
+  { id: "worth-it", label: "Worth It?" },
+  { id: "career-scope", label: "Career Scope" },
+  { id: "coupons", label: "Coupons" },
+
+  // 25 Aug panding id conect
  
-];
-const BASE_PATH = "/programs/doctorate/ggu";
+];   
+const BASE_PATH = "/online-mba";
 
 const LINK_MAP: Record<string, string> = {
   "who-can-apply": "/programs/doctorate/ggu/who-can-apply",
-  specializations: "/programs/doctorate/ggu/specializations",
-  fees: "/programs/doctorate/ggu/fees",
-  "emi-details": "/programs/doctorate/ggu/emi-details",
-  "admission-process": "/programs/doctorate/ggu/admission-process",
-  syllabus: "/programs/doctorate/ggu/syllabus",
-  "examination-pattern": "/programs/doctorate/ggu/examination-pattern",
-  "job-roles": "/programs/doctorate/ggu/job-roles",
-  reviews: "/programs/doctorate/ggu/reviews",
-  coupons: "/programs/doctorate/ggu/coupons",
-  "placement-partners": "/programs/doctorate/ggu/placement-partners",
-  faculty: "/programs/doctorate/ggu/faculty",
+  "subject-syllabus": "/online-mba/subject-syllabus",
+  "eligibility-duration": "/online-mba/eligibility-duration",
+  "program-fees": "/online-mba/program-fees",
+  "admission-procedure": "/online-mba/admission-procedure",
+ "top-specializations": "/online-mba/top-specializations",
+  "education-loans": "/online-mba/education-loans",
+  "worth-it": "/online-mba/worth-it",
+  "career-scope": "/online-mba/career-scope",
+  "coupons": "/online-mba/coupons",
+  
 };
 
 export default function SubHeader() {

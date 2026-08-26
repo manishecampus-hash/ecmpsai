@@ -62,29 +62,28 @@ export default function Syllabus() {
           </h2>
         </div>
 
-     
-
-        {/* Quick Overview */}
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <InfoCard
+        {/* Compact Quick Overview */}
+        <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:grid-cols-3">
+          <CompactInfo
             icon={<CalendarIcon />}
             label="Programme Duration"
             value="2 Years"
             description="Usually divided into 4 semesters"
           />
 
-          <InfoCard
+          <CompactInfo
             icon={<BookIcon />}
             label="Learning Structure"
             value="Core + Electives"
             description="Foundation followed by specialization"
           />
 
-          <InfoCard
+          <CompactInfo
             icon={<GradCapIcon />}
             label="Specialization"
             value="Choose Your Path"
             description="Focus on your preferred domain"
+            last
           />
         </div>
 
@@ -95,6 +94,7 @@ export default function Syllabus() {
               <p className="text-xs font-bold uppercase tracking-wider text-red-500">
                 Programme Structure
               </p>
+
               <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
                 Your 4-Semester MBA Journey
               </h3>
@@ -142,6 +142,7 @@ export default function Syllabus() {
                   <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
                     Core Subjects
                   </h3>
+
                   <p className="mt-0.5 text-sm text-slate-500">
                     Usually covered during Semester 1 &amp; 2
                   </p>
@@ -191,6 +192,7 @@ export default function Syllabus() {
                   <p className="text-xs font-bold uppercase tracking-wider text-red-500">
                     Semester 3 &amp; 4
                   </p>
+
                   <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
                     Choose Your Specialization
                   </h3>
@@ -239,30 +241,40 @@ export default function Syllabus() {
   );
 }
 
-function InfoCard({
+function CompactInfo({
   icon,
   label,
   value,
   description,
+  last = false,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   description: string;
+  last?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+    <div
+      className={`flex items-center gap-3 px-4 py-4 sm:px-5 ${
+        !last ? "border-b border-slate-200 sm:border-b-0 sm:border-r" : ""
+      }`}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
         {icon}
       </span>
 
-      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-400">
-        {label}
-      </p>
+      <div className="min-w-0">
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {label}
+        </p>
 
-      <h3 className="mt-1 text-lg font-bold text-slate-900">{value}</h3>
+        <h3 className="mt-0.5 text-lg font-bold text-slate-900">{value}</h3>
 
-      <p className="mt-1 text-sm text-slate-500">{description}</p>
+        <p className="mt-0.5 text-sm leading-snug text-slate-500">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }

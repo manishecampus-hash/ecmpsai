@@ -51,46 +51,42 @@ export default function UgcValidity() {
           </p>
         </div>
 
-        {/* Approvals Table */}
-        <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="bg-[#ee2c3c] px-6 py-4">
-            <h3 className="text-center text-sm font-bold text-white sm:text-base">
-              Important Approvals to Check
-            </h3>
-          </div>
-
-          <div className="grid md:grid-cols-2">
-            {/* India Header */}
-            <div className="border-b border-slate-100 bg-red-50/40 px-6 py-4 md:border-r">
-              <h4 className="text-center text-sm font-bold text-slate-900 sm:text-base">
+        {/* Approvals Cards Container */}
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          {/* India Card */}
+          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-blue-50/30 to-white shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="bg-[#ee2c3c] px-6 py-5">
+              <h4 className="text-center text-base font-bold text-white">
                 Online University in India
               </h4>
+              <p className="text-center text-xs text-blue-100 mt-1">Check these certifications</p>
             </div>
 
-            {/* Foreign Header */}
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h4 className="text-center text-sm font-bold text-slate-900 sm:text-base">
-                Online University Abroad
-              </h4>
-            </div>
-
-            {/* India List */}
-            <ul className="space-y-4 bg-red-50/40 px-6 py-6 md:border-r md:border-slate-100">
+            <ul className="space-y-3 px-6 py-6">
               {INDIA_APPROVALS.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <CheckBubble />
+                  <CheckBubble variant="blue" />
                   <span className="text-sm font-medium text-slate-700 sm:text-base">
                     {item}
                   </span>
                 </li>
               ))}
             </ul>
+          </div>
 
-            {/* Foreign List */}
-            <ul className="space-y-4 px-6 py-6">
+          {/* Foreign Card */}
+          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-emerald-50/30 to-white shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="bg-[#2c313c] px-6 py-5">
+              <h4 className="text-center text-base font-bold text-white">
+                Online University Abroad
+              </h4>
+              <p className="text-center text-xs text-emerald-100 mt-1">International standards</p>
+            </div>
+
+            <ul className="space-y-3 px-6 py-6">
               {FOREIGN_APPROVALS.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <CheckBubble />
+                  <CheckBubble variant="emerald" />
                   <span className="text-sm font-medium text-slate-700 sm:text-base">
                     {item}
                   </span>
@@ -101,29 +97,37 @@ export default function UgcValidity() {
         </div>
 
         {/* Important Note */}
-        <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+        <div className="mt-8 flex items-start gap-3 rounded-xl border-l-4 border-l-amber-500 bg-amber-50 px-6 py-5 shadow-sm">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white mt-0.5">
             !
           </span>
 
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-            <span className="font-semibold text-slate-900">
-              Important:
-            </span>{" "}
-            Approval and accreditation requirements may vary depending on the
-            country, university and specific programme. Always verify the
-            latest status directly through the relevant official regulatory
-            authority and university before enrolling.
-          </p>
+          <div>
+            <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+              <span className="font-semibold text-slate-900">
+                Important:
+              </span>{" "}
+              Approval and accreditation requirements may vary depending on the
+              country, university and specific programme. Always verify the
+              latest status directly through the relevant official regulatory
+              authority and university before enrolling.
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function CheckBubble() {
+function CheckBubble({ variant = "red" }: { variant?: "blue" | "emerald" | "red" }) {
+  const variantColors = {
+    blue: "bg-blue-50 text-blue-600",
+    emerald: "bg-emerald-50 text-emerald-600",
+    red: "bg-red-50 text-red-500",
+  };
+
   return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
+    <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${variantColors[variant]}`}>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"

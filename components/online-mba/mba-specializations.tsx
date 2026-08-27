@@ -14,7 +14,7 @@ const SPECIALIZATIONS: Spec[] = [
     about:
       "A postgraduate degree focused on managing people and organizational resources. Covers recruitment, compensation, employee relations, performance management, training, labor laws, and leadership.",
     careers:
-      "Opens roles like HR Manager, Talent Acquisition Specialist, Recruiter, HR Business Partner, and Training Manager across industries.",
+      "",
   },
   {
     name: "Online MBA in Finance Management",
@@ -137,10 +137,8 @@ export default function Specializations() {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <CheckBubble />
-                  <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                    {spec.careers}
-                  </span>
+                 
+               
                 </div>
               </div>
             </div>

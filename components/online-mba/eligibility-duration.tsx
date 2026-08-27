@@ -2,190 +2,101 @@
 
 import React from "react";
 
-const data = [
-  {
-    category: "Basic Requirement",
-    eligibility: (
-      <>
-        A <strong>Bachelor&apos;s degree</strong> from a recognized university,
-        institution, or college.
-      </>
-    ),
-    duration: (
-      <>
-        The programme has a minimum duration of <strong>2 years</strong> and is
-        generally divided into <strong>4 semesters.</strong>
-      </>
-    ),
-  },
-  {
-    category: "Academic Criteria",
-    eligibility: (
-      <>
-        Most universities require at least{" "}
-        <strong>50% aggregate marks</strong> at the undergraduate level.
-      </>
-    ),
-    duration: (
-      <>
-        Students complete the programme progressively across{" "}
-        <strong>Semester 1, 2, 3 and 4.</strong>
-      </>
-    ),
-  },
-  {
-    category: "Admission Process",
-    eligibility: (
-      <>
-        Many Online MBA programmes offer <strong>direct admission</strong> and
-        may not require an entrance examination.
-      </>
-    ),
-    duration: (
-      <>
-        Many universities allow students additional time, often up to{" "}
-        <strong>4 years</strong>, to complete the programme.
-      </>
-    ),
-  },
-  {
-    category: "Flexibility",
-    eligibility: (
-      <>
-        <strong>Work experience</strong> is usually not mandatory, although
-        requirements can vary by university.
-      </>
-    ),
-    duration: (
-      <>
-        Depending on university rules, students may be able to{" "}
-        <strong>pause and resume</strong> their studies within the permitted
-        completion period.
-      </>
-    ),
-  },
-];
-
 export default function EligibilityDuration() {
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
-      <div className="max-w-6xl mx-auto font-[Inter]">
-        {/* Heading - kept same */}
-        <div className="mb-6 sm:mb-8 text-center">
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+    <section className="w-full px-4 py-8 font-sans sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl">
+        {/* Section Heading */}
+        <div className="mb-6 text-center sm:mb-8">
+          <h2 className="text-[24px] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
             Eligibility Duration of an Online
             <span className="text-red-500"> MBA</span>
           </h2>
         </div>
 
-        {/* Main Premium Layout */}
-        <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.06)]">
-          {/* Top Labels */}
-          <div className="grid grid-cols-1 border-b border-slate-200 md:grid-cols-2">
-            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 md:border-b-0 md:border-r">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                  <GradCapIcon />
+        {/* Main Card */}
+        <div className="relative overflow-hidden rounded-[28px] border border-red-100 bg-red-50/70 p-3 shadow-[0_10px_35px_rgba(220,38,38,0.06)] sm:p-5">
+          {/* Soft Background Effect */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(254,226,226,0.8),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(254,242,242,0.9),transparent_35%)]" />
+
+          {/* Inner Card */}
+          <div className="relative grid overflow-hidden rounded-[24px] bg-white md:grid-cols-2">
+            {/* Educational Qualification */}
+            <div className="border-b border-red-100 px-6 py-7 sm:px-8 sm:py-9 md:border-b-0 md:border-r">
+              <div className="flex items-start gap-4 sm:gap-5">
+                {/* Icon */}
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500 sm:h-[72px] sm:w-[72px]">
+                  <GraduationIcon />
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">
-                    Eligibility
+                <div className="min-w-0 pt-1">
+                  <h3 className="text-[22px] font-bold leading-tight text-slate-900 sm:text-[27px]">
+                    Educational Qualification
                   </h3>
-                  <p className="text-xs text-slate-500">Who can apply?</p>
+
+                  <p className="mt-3 text-[15px] leading-[1.65] text-slate-600 sm:mt-4 sm:text-[16px] lg:text-[17px]">
+                    An Online MBA course requires a{" "}
+                    <strong className="font-semibold text-slate-800">
+                      Bachelor&apos;s degree with a minimum of 50% marks
+                    </strong>{" "}
+                    from a recognized university, institution, or college.
+                    Students seeking admission to an Online MBA programme{" "}
+                    <strong className="font-semibold text-slate-800">
+                      generally do not need an entrance exam score.
+                    </strong>
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white px-6 py-5">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
+            {/* Duration */}
+            <div className="px-6 py-7 sm:px-8 sm:py-9">
+              <div className="flex items-start gap-4 sm:gap-5">
+                {/* Icon */}
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500 sm:h-[72px] sm:w-[72px]">
                   <ClockIcon />
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">
+                <div className="min-w-0 pt-1">
+                  <h3 className="text-[22px] font-bold leading-tight text-slate-900 sm:text-[27px]">
                     Duration
                   </h3>
-                  <p className="text-xs text-slate-500">
-                    2 Years · 4 Semesters
+
+                  <p className="mt-3 text-[15px] leading-[1.65] text-slate-600 sm:mt-4 sm:text-[16px] lg:text-[17px]">
+                    The Online MBA programme has a minimum duration of{" "}
+                    <strong className="font-semibold text-slate-800">
+                      2 years
+                    </strong>
+                    , divided into{" "}
+                    <strong className="font-semibold text-slate-800">
+                      4 semesters.
+                    </strong>{" "}
+                    Most universities allow students up to{" "}
+                    <strong className="font-semibold text-slate-800">
+                      4 years
+                    </strong>{" "}
+                    to complete the programme, allowing them to pause and resume
+                    their studies within the permitted completion period.
                   </p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Comparison Content */}
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* Eligibility Column */}
-            <div className="divide-y divide-slate-200 md:border-r md:border-slate-200">
-              {data.map((item, index) => (
-                <div
-                  key={item.category}
-                  className="relative px-6 py-6 sm:px-7"
-                >
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                      0{index + 1}
-                    </span>
-
-                    <p className="font-semibold text-slate-900">
-                      {item.category}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 pl-1">
-                    <CheckBubble />
-
-                    <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                      {item.eligibility}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Duration Column */}
-            <div className="divide-y divide-slate-200">
-              {data.map((item, index) => (
-                <div
-                  key={item.category}
-                  className="relative px-6 py-6 sm:px-7"
-                >
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-500">
-                      0{index + 1}
-                    </span>
-
-                    <p className="font-semibold text-slate-900">
-                      {item.category}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 pl-1">
-                    <CheckBubble />
-
-                    <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-                      {item.duration}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Note */}
-        <div className="mt-5 flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/50 px-5 py-4">
-          <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white">
+        {/* Important Information */}
+        <div className="mt-5 flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/70 px-5 py-4">
+          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">
             !
           </div>
 
-          <p className="text-sm leading-relaxed text-slate-500">
-            <span className="font-semibold text-red-500">Note:</span>{" "}
-            Eligibility and programme duration may vary by university. Always
-            check the official admission and programme guidelines before
-            applying.
+          <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+            <span className="font-semibold text-red-500">Important:</span>{" "}
+            Eligibility and programme duration may vary by university. UGC-DEB
+            mandates a minimum two-year duration for an MBA degree, and
+            programmes advertised as a “1-year MBA” may not be equivalent to a
+            full MBA degree. Always check the university&apos;s latest admission
+            and programme guidelines before applying.
           </p>
         </div>
       </div>
@@ -193,56 +104,60 @@ export default function EligibilityDuration() {
   );
 }
 
-function CheckBubble() {
+function GraduationIcon() {
   return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M20 6L9 17l-5-5"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M2.5 9.2 12 5l9.5 4.2L12 13.5 2.5 9.2Z"
+        fill="currentColor"
+      />
 
-function GradCapIcon() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
       <path
-        d="M2 9l10-5 10 5-10 5-10-5z"
+        d="M6.5 11.2v4.4c0 1.6 2.5 2.9 5.5 2.9s5.5-1.3 5.5-2.9v-4.4"
         stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"
-        stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.8"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
+
+      <path
+        d="M3.5 10v5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+
+      <circle cx="3.5" cy="16.5" r="1" fill="currentColor" />
     </svg>
   );
 }
 
 function ClockIcon() {
   return (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <circle
         cx="12"
         cy="12"
-        r="9"
+        r="8.5"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.8"
       />
+
       <path
-        d="M12 7v5l3 3"
+        d="M12 7.5v5l3.5 2"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

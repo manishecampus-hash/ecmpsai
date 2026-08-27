@@ -4,11 +4,11 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import {
   ArrowRight,
+  Check,
   ChevronLeft,
   ChevronRight,
+  Clock,
   GraduationCap,
-  MapPin,
-  UsersRound,
 } from "lucide-react";
 import { universities } from "@/data/universities";
 
@@ -16,6 +16,7 @@ const CARDS_PER_PAGE = 3;
 
 export default function MbaUniversitySection() {
   const [page, setPage] = useState(0);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const universityPages = useMemo(() => {
     const pages = [];
@@ -38,15 +39,28 @@ export default function MbaUniversitySection() {
     setPage((current) => (current === totalPages - 1 ? 0 : current + 1));
   };
 
+  const toggleSelect = (key: string) => {
+    setSelected((current) =>
+      current.includes(key)
+        ? current.filter((item) => item !== key)
+        : [...current, key]
+    );
+  };
+
+  const handleCompareNow = () => {
+    // Hook this up to your actual compare route / modal
+    console.log("Comparing:", selected);
+  };
+
   return (
     <section
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8"
+      className="relative w-full bg-white px-4 py-12 sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-10 max-w-3xl text-center">
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-black sm:text-3xl md:text-4xl">
-            AI Compare for 
+            AI Compare for
             <span className="text-[#ee2c3c]"> Online MBA</span>
           </h2>
         </div>
@@ -55,83 +69,120 @@ export default function MbaUniversitySection() {
           <button
             type="button"
             onClick={goPrev}
-            className="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.14)] transition hover:border-red-200 hover:text-red-500 lg:flex"
+            className="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.14)] transition   lg:flex"
             aria-label="Previous universities"
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2.4} />
           </button>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {currentUniversities.map((university, index) => {
-              const actualIndex = page * CARDS_PER_PAGE + index;
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {currentUniversities.map((university) => {
+              const key = university.slug || university.name;
+              const isSelected = selected.includes(key);
 
               return (
                 <article
-                  key={university.slug || university.name}
-                  className="group relative flex min-h-[390px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.10)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_50px_rgba(15,23,42,0.14)]"
+                  key={key}
+                  className={`relative flex flex-col rounded-2xl border bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,0.10)] ${
+                    isSelected
+                      ? ""
+                      : "border-slate-200"
+                  }`}
                 >
-                  <div className="absolute inset-x-0 top-0 h-24  from-red-50 via-white to-slate-50" />
+                  {/* Top row: logo + badge */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-20 items-center">
+                      <Image
+                        src={university.image}
+                        alt={university.name}
+                        width={280}
+                        height={80}
+                        className="max-h-20 w-auto object-contain"
+                      />
+                    </div>
 
-                  <div className="absolute right-4 top-4 rounded-full bg-white px-3 py-1 text-[11px] font-black text-red-500 shadow-sm ring-1 ring-red-100">
-                    #{actualIndex + 1}
+                    {university.badge && (
+                      <span
+                        className="rounded-full px-3 py-1 text-[11px] font-bold text-white"
+                        style={{
+                          backgroundColor:
+                            university.badgeColor || "#ee2c3c",
+                        }}
+                      >
+                        {university.badge}
+                      </span>
+                    )}
                   </div>
 
-                  <div className="relative flex h-full flex-col">
-                    <div className="flex items-center justify-center pt-5">
-                      <div className="flex h-20 w-44 items-center justify-center rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
-                        <Image
-                          src={university.image}
-                          alt={university.name}
-                          width={180}
-                          height={70}
-                          className="max-h-14 w-auto object-contain"
-                        />
-                      </div>
+                  {/* Checkbox */}
+                  <label
+                    className="absolute right-4 top-14 z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 border-slate-300 bg-white shadow-sm transition hover:border-red-300"
+                    style={
+                      isSelected
+                        ? { backgroundColor: "#ee2c3c", borderColor: "#ee2c3c" }
+                        : undefined
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleSelect(key)}
+                      className="sr-only"
+                      aria-label={`Select ${university.name} to compare`}
+                    />
+                    {isSelected && (
+                      <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+                    )}
+                  </label>
+
+                  {/* University name */}
+                  <p className="mt-3 text-sm text-slate-500">
+                    {university.name}
+                  </p>
+
+                  {/* Heading */}
+                  <h3 className="mt-1 text-lg font-bold leading-snug text-slate-950">
+                    MBA from {university.name}
+                  </h3>
+
+                  {/* Tag pill - e.g. "100% Online Program", "#1 Choice for Working Professionals" */}
+                  {university.tag && (
+                    <span
+                      className="mt-3 inline-block w-fit rounded-full px-3 py-1.5 text-xs font-medium"
+                      style={{
+                        backgroundColor: university.tagBg || "#eff6ff",
+                        color: university.tagColor || "#2563eb",
+                      }}
+                    >
+                      {university.tag}
+                    </span>
+                  )}
+
+                  {/* Meta info */}
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <GraduationCap className="h-4 w-4 text-slate-500" />
+                      <span>{university.eligibility || "Bachelor's Degree"}</span>
                     </div>
-
-                    <div className="mt-6 text-center">
-                      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
-                        Online University
-                      </p>
-
-                      <h3 className="mx-auto mt-2 line-clamp-2 min-h-[48px] max-w-xs text-lg font-black leading-6 text-slate-950">
-                        {university.name}
-                      </h3>
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <Clock className="h-4 w-4 text-slate-500" />
+                      <span>{university.duration || `${university.courses} Months`}</span>
                     </div>
+                  </div>
 
-                    <div className="mt-5 grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-slate-50 p-3 text-center">
-                        <GraduationCap className="mx-auto mb-1 h-4 w-4 text-red-500" />
-                        <p className="text-[11px] font-bold text-slate-500">
-                          Programs
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900">
-                          {university.courses}
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-slate-50 p-3 text-center">
-                        <MapPin className="mx-auto mb-1 h-4 w-4 text-red-500" />
-                        <p className="text-[11px] font-bold text-slate-500">
-                          Region
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900">
-                          {university.region}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
-                      <UsersRound className="h-4 w-4 shrink-0" />
-                      <span>Trusted by 5,000+ Executives</span>
-                    </div>
-
+                  {/* Buttons */}
+                  <div className="mt-5 flex gap-3">
                     <button
                       type="button"
-                      className="mt-4 mx-auto inline-flex h-10 items-center justify-center gap-2 "
+                      className="flex-1 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
                     >
-                      Add to AI Compare
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                      View Program
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 rounded-lg bg-[#ee2c3c] py-2.5 text-sm font-semibold text-white transition "
+                    >
+                      Syllabus
                     </button>
                   </div>
                 </article>
@@ -142,7 +193,7 @@ export default function MbaUniversitySection() {
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-0 top-1/2 z-10 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.14)] transition hover:border-red-200 hover:text-red-500 lg:flex"
+            className="absolute right-0 top-1/2 z-10 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.14)] transition   lg:flex"
             aria-label="Next universities"
           >
             <ChevronRight className="h-5 w-5" strokeWidth={2.4} />
@@ -153,7 +204,7 @@ export default function MbaUniversitySection() {
           <button
             type="button"
             onClick={goPrev}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:text-red-500"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition "
             aria-label="Previous universities"
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2.4} />
@@ -162,12 +213,26 @@ export default function MbaUniversitySection() {
           <button
             type="button"
             onClick={goNext}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:text-red-500"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition "
             aria-label="Next universities"
           >
             <ChevronRight className="h-5 w-5" strokeWidth={2.4} />
           </button>
         </div>
+
+        {/* Compare Now button - appears once 2+ universities are selected */}
+        {selected.length >= 2 && (
+          <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
+            <button
+              type="button"
+              onClick={handleCompareNow}
+              className="flex items-center gap-2 rounded-full bg-[#ee2c3c] px-6 py-3 text-sm font-black text-white shadow-[0_10px_30px_rgba(238,44,60,0.4)] transition "
+            >
+              Compare Now ({selected.length})
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

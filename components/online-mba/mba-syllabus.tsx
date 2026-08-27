@@ -62,31 +62,6 @@ export default function Syllabus() {
           </h2>
         </div>
 
-        {/* Compact Quick Overview */}
-        <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:grid-cols-3">
-          <CompactInfo
-            icon={<CalendarIcon />}
-            label="Programme Duration"
-            value="2 Years"
-            description="Usually divided into 4 semesters"
-          />
-
-          <CompactInfo
-            icon={<BookIcon />}
-            label="Learning Structure"
-            value="Core + Electives"
-            description="Foundation followed by specialization"
-          />
-
-          <CompactInfo
-            icon={<GradCapIcon />}
-            label="Specialization"
-            value="Choose Your Path"
-            description="Focus on your preferred domain"
-            last
-          />
-        </div>
-
         {/* Semester Journey */}
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -134,18 +109,21 @@ export default function Syllabus() {
           <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8 sm:py-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                  <BookIcon />
+               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white">
+                  <TargetIcon />
                 </span>
 
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                    Core Subjects
-                  </h3>
 
-                  <p className="mt-0.5 text-sm text-slate-500">
-                    Usually covered during Semester 1 &amp; 2
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                    Semester 1 &amp; 2
                   </p>
+
+
+                  
+                  <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
+                   Core Subjects Covered
+                  </h3>
                 </div>
               </div>
 
@@ -241,44 +219,6 @@ export default function Syllabus() {
   );
 }
 
-function CompactInfo({
-  icon,
-  label,
-  value,
-  description,
-  last = false,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  description: string;
-  last?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-center gap-3 px-4 py-4 sm:px-5 ${
-        !last ? "border-b border-slate-200 sm:border-b-0 sm:border-r" : ""
-      }`}
-    >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500">
-        {icon}
-      </span>
-
-      <div className="min-w-0">
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          {label}
-        </p>
-
-        <h3 className="mt-0.5 text-lg font-bold text-slate-900">{value}</h3>
-
-        <p className="mt-0.5 text-sm leading-snug text-slate-500">
-          {description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function CheckBubble() {
   return (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
@@ -292,67 +232,6 @@ function CheckBubble() {
         />
       </svg>
     </span>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="16"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M8 3v4M16 3v4M3 10h18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4 5.5A2.5 2.5 0 016.5 3H20v16H6.5A2.5 2.5 0 014 16.5v-11z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4 16.5A2.5 2.5 0 016.5 14H20"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function GradCapIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M2 9l10-5 10 5-10 5-10-5z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 

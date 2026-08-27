@@ -1,11 +1,11 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Check } from "lucide-react";
 
 /**
  * Key Highlights Component
- * Card-grid layout with Inter typography and red accent styling.
+ * Plain content list (no card borders/backgrounds) with Inter typography and red accent styling.
  */
 
 interface Highlight {
@@ -16,71 +16,65 @@ interface Highlight {
 
 const HIGHLIGHTS: Highlight[] = [
   {
-    icon: <CapIcon />,
+    icon: <Check  />,
     title: "Same academic value",
     text: "A 2-year program that carries the same academic value and recognition as a regular, on-campus MBA.",
   },
   {
-    icon: <BriefcaseIcon />,
+    icon: <Check />,
     title: "Study while you work",
     text: "Keep working while you study — build core business and leadership skills without stepping away from your career.",
   },
   {
-    icon: <GlobeIcon />,
+    icon: <Check />,
     title: "Learn from anywhere",
     text: "Course material, recorded lectures, and assignments are accessible from anywhere, so you can balance study with work and life.",
   },
   {
-    icon: <LayersIcon />,
+    icon: <Check />,
     title: "Pick your specialization",
     text: "Finance, marketing, entrepreneurship, IT, business analytics & data science, HR, and operations management.",
   },
   {
-    icon: <UsersIcon />,
+    icon: <Check />,
     title: "A wider network",
     text: "Connect with peers, faculty, and industry professionals from different regions and sectors through live sessions and forums.",
   },
   {
-    icon: <BookIcon />,
+    icon: <Check/>,
     title: "Everything in one place",
     text: "Recorded lectures, e-books, live classes, LMS platforms, and discussion boards — all in one place.",
   },
   {
-    icon: <UserCheckIcon />,
+    icon: <Check />,
     title: "Built for every stage",
     text: "A strong fit for working professionals, fresh graduates, business owners, and anyone switching careers.",
   },
   {
-    icon: <TrendUpIcon />,
+    icon: <Check />,
     title: "Sharper leadership",
     text: "Strategic, managerial, and leadership skills that support promotions and stronger job roles.",
   },
   {
-    icon: <ShieldIcon />,
+    icon: <Check />,
     title: "Accredited institutions",
     text: "Most universities offering UGC-DEB-approved online MBA programs are also NAAC-accredited institutions.",
   },
   {
-    icon: <TargetIcon />,
+    icon: <Check />,
     title: "Placement support",
     text: "Virtual placement assistance, resume-building support, and interview preparation from reputable universities.",
   },
   {
-    icon: <CompassIcon />,
+    icon: <Check />,
     title: "Global exposure",
     text: "Global case studies, international faculty sessions, and industry certifications for broader exposure.",
   },
   {
-    icon: <BrainIcon />,
+    icon: <Check />,
     title: "Well-rounded skills",
     text: "Sharper decision-making, communication, strategic thinking, and problem-solving skills along the way.",
   },
-];
-
-const SIDEBAR_POINTS: string[] = [
-  "Avail an exclusive discount coupon of up to ₹20,000 on all online courses",
-  "Secure a seat at your dream university before intake closes",
-  "Unlock early-bird benefits and fee waivers",
 ];
 
 export default function KeyHighlights() {
@@ -89,76 +83,31 @@ export default function KeyHighlights() {
       <div className="max-w-6xl mx-auto font-[Inter]">
         {/* Header */}
         <div className="mb-6 sm:mb-8 text-center">
-          
-
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
             Key Highlights of Online MBA in
             <span className="text-red-500"> India</span>
           </h2>
-
         </div>
 
-        {/* Main Layout Grid */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
-          {/* Highlight Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {HIGHLIGHTS.map((h, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-red-200 hover:shadow-sm transition-all"
-              >
-                <div className="h-10 w-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
-                  {h.icon}
-                </div>
+        {/* Content-only list, no card wrappers */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+          {HIGHLIGHTS.map((h, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="h-9 w-9 shrink-0 text-red-500 flex items-center justify-center">
+                {h.icon}
+              </div>
 
-                <h3 className="mt-3 text-sm font-bold text-slate-900">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
                   {h.title}
                 </h3>
 
-                <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                <p className="mt-1 text-sm text-slate-600 leading-relaxed">
                   {h.text}
                 </p>
               </div>
-            ))}
-          </div>
-
-          {/* Sidebar Sticky CTA Card */}
-          <aside className="lg:sticky lg:top-6 rounded-2xl border border-slate-200 shadow-sm bg-white overflow-hidden">
-            <div className="h-1.5 bg-red-500" />
-
-            <div className="p-6">
-              <p className="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-wide">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-                Admissions closing soon
-              </p>
-
-              <h3 className="mt-2 text-lg font-bold text-slate-900">
-                Compare &amp; enrol now
-              </h3>
-
-              <p className="mt-1 text-sm text-slate-500">
-                Free, and takes under 2 minutes.
-              </p>
-
-              <ul className="mt-5 space-y-3.5">
-                {SIDEBAR_POINTS.map((text, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-                      <CheckIcon />
-                    </span>
-
-                    <span className="text-sm text-slate-600 leading-relaxed">
-                      {text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <button className="mt-6 w-full inline-flex items-center justify-center gap-2 underline">
-                Compare
-              </button>
             </div>
-          </aside>
+          ))}
         </div>
       </div>
     </section>

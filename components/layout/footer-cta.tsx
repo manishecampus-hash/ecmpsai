@@ -58,86 +58,78 @@ export function FooterCta() {
   };
 
   return (
-    <div className="absolute inset-x-0 -top-32 z-20 mx-auto max-w-6xl px-4 sm:px-4 md:px-6 sm:-top-40 md:-top-28 lg:-top-20">
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#E1D9D1] shadow-[0_20px_50px_rgba(0,0,0,0.05)] md:rounded-[32px]">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          {/* Image */}
-          <div className="flex w-full shrink-0 justify-center md:w-64 md:items-center md:self-stretch">
-            <div className="relative aspect-[16/9] w-2/5 max-w-[90px] sm:aspect-[4/3] sm:w-1/2 sm:max-w-[220px] md:aspect-auto md:h-full md:w-full md:min-h-[160px]">
-              <Image
-                src="/image/logo.png"
-                alt="CTA"
-                fill
-                priority
-                className="object-contain object-bottom md:object-left md:p-6"
-              />
-            </div>
+    <div className="w-full relative overflow-hidden rounded-2xl border border-slate-800/60 bg-slate-900/10 backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,0.15)] md:rounded-[24px]">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between p-6 md:p-8 gap-6">
+        {/* Left Column: Logo + Title + Pills */}
+        <div className="flex flex-col items-center md:items-start gap-4 flex-1">
+          <div className="relative h-8 w-32" style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
+            <Image
+              src="/image/logo.png"
+              alt="eCampus Logo"
+              fill
+              priority
+              className="object-contain object-left"
+            />
           </div>
+          <h2 className="text-xl font-extrabold leading-tight tracking-tight text-white sm:text-2xl lg:text-[28px] text-center md:text-left">
+            Ready to Start Your{' '}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">
+              Global Academic Journey?
+            </span>
+          </h2>
 
-          {/* Content */}
-          <div className="flex flex-1 flex-col items-center gap-2 px-4 pb-4 pt-2 sm:gap-4 sm:pb-8 md:flex-row md:items-center md:justify-between md:gap-6 md:px-0 md:py-10 md:pr-8">
-            {/* Text */}
-            <div className="text-center md:text-left">
-              <h2 className="text-base font-bold leading-tight text-slate-800 sm:text-2xl lg:text-4xl">
-                Ready to Start Your
-                <br className="hidden md:block" />
-                Global Academic Journey?
-              </h2>
-
-              <div className="mt-2 flex flex-wrap justify-center gap-2 sm:mt-4 sm:gap-3 md:justify-start">
-                {[
-                  "Globally Accredited",
-                  "Flexible Online",
-                  "Industry Experts",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 sm:text-xs"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-slate-400" />
-                    <span>{item}</span>
-                  </div>
-                ))}
+          <div className="flex flex-wrap justify-center md:justify-start gap-2">
+            {[
+              "Globally Accredited",
+              "Flexible Online",
+              "Industry Experts",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-1.5 rounded-full bg-slate-800/40 border border-slate-700/40 px-3 py-1 text-[11px] font-semibold text-slate-300 transition-all duration-300 hover:bg-slate-800 hover:text-white sm:text-xs"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                <span>{item}</span>
               </div>
-            </div>
-
-            {/* Button — opens popup instead of navigating */}
-            <div className="flex shrink-0 flex-col items-center gap-1.5 sm:gap-2">
-              <Dialog open={open} onOpenChange={handleOpenChange}>
-                <DialogTrigger asChild>
-                  <button
-                    type="button"
-                    className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-slate-800 px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-6 sm:py-3"
-                  >
-                    <span
-                      className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
-                      aria-hidden="true"
-                    />
-
-                    <span className="relative z-10 flex items-center gap-2">
-                      Apply Now
-                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </span>
-                  </button>
-                </DialogTrigger>
-
-                <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-                  {submittedLead ? (
-                    <SuccessState
-                      name={submittedLead.name}
-                      onClose={() => handleOpenChange(false)}
-                    />
-                  ) : (
-                    <ApplicationForm onSubmit={handleFormSubmit} />
-                  )}
-                </DialogContent>
-              </Dialog>
-
-              <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                Join 50,000+ Alumni
-              </p>
-            </div>
+            ))}
           </div>
+        </div>
+
+        {/* Right Column: Button */}
+        <div className="flex flex-col items-center gap-2.5 shrink-0 md:pl-6">
+          <Dialog open={open} onOpenChange={handleOpenChange}>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-7 sm:py-3.5"
+              >
+                <span
+                  className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                  aria-hidden="true"
+                />
+
+                <span className="relative z-10 flex items-center gap-2">
+                  Apply Now
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </button>
+            </DialogTrigger>
+
+            <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
+              {submittedLead ? (
+                <SuccessState
+                  name={submittedLead.name}
+                  onClose={() => handleOpenChange(false)}
+                />
+              ) : (
+                <ApplicationForm onSubmit={handleFormSubmit} />
+              )}
+            </DialogContent>
+          </Dialog>
+
+          <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            Join 50,000+ Alumni
+          </p>
         </div>
       </div>
     </div>

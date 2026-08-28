@@ -73,10 +73,10 @@ const navigation = {
 };
 
 const socialLinkClass =
-  "flex h-11 w-11 items-center justify-center rounded-xl border border-dotted border-slate-700 text-slate-400 transition-all duration-300 hover:-translate-y-1 hover:border-red-500 hover:bg-red-500/10 hover:text-red-500";
+  "flex h-10 w-10 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900/20 text-slate-400 transition-all duration-300 hover:-translate-y-1 hover:border-red-500 hover:bg-red-500/10 hover:text-white";
 
 const contactLinkClass =
-  "group relative flex h-12 items-center justify-center gap-2 rounded-lg border border-slate-700 px-4 pt-2 transition-colors";
+  "group relative flex items-center justify-center gap-2 rounded-full border border-slate-800/80 bg-slate-900/20 px-5 py-2.5 transition-all duration-300 hover:bg-slate-900/50";
 
 export function Footer() {
   const [footerSections, setFooterSections] = useState<any[]>(
@@ -120,77 +120,119 @@ export function Footer() {
   return (
     <footer
       id="footer"
-      className="relative mt-32 w-full bg-[#191e27] sm:mt-40 lg:mt-36"
+      className="relative mt-16 w-full bg-gradient-to-b from-[#0F131E] to-[#080B11] border-t border-slate-800/60 sm:mt-20 lg:mt-24"
     >
-      <FooterCta />
-
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-5 px-4 pb-0 pt-24 sm:px-6 sm:pt-32 sm:gap-6 sm:pb-1 lg:px-8 lg:pt-28">
-        {/* <div className="relative h-12 w-40">
-          <Link href="/" aria-label="eCampus home">
-            <Image
-              src="/image/logo.png"
-              alt="Logo"
-              fill
-              className="object-contain brightness-0 invert transition-transform duration-300 hover:scale-105"
-              priority
-            />
-          </Link>
-        </div> */}
-
-        <div className="w-full border-b border-dotted border-slate-800" />
-
-        <div className="grid w-full grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6">
-          {footerSections.map((section) => (
-            <div key={section.id}>
-              <h4 className="mb-4 text-sm font-semibold text-white">
-                {section.name}
-              </h4>
-              <ul className="flex flex-col space-y-2">
-                {section.items.map((item: any) => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className="text-sm leading-relaxed text-white/70 transition-colors hover:text-red-500"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+      <div className="relative mx-auto flex max-w-[1440px] flex-col gap-8 px-4 pb-0 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+        <div className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
+          {/* Column 1: Brand Info Column */}
+          <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 flex flex-col gap-5 text-left">
+            <div className="relative h-10 w-40" style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
+              <Image
+                src="/image/logo.png"
+                alt="eCampus Logo"
+                fill
+                priority
+                unoptimized
+                className="object-contain object-left"
+              />
             </div>
-          ))}
+            <p className="text-[14.5px] leading-relaxed text-slate-300/90 font-medium tracking-wide">
+              Embrace the convenience of learning and upskill with our extensive selection of online/distance degrees, diplomas, and certification courses, specially tailored for you.
+            </p>
+            <p className="text-[14.5px] leading-relaxed text-slate-300/90 font-medium tracking-wide">
+              eCampus is India's leading online education platform that aims to bring together top online universities and institutions on a single unified platform.
+            </p>
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
+                Follow us at
+              </span>
+              <div className="flex flex-wrap gap-2.5">
+                {[
+                  { Icon: DIcons.Instagram, color: "hover:text-pink-400 hover:border-pink-400/50 hover:bg-pink-400/10" },
+                  { Icon: DIcons.LinkedIn, color: "hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/10" },
+                  { Icon: DIcons.Facebook, color: "hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-500/10" },
+                  { Icon: DIcons.X, color: "hover:text-sky-400 hover:border-sky-400/50 hover:bg-sky-400/10" },
+                  { Icon: DIcons.YouTube, color: "hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10" },
+                ].map(({ Icon, color }, idx) => (
+                  <Link
+                    key={idx}
+                    href="#"
+                    className={`flex h-9 w-9 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900/20 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 ${color}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Columns 2-6: Dynamic Link Columns */}
+          {footerSections.map((section, idx) => {
+            let colSpanClass = "col-span-1 lg:col-span-2";
+            if (footerSections.length === 5) {
+              if (idx === 4) colSpanClass = "col-span-1 lg:col-span-1";
+            } else if (footerSections.length === 4) {
+              if (idx === 0) colSpanClass = "col-span-1 lg:col-span-3";
+            }
+            return (
+              <div key={section.id} className={colSpanClass}>
+                <h4 className="mb-5 text-[13px] font-extrabold uppercase tracking-wider text-slate-100">
+                  {section.name}
+                </h4>
+                <ul className="flex flex-col space-y-2.5">
+                  {section.items.map((item: any) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className="group flex items-center text-[13.5px] leading-relaxed text-slate-400 transition-all duration-300 hover:translate-x-1 hover:text-white"
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="w-full border-b border-dotted border-slate-800" />
+        <div className="w-full border-b border-slate-800/80" />
       </div>
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-4 px-4 py-1 sm:px-6 sm:py-2 sm:gap-7 md:flex-row lg:px-8">
-        <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-          {[
-            { Icon: DIcons.X, color: "text-sky-500" }, // X (Twitter)
-            { Icon: DIcons.Instagram, color: "text-pink-500" },
-            { Icon: DIcons.LinkedIn, color: "text-blue-600" },
-            { Icon: DIcons.Facebook, color: "text-blue-500" },
-            { Icon: DIcons.YouTube, color: "text-red-600" },
-          ].map(({ Icon, color }, idx) => (
-            <Link key={idx} href="#" className={socialLinkClass}>
-              <Icon className={`h-5 w-5 ${color}`} />
-            </Link>
-          ))}
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-5 px-4 py-4 sm:px-6 sm:py-6 md:flex-row lg:px-8">
+        {/* Sign Up Button (Left on Desktop, Centered on Mobile) */}
+        <div className="flex justify-center md:justify-start">
+          <Link
+            href="/signup"
+            onClick={(e) => {
+              e.preventDefault();
+              window.dispatchEvent(new CustomEvent("open-signup"));
+            }}
+            className="group relative p-[1px] inline-flex items-center justify-center overflow-hidden rounded-full transition-all duration-300 hover:scale-[1.03]"
+          >
+            {/* Spinning gradient background for border */}
+            <span className="absolute -inset-[100%] bg-[conic-gradient(from_0deg,transparent_60%,#f97316_80%,#ef4444_90%,transparent_100%)] animate-[spin_3.5s_linear_infinite]" />
+            
+            {/* Inner Dark Body */}
+            <span className="relative flex items-center justify-center gap-2 rounded-full bg-[#0F131E] px-7 py-2.5 text-[13px] font-bold uppercase tracking-wider text-slate-300 transition-colors duration-300 group-hover:bg-[#161B29] group-hover:text-white">
+              Sign Up / Register
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </span>
+          </Link>
         </div>
-        <div className="flex flex-row items-center gap-2">
+
+        {/* Contact Buttons (Right on Desktop, Centered on Mobile) */}
+        <div className="flex flex-wrap justify-center items-center gap-3 md:justify-end">
           {/* Toll Free Button */}
           <a
             href="tel:18001216201"
-            className={`${contactLinkClass} flex items-center gap-2 !rounded-full !border-2 border-red-500 px-5 py-2.5 min-w-[160px] hover:bg-red-500/10 relative overflow-visible`}
+            className={`${contactLinkClass} hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(239,68,68,0.1)]`}
           >
-            <span className="absolute -top-2 left-3 rounded-full bg-red-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
-              Toll Free
-            </span>
-
             <Phone className="h-4 w-4 shrink-0 text-red-500" />
-
-            <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-white">
+            <span className="whitespace-nowrap text-[13px] font-semibold text-slate-400 uppercase tracking-wider">
+              Toll Free:
+            </span>
+            <span className="whitespace-nowrap text-[14px] font-extrabold text-white tracking-tight">
               1800-121-6201
             </span>
           </a>
@@ -200,38 +242,20 @@ export function Footer() {
             href="https://wa.me/919355907564"
             target="_blank"
             rel="noopener noreferrer"
-            className={`${contactLinkClass} flex items-center gap-2 !rounded-full !border-2 border-green-500 px-5 py-2.5 min-w-[150px] hover:bg-green-500/10 relative overflow-visible`}
+            className={`${contactLinkClass} hover:border-emerald-500/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]`}
           >
-            <span className="absolute -top-2 left-3 rounded-full bg-green-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
-              WhatsApp
+            <MessageCircle className="h-4 w-4 shrink-0 text-emerald-500" />
+            <span className="whitespace-nowrap text-[13px] font-semibold text-slate-400 uppercase tracking-wider">
+              WhatsApp:
             </span>
-
-            <MessageCircle className="h-4 w-4 shrink-0 text-green-500" />
-
-            <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-white">
+            <span className="whitespace-nowrap text-[14px] font-extrabold text-white tracking-tight">
               93559 07564
             </span>
           </a>
         </div>
       </div>
 
-      {/* <div className="bg-[#1b1e20] px-4 pt-4 pb-24 sm:pt-6 sm:pb-24 md:py-6">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-[12px] sm:gap-4 md:flex-row">
-          <div className="flex flex-wrap justify-center gap-4 text-slate-300">
-            <Link href="/terms" className="hover:text-red-500">
-              Terms & Condition
-            </Link>
-            <Link href="/privacy" className="hover:text-red-500">
-              Privacy Policy
-            </Link>
-          </div>
-          <p className="text-slate-400">©2026 | All rights reserved.</p>
-        </div>
-      </div> */}
-
-{/* 26 aug */}
-<ChildFooter/>
-
+      <ChildFooter />
     </footer>
   );
 }

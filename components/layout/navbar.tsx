@@ -1073,6 +1073,12 @@ export function Navbar() {
     return () => window.removeEventListener("ecampus-auth-change", readStudent);
   }, []);
 
+  useEffect(() => {
+    const handleOpenSignup = () => setShowSignupModal(true);
+    window.addEventListener("open-signup", handleOpenSignup);
+    return () => window.removeEventListener("open-signup", handleOpenSignup);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("ecampus_student");
     window.dispatchEvent(new Event("ecampus-auth-change"));

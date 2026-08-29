@@ -22,24 +22,23 @@ export default function AboutProgram({ university }: AboutProgramProps) {
         {/* Intro: image left, About copy right */}
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-14">
           {/* Image slot */}
-          <div className="order-1">
-            <div className="relative w-full overflow-hidden border border-dashed border-slate-200 bg-slate-50 aspect-[4/3] flex items-center justify-center rounded-2xl">
-              {uniImage ? (
+          {uniImage ? (
+            <div className="order-1">
+              <div className="relative w-full overflow-hidden aspect-[4/3] rounded-2xl">
                 <img
                   src={uniImage}
                   alt={`${uniDisplayName} Campus`}
                   className="h-full w-full object-cover"
                 />
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-slate-300">
-                  <ImageIcon className="h-10 w-10" />
-                  <span className="text-xs font-medium text-slate-400">
-                    Campus image goes here
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="order-1">
+              <div className="relative w-full overflow-hidden border border-slate-200 bg-slate-50 aspect-[4/3] flex items-center justify-center rounded-2xl text-slate-400 text-sm font-medium">
+                Image coming soon
+              </div>
+            </div>
+          )}
 
           {/* Text */}
           <div className="order-2 text-left">

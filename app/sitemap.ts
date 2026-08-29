@@ -17,6 +17,21 @@ async function getBlogs() {
   return [];
 }
 
+async function getRootCourses() {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/root-courses`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.error("Error fetching root courses for sitemap:", err);
+  }
+  return [];
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:4001";
   
@@ -53,5 +68,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  return [...staticRoutes, ...blogRoutes];
+  // 3. Dynamic root course routes from the database
+  const dbCourses = await getRootCourses();
+  const courseRoutes = dbCourses
+    .filter((course: any) => {
+      if (course.status === "inactive") return false;
+      if (course.seoSettings && course.seoSettings.sitemap === false) return false;
+      return true;
+    })
+    .map((course: any) => {
+      const slug = (course.slug || "").replace(/^\/+|\/+$/g, "");
+      return {
+        url: `${baseUrl}/${slug}`,
+        lastModified: course.updatedAt ? new Date(course.updatedAt) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      };
+    });
+
+  return [...staticRoutes, ...blogRoutes, ...courseRoutes];
 }

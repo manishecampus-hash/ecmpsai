@@ -47,14 +47,27 @@ const steps = [
   },
 ];
 
-export default function MbaAdmissionProcedure() {
+export default function MbaAdmissionProcedure({ data }: { data?: any }) {
+  const heading = data?.heading || "Admission Procedure";
+  const list = data?.list && Array.isArray(data.list) && data.list.length > 0
+    ? data.list
+    : steps;
+
+  const ICONS = [Globe, LogIn, ClipboardCheck, UserPlus, Wallet];
+
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          <span className="text-red-500">Online MBA</span> Admission
-          Procedure
+          {heading.includes("Online MBA") ? (
+            <>
+              <span className="text-red-500">Online MBA</span>
+              {heading.split("Online MBA")[1] || " Admission Procedure"}
+            </>
+          ) : (
+            heading
+          )}
         </h2>
       </div>
 
@@ -80,21 +93,20 @@ export default function MbaAdmissionProcedure() {
 
       {/* Intro text */}
       <p className="mt-6 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
-        There is an online MBA admission procedure, which a student must
-        read about in detail before taking admission at any university for
-        this program:
+        There is an admission procedure, which a student must read about in detail before taking admission:
       </p>
 
       {/* Steps panel */}
       <div className="mt-6 rounded-3xl border border-slate-200 bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] overflow-hidden max-w-4xl">
-        {steps.map((step, i) => {
-          const Icon = step.icon;
+        {list.map((step: any, i: number) => {
+          const Icon = step.icon || ICONS[i % ICONS.length];
+          const stepNumber = step.number || `0${i + 1}`;
 
           return (
             <div
-              key={step.number}
+              key={i}
               className={`group flex flex-col sm:flex-row gap-4 sm:gap-6 px-5 py-6 sm:px-8 transition-colors hover:bg-red-50/40 ${
-                i !== steps.length - 1 ? "border-b border-slate-100" : ""
+                i !== list.length - 1 ? "border-b border-slate-100" : ""
               }`}
             >
               <div className="flex shrink-0 items-center gap-4 sm:flex-col sm:items-start sm:gap-2">
@@ -102,7 +114,7 @@ export default function MbaAdmissionProcedure() {
                   <Icon className="h-5 w-5" strokeWidth={2} />
                 </span>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-red-500">
-                  Step {step.number}
+                  Step {stepNumber}
                 </span>
               </div>
 

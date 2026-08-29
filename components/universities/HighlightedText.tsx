@@ -2,14 +2,15 @@ import React from "react";
 
 interface HighlightedTextProps {
   text?: string | null;
+  className?: string;
 }
 
-export default function HighlightedText({ text }: HighlightedTextProps) {
+export default function HighlightedText({ text, className }: HighlightedTextProps) {
   if (!text) {
     return null;
   }
 
-  // Split text by matching pairs of asterisks (e.g., *Questionss*)
+  // Split text by matching pairs of asterisks (e.g., *Questions*)
   const parts = text.split(/(\*[^*]+\*)/g);
 
   return (
@@ -20,7 +21,11 @@ export default function HighlightedText({ text }: HighlightedTextProps) {
         if (isHighlighted) {
           const content = part.slice(1, -1);
           return (
-            <span key={index} className="text-orange-600" style={{ color: "var(--orange-brand)" }}>
+            <span
+              key={index}
+              className={className || "text-orange-600"}
+              style={className ? undefined : { color: "var(--orange-brand)" }}
+            >
               {content}
             </span>
           );
@@ -31,3 +36,4 @@ export default function HighlightedText({ text }: HighlightedTextProps) {
     </>
   );
 }
+

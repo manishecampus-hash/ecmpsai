@@ -604,7 +604,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
-import { categories } from "@/data/header-menu";
+// import { categories } from "@/data/header-menu";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
 import * as LucideIcons from "lucide-react";
@@ -953,7 +953,7 @@ export function Navbar() {
   const pathname = usePathname();
 
   const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
-  const [programsMenu, setProgramsMenu] = useState<any[]>(categories);
+  const [programsMenu, setProgramsMenu] = useState<any[]>([]);
   const [activeCat, setActiveCat] = useState<string>("");
 
   useEffect(() => {
@@ -1016,9 +1016,14 @@ export function Navbar() {
           if (fetchedCats.length > 0) {
             setActiveCat(fetchedCats[0].id);
           }
+        } else {
+          setProgramsMenu([]);
         }
       })
-      .catch((err) => console.error("Error fetching programs menu:", err));
+      .catch((err) => {
+        console.error("Error fetching programs menu:", err);
+        setProgramsMenu([]);
+      });
   }, []);
 
   // FIX: split the single shared ref into three separate refs so outside-click
@@ -1184,23 +1189,25 @@ export function Navbar() {
               className="hidden md:flex items-center gap-1"
               ref={desktopTriggerRef}
             >
-              <button
-                onClick={(e) => toggle("program", e)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[15px] font-medium transition-all duration-200 ${
-                  activeMenu !== "program"
-                    ? "bg-[#FFF5F5] text-red-600 border-[#FDE2E2]"
-                    : "bg-white text-gray-600 border-gray-300"
-                }`}
-              >
-                Programs
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    activeMenu === "program" ? "rotate-180" : "rotate-0"
-                  } ${
-                    activeMenu !== "program" ? "text-red-600" : "text-gray-600"
+              {programsMenu.length > 0 && (
+                <button
+                  onClick={(e) => toggle("program", e)}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[15px] font-medium transition-all duration-200 ${
+                    activeMenu !== "program"
+                      ? "bg-[#FFF5F5] text-red-600 border-[#FDE2E2]"
+                      : "bg-white text-gray-600 border-gray-300"
                   }`}
-                />
-              </button>
+                >
+                  Programs
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      activeMenu === "program" ? "rotate-180" : "rotate-0"
+                    } ${
+                      activeMenu !== "program" ? "text-red-600" : "text-gray-600"
+                    }`}
+                  />
+                </button>
+              )}
 
               {headerNavLinks.map((link) => (
                 <Link
@@ -1251,24 +1258,26 @@ export function Navbar() {
               )}
 
               {/* Mobile Programs button - direct button, same style as desktop */}
-              <button
-                ref={mobileTriggerRef}
-                onClick={(e) => toggle("program", e)}
-                className={`md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 ${
-                  activeMenu !== "program"
-                    ? "bg-[#FFF5F5] text-red-600 border-[#FDE2E2]"
-                    : "bg-white text-gray-600 border-gray-300"
-                }`}
-              >
-                Programs
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                    activeMenu === "program" ? "rotate-180" : "rotate-0"
-                  } ${
-                    activeMenu !== "program" ? "text-red-600" : "text-gray-600"
+              {programsMenu.length > 0 && (
+                <button
+                  ref={mobileTriggerRef}
+                  onClick={(e) => toggle("program", e)}
+                  className={`md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 ${
+                    activeMenu !== "program"
+                      ? "bg-[#FFF5F5] text-red-600 border-[#FDE2E2]"
+                      : "bg-white text-gray-600 border-gray-300"
                   }`}
-                />
-              </button>
+                >
+                  Programs
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeMenu === "program" ? "rotate-180" : "rotate-0"
+                    } ${
+                      activeMenu !== "program" ? "text-red-600" : "text-gray-600"
+                    }`}
+                  />
+                </button>
+              )}
 
               {/* REMOVED: Hamburger button used to be here on the right side.
                   It has been moved to the top-left, next to the logo. */}

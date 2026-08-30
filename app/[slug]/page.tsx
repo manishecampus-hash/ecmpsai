@@ -45,10 +45,11 @@ interface CourseData {
   id: string;
   name: string;
   slug: string;
+  shortcode?: string;
   description: string;
   details: any;
   image?: string;
-  status: string;
+  status: "active" | "inactive";
   seoSettings?: SeoSettings;
   associatedUniversities?: University[];
 }

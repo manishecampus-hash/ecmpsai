@@ -2588,13 +2588,13 @@
 // 19 aug
 
 
+"use client";
+
 import { useState, useEffect, type FormEvent } from "react";
 import {
   X,
   ArrowLeft,
   ChevronDown,
-  ChevronRight,
-  ShieldCheck,
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -2621,7 +2621,10 @@ const countryCodes = [
 type Step = "phone" | "otp";
 type SignupMode = "mobile" | "email";
 
-export function SignupModal({ isOpen, onClose }: SignupModalProps) {
+export function SignupModal({
+  isOpen,
+  onClose,
+}: SignupModalProps) {
   const [step, setStep] = useState<Step>("phone");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
@@ -2637,13 +2640,21 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
-    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+
+    const t = setTimeout(
+      () => setResendCooldown((s) => s - 1),
+      1000,
+    );
+
     return () => clearTimeout(t);
   }, [resendCooldown]);
 
   if (!isOpen) return null;
 
-  const selectedCountry = countryCodes.find((c) => c.code === countryCode)!;
+  const selectedCountry = countryCodes.find(
+    (c) => c.code === countryCode,
+  )!;
+
   const fullPhone = `${countryCode}${phone}`;
 
   const handleModeChange = (nextMode: SignupMode) => {
@@ -2703,7 +2714,10 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: fullPhone, otp }),
+        body: JSON.stringify({
+          phone: fullPhone,
+          otp,
+        }),
       });
 
       const data = await res.json();
@@ -2766,7 +2780,11 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
       const res = await fetch(`${apiUrl}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
       });
 
       if (!res.ok) {
@@ -2774,7 +2792,11 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
         throw new Error(data.message || "Signup failed");
       }
 
-      localStorage.setItem("ecampus_student", JSON.stringify({ name, email }));
+      localStorage.setItem(
+        "ecampus_student",
+        JSON.stringify({ name, email }),
+      );
+
       window.dispatchEvent(new Event("ecampus-auth-change"));
       onClose();
     } catch (err: any) {
@@ -2792,76 +2814,129 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
   return (
     <>
+      {/* Backdrop */}
       <div
         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
+      {/* Modal wrapper */}
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
         <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
+          {/* Fixed / stable modal size */}
           <div
-            className="relative h-auto max-h-[calc(100vh-24px)] w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+            className="
+              relative
+              w-full
+              max-w-[380px]
+              min-h-[430px]
+              overflow-hidden
+              rounded-2xl
+              bg-white
+              shadow-2xl
+            "
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex h-full flex-col overflow-y-auto bg-white p-4 sm:p-5">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="
+                absolute right-3.5 top-3.5 z-20
+                flex h-8 w-8
+                items-center justify-center
+                rounded-full
+                bg-gray-100
+                text-gray-600
+                transition
+                hover:bg-gray-200
+                hover:text-black
+              "
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {/* Back button */}
+            {step === "otp" && (
               <button
-                onClick={onClose}
-                className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black"
+                type="button"
+                onClick={handleBack}
+                aria-label="Back"
+                className="
+                  absolute left-3.5 top-3.5 z-20
+                  flex h-8 w-8
+                  items-center justify-center
+                  rounded-full
+                  bg-gray-100
+                  text-gray-600
+                  transition
+                  hover:bg-gray-200
+                  hover:text-black
+                "
               >
-                <X className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" />
               </button>
+            )}
 
-              {step === "otp" && (
-                <button
-                  onClick={handleBack}
-                  className="absolute left-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 hover:text-black"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-              )}
-
-              <div className="mx-auto flex w-full max-w-xs flex-col justify-center py-2">
+            <div className="flex min-h-[430px] flex-col bg-white px-5 py-6 sm:px-7 sm:py-7">
+              <div className="mx-auto flex w-full max-w-[330px] flex-1 flex-col">
+                {/* Logo */}
                 <div className="flex justify-center">
                   <img
                     src="/image/logo.png"
-                    alt="logo"
-                    className="mb-1 h-6 object-contain"
+                    alt="eCampus"
+                    className="h-6 w-auto object-contain"
                   />
                 </div>
 
-                <h2 className="text-center text-lg font-bold text-black md:text-xl">
-                  {step === "otp"
-                    ? "Enter OTP"
-                    : mode === "email"
-                      ? "Create Account"
-                      : "Welcome to eCampus!"}
-                </h2>
+                {/* Heading */}
+                <div className="mt-4">
+                  <h2 className="text-center text-xl font-bold leading-tight text-gray-900 sm:text-2xl">
+                    {step === "otp"
+                      ? "Enter OTP"
+                      : mode === "email"
+                        ? "Create Account"
+                        : "Welcome to eCampus!"}
+                  </h2>
 
-                <p className="mt-0.5 text-center text-xs text-gray-500">
-                  {step === "otp"
-                    ? `OTP sent to ${fullPhone}`
-                    : mode === "email"
-                      ? "Complete your details to continue."
-                      : "Create your account to explore top online programs"}
-                </p>
+                  <p className="mx-auto mt-1.5 max-w-[300px] text-center text-sm leading-5 text-gray-600">
+                    {step === "otp"
+                      ? `OTP sent to ${fullPhone}`
+                      : mode === "email"
+                        ? "Complete your details to continue."
+                        : "Create your account to explore top online programs"}
+                  </p>
+                </div>
 
+                {/* Error */}
                 {error && (
-                  <div className="mt-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900">
+                  <div className="mt-3 rounded-lg border border-red-300 bg-red-50 px-3.5 py-2 text-xs font-medium leading-4 text-red-700">
                     {error}
                   </div>
                 )}
 
+                {/* Mode tabs */}
                 {step === "phone" && (
-                  <div className="mt-2">
-                    <div className="flex rounded-2xl bg-red-50 p-1">
+                  <div className="mt-5">
+                    <div className="flex w-full gap-1.5 rounded-xl bg-red-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleModeChange("mobile")}
-                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-1.5 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
-                          mode === "mobile"
-                            ? "bg-white text-red-600 shadow-sm"
-                            : "text-gray-500"
-                        }`}
+                        className={`
+                          flex h-10 flex-1 items-center justify-center
+                          rounded-lg
+                          px-2
+                          text-[13px]
+                          font-semibold
+                          transition-all
+                          sm:text-sm
+                          ${
+                            mode === "mobile"
+                              ? "bg-white text-red-600 shadow-sm"
+                              : "text-gray-500 hover:text-gray-700"
+                          }
+                        `}
                       >
                         Mobile Number
                       </button>
@@ -2869,11 +2944,20 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                       <button
                         type="button"
                         onClick={() => handleModeChange("email")}
-                        className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-1.5 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
-                          mode === "email"
-                            ? "bg-white text-red-600 shadow-sm"
-                            : "text-gray-500"
-                        }`}
+                        className={`
+                          flex h-10 flex-1 items-center justify-center
+                          rounded-lg
+                          px-2
+                          text-[13px]
+                          font-semibold
+                          transition-all
+                          sm:text-sm
+                          ${
+                            mode === "email"
+                              ? "bg-white text-red-600 shadow-sm"
+                              : "text-gray-500 hover:text-gray-700"
+                          }
+                        `}
                       >
                         Email
                       </button>
@@ -2881,30 +2965,69 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   </div>
                 )}
 
+                {/* Forms */}
                 {step === "phone" && (
-                  <div className="mt-2">
+                  <div className="mt-4">
+                    {/* Mobile form */}
                     {mode === "mobile" && (
                       <form
                         onSubmit={handlePhoneContinue}
-                        className="flex flex-col gap-2"
+                        className="flex flex-col gap-3"
                       >
-                        <div className="flex overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition focus-within:ring-1 focus-within:ring-red-200">
-                          <div className="relative flex items-center gap-2 border-r border-gray-200 px-3">
-                            <span className="text-sm">
+                        <div
+                          className="
+                            flex h-[50px]
+                            overflow-hidden
+                            rounded-xl
+                            border border-gray-300
+                            bg-white
+                            shadow-sm
+                            transition-all
+                            focus-within:border-red-400
+                            focus-within:ring-2
+                            focus-within:ring-red-100
+                          "
+                        >
+                          <div
+                            className="
+                              relative
+                              flex
+                              shrink-0
+                              items-center
+                              gap-1.5
+                              border-r
+                              border-gray-300
+                              bg-gray-50
+                              px-3
+                            "
+                          >
+                            <span className="text-base leading-none">
                               {selectedCountry.flag}
                             </span>
-                            <span className="text-xs font-medium text-black">
+
+                            <span className="text-sm font-semibold text-gray-900">
                               {selectedCountry.code}
                             </span>
-                            <ChevronDown className="h-3 w-3 text-gray-400" />
+
+                            <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
 
                             <select
                               value={countryCode}
-                              onChange={(e) => setCountryCode(e.target.value)}
-                              className="absolute inset-0 w-full cursor-pointer opacity-0"
+                              onChange={(e) =>
+                                setCountryCode(e.target.value)
+                              }
+                              className="
+                                absolute inset-0
+                                h-full w-full
+                                cursor-pointer
+                                opacity-0
+                              "
                             >
                               {countryCodes.map((c) => (
-                                <option key={c.code} value={c.code}>
+                                <option
+                                  key={c.code}
+                                  value={c.code}
+                                >
                                   {c.flag} {c.code} ({c.name})
                                 </option>
                               ))}
@@ -2913,75 +3036,180 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
                           <input
                             type="tel"
-                            placeholder="Enter your mobile number"
+                            inputMode="numeric"
+                            placeholder="10-digit number"
                             value={phone}
                             onChange={(e) =>
-                              setPhone(e.target.value.replace(/\D/g, ""))
+                              setPhone(
+                                e.target.value.replace(/\D/g, ""),
+                              )
                             }
                             maxLength={15}
                             required
-                            className="flex-1 bg-white p-2 text-sm outline-none placeholder-gray-400"
+                            className="
+                              min-w-0
+                              flex-1
+                              bg-white
+                              px-3.5
+                              text-base
+                              font-semibold
+                              text-gray-900
+                              outline-none
+                              placeholder:text-sm
+                              placeholder:font-normal
+                              placeholder:text-gray-400
+                            "
                           />
                         </div>
 
                         <Button
                           type="submit"
-                          disabled={loading || phone.length < 7}
-                          className="flex h-10 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                          disabled={
+                            loading || phone.length < 7
+                          }
+                          className="
+                            h-11
+                            w-full
+                            rounded-full
+                            bg-red-600
+                            text-sm
+                            font-semibold
+                            text-white
+                            transition
+                            hover:bg-red-700
+                            disabled:bg-gray-300
+                            disabled:text-gray-500
+                          "
                         >
-                          <span>{loading ? "Sending..." : "Continue"}</span>
-                          <ArrowRight className="h-4 w-4" />
+                          <span>
+                            {loading ? "Sending..." : "Continue"}
+                          </span>
+
+                          <ArrowRight className="ml-1.5 h-4 w-4" />
                         </Button>
                       </form>
                     )}
 
+                    {/* Email form */}
                     {mode === "email" && (
                       <form
                         onSubmit={handleEmailContinue}
-                        className="flex flex-col gap-2"
+                        className="flex flex-col gap-3"
                       >
                         <input
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
                           placeholder="Email Address"
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={(e) =>
+                            setEmail(e.target.value)
+                          }
                           required
-                          className="w-full rounded-lg border border-gray-200 p-2 text-sm outline-none transition placeholder-gray-500 focus:border-black"
+                          className="
+                            h-[50px]
+                            w-full
+                            rounded-xl
+                            border
+                            border-gray-300
+                            bg-white
+                            px-3.5
+                            text-base
+                            text-gray-900
+                            outline-none
+                            transition-all
+                            placeholder:text-sm
+                            placeholder:text-gray-400
+                            focus:border-red-400
+                            focus:ring-2
+                            focus:ring-red-100
+                          "
                         />
 
                         <Button
                           type="submit"
-                          disabled={loading}
-                          className="h-10 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                          disabled={loading || !email}
+                          className="
+                            h-11
+                            w-full
+                            rounded-full
+                            bg-red-600
+                            text-sm
+                            font-semibold
+                            text-white
+                            transition
+                            hover:bg-red-700
+                            disabled:bg-gray-300
+                            disabled:text-gray-500
+                          "
                         >
-                          {loading ? "Creating..." : "Continue"}
+                          {loading ? "Sending..." : "Continue"}
                         </Button>
                       </form>
                     )}
                   </div>
                 )}
 
+                {/* OTP */}
                 {step === "otp" && (
-                  <form onSubmit={handleOtpVerify} className="mt-2">
+                  <form
+                    onSubmit={handleOtpVerify}
+                    className="mt-5"
+                  >
                     <input
                       type="text"
                       inputMode="numeric"
-                      placeholder="6-digit OTP"
+                      autoComplete="one-time-code"
+                      placeholder="0 0 0 0 0 0"
                       value={otp}
                       onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                        setOtp(
+                          e.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 6),
+                        )
                       }
                       maxLength={6}
                       required
                       autoFocus
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-center text-base font-semibold tracking-[0.4em] outline-none transition placeholder-gray-400 focus:border-black"
+                      className="
+                        h-[54px]
+                        w-full
+                        rounded-xl
+                        border
+                        border-gray-300
+                        px-4
+                        text-center
+                        text-2xl
+                        font-bold
+                        tracking-[0.35em]
+                        outline-none
+                        transition-all
+                        placeholder:text-gray-300
+                        focus:border-red-400
+                        focus:ring-2
+                        focus:ring-red-100
+                      "
                     />
 
                     <button
                       type="button"
                       onClick={handleResendOtp}
-                      disabled={resendCooldown > 0 || loading}
-                      className="mt-1.5 text-xs font-medium text-gray-600 transition hover:text-black disabled:text-gray-400"
+                      disabled={
+                        resendCooldown > 0 || loading
+                      }
+                      className="
+                        mt-2.5
+                        block
+                        w-full
+                        text-center
+                        text-xs
+                        font-semibold
+                        text-gray-600
+                        transition
+                        hover:text-red-600
+                        disabled:text-gray-400
+                      "
                     >
                       {resendCooldown > 0
                         ? `Resend in ${resendCooldown}s`
@@ -2990,26 +3218,48 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
                     <Button
                       type="submit"
-                      disabled={loading || otp.length !== 6}
-                      className="mt-2 h-10 w-full rounded-full bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500"
+                      disabled={
+                        loading || otp.length !== 6
+                      }
+                      className="
+                        mt-3
+                        h-11
+                        w-full
+                        rounded-full
+                        bg-red-600
+                        text-sm
+                        font-semibold
+                        text-white
+                        transition
+                        hover:bg-red-700
+                        disabled:bg-gray-300
+                        disabled:text-gray-500
+                      "
                     >
                       {loading ? "Verifying..." : "Continue"}
                     </Button>
                   </form>
                 )}
 
-                
-
-                <p className="mt-2 text-center text-[11px] leading-relaxed text-gray-500">
-                  By continuing, you agree to our{" "}
-                  <a href="/terms" className="text-red-600 hover:underline">
-                    Terms
-                  </a>{" "}
-                  &{" "}
-                  <a href="/privacy" className="text-red-600 hover:underline">
-                    Privacy Policy
-                  </a>
-                </p>
+                {/* Terms */}
+                <div className="mt-auto pt-6">
+                  <p className="mx-auto max-w-[310px] text-center text-[11px] leading-[17px] text-gray-600 sm:text-xs">
+                    By continuing, you agree to our{" "}
+                    <a
+                      href="/terms"
+                      className="font-semibold text-red-600 hover:text-red-700 hover:underline"
+                    >
+                      Terms
+                    </a>{" "}
+                    &{" "}
+                    <a
+                      href="/privacy"
+                      className="font-semibold text-red-600 hover:text-red-700 hover:underline"
+                    >
+                      Privacy Policy
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

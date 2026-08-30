@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -41,7 +40,6 @@ const courseList = [
   "AI for Business Professionals",
   "Certificate in CTO & AI Leadership",
   "Certificate in Chief data & AI officer",
- 
 ];
 
 // ── Countries ────────────────────────────────────────────────────────────────
@@ -126,35 +124,47 @@ export function ApplicationForm({
 
   const validate = () => {
     const err: any = {};
-    if (!formData.fullName.trim()) err.fullName = "Enter name";
-    if (!/^\S+@\S+\.\S+$/.test(formData.email)) err.email = "Enter valid email";
+
+    if (!formData.fullName.trim()) {
+      err.fullName = "Enter name";
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      err.email = "Enter valid email";
+    }
 
     const digitsOnly = formData.mobile.replace(/\D/g, "");
+
     if (selectedCountry.code === "in") {
-      // Strict 10-digit check only for India
       if (!digitsOnly || digitsOnly.length !== selectedCountry.length) {
         err.mobile = `Enter a valid ${selectedCountry.name} phone number`;
       }
     } else {
-      // For all other countries, just make sure some number has been entered
       if (!digitsOnly) {
         err.mobile = "Enter a valid phone number";
       }
     }
 
-    if (!formData.course) err.course = "Select a course";
-    if (!formData.state && selectedCountry.code === "in")
+    if (!formData.course) {
+      err.course = "Select a course";
+    }
+
+    if (!formData.state && selectedCountry.code === "in") {
       err.state = "Select a state";
+    }
 
     setErrors(err);
+
     return Object.keys(err).length === 0;
   };
 
   const isPhoneValid = () => {
     const digitsOnly = formData.mobile.replace(/\D/g, "");
+
     if (selectedCountry.code === "in") {
       return digitsOnly.length === selectedCountry.length;
     }
+
     return digitsOnly.length > 0;
   };
 
@@ -168,6 +178,7 @@ export function ApplicationForm({
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -175,7 +186,9 @@ export function ApplicationForm({
     try {
       const res = await fetch("/api/application", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           name: formData.fullName,
           email: formData.email,
@@ -186,9 +199,12 @@ export function ApplicationForm({
       });
 
       let number = formData.mobile;
-      let newNumber = number.startsWith("91") ? number.slice(2) : number;
+      let newNumber = number.startsWith("91")
+        ? number.slice(2)
+        : number;
 
       const leadFormData = new FormData();
+
       leadFormData.append("full_name", formData.fullName);
       leadFormData.append("email", formData.email);
       leadFormData.append("country_code", "+91");
@@ -207,12 +223,12 @@ export function ApplicationForm({
       );
 
       const result = await response.json();
+
       console.log("Success:", result);
 
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // ✅ Route push ki jagah parent ko batao — parent apna state khud manage karega
         onSubmit({
           name: formData.fullName,
           email: formData.email,
@@ -233,17 +249,24 @@ export function ApplicationForm({
     <div className="w-full max-w-md mx-auto bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-6">
       <div className="flex flex-col items-center text-center space-y-1.5 mb-3">
         <h2 className="text-1xl sm:text-2xl font-extrabold text-gray-900 leading-tight xl:2xl">
-          Download Personalized Report
+          Apply Now
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-3 mt-2"
+      >
+        {/* Name */}
         <div>
           <Input
             placeholder="Enter name"
             value={formData.fullName}
             onChange={(e) =>
-              setFormData({ ...formData, fullName: e.target.value })
+              setFormData({
+                ...formData,
+                fullName: e.target.value,
+              })
             }
             className={`h-10 w-full px-3 rounded-xl border text-sm ${
               errors.fullName
@@ -251,18 +274,25 @@ export function ApplicationForm({
                 : "border-gray-200 bg-white focus:border-emerald-400"
             }`}
           />
+
           {errors.fullName && (
-            <p className="text-red-500 text-xs mt-0.5">{errors.fullName}</p>
+            <p className="text-red-500 text-xs mt-0.5">
+              {errors.fullName}
+            </p>
           )}
         </div>
 
+        {/* Email */}
         <div>
           <Input
             type="email"
             placeholder="Enter email"
             value={formData.email}
             onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
+              setFormData({
+                ...formData,
+                email: e.target.value,
+              })
             }
             className={`h-10 w-full px-3 rounded-xl border text-sm ${
               errors.email
@@ -270,33 +300,52 @@ export function ApplicationForm({
                 : "border-gray-200 bg-white focus:border-emerald-400"
             }`}
           />
+
           {errors.email && (
-            <p className="text-red-500 text-xs mt-0.5">{errors.email}</p>
+            <p className="text-red-500 text-xs mt-0.5">
+              {errors.email}
+            </p>
           )}
         </div>
 
+        {/* Country */}
         <div>
           <Select
             value={selectedCountry.code}
             onValueChange={(code) => {
-              const country = countryList.find((c) => c.code === code);
+              const country = countryList.find(
+                (c) => c.code === code,
+              );
+
               if (country) {
                 setSelectedCountry(country);
-                setFormData({ ...formData, mobile: "" });
-                setErrors({ ...errors, mobile: "" });
+
+                setFormData({
+                  ...formData,
+                  mobile: "",
+                });
+
+                setErrors({
+                  ...errors,
+                  mobile: "",
+                });
               }
             }}
           >
             <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
+
             <SelectContent
               side="bottom"
               align="start"
-              className="bg-white border border-gray-200 text-gray-900 max-h-48 overflow-y-auto w-full"
+              className="z-[10000] bg-white border border-gray-200 text-gray-900 max-h-48 overflow-y-auto w-full"
             >
               {countryList.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
+                <SelectItem
+                  key={country.code}
+                  value={country.code}
+                >
                   {country.name} (+{country.dialCode})
                 </SelectItem>
               ))}
@@ -304,6 +353,7 @@ export function ApplicationForm({
           </Select>
         </div>
 
+        {/* Mobile */}
         <div>
           <div
             className={`__phone-input-wrapper h-10 w-full flex items-center rounded-xl border overflow-hidden ${
@@ -315,6 +365,7 @@ export function ApplicationForm({
             <div className="__country-code px-3 bg-gray-50 text-gray-700 font-medium text-sm border-r border-gray-200 flex items-center min-w-fit h-full whitespace-nowrap">
               +{selectedCountry.dialCode}
             </div>
+
             <input
               type="tel"
               placeholder={
@@ -324,13 +375,23 @@ export function ApplicationForm({
               }
               value={formData.mobile.replace(/\D/g, "")}
               onChange={(e) => {
-                const digitsOnly = e.target.value.replace(/\D/g, "");
-                // India: capped at fixed length. Other countries: no limit.
+                const digitsOnly = e.target.value.replace(
+                  /\D/g,
+                  "",
+                );
+
                 const capped =
                   selectedCountry.code === "in"
-                    ? digitsOnly.slice(0, selectedCountry.length)
+                    ? digitsOnly.slice(
+                        0,
+                        selectedCountry.length,
+                      )
                     : digitsOnly;
-                setFormData({ ...formData, mobile: capped });
+
+                setFormData({
+                  ...formData,
+                  mobile: capped,
+                });
               }}
               maxLength={
                 selectedCountry.code === "in"
@@ -340,23 +401,33 @@ export function ApplicationForm({
               className="__phone-input flex-1 px-3 h-full outline-none text-sm text-gray-900 bg-transparent placeholder-gray-400"
             />
           </div>
+
           {errors.mobile && (
-            <p className="text-red-500 text-xs mt-0.5">{errors.mobile}</p>
+            <p className="text-red-500 text-xs mt-0.5">
+              {errors.mobile}
+            </p>
           )}
         </div>
 
+        {/* Course */}
         <div className="relative z-50">
           <Select
             value={formData.course}
-            onValueChange={(v) => setFormData({ ...formData, course: v })}
+            onValueChange={(v) =>
+              setFormData({
+                ...formData,
+                course: v,
+              })
+            }
           >
             <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
               <SelectValue placeholder="Select Course" />
             </SelectTrigger>
+
             <SelectContent
               side="bottom"
               align="start"
-              className="bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+              className="z-[10000] bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
             >
               {courseList.map((c) => (
                 <SelectItem key={c} value={c}>
@@ -365,24 +436,34 @@ export function ApplicationForm({
               ))}
             </SelectContent>
           </Select>
+
           {errors.course && (
-            <p className="text-red-500 text-xs mt-0.5">{errors.course}</p>
+            <p className="text-red-500 text-xs mt-0.5">
+              {errors.course}
+            </p>
           )}
         </div>
 
+        {/* State */}
         {selectedCountry.code === "in" && (
           <div className="relative z-40">
             <Select
               value={formData.state}
-              onValueChange={(v) => setFormData({ ...formData, state: v })}
+              onValueChange={(v) =>
+                setFormData({
+                  ...formData,
+                  state: v,
+                })
+              }
             >
               <SelectTrigger className="!h-10 !min-h-[40px] bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
+
               <SelectContent
                 side="bottom"
                 align="start"
-                className="bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+                className="z-[10000] bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
               >
                 {indianStates.map((s) => (
                   <SelectItem key={s} value={s}>
@@ -391,12 +472,16 @@ export function ApplicationForm({
                 ))}
               </SelectContent>
             </Select>
+
             {errors.state && (
-              <p className="text-red-500 text-xs mt-0.5">{errors.state}</p>
+              <p className="text-red-500 text-xs mt-0.5">
+                {errors.state}
+              </p>
             )}
           </div>
         )}
 
+        {/* Submit */}
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
@@ -406,7 +491,7 @@ export function ApplicationForm({
             <Loader2 className="animate-spin" />
           ) : (
             <>
-              Download Now
+              Apply Now
               <ArrowRight className="ml-2 w-4 h-4" />
             </>
           )}

@@ -14,8 +14,6 @@ import { useEffect, useRef, useState } from "react";
 const CARD_WIDTH = 300;
 const GAP = 28;
 
-const TILTS = [-2.2, 1.6, -1.1, 2.4, -1.8, 1.2, -2.6, 1.9];
-
 const preventFocusScroll = (e: SyntheticEvent) => {
   e.preventDefault();
 };
@@ -164,9 +162,6 @@ export function MediaSection() {
             </button>
           )}
 
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[#FBFAF7] to-transparent sm:w-20" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[#FBFAF7] to-transparent sm:w-20" />
-
           <div
             ref={trackRef}
             onScroll={checkScroll}
@@ -174,7 +169,6 @@ export function MediaSection() {
             style={{ scrollSnapType: "x mandatory" }}
           >
             {items.map((article, i) => {
-              const tilt = TILTS[i % TILTS.length];
               const logoStyle = LOGO_STYLES[article.name] || {
                 bg: "bg-[#1B2230]",
                 text: "text-white",
@@ -189,9 +183,8 @@ export function MediaSection() {
                   style={{
                     scrollSnapAlign: "start",
                     width: CARD_WIDTH,
-                    transform: "rotate(" + tilt + "deg)",
                   }}
-                  className="group relative flex-shrink-0 bg-white shadow-[0_8px_24px_-8px_rgba(27,34,48,0.18)] transition-all duration-300 hover:z-10 hover:rotate-0 hover:-translate-y-2 hover:shadow-[0_18px_36px_-10px_rgba(27,34,48,0.28)]"
+                  className="group relative flex-shrink-0 bg-white shadow-[0_8px_24px_-8px_rgba(27,34,48,0.18)] transition-all duration-300 hover:z-10 hover:-translate-y-2 hover:shadow-[0_18px_36px_-10px_rgba(27,34,48,0.28)]"
                 >
                   <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 shadow-md ring-2 ring-white">
                     <Pin

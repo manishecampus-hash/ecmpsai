@@ -12,7 +12,7 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
-import { CarouselBanner } from "./carousel-banner";
+
 
 const suggestionChips = [
   { label: "Career Switch", icon: BriefcaseBusiness, color: "#5b21b6" },
@@ -64,9 +64,9 @@ export default function HeroSearch() {
   if (!mounted) return <section className="min-h-screen bg-white" />;
 
   return (
-    <section className="relative h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center bg-white px-4 overflow-hidden">
+<section className="relative w-full flex flex-col items-center justify-start lg:pt-0 xl:pt-2 bg-white px-4 overflow-hidden">
       {/* Banner above search */}
-      <CarouselBanner />
+     
 
       <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center mt-2">
         {/* Heading */}

@@ -19,185 +19,273 @@ import {
 
 // Real data with actual content
 const programsData = [
-  {
+  
+{
     id: 1,
-    title: "BTech Computer Science Engineering",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
-    ribbon: "DEGREE",
-    learners: "5.2K+ Students",
-    duration: "4 Years",
-    tab: "engineering",
-    slug: "/program/btech-cse",
-    isFree: false,
-    mode: "offline",
-    description:
-      "Build strong foundations in programming, algorithms and system design with an industry-aligned curriculum.",
-    highlights: [
-      "Industry-aligned curriculum",
-      "Live coding labs",
-      "100% placement support",
-    ],
-    deadline: "Applications close 25 Aug",
-  },
-  {
-    id: 2,
-    title: "Advanced Python Programming Bootcamp",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
-    ribbon: "COURSE",
-    learners: "12K+ Students",
-    duration: "8 Weeks",
-    tab: "engineering",
-    slug: "/program/python-bootcamp",
-    isFree: true,
-    mode: "online",
-    description:
-      "Master advanced Python concepts, automation and real-world projects in an intensive, mentor-led format.",
-    highlights: [
-      "Hands-on projects",
-      "1:1 mentor sessions",
-      "Certificate on completion",
-    ],
-    deadline: "Applications close 10 Aug",
-  },
-  {
-    id: 3,
-    title: "MBA - Business Administration",
+    title: "MBA - Master of Business Administration",
     image:
       "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
     ribbon: "DEGREE",
     learners: "3.8K+ Students",
     duration: "2 Years",
-    tab: "management",
+    tab: "degree",
     slug: "/program/mba-general",
     isFree: false,
-    mode: "offline",
+    mode: "online",
     description:
       "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
     highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Applications close 5 Sep",
+    deadline: "Applications closes on 31 Oct",
+  },
+  
+{
+    id: 2,
+    title: "B.Tech - CS Engineering",
+    image:
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "5.2K+ Students",
+    duration: "3 Years",
+    tab: "engineering",
+    slug: "/program/btech-cse",
+    isFree: false,
+    mode: "online",
+    description:
+      "Build strong foundations in programming, algorithms, data structures, and software development with an industry-focused curriculum.",
+    highlights: [
+      "Industry-aligned curriculum",
+      "Live coding labs",
+      "Placement-focused projects",
+    ],
+    deadline: "Application closes on 31 Oct",
+  },
+  {
+    id: 3,
+    title: "B.Tech - Mechanical Engineering",
+    image:
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "7.2K+ Students",
+    duration: "3 Years",
+    tab: "engineering",
+    slug: "/program/btech-me",
+    isFree: false,
+    mode: "online",
+    description:
+      "Master manufacturing, thermodynamics, machine design, and automation with a curriculum built for modern industries.",
+    highlights: [
+      "Advanced manufacturing concepts",
+      "CAD & design training",
+      " Industry-ready technical skills",
+    ],
+    deadline: "Application closes on 31 Oct",
   },
   {
     id: 4,
-    title: "Digital Marketing Masterclass",
+    title: "B.Tech - Civil Engineering",
     image:
-      "https://images.unsplash.com/photo-1460925895917-aeb19be489c7?w=400&h=200&fit=crop",
-    ribbon: "CERTIFICATION",
-    learners: "8.9K+ Students",
-    duration: "6 Weeks",
-    tab: "certifications",
-    slug: "/program/digital-marketing",
-    isFree: true,
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "6.9K+ Students",
+    duration: "3 Years",
+    tab: "engineering",
+    slug: "/program/btech-ci",
+    isFree: false,
     mode: "online",
     description:
-      "Learn SEO, paid ads, and content strategy through practical campaigns and real client-style projects.",
+      "Develop expertise in construction, structural design, surveying, and infrastructure planning through practical engineering concepts.",
     highlights: [
-      "SEO + Paid Ads",
-      "Live campaign practice",
-      "Google certification prep",
+      " Structural design expertise",
+      "Construction management skills",
+      " Industry-oriented site practices",
     ],
-    deadline: "Applications close 18 Aug",
+    deadline: "Application closes on 31 Oct",
   },
   {
     id: 5,
-    title: "Cloud Architecture with AWS",
+    title: "B.Tech - Electrical Engineering",
     image:
       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
-    ribbon: "CERTIFICATION",
-    learners: "6.7K+ Students",
-    duration: "10 Weeks",
+    ribbon: "DEGREE",
+    learners: "6.1K+ Students",
+    duration: "3 Years",
     tab: "engineering",
-    slug: "/program/aws-cloud",
+    slug: "/program/btech-ee",
     isFree: false,
     mode: "online",
     description:
-      "Design and deploy scalable cloud infrastructure with hands-on AWS labs and real deployment scenarios.",
+      "Gain knowledge in power systems, electrical machines, circuits, and energy technologies through hands-on learning.",
     highlights: [
-      "Hands-on AWS labs",
-      "Solution architect prep",
-      "Cloud project portfolio",
+      "Power systems fundamentals",
+      "Practical circuit design",
+      "Smart energy technologies",
     ],
-    deadline: "Applications close 1 Sep",
+    deadline: "Application closes on 31 Oct",
   },
   {
     id: 6,
-    title: "Global MBA - Sync Online",
+    title: "B.Tech - ECE ",
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
     ribbon: "DEGREE",
-    learners: "2.1K+ Students",
-    duration: "18 Months",
-    tab: "globalandasync",
-    slug: "/program/global-mba-sync",
+    learners: "3.4K+ Students",
+    duration: "3 Years",
+    tab: "engineering",
+    slug: "/program/btech-ece",
     isFree: false,
     mode: "online",
     description:
-      "A globally recognized MBA delivered live online with international peer cohorts and faculty.",
+      "Learn communication systems, embedded technology, electronics design, and signal processing with industry-relevant skills.",
     highlights: [
-      "Live global cohorts",
-      "International faculty",
-      "Dual credential option",
+      "Embedded systems training",
+      "Communication technology focus",
+      " Industry-driven lab exposure",
     ],
-    deadline: "Applications close 15 Sep",
+    deadline: "Application closes on 31 Oct",
   },
   {
     id: 7,
-    title: "Data Science & ML Bootcamp",
+    title: "BBA - Bachelor of Business Administration",
     image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
-    ribbon: "COURSE",
-    learners: "9.3K+ Students",
-    duration: "12 Weeks",
-    tab: "engineering",
-    slug: "/program/data-science",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "3.8K+ Students",
+    duration: "3 Years",
+    tab: "degree",
+    slug: "/program/bba-general",
     isFree: false,
     mode: "online",
     description:
-      "Go from fundamentals to deployment with hands-on projects in Python, ML models and real datasets.",
-    highlights: [
-      "Real-world datasets",
-      "ML model deployment",
-      "Capstone project",
-    ],
-    deadline: "Applications close 22 Aug",
+      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
+    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
+    deadline: "Application closes on 31 Oct",
   },
+
   {
     id: 8,
-    title: "Financial Management Fundamentals",
+    title: "BCA - Bachelor of Computer Application",
     image:
       "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
-    ribbon: "CERTIFICATION",
-    learners: "4.5K+ Students",
-    duration: "4 Weeks",
-    tab: "management",
-    slug: "/program/finance-basics",
-    isFree: true,
-    mode: "offline",
+    ribbon: "DEGREE",
+    learners: "3.8K+ Students",
+    duration: "3 Years",
+    tab: "degree",
+    slug: "/program/bca-general",
+    isFree: false,
+    mode: "online",
     description:
-      "Understand budgeting, financial statements and investment basics to make smarter money decisions.",
-    highlights: [
-      "Practical budgeting tools",
-      "Case-based learning",
-      "Beginner friendly",
-    ],
-    deadline: "Applications close 8 Aug",
+      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
+    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
+    deadline: "Application closes on 31 Oct",
   },
+   {
+    id: 9,
+    title: "BA - Bachelor of Arts",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "3.7K+ Students",
+    duration: "3 Years",
+    tab: "degree",
+    slug: "/program/ba-general",
+    isFree: false,
+    mode: "online",
+    description:
+      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
+    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
+    deadline: "Application closes on 31 Oct",
+  },
+   {
+    id: 10,
+    title: "BCOM - Bachelor of Commerce",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "DEGREE",
+    learners: "5.1K+ Students",
+    duration: "3 Years",
+    tab: "degree",
+    slug: "/program/bcom-general",
+    isFree: false,
+    mode: "online",
+    description:
+      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
+    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
+    deadline: "Application closes on 31 Oct",
+  },
+
+  
+
+  {
+    id: 11,
+    title: "Chief Technology Officer & AI Leadership Programme",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "CERTIFICATE",
+    learners: "20.2K+ Students",
+    duration: "6 months",
+    tab: "aiml",
+    slug: "/program/bcom-general",
+    isFree: false,
+    mode: "online",
+    description:
+      "The only program that transforms engineering leaders into AI-first CTOs with structured depth in deep tech, AI, business strategy, and boardroom leadership.",
+    highlights: ["Tech & AI Leadership: IIIT-Bangalore", "Business, Strategy & P&L Leadership: IIM Udaipur", "Immersive AI & Strategy workshop at IIIT-B"],
+    deadline: "Application closes on 31 Aug",
+  },
+
+  {
+    id: 12,
+    title: "Ex. Diploma in Machine Learning & AI with MLOps, Gen AI & Agentic AI",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "CERTIFICATE",
+    learners: "10.7K+ Students",
+    duration: "12 months",
+    tab: "aiml",
+    slug: "/program/bcom-general",
+    isFree: false,
+    mode: "online",
+    description:
+      "Enroll into India's pioneering Online Machine Learning Program; Learn machine learning the way product companies build, deploy, and scale AI systems",
+    highlights: ["450+ Hours of Curriculum", "30+ Hands-on Projects", "80+ Industry Tools"],
+    deadline: "Application closes on 15 Sep",
+  },
+
+  {
+    id: 13,
+    title: "DBA in Emerging Technologies with a concentration in Generative and Agentic AI ",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    ribbon: "DOCTORATE",
+    learners: "14.4K+ Students",
+    duration: "27 months",
+    tab: "genai",
+    slug: "/program/dba-generative-ai",
+    isFree: false,
+    mode: "online",
+    description:
+      "The DBA in Emerging Technologies with a concentration in Generative and Agentic AI from GGU teaches AI, emerging tech, leadership, and decision-making skills to solve real-world business challenges and drive innovation.",
+    highlights: ["500 hours of live learning", "Learn with Students from 15+ Countries", "Lead in the space of emerging technologies"],
+    deadline: "Application closes on 15 Sep",
+  },
+  
 ];
 
 const courseTabs = [
   { id: "all", label: "All Courses" },
   { id: "engineering", label: "Engineering" },
-  { id: "management", label: "Management" },
   { id: "degree", label: "Degree" },
-  { id: "globalandasync", label: "Global and Async" },
+  { id: "aiml", label: "AI & ML" },
+  { id: "genai", label: "Generative AI" },
   { id: "certifications", label: "Certifications" },
 ];
 
 const modeTabs = [
   { id: "all", label: "All" },
   { id: "online", label: "Online" },
-  { id: "offline", label: "Offline" },
+  { id: "Blended", label: "Blended" },
+  
+
 ];
 
 function useScrollState(
@@ -284,7 +372,7 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   background: "transparent",
   border: "none",
   padding: 0,
-  cursor: visible ? "pointer" : "default",
+  cursor: visible ? "pointer" : "",
   color: "#ff3b4f",
   display: "flex",
   alignItems: "center",
@@ -376,6 +464,8 @@ export default function ProgramsSection() {
       <style>{`
         .__ps::-webkit-scrollbar { display: none; }
 
+
+
         /* Tab arrows are removed everywhere (mobile + desktop). They were
            the source of the tap-jitter/drag feel on mobile, and the tabs
            strip fits fine within its own horizontal scroll without them. */
@@ -413,7 +503,7 @@ export default function ProgramsSection() {
           position: relative;
           height: 160px;
           overflow: hidden;
-          background: #f1f5f9;
+          // background: #f1f5f9;
           flex-shrink: 0;
           z-index: 1;
         }
@@ -614,15 +704,15 @@ export default function ProgramsSection() {
         }
       `}</style>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
         {/* Header */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6 font-[Inter]">
+        <div className="text-center mb-8 font-[Inter]">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Handshake className="h-3.5 w-3.5 text-red-500" />
             In-Demand Courses
           </span>
 
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-[28px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Find The Right <span className="text-red-500">Program</span>
           </h2>
         </div>
@@ -638,7 +728,7 @@ export default function ProgramsSection() {
             flexWrap: "wrap",
           }}
         >
-          <button
+          {/* <button
             type="button"
             className="__tabArrow"
             onPointerDown={preventFocusScroll}
@@ -654,7 +744,7 @@ export default function ProgramsSection() {
             aria-label="Scroll tabs left"
           >
             <ChevronLeft size={16} />
-          </button>
+          </button> */}
 
           <div
             ref={tabsRef}
@@ -709,7 +799,7 @@ export default function ProgramsSection() {
             })}
           </div>
 
-          <button
+          {/* <button
             type="button"
             className="__tabArrow"
             onPointerDown={preventFocusScroll}
@@ -725,7 +815,7 @@ export default function ProgramsSection() {
             aria-label="Scroll tabs right"
           >
             <ChevronRight size={16} />
-          </button>
+          </button> */}
 
           <div
             className="__modeToggle"
@@ -787,10 +877,9 @@ export default function ProgramsSection() {
 
         {/* Carousel Row */}
         <div ref={carouselWrapRef} style={{ position: "relative" }}>
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:w-20" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:w-20" />
+          {/* ❌ REMOVED: White gradient overlays on left and right */}
 
-          {carLeft && (
+          {/* {carLeft && (
             <button
               type="button"
               aria-label="Scroll carousel left"
@@ -800,7 +889,7 @@ export default function ProgramsSection() {
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
-          )}
+          )} */}
 
           <div
             ref={carouselRef}
@@ -811,7 +900,7 @@ export default function ProgramsSection() {
               overflowX: "auto",
               scrollbarWidth: "none",
               scrollSnapType: "x mandatory",
-              padding: "4px 32px 12px",
+              padding: "4px 0 12px 0",
               alignItems: "stretch",
             }}
           >
@@ -848,7 +937,7 @@ export default function ProgramsSection() {
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
-                    transition: "box-shadow 0.25s, transform 0.25s",
+                    // transition: "box-shadow 0.25s, transform 0.25s",
                     boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
                     position: "relative",
                     cursor: "pointer",
@@ -1004,14 +1093,14 @@ export default function ProgramsSection() {
                         transition: "border-color 0.2s, background 0.2s",
                         whiteSpace: "nowrap",
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "#94a3b8";
-                        e.currentTarget.style.background = "#f8fafc";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "#cbd5e1";
-                        e.currentTarget.style.background = "#fff";
-                      }}
+                     onMouseEnter={(e) => {
+  e.currentTarget.style.boxShadow =
+    "0 8px 32px rgba(0,0,0,0.14)";
+}}
+onMouseLeave={(e) => {
+  e.currentTarget.style.boxShadow =
+    "0 2px 12px rgba(0,0,0,0.08)";
+}}
                     >
                       View Program
                     </a>
@@ -1103,7 +1192,7 @@ export default function ProgramsSection() {
             />
           </div>
 
-          {carRight && (
+          {/* {carRight && (
             <button
               type="button"
               aria-label="Scroll carousel right"
@@ -1113,7 +1202,7 @@ export default function ProgramsSection() {
             >
               <ChevronRight className="w-6 h-6" />
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </section>

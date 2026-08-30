@@ -1,3 +1,445 @@
+// "use client";
+
+// import React, { useState, useEffect, useCallback, useRef } from "react";
+// import { ChevronLeft, ChevronRight } from "lucide-react";
+// import Image from "next/image";
+// import Link from "next/link";
+
+// const staticSlides = [
+//   {
+//     id: "static-1",
+//     desktop: "/banner/newwww.svg",
+//     mobile: "/banner/mobile.svg",
+//     slug: "",
+//     title: "",
+//     category: "",
+//     isDynamic: false,
+//   },
+//   {
+//     id: "static-2",
+//     desktop: "/banner/newupdatebanner.svg",
+//     mobile: "/banner/mobileupdate2.svg",
+//     slug: "",
+//     title: "",
+//     category: "",
+//     isDynamic: false,
+//   },
+//   // {
+//   //   id: "static-3",
+//   //   desktop: "/banner/",
+//   //   mobile: "/banner/mobile3.png",
+//   //   slug: "",
+//   //   title: "",
+//   //   category: "",
+//   //   isDynamic: false,
+//   // },
+//   // {
+//   //   id: "static-4",
+//   //   desktop: "/banner/",
+//   //   mobile: "/banner/mobile4.png",
+//   //   slug: "",
+//   //   title: "",
+//   //   category: "",
+//   //   isDynamic: false,
+//   // },
+// ];
+
+// const SWIPE_THRESHOLD = 50;
+// const LOCK_AXIS_THRESHOLD = 10;
+
+// export function CarouselBanner() {
+//   const [slidesData, setSlidesData] = useState<any[]>(staticSlides);
+//   const [currentSlide, setCurrentSlide] = useState(0);
+//   const [isAutoPlay, setIsAutoPlay] = useState(true);
+//   const [isTransitioning, setIsTransitioning] = useState(false);
+//   const [isDraggingState, setIsDraggingState] = useState(false);
+
+//   const touchStartX = useRef<number>(0);
+//   const touchStartY = useRef<number>(0);
+//   const touchDeltaX = useRef<number>(0);
+//   const isHorizontalSwipe = useRef<boolean | null>(null);
+//   const wrapRef = useRef<HTMLDivElement>(null);
+//   const isDragging = useRef<boolean>(false);
+//   const mouseStartX = useRef<number>(0);
+//   const mouseDeltaX = useRef<number>(0);
+
+//   const goTo = useCallback(
+//     (index: number) => {
+//       if (isTransitioning) return;
+//       setIsTransitioning(true);
+//       setCurrentSlide(index);
+//       setTimeout(() => setIsTransitioning(false), 600);
+//     },
+//     [isTransitioning],
+//   );
+
+//   const nextSlide = useCallback(() => {
+//     if (slidesData.length === 0) return;
+//     goTo((currentSlide + 1) % slidesData.length);
+//   }, [currentSlide, goTo, slidesData.length]);
+
+//   const prevSlide = useCallback(() => {
+//     if (slidesData.length === 0) return;
+//     goTo((currentSlide - 1 + slidesData.length) % slidesData.length);
+//   }, [currentSlide, goTo, slidesData.length]);
+
+//   const goToSlide = (index: number) => {
+//     goTo(index);
+//     setIsAutoPlay(false);
+//   };
+
+//   useEffect(() => {
+//     if (!isAutoPlay || slidesData.length <= 1) return;
+//     const timer = setInterval(() => {
+//       setCurrentSlide((prev) => (prev + 1) % slidesData.length);
+//     }, 5000);
+//     return () => clearInterval(timer);
+//   }, [isAutoPlay, slidesData.length]);
+
+//   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+//     touchStartX.current = e.touches[0].clientX;
+//     touchStartY.current = e.touches[0].clientY;
+//     touchDeltaX.current = 0;
+//     isHorizontalSwipe.current = null;
+//     setIsAutoPlay(false);
+//   }, []);
+
+//   const handleTouchEnd = useCallback(() => {
+//     if (isHorizontalSwipe.current === true) {
+//       if (touchDeltaX.current < -SWIPE_THRESHOLD) nextSlide();
+//       else if (touchDeltaX.current > SWIPE_THRESHOLD) prevSlide();
+//     }
+//     isHorizontalSwipe.current = null;
+//   }, [nextSlide, prevSlide]);
+
+//   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+//     isDragging.current = true;
+//     setIsDraggingState(true);
+//     mouseStartX.current = e.clientX;
+//     mouseDeltaX.current = 0;
+//     setIsAutoPlay(false);
+//   }, []);
+
+//   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+//     if (!isDragging.current) return;
+//     mouseDeltaX.current = e.clientX - mouseStartX.current;
+//   }, []);
+
+//   const handleMouseUp = useCallback(() => {
+//     if (!isDragging.current) return;
+//     isDragging.current = false;
+//     setIsDraggingState(false);
+//     if (mouseDeltaX.current < -SWIPE_THRESHOLD) nextSlide();
+//     else if (mouseDeltaX.current > SWIPE_THRESHOLD) prevSlide();
+//     mouseDeltaX.current = 0;
+//   }, [nextSlide, prevSlide]);
+
+//   useEffect(() => {
+//     const el = wrapRef.current;
+//     if (!el) return;
+//     const onTouchMove = (e: TouchEvent) => {
+//       const dx = e.touches[0].clientX - touchStartX.current;
+//       const dy = e.touches[0].clientY - touchStartY.current;
+//       touchDeltaX.current = dx;
+//       if (isHorizontalSwipe.current === null) {
+//         if (
+//           Math.abs(dx) > LOCK_AXIS_THRESHOLD ||
+//           Math.abs(dy) > LOCK_AXIS_THRESHOLD
+//         ) {
+//           isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy);
+//         }
+//       }
+//       if (isHorizontalSwipe.current === true) e.preventDefault();
+//     };
+//     el.addEventListener("touchmove", onTouchMove, { passive: false });
+//     return () => el.removeEventListener("touchmove", onTouchMove);
+//   }, []);
+
+//   return (
+//     <>
+//       <style>{`
+//         .cb-wrap {
+//           position: relative;
+//           width: 100%;
+//           overflow: hidden;
+//           background: #ffffff;
+//           aspect-ratio: 16 / 8;
+//           max-height: 40vh;
+//           border-radius: 12px;
+//           user-select: none;
+//           touch-action: pan-y;
+//         }
+
+//         @media (min-width: 768px) {
+//           .cb-wrap {
+//             aspect-ratio: 16 / 4;
+//             max-height: 40vh;
+//             border-bottom: none;
+//             touch-action: auto;
+//           }
+//         }
+
+//         .cb-track {
+//           display: flex;
+//           width: 100%;
+//           height: 100%;
+//           transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1);
+//           will-change: transform;
+//         }
+
+//         .cb-slide {
+//           flex: 0 0 100%;
+//           width: 100%;
+//           height: 100%;
+//           position: relative;
+//         }
+
+//         .img-mobile { display: block; }
+//         .img-desktop { display: none; }
+
+//         @media (min-width: 768px) {
+//           .img-mobile { display: none; }
+//           .img-desktop { display: block; }
+//         }
+
+//         .banner-img {
+//           object-fit: cover;
+//           -webkit-touch-callout: none;
+//           pointer-events: none;
+//         }
+
+//         .cb-overlay {
+//           position: absolute;
+//           bottom: 0;
+//           left: 0;
+//           right: 0;
+//           background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+//           padding: 20px 24px;
+//           color: #ffffff;
+//           display: flex;
+//           flex-direction: column;
+//           gap: 6px;
+//           text-align: left;
+//           z-index: 10;
+//         }
+
+//         .cb-category {
+//           display: inline-block;
+//           align-self: flex-start;
+//           background: #E8281E;
+//           color: #ffffff;
+//           padding: 3px 8px;
+//           border-radius: 4px;
+//           font-size: 0.65rem;
+//           font-weight: 700;
+//           text-transform: uppercase;
+//           letter-spacing: 0.05em;
+//         }
+
+//         .cb-title {
+//           font-size: 1.05rem;
+//           font-weight: 700;
+//           margin: 0;
+//           line-height: 1.3;
+//           text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+//           overflow: hidden;
+//           text-overflow: ellipsis;
+//           display: -webkit-box;
+//           -webkit-line-clamp: 2;
+//           -webkit-box-orient: vertical;
+//         }
+
+//         @media (min-width: 768px) {
+//           .cb-overlay {
+//             padding: 32px 48px;
+//           }
+//           .cb-title {
+//             font-size: 1.4rem;
+//           }
+//         }
+
+//         .cb-arrow { display: none; }
+
+//         @media (min-width: 768px) {
+//           .cb-arrow {
+//             position: absolute;
+//             top: 50%;
+//             transform: translateY(-50%);
+//             z-index: 20;
+//             width: 36px;
+//             height: 36px;
+//             border-radius: 9999px;
+//             border: none;
+//             background: rgba(0,0,0,0.3);
+//             color: white;
+//             display: flex;
+//             align-items: center;
+//             justify-content: center;
+//             cursor: pointer;
+//             transition: background 0.25s ease;
+//           }
+//           .cb-arrow:hover { background: rgba(0,0,0,0.5); }
+//         }
+
+//         .cb-arrow.left  { left: 10px; }
+//         .cb-arrow.right { right: 10px; }
+
+//         .cb-dots {
+//           display: flex;
+//           justify-content: center;
+//           align-items: center;
+//           gap: 6px;
+//           padding: 8px 0 0 0;
+//         }
+
+//         .cb-dot {
+//           width: 6px;
+//           height: 6px;
+//           border-radius: 9999px;
+//           border: none;
+//           cursor: pointer;
+//           background: #d1d5db;
+//           transition: all 0.3s ease;
+//           padding: 0;
+//         }
+
+//         .cb-dot.active {
+//           width: 16px;
+//           background: #2563eb;
+//         }
+//       `}</style>
+
+//       <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 -mt-8 md:-mt-6">
+//         <div
+//           ref={wrapRef}
+//           className="cb-wrap shadow-sm border border-gray-100"
+//           onMouseEnter={() => setIsAutoPlay(false)}
+//           onMouseLeave={() => {
+//             setIsAutoPlay(true);
+//             isDragging.current = false;
+//             setIsDraggingState(false);
+//           }}
+//           onMouseDown={handleMouseDown}
+//           onMouseMove={handleMouseMove}
+//           onMouseUp={handleMouseUp}
+//           onTouchStart={handleTouchStart}
+//           onTouchEnd={handleTouchEnd}
+//           style={{ cursor: isDraggingState ? "grabbing" : "grab" }}
+//         >
+//           <div
+//             className="cb-track"
+//             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+//           >
+//             {slidesData.map((s, i) => (
+//               <div key={s.id} className="cb-slide">
+//                 {s.slug ? (
+//                   <Link
+//                     href={s.slug}
+//                     style={{
+//                       display: "block",
+//                       width: "100%",
+//                       height: "100%",
+//                       position: "relative",
+//                     }}
+//                   >
+//                     <div className="img-mobile relative w-full h-full">
+//                       <Image
+//                         src={s.mobile}
+//                         alt={s.title || `Mobile Banner ${s.id}`}
+//                         fill
+//                         priority={i === 0}
+//                         className="banner-img"
+//                         draggable={false}
+//                       />
+//                     </div>
+//                     <div className="img-desktop relative w-full h-full">
+//                       <Image
+//                         src={s.desktop}
+//                         alt={s.title || `Desktop Banner ${s.id}`}
+//                         fill
+//                         priority={i === 0}
+//                         className="banner-img"
+//                         draggable={false}
+//                       />
+//                     </div>
+//                     {s.isDynamic && (
+//                       <div className="cb-overlay">
+//                         <span className="cb-category">{s.category}</span>
+//                         <h3 className="cb-title">{s.title}</h3>
+//                       </div>
+//                     )}
+//                   </Link>
+//                 ) : (
+//                   <>
+//                     <div className="img-mobile relative w-full h-full">
+//                       <Image
+//                         src={s.mobile}
+//                         alt={`Mobile Banner ${s.id}`}
+//                         fill
+//                         priority={i === 0}
+//                         className="banner-img"
+//                         draggable={false}
+//                       />
+//                     </div>
+//                     <div className="img-desktop relative w-full h-full">
+//                       <Image
+//                         src={s.desktop}
+//                         alt={`Desktop Banner ${s.id}`}
+//                         fill
+//                         priority={i === 0}
+//                         className="banner-img"
+//                         draggable={false}
+//                       />
+//                     </div>
+//                   </>
+//                 )}
+//               </div>
+//             ))}
+//           </div>
+
+//           {slidesData.length > 1 && (
+//             <>
+//               <button
+//                 className="cb-arrow left"
+//                 onClick={() => {
+//                   prevSlide();
+//                   setIsAutoPlay(false);
+//                 }}
+//               >
+//                 <ChevronLeft size={16} />
+//               </button>
+//               <button
+//                 className="cb-arrow right"
+//                 onClick={() => {
+//                   nextSlide();
+//                   setIsAutoPlay(false);
+//                 }}
+//               >
+//                 <ChevronRight size={16} />
+//               </button>
+//             </>
+//           )}
+//         </div>
+
+//         {slidesData.length > 1 && (
+//           <div className="cb-dots">
+//             {slidesData.map((_, i) => (
+//               <button
+//                 key={i}
+//                 className={`cb-dot ${i === currentSlide ? "active" : ""}`}
+//                 onClick={() => goToSlide(i)}
+//               />
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </>
+//   );
+// }
+
+
+
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -9,7 +451,7 @@ const staticSlides = [
   {
     id: "static-1",
     desktop: "/banner/newwww.svg",
-    mobile: "/banner/mobileupdate.svg",
+    mobile: "/banner/mobile.svg",
     slug: "",
     title: "",
     category: "",
@@ -24,24 +466,6 @@ const staticSlides = [
     category: "",
     isDynamic: false,
   },
-  // {
-  //   id: "static-3",
-  //   desktop: "/banner/",
-  //   mobile: "/banner/mobile3.png",
-  //   slug: "",
-  //   title: "",
-  //   category: "",
-  //   isDynamic: false,
-  // },
-  // {
-  //   id: "static-4",
-  //   desktop: "/banner/",
-  //   mobile: "/banner/mobile4.png",
-  //   slug: "",
-  //   title: "",
-  //   category: "",
-  //   isDynamic: false,
-  // },
 ];
 
 const SWIPE_THRESHOLD = 50;
@@ -158,26 +582,54 @@ export function CarouselBanner() {
   return (
     <>
       <style>{`
+        .cb-container {
+          width: 100vw;
+          margin-left: calc(-50vw + 50%);
+          padding: 0;
+          position: relative;
+        }
+
         .cb-wrap {
           position: relative;
           width: 100%;
           overflow: hidden;
           background: #ffffff;
-          aspect-ratio: 16 / 8;
-          max-height: 40vh;
           border-radius: 12px;
           user-select: none;
           touch-action: pan-y;
+
+          /* Mobile */
+          aspect-ratio: 5 / 2;
         }
 
-        @media (min-width: 768px) {
+        /* Tablet */
+        @media (min-width: 640px) {
           .cb-wrap {
-            aspect-ratio: 16 / 4;
-            max-height: 40vh;
-            border-bottom: none;
-            touch-action: auto;
+            aspect-ratio: 8 / 3;
           }
         }
+
+        /* Laptop */
+        @media (min-width: 1024px) {
+          .cb-wrap {
+            aspect-ratio: 16 / 3.5;
+          }
+        }
+
+        /* Large laptop / desktop */
+        @media (min-width: 1280px) {
+          .cb-wrap {
+            aspect-ratio: 16 / 3.5;
+          }
+        }
+
+        /* Large desktop */
+        @media (min-width: 1920px) {
+          .cb-wrap {
+            aspect-ratio: 16 / 3.5;
+          }
+        }
+
 
         .cb-track {
           display: flex;
@@ -194,18 +646,29 @@ export function CarouselBanner() {
           position: relative;
         }
 
-        .img-mobile { display: block; }
-        .img-desktop { display: none; }
+        .img-mobile { 
+          display: block; 
+        }
+        .img-desktop { 
+          display: none; 
+        }
 
-        @media (min-width: 768px) {
-          .img-mobile { display: none; }
-          .img-desktop { display: block; }
+        @media (min-width: 1024px) {
+          .img-mobile { 
+            display: none; 
+          }
+          .img-desktop { 
+            display: block; 
+          }
         }
 
         .banner-img {
           object-fit: cover;
+          object-position: center;
           -webkit-touch-callout: none;
           pointer-events: none;
+          width: 100%;
+          height: 100%;
         }
 
         .cb-overlay {
@@ -214,13 +677,34 @@ export function CarouselBanner() {
           left: 0;
           right: 0;
           background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
-          padding: 20px 24px;
+          padding: 16px 16px;
           color: #ffffff;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 4px;
           text-align: left;
           z-index: 10;
+        }
+
+        @media (min-width: 640px) {
+          .cb-overlay {
+            padding: 20px 24px;
+            gap: 6px;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .cb-overlay {
+            padding: 28px 36px;
+            gap: 8px;
+          }
+        }
+
+        @media (min-width: 1280px) {
+          .cb-overlay {
+            padding: 32px 48px;
+            gap: 10px;
+          }
         }
 
         .cb-category {
@@ -236,11 +720,18 @@ export function CarouselBanner() {
           letter-spacing: 0.05em;
         }
 
+        @media (min-width: 1024px) {
+          .cb-category {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+          }
+        }
+
         .cb-title {
-          font-size: 1.05rem;
+          font-size: 0.95rem;
           font-weight: 700;
           margin: 0;
-          line-height: 1.3;
+          line-height: 1.2;
           text-shadow: 0 1px 2px rgba(0,0,0,0.5);
           overflow: hidden;
           text-overflow: ellipsis;
@@ -249,18 +740,32 @@ export function CarouselBanner() {
           -webkit-box-orient: vertical;
         }
 
-        @media (min-width: 768px) {
-          .cb-overlay {
-            padding: 32px 48px;
-          }
+        @media (min-width: 640px) {
           .cb-title {
-            font-size: 1.4rem;
+            font-size: 1.05rem;
+            line-height: 1.25;
           }
         }
 
-        .cb-arrow { display: none; }
+        @media (min-width: 1024px) {
+          .cb-title {
+            font-size: 1.2rem;
+            line-height: 1.3;
+          }
+        }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1280px) {
+          .cb-title {
+            font-size: 1.4rem;
+            line-height: 1.3;
+          }
+        }
+
+        .cb-arrow { 
+          display: none; 
+        }
+
+        @media (min-width: 1024px) {
           .cb-arrow {
             position: absolute;
             top: 50%;
@@ -278,18 +783,32 @@ export function CarouselBanner() {
             cursor: pointer;
             transition: background 0.25s ease;
           }
-          .cb-arrow:hover { background: rgba(0,0,0,0.5); }
+          .cb-arrow:hover { 
+            background: rgba(0,0,0,0.5); 
+          }
         }
 
-        .cb-arrow.left  { left: 10px; }
-        .cb-arrow.right { right: 10px; }
+        .cb-arrow.left  { 
+          left: 10px; 
+        }
+        .cb-arrow.right { 
+          right: 10px; 
+        }
 
         .cb-dots {
           display: flex;
           justify-content: center;
           align-items: center;
           gap: 6px;
-          padding: 8px 0 0 0;
+          padding: 10px 0 0 0;
+          margin-top: 0;
+        }
+
+        @media (min-width: 1024px) {
+          .cb-dots {
+            gap: 8px;
+            padding: 12px 0 0 0;
+          }
         }
 
         .cb-dot {
@@ -303,13 +822,26 @@ export function CarouselBanner() {
           padding: 0;
         }
 
+        @media (min-width: 1024px) {
+          .cb-dot {
+            width: 8px;
+            height: 8px;
+          }
+        }
+
         .cb-dot.active {
           width: 16px;
           background: #2563eb;
         }
+
+        @media (min-width: 1024px) {
+          .cb-dot.active {
+            width: 20px;
+          }
+        }
       `}</style>
 
-      <div className="relative w-[calc(100%+49px)] -mx-4 overflow-hidden mb-6 -mt-8 md:-mt-6">
+      <div className="cb-container">
         <div
           ref={wrapRef}
           className="cb-wrap shadow-sm border border-gray-100"
@@ -342,7 +874,7 @@ export function CarouselBanner() {
                       position: "relative",
                     }}
                   >
-                    <div className="img-mobile relative w-full h-full">
+                    <div className="img-mobile">
                       <Image
                         src={s.mobile}
                         alt={s.title || `Mobile Banner ${s.id}`}
@@ -352,7 +884,7 @@ export function CarouselBanner() {
                         draggable={false}
                       />
                     </div>
-                    <div className="img-desktop relative w-full h-full">
+                    <div className="img-desktop">
                       <Image
                         src={s.desktop}
                         alt={s.title || `Desktop Banner ${s.id}`}
@@ -371,7 +903,7 @@ export function CarouselBanner() {
                   </Link>
                 ) : (
                   <>
-                    <div className="img-mobile relative w-full h-full">
+                    <div className="img-mobile">
                       <Image
                         src={s.mobile}
                         alt={`Mobile Banner ${s.id}`}
@@ -381,7 +913,7 @@ export function CarouselBanner() {
                         draggable={false}
                       />
                     </div>
-                    <div className="img-desktop relative w-full h-full">
+                    <div className="img-desktop">
                       <Image
                         src={s.desktop}
                         alt={`Desktop Banner ${s.id}`}
@@ -405,6 +937,7 @@ export function CarouselBanner() {
                   prevSlide();
                   setIsAutoPlay(false);
                 }}
+                aria-label="Previous slide"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -414,6 +947,7 @@ export function CarouselBanner() {
                   nextSlide();
                   setIsAutoPlay(false);
                 }}
+                aria-label="Next slide"
               >
                 <ChevronRight size={16} />
               </button>
@@ -428,6 +962,7 @@ export function CarouselBanner() {
                 key={i}
                 className={`cb-dot ${i === currentSlide ? "active" : ""}`}
                 onClick={() => goToSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
               />
             ))}
           </div>

@@ -314,29 +314,36 @@ export function GraduatesMarquee({
   const [selected, setSelected] = useState<GraduateTestimonialT | null>(null);
 
   return (
-    <section className="__gradSection">
+   <section className="relative z-10 w-full">
       <style>{`
-        .__gradSection {
-          background: #ffffff;
-          padding: 60px 20px;
-        }
-
-        @media (max-width: 768px) {
-          .__gradSection {
-            padding: 48px 16px;
-          }
-        }
+       .__gradSection {
+  background: #ffffff;
+  padding: 0;
+}
 
         .__gradContainer {
           max-width: 1280px;
           margin: 0 auto;
+          padding: 0 16px;
+        }
+
+        @media (min-width: 640px) {
+          .__gradContainer {
+            padding: 0 24px;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .__gradContainer {
+            padding: 0 64px;
+          }
         }
 
         /* Header */
-        .__gradHeader {
-          text-align: center;
-          margin-bottom: 48px;
-        }
+      .__gradHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
 
         @media (max-width: 768px) {
           .__gradHeader {

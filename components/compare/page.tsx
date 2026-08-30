@@ -113,7 +113,7 @@ export default function UniversitySlider() {
 
                 <Link
                   href={`/compare/${pair.id}`}
-                  className="w-full mt-auto py-2.5 border border-orange-500 text-orange-600 rounded-md font-semibold text-sm text-center block"
+                  className="w-full mt-auto py-2.5 border border-red-500 text-red-600 rounded-md font-semibold text-sm text-center block"
                 >
                   {pair.a.university} vs {pair.b.university}
                 </Link>
@@ -123,23 +123,23 @@ export default function UniversitySlider() {
         </div>
 
         {/* Arrow position adjusted to match reduced image height */}
-        {canScrollRight && (
-          <button
-            onClick={scroll}
-            className="hidden sm:flex absolute right-0 top-[55px] translate-x-1/2 z-10 bg-white shadow-md p-2 rounded-full border border-gray-200 hover:shadow-lg transition"
-          >
-            <ChevronRight size={20} className="text-gray-700" />
-          </button>
-        )}
+      {canScrollRight && (
+  <button
+    onClick={scroll}
+    className="hidden sm:flex absolute right-0 top-[70px] translate-x-1/2 z-10 bg-white shadow-md p-2 rounded-full border border-gray-200 hover:shadow-lg transition"
+  >
+    <ChevronRight size={20} className="text-gray-700" />
+  </button>
+)}
       </div>
 
       <div className="mt-4 flex justify-center">
         <Link
           href="/comparisons"
-          className="inline-flex items-center gap-2 text-orange-600 font-medium text-sm underline"
+          className="inline-flex items-center gap-2 text-red-500 font-medium text-sm underline"
         >
           View All University Comparisons
-          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 text-white">
+          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white">
             <ArrowRight size={12} />
           </span>
         </Link>

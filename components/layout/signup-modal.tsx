@@ -2998,39 +2998,7 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
                   </form>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => setAssuredOptIn((v) => !v)}
-                  className={`mt-2 w-full rounded-lg border p-2 text-left transition ${
-                    assuredOptIn
-                      ? "border-red-300 bg-red-50"
-                      : "border-red-100 bg-red-50/60"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="text-red-600" size={16} />
-
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[11px] font-semibold text-black">
-                          eCampus Assured
-                        </h3>
-
-                        <span className="flex items-center gap-0.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600">
-                          Know More
-                          <ChevronRight size={10} />
-                        </span>
-                      </div>
-
-                      <p className="text-[10px] text-gray-600">
-                        Get up to{" "}
-                        <span className="font-bold text-red-600">
-                          100% Course Fee Refund*
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </button>
+                
 
                 <p className="mt-2 text-center text-[11px] leading-relaxed text-gray-500">
                   By continuing, you agree to our{" "}

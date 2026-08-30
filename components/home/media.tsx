@@ -127,9 +127,9 @@ export function MediaSection() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden px-4 py-8 sm:px-6">
-      <div className="relative mx-auto max-w-7xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-6">
+    <section className="relative z-10 w-full">
+      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+        <div className="text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Handshake className="h-3.5 w-3.5 text-[#ef4444]" />
             Media
@@ -139,7 +139,7 @@ export function MediaSection() {
           </h2>
         </div>
 
-        <div className="relative py-4">
+       <div className="relative">
           {showLeft && (
             <button
               type="button"
@@ -170,7 +170,7 @@ export function MediaSection() {
           <div
             ref={trackRef}
             onScroll={checkScroll}
-            className="scrollbar-hide flex gap-7 overflow-x-auto scroll-smooth px-2 py-4"
+            className="scrollbar-hide flex gap-7 overflow-x-auto scroll-smooth px-0 py-2"
             style={{ scrollSnapType: "x mandatory" }}
           >
             {items.map((article, i) => {

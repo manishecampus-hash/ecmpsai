@@ -317,3 +317,17 @@ body * {
   font-family: "Inter", "Inter Fallback", sans-serif;
 }
 
+
+/* 30 aug*/
+
+.home-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.home-sections > section {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+

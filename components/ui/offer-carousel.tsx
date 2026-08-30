@@ -537,6 +537,7 @@
 
 // New.................
 
+
 "use client";
 
 import * as React from "react";
@@ -771,7 +772,7 @@ export const OfferCarousel = ({
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="flex gap-4 overflow-x-auto py-6 scroll-smooth px-0 md:mx-10 md:px-0"
+          className="flex gap-4 overflow-x-auto py-6 scroll-smooth px-0"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {offers.map((offer, index) => (

@@ -1,7 +1,8 @@
 import { blogs } from "@/data/blog-data";
 import BlogHero from "@/components/blog/blog-hero";
 import BlogCategories from "@/components/blog/blog-categories";
-import RecommendedPrograms from "@/components/blog/recommended-programs";
+import { Footer } from "@/components/layout/footer";
+// import RecommendedPrograms from "@/components/blog/recommended-programs";
 
 function mapDbBlogToBlog(dbBlog: any) {
   if (Array.isArray(dbBlog.content)) {
@@ -102,7 +103,8 @@ export default async function BlogPage() {
 
             {/* Blog list receives full data so filtering and load more can work */}
             <BlogCategories blogs={sortedAllBlogs} />
-            <RecommendedPrograms />
+            {/* <RecommendedPrograms /> */}
+            <Footer/>
         </main>
     );
 }

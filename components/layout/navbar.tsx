@@ -1253,7 +1253,7 @@ export function Navbar() {
                     onClick={() => setShowSignupModal(true)}
                     className="bg-white text-gray-800 border border-gray-300 rounded-full hover:bg-gray-100 hover:text-gray-900"
                   >
-                    Sign Up
+                    Apply Now
                   </Button>
                 </div>
               )}

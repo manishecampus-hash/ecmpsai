@@ -45,7 +45,7 @@ export default function FAQ() {
   };
 
   return (
-    <Section className="w-full bg-white pt-3 pb-13 lg:pb-5">
+    <Section className="w-full bg-white pt-3 pb-1 lg:pb-1">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
         {/* FAQ Grid Wrapper with 2-Column Layout */}
         <div className="grid gap-12 lg:grid-cols-12 lg:items-start">

@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
+import { BrochureForm } from "./../form/brochure-form";
 
 // Real data with actual content
 const programsData = [
@@ -387,7 +388,9 @@ export default function ProgramsSection() {
   const [activeTab, setActiveTab] = useState("all");
   const [activeMode, setActiveMode] = useState("all");
   const [activeCardId, setActiveCardId] = useState<number | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+const [showBrochureForm, setShowBrochureForm] = useState(false);
+
+const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const carouselWrapRef = useRef<HTMLDivElement>(null);
   const lastTapRef = useRef<{ id: number | null; time: number }>({
@@ -712,7 +715,7 @@ export default function ProgramsSection() {
             In-Demand Courses
           </span>
 
-          <h2 className="mt-3 text-[28px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+          <h2 className="mt-3 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Find The Right <span className="text-red-500">Program</span>
           </h2>
         </div>
@@ -1104,35 +1107,22 @@ onMouseLeave={(e) => {
                     >
                       View Program
                     </a>
-                    <a
-                      href={program.slug}
-                      style={{
-                        flex: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "6px",
-                        background: "#ff3b4f",
-                        border: "1.5px solid #ff3b4f",
-                        padding: "8px 10px",
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        color: "#fff",
-                        textDecoration: "none",
-                        transition: "background 0.2s, border-color 0.2s",
-                        whiteSpace: "nowrap",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#e02035";
-                        e.currentTarget.style.borderColor = "#e02035";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "#ff3b4f";
-                        e.currentTarget.style.borderColor = "#ff3b4f";
-                      }}
-                    >
-                      {program.isFree ? "Enroll Now" : "Get Brochure"}
-                    </a>
+                    {program.isFree ? (
+  <a
+    href={program.slug}
+    className="flex-1 flex items-center justify-center rounded-[6px] bg-[#ff3b4f] border-[1.5px] border-[#ff3b4f] px-[10px] py-2 text-xs font-bold text-white no-underline whitespace-nowrap transition-colors hover:bg-[#e02035] hover:border-[#e02035]"
+  >
+    Enroll Now
+  </a>
+) : (
+  <button
+    type="button"
+    onClick={() => setShowBrochureForm(true)}
+    className="flex-1 flex items-center justify-center rounded-[6px] bg-[#ff3b4f] border-[1.5px] border-[#ff3b4f] px-[10px] py-2 text-xs font-bold text-white whitespace-nowrap transition-colors hover:bg-[#e02035] hover:border-[#e02035] cursor-pointer"
+  >
+    Get Brochure
+  </button>
+)}
                   </div>
 
                   {/* Full-card overlay - RED THEME with icon rows.
@@ -1205,6 +1195,35 @@ onMouseLeave={(e) => {
           )} */}
         </div>
       </div>
+      {showBrochureForm && (
+  <div
+    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
+    onClick={() => setShowBrochureForm(false)}
+  >
+   <div
+  className="relative w-full max-w-md max-h-[90vh] overflow-visible rounded-2xl bg-white shadow-2xl"
+  onClick={(e) => e.stopPropagation()}
+>
+      <button
+        type="button"
+        onClick={() => setShowBrochureForm(false)}
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-lg font-medium text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
+        aria-label="Close brochure form"
+      >
+        ×
+      </button>
+
+      <BrochureForm
+        onSubmit={() => {
+          setShowBrochureForm(false);
+        }}
+        onBack={() => {
+          setShowBrochureForm(false);
+        }}
+      />
+    </div>
+  </div>
+)}
     </section>
   );
 }

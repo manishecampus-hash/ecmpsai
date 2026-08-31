@@ -924,18 +924,18 @@ function MobileDrawer({
                   variant="outline"
                   className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
                 >
-                  Login
+                  Sign Up
                 </Button>
               </Link>
-              <Button
-                className="px-4 py-2.5 rounded-md text-[15px] font-medium transition-colors text-gray-700 bg-white hover:bg-gray-50"
+              {/* <Button
+                className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
                 onClick={() => {
                   onSignup();
                   onClose();
                 }}
               >
                 Sign Up
-              </Button>
+              </Button> */}
             </div>
           )}
         </div>
@@ -1247,14 +1247,14 @@ export function Navbar() {
                   </Button>
                 </div>
               ) : (
-                <div className="hidden sm:flex items-center gap-2">
-                  <Button
+                <div className="hidden sm:flex items-center gap-2"> 
+                  {/* <Button  31 Aug temp comment 
                     size="sm"
                     onClick={() => setShowSignupModal(true)}
                     className="bg-white text-gray-800 border border-gray-300 rounded-full hover:bg-gray-100 hover:text-gray-900"
                   >
                     Apply Now
-                  </Button>
+                  </Button> */}
                 </div>
               )}
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowUp,
+  Briefcase,
   BriefcaseBusiness,
   GraduationCap,
   Landmark,
@@ -70,24 +71,21 @@ export default function HeroSearch() {
 
       <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center mt-2">
         {/* Heading */}
-        <div className="mb-6">
-          {student?.name ? (
-            <h1 className="text-5xl md:text-7xl font-normal tracking-[-0.06em] leading-none text-gray-900">
-              <span className="block">
-                Hey, {student.name.split(" ")[0]} 👋
-              </span>
-              <span className="block mt-2">What's your next move?</span>
-            </h1>
-          ) : (
-            // <h1 className="text-3xl md:text-3xl font-normal tracking-[-0.06em] leading-none text-gray-900">
-            //   Explore. Learn. Advance.
-            // </h1>
+        
 
-            <h1 className="mt-2 text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
-              Explore. Learn. <span className="text-red-500">Advance.</span>
+            <div className="mb-6 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
+              <Sparkles className="h-3.5 w-3.5 text-red-500" />
+              AI Overview
+            </span>
+
+            <h1 className="mt-2 whitespace-nowrap text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+             Explore. Learn. {" "}
+              <span className="text-red-500">Advance.</span>
             </h1>
-          )}
-        </div>
+          </div>
+
+       
         {/* Single Input Box */}
         <form
           onSubmit={handleSearch}

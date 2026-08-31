@@ -30,7 +30,6 @@ const faqs = [
     answer:
       "Yes. Our team assists students throughout the admission process, including program selection, eligibility verification, application submission, document support, and enrollment guidance.",
   },
-  
 ];
 
 export default function FAQ() {
@@ -45,26 +44,27 @@ export default function FAQ() {
   };
 
   return (
-    <Section className="w-full bg-white pt-3 pb-1 lg:pb-1">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+    <Section className="w-full bg-white p-0 m-0">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter] p-3 pb-0">
         {/* FAQ Grid Wrapper with 2-Column Layout */}
-        <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
+       <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
           {/* LEFT COLUMN: Header & Support Desk Info (Span 4) */}
-          <div className="lg:col-span-4 lg:sticky lg:top-8">
+          <div className="text-center lg:col-span-4 lg:sticky lg:top-8 lg:text-left">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
               <Handshake className="h-3.5 w-3.5 text-red-500" />
               FAQ
             </span>
-            <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-              Frequently Asked <span className="text-red-500">Questions</span>
-            </h2>
 
+   <h2 className="mt-2 whitespace-nowrap text-[23px] font-extrabold leading-[1.2] tracking-[-0.5px] text-gray-900 sm:text-[28px] lg:whitespace-normal lg:text-[36px]">
+  Frequently Asked <span className="text-red-500">Questions</span>
+</h2>
             {/* Support Desk Info Card - Hidden on mobile */}
             <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
               <div className="flex items-center gap-3 text-slate-700">
                 <MessageSquare className="h-5 w-5 text-red-500" />
                 <span className="text-sm font-bold">Still have doubts?</span>
               </div>
+
               <p className="mt-2 text-xs text-gray-500 leading-relaxed">
                 Connect with our professional academic program advisors directly
                 for personalized roadmap assistance.

@@ -41,7 +41,7 @@ export const popularCourses: Offer[] = [
     mode: "Online",
     icon: "graduation-cap",
     href: "/programs/op-jindal-mba",
-    videoSrc: "https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1",
+    videoSrc: "https://www.youtube.com/embed/7NHpm3uAQ6w",
   },
   {
     id: 3,

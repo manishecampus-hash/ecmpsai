@@ -1,86 +1,3 @@
-// import { notFound } from "next/navigation";
-// import { blogs } from "@/data/blog-data";
-
-// type Props = {
-//     params: Promise<{
-//         slug: string;
-//     }>;
-// };
-
-// export async function generateStaticParams() {
-//     return blogs.map((blog) => ({
-//         slug: blog.slug,
-//     }));
-// }
-
-// export default async function BlogDetailPage({ params }: Props) {
-//     const { slug } = await params;
-
-//     const blog = blogs.find(
-//         (item) => item.slug.trim().toLowerCase() === slug.trim().toLowerCase()
-//     );
-
-//     if (!blog) {
-//         return (
-//             <main className="min-h-screen bg-white">
-//                 <div className="mx-auto max-w-4xl px-6 py-20">
-//                     <h1 className="text-3xl font-bold text-red-600">
-//                         Blog Not Found
-//                     </h1>
-
-//                     <p className="mt-4 text-gray-600">
-//                         Requested slug: {slug}
-//                     </p>
-
-//                     <div className="mt-8">
-//                         <h2 className="font-semibold">Available Slugs:</h2>
-
-//                         <ul className="mt-3 space-y-2">
-//                             {blogs.map((b) => (
-//                                 <li key={b.id} className="text-blue-600">
-//                                     {b.slug}
-//                                 </li>
-//                             ))}
-//                         </ul>
-//                     </div>
-//                 </div>
-//             </main>
-//         );
-//     }
-
-//     return (
-//         <main className="min-h-screen bg-white">
-//             <article className="mx-auto max-w-4xl px-6 py-16">
-//                 <span className="inline-block rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600">
-//                     {blog.category}
-//                 </span>
-
-//                 <h1 className="mt-6 text-4xl font-bold text-gray-900">
-//                     {blog.title}
-//                 </h1>
-
-//                 <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500">
-//                     <span>{blog.author}</span>
-//                     <span>•</span>
-//                     <span>{blog.date}</span>
-//                     <span>•</span>
-//                     <span>{blog.reads}</span>
-//                 </div>
-
-//                 <div className="mt-10">
-//                     <p className="text-xl leading-8 text-gray-600">
-//                         {blog.excerpt}
-//                     </p>
-//                 </div>
-//             </article>
-//         </main>
-//     );
-// }
-
-// ── Server Component — NO "use client" ──
-
-// ── Server Component — NO "use client" ──
-
 import Image from "next/image";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
@@ -91,9 +8,11 @@ import { TableOfContents } from "@/components/blog-content/TableOfContents";
 import { RelatedPosts } from "@/components/blog-content/RealetedPost";
 import { BlogContent } from "@/components/blog-content/blog-content";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
-import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
+// import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
 import { Footer } from "@/components/layout/footer";
 import { BlogViewCounter } from "@/components/blog-content/BlogViewCounter";
+import { ApplicationForm } from "@/components/form/common-form";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -371,7 +290,7 @@ export default async function BlogDetailsPage({
         </article>
 
         <aside className="blog-sidebar" aria-label="Consultation form">
-          <ConsultationForm />
+          <ApplicationForm />
         </aside>
       </section>
 

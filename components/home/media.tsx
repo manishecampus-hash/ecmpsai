@@ -127,13 +127,13 @@ export function MediaSection() {
   return (
     <section className="relative z-10 w-full">
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <Handshake className="h-3.5 w-3.5 text-[#ef4444]" />
             Media
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            The press <span className="text-[#ef4444]">wall</span>
+            The Press <span className="text-[#ef4444]">Wall</span>
           </h2>
         </div>
 

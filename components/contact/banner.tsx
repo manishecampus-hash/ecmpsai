@@ -137,15 +137,11 @@ const Banner = () => {
 
             
             <div className="mt-6 sm:mt-7 flex flex-col gap-3 sm:gap-4 sm:flex-row">
-              <button className="inline-flex h-9 sm:h-11 w-fit items-center justify-center self-start rounded-[13px] bg-[#f83d46] px-4 sm:px-5 text-xs sm:text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
-              <Send size={16} className="sm:size-[19px]" />
-               Contact Our Team
+              <button className="inline-flex h-9 sm:h-11 w-fit items-center gap-1 justify-center self-start rounded-[13px] bg-[#f83d46] px-4 sm:px-5 text-xs sm:text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
+              <Send size={16} className="sm:size-[19px]" gap-3 />
+               Speak to Counsellor
               </button>
 
-              <button className="inline-flex h-9 sm:h-11 w-fit sm:w-[170px] items-center justify-center gap-2 whitespace-nowrap rounded-[13px] border border-[#dfe5ee] bg-white px-4 sm:px-5 text-xs sm:text-sm font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99]">
-               <MessageCircle size={16} className="sm:size-[19px]" />
-                Explore Support
-              </button>
             </div>
 
            

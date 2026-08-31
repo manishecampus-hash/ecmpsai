@@ -450,17 +450,28 @@ import Link from "next/link";
 const staticSlides = [
   {
     id: "static-1",
-    desktop: "/banner/newupdatebanner.svg",
-    mobile: "/banner/mobileupdate2.svg",
+   
+    desktop: "/banner/31aug.svg",
+    mobile: "/banner/Untitled design (7).svg",
     slug: "",
     title: "",
     category: "",
     isDynamic: false,
   },
   {
-    id: "static-2",
-    desktop: "/banner/newwww.svg",
-    mobile: "/banner/mobile.svg",
+    id: "static-2",    
+    desktop: "/banner/new31.svg",
+    mobile: "/banner/Untitled design (8).svg",
+    slug: "",
+    title: "",
+    category: "",
+    isDynamic: false,
+  },
+
+   {
+    id: "static-3",   
+    desktop: "/banner/newbn.svg",
+    mobile: "/banner/Untitled design (9).svg",   
     slug: "",
     title: "",
     category: "",
@@ -594,12 +605,12 @@ export function CarouselBanner() {
           width: 100%;
           overflow: hidden;
           background: #ffffff;
-          border-radius: 12px;
+          border-radius: 0px;
           user-select: none;
           touch-action: pan-y;
-
+ 
           /* Mobile */
-          aspect-ratio: 5 / 2;
+          aspect-ratio: 5 / 2.4;
         }
 
         /* Tablet */

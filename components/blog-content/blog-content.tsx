@@ -243,22 +243,30 @@ export function BlogContent({ blog }: { blog: Blog }) {
           table-layout: fixed;
           border: 1px solid #e5e7eb;
           background: #ffffff;
-          font-size: 18px;
-          line-height: 1.3;
-          margin: 32px 0 40px;
+          font-size: 16px;
+          line-height: 1.5;
+          margin: 20px 0 28px;
         }
 
         .upgrad-content th,
         .upgrad-content td,
         .content-table th,
         .content-table td {
-          padding: 24px 20px;
+          padding: 10px 14px;
           text-align: left;
           vertical-align: middle;
           border-right: 1px solid #e5e7eb;
           border-bottom: 1px solid #e5e7eb;
           color: #1f2937;
           overflow-wrap: anywhere;
+        }
+
+        .upgrad-content table p,
+        .upgrad-content td p,
+        .upgrad-content th p,
+        .content-table p {
+          margin: 0 !important;
+          padding: 0;
         }
 
         .upgrad-content th,

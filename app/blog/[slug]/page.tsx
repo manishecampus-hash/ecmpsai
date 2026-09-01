@@ -82,8 +82,8 @@ function mapDbBlogToBlog(dbBlog: any) {
   const readTimeVal = Math.max(1, Math.ceil(wordCount / 200));
   const readTime = `${readTimeVal} min read`;
 
-  // Fallback image
-  const imageSrc = dbBlog.imageUrl || "/blogs/top-career.png";
+  // Article image (no fallback if not uploaded)
+  const imageSrc = dbBlog.imageUrl || "";
 
   return {
     id: dbBlog.id || dbBlog._id || String(Math.random()),
@@ -258,30 +258,28 @@ export default async function BlogDetailsPage({
 
           <TableOfContents headings={blog.headings} />
 
-          {!isDbBlog && (
-            <>
-              <p className="blog-lead">{blog.description}</p>
-
-              {blog.imageSrc && (
-                <figure className="blog-feature-image">
-                  <Image
-                    src={blog.imageSrc}
-                    alt={blog.title}
-                    width={900}
-                    height={560}
-                    sizes="(max-width: 980px) calc(100vw - 28px), 900px"
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      display: "block",
-                      borderRadius: "8px",
-                    }}
-                    priority
-                  />
-                </figure>
-              )}
-            </>
+          {blog.description && !isDbBlog && (
+            <p className="blog-lead">{blog.description}</p>
           )}
+
+          {blog.imageSrc ? (
+            <figure className="blog-feature-image">
+              <Image
+                src={blog.imageSrc}
+                alt={blog.title}
+                width={900}
+                height={560}
+                sizes="(max-width: 980px) calc(100vw - 28px), 900px"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  borderRadius: "8px",
+                }}
+                priority
+              />
+            </figure>
+          ) : null}
 
           <BlogContent blog={blog} />
 

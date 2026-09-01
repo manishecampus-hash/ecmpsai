@@ -120,13 +120,13 @@ export function Footer() {
   return (
     <footer
       id="footer"
-      className="relative mt-16 w-full bg-gradient-to-b from-[#0F131E] to-[#080B11] border-t border-slate-800/60 sm:mt-20 lg:mt-24"
+      className="relative mt-6 w-full bg-gradient-to-b from-[#0F131E] to-[#080B11] border-t border-slate-800/60 sm:mt-8 lg:mt-10"
     >
-      <div className="relative mx-auto flex max-w-[1440px] flex-col gap-8 px-4 pb-0 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+      <div className="relative mx-auto flex max-w-[1440px] flex-col gap-8 px-4 pb-0 pt-10 sm:px-6 sm:pt-12 lg:px-8">
         <div className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
           {/* Column 1: Brand Info Column */}
           <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 flex flex-col gap-5 text-left">
-            <div className="relative h-10 w-40" style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
+            <div className="relative h-10 w-40 invert hue-rotate-180">
               <Image
                 src="/image/logo.png"
                 alt="eCampus Logo"

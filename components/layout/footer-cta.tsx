@@ -62,7 +62,7 @@ export function FooterCta() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between p-6 md:p-8 gap-6">
         {/* Left Column: Logo + Title + Pills */}
         <div className="flex flex-col items-center md:items-start gap-4 flex-1">
-          <div className="relative h-8 w-32" style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
+          <div className="relative h-8 w-32 invert hue-rotate-180">
             <Image
               src="/image/logo.png"
               alt="eCampus Logo"

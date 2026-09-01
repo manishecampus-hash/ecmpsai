@@ -29,10 +29,7 @@ export default function CourseFAQ({ data }: { data?: any }) {
   };
 
   return (
-    <section
-      style={{ fontFamily: "'Inter', sans-serif" }}
-      className="max-w-4xl mx-auto px-4 py-10"
-    >
+    <section className="max-w-4xl mx-auto px-4 py-10 font-sans">
       <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 text-center">
         {heading.includes("*") ? (
           <HighlightedText text={heading} className="text-[#ee2c3c]" />

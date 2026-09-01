@@ -103,7 +103,7 @@ export function ApplicationForm({
   onSubmit,
   onBack,
 }: {
-  onSubmit: (data: LeadData) => void;
+  onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -229,11 +229,13 @@ export function ApplicationForm({
       const data = await res.json();
 
       if (res.ok && data.success) {
-        onSubmit({
-          name: formData.fullName,
-          email: formData.email,
-          mobile: formData.mobile,
-        });
+        if (onSubmit) {
+          onSubmit({
+            name: formData.fullName,
+            email: formData.email,
+            mobile: formData.mobile,
+          });
+        }
       } else {
         alert(data.message || "Something went wrong ❌");
       }

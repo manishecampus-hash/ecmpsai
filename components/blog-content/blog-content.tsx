@@ -1,6 +1,7 @@
 "use client";
 
 import { Blog, ContentBlock } from "@/data/blog-data";
+import { sanitizeAutoLinks } from "@/lib/utils";
 
 function inlineFormat(text: string) {
   return text
@@ -150,13 +151,15 @@ function renderBlock(block: ContentBlock, key: number): React.ReactNode {
   }
 }
 
+
+
 export function BlogContent({ blog }: { blog: Blog }) {
   const isHtml = typeof blog.content === "string";
 
   return (
     <article className="upgrad-content">
       {isHtml ? (
-        <div dangerouslySetInnerHTML={{ __html: blog.content as string }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeAutoLinks(blog.content as unknown as string) }} />
       ) : (
         (blog.content as ContentBlock[]).map((block, i) => renderBlock(block, i))
       )}

@@ -35,20 +35,23 @@ export async function proxy(request: NextRequest) {
     
     clearTimeout(timeoutId);
 
-    if (res.ok) {
-      const redirectRule = await res.json();
-      if (redirectRule && redirectRule.newUrl) {
-        const { newUrl, type } = redirectRule;
-        const statusCode = type === 301 ? 301 : 302;
+    if (res.ok && res.status !== 204) {
+      const text = await res.text();
+      if (text.trim()) {
+        const redirectRule = JSON.parse(text);
+        if (redirectRule && redirectRule.newUrl) {
+          const { newUrl, type } = redirectRule;
+          const statusCode = type === 301 ? 301 : 302;
 
-        let destination = newUrl;
-        // If relative URL, build absolute URL using current request host and origin
-        if (!newUrl.startsWith("http://") && !newUrl.startsWith("https://")) {
-          const origin = request.nextUrl.origin;
-          destination = `${origin}${newUrl}${search}`;
+          let destination = newUrl;
+          // If relative URL, build absolute URL using current request host and origin
+          if (!newUrl.startsWith("http://") && !newUrl.startsWith("https://")) {
+            const origin = request.nextUrl.origin;
+            destination = `${origin}${newUrl}${search}`;
+          }
+
+          return NextResponse.redirect(destination, statusCode);
         }
-
-        return NextResponse.redirect(destination, statusCode);
       }
     }
   } catch (err) {

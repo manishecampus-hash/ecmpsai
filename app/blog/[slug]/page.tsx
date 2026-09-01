@@ -7,6 +7,7 @@ import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
 import { RelatedPosts } from "@/components/blog-content/RealetedPost";
 import { BlogContent } from "@/components/blog-content/blog-content";
+import { sanitizeAutoLinks } from "@/lib/utils";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 // import { ConsultationForm } from "@/components/blog-content/ConsultationForm";
 import { Footer } from "@/components/layout/footer";
@@ -59,7 +60,7 @@ function mapDbBlogToBlog(dbBlog: any) {
   }
 
   // Generate headings and process HTML
-  const { html, headings } = parseHtmlContent(dbBlog.content || "");
+  const { html, headings } = parseHtmlContent(sanitizeAutoLinks(dbBlog.content || ""));
 
   // Format date
   let formattedDate = "Jun 8, 2026";

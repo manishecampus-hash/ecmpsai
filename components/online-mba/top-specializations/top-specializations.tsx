@@ -22,13 +22,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-interface Specialization {
+interface SpecializationItem {
   title: string;
-  href: string;
-  icon: LucideIcon;
+  href?: string;
+  icon?: LucideIcon;
 }
 
-const SPECIALIZATIONS: Specialization[] = [
+const DEFAULT_SPECIALIZATIONS: SpecializationItem[] = [
   { title: "Finance Management", href: "#", icon: Landmark },
   { title: "Marketing Management", href: "#", icon: Megaphone },
   { title: "HR Management", href: "#", icon: Users },
@@ -43,36 +43,59 @@ const SPECIALIZATIONS: Specialization[] = [
   { title: "Healthcare Management", href: "#", icon: HeartPulse },
   { title: "Data Science", href: "#", icon: Database },
   { title: "Retail Management", href: "#", icon: ShoppingBag },
-  {
-    title: "Hospital Administration & Healthcare (Dual)",
-    href: "#",
-    icon: Building2,
-  },
+  { title: "Hospital Administration & Healthcare (Dual)", href: "#", icon: Building2 },
   { title: "Fintech Management", href: "#", icon: Wallet },
 ];
 
-export default function TopSpecializations() {
+const ICON_LIST = [Landmark, Megaphone, Users, Settings, Truck, BarChart3, Monitor, Globe, Package, Briefcase, TrendingUp, HeartPulse, Database, ShoppingBag, Building2, Wallet];
+
+interface TopSpecializationsProps {
+  data?: any;
+  title?: string;
+}
+
+export default function TopSpecializations({ data, title }: TopSpecializationsProps) {
+  const heading = data?.heading || title || "Top Specializations in Online MBA";
+
+  const list: SpecializationItem[] = data?.specializationsList
+    ? typeof data.specializationsList === "string"
+      ? data.specializationsList.split(/[\n,]+/).map((s: string, idx: number) => ({
+          title: s.trim(),
+          href: "#",
+          icon: ICON_LIST[idx % ICON_LIST.length],
+        })).filter((item: any) => Boolean(item.title))
+      : Array.isArray(data.specializationsList)
+      ? data.specializationsList
+      : DEFAULT_SPECIALIZATIONS
+    : DEFAULT_SPECIALIZATIONS;
+
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          <span className="text-red-500">Top Specializations</span> in Online
-          MBA
+          {heading.includes("Top Specializations") ? (
+            <>
+              <span className="text-red-500">Top Specializations</span>{" "}
+              {heading.replace("Top Specializations", "").trim()}
+            </>
+          ) : (
+            heading
+          )}
         </h2>
       </div>
 
       {/* Specializations list panel */}
       <div className="rounded-2xl border border-slate-200 overflow-hidden">
         <div className="grid sm:grid-cols-2">
-          {SPECIALIZATIONS.map((spec, i) => {
-            const Icon = spec.icon;
-            const isLastRow = i >= SPECIALIZATIONS.length - 2;
+          {list.map((spec: any, i: number) => {
+            const Icon = spec.icon || ICON_LIST[i % ICON_LIST.length];
+            const isLastRow = i >= list.length - 2;
 
             return (
               <a
-                key={spec.title}
-                href={spec.href}
+                key={spec.title || i}
+                href={spec.href || "#"}
                 className={`group flex items-center gap-4 px-6 py-5 transition-colors hover:bg-red-50/50 border-b border-slate-200 ${
                   i % 2 === 0 ? "sm:border-r" : ""
                 } ${isLastRow ? "sm:border-b-0" : ""}`}

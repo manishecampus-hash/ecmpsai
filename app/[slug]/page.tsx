@@ -52,6 +52,7 @@ interface CourseData {
   status: "active" | "inactive";
   seoSettings?: SeoSettings;
   associatedUniversities?: University[];
+  subHeaders?: any[];
 }
 
 interface PageProps {
@@ -140,7 +141,7 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
 
   return (
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
-      <SubHeader />
+      <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
       <CourseHeroSection data={detailsObj?.banner} />
       <CourseUniversitySection universities={universities} />
       <CourseOverview data={detailsObj?.about} />

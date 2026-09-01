@@ -8,7 +8,7 @@ interface JobRole {
   salary: string;
 }
 
-const JOB_ROLES: JobRole[] = [
+const DEFAULT_JOB_ROLES: JobRole[] = [
   { role: "Portfolio manager", salary: "3 LPA to 37.2 LPA" },
   { role: "Consultant", salary: "4.2 LPA to 25.3 LPA" },
   { role: "Business development manager", salary: "3.1 LPA to 15.8 LPA" },
@@ -26,49 +26,71 @@ interface Recruiter {
   salary: string;
 }
 
-const RECRUITERS: Recruiter[] = [
+const DEFAULT_RECRUITERS: Recruiter[] = [
   { company: "ICICI Lombard", salary: "39 lakhs to 44.2 lakhs" },
   { company: "Mphasis", salary: "2 lakhs to 106 lakhs" },
   { company: "Airtel", salary: "4.5 lakhs to 22.2 lakhs" },
   { company: "IndiaMART", salary: "3.2 lakhs to 16.9 lakhs" },
   { company: "NIIT", salary: "2.5 lakhs to 39.3 lakhs" },
   { company: "Coforge", salary: "24.5 lakhs to 44.2 lakhs" },
-  { company: "InfoTech", salary: "10 lakhs to 31.6 lakhs" },
-  { company: "Maruti Suzuki", salary: "2.2 lakhs to 11.7 lakhs" },
   { company: "EY", salary: "0.7 lakhs to 29 lakhs" },
-  { company: "Teleperformance", salary: "1.2 lakhs to 8 lakhs" },
-  { company: "Genpact", salary: "1.5 lakhs to 12 lakhs" },
   { company: "Amazon", salary: "1.5 lakhs to 34 lakhs" },
   { company: "Accenture", salary: "2 lakhs to 10.6 lakhs" },
 ];
 
-export default function CareerScope() {
+interface CareerScopeProps {
+  data?: any;
+  title?: string;
+}
+
+export default function CareerScope({ data, title }: CareerScopeProps) {
+  const heading = data?.heading || title || "Job Opportunity after Online MBA";
+  const introText =
+    data?.introText ||
+    "Aspirants can take several job opportunities from the course; thereof, there are several job roles available with their estimated data. Go through it in detail, which will help you learn about further opportunities.";
+
+  const disclaimer =
+    data?.disclaimer ||
+    "*The salary is estimated, and the data can be derived from Naukri or Glassdoor.";
+
+  const jobRolesList = data?.jobRoles && Array.isArray(data.jobRoles) && data.jobRoles.length > 0
+    ? data.jobRoles
+    : DEFAULT_JOB_ROLES;
+
+  const recruitersList = data?.recruiters && Array.isArray(data.recruiters) && data.recruiters.length > 0
+    ? data.recruiters
+    : DEFAULT_RECRUITERS;
+
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          Job Opportunity after <span className="text-red-500">Online MBA</span>
+          {heading.includes("Online MBA") ? (
+            <>
+              {heading.split("Online MBA")[0]}
+              <span className="text-red-500">Online MBA</span>
+              {heading.split("Online MBA")[1]}
+            </>
+          ) : (
+            heading
+          )}
         </h2>
       </div>
 
       <p className="max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
-        Aspirants can take several job opportunities from the online MBA
-        course; thereof, there are several job roles available with their
-        estimated data. Go through it in detail, which will help you learn
-        about further opportunities.
+        {introText}
       </p>
 
       <p className="mt-2 max-w-4xl text-xs italic text-slate-400 sm:text-sm">
-        *The salary is estimated, and the data can be derived from Naukri or
-        Glassdoor.
+        {disclaimer}
       </p>
 
       {/* Job roles table */}
       <div className="mt-6 rounded-xl border border-slate-200 overflow-hidden">
         <div className="bg-red-500 px-6 py-4">
           <h3 className="text-center text-sm font-bold text-white sm:text-base">
-            Job Roles after Online MBA Course
+            Job Roles Overview
           </h3>
         </div>
 
@@ -85,11 +107,11 @@ export default function CareerScope() {
           </div>
         </div>
 
-        {JOB_ROLES.map((job, i) => (
+        {jobRolesList.map((job: any, i: number) => (
           <div
-            key={job.role}
+            key={job.role || i}
             className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] ${
-              i !== JOB_ROLES.length - 1 ? "border-b border-slate-200" : ""
+              i !== jobRolesList.length - 1 ? "border-b border-slate-200" : ""
             } ${i % 2 === 1 ? "bg-red-50/30" : "bg-white"}`}
           >
             <div className="px-6 py-3.5 sm:border-r border-slate-200">
@@ -109,20 +131,11 @@ export default function CareerScope() {
       {/* Top recruiters intro */}
       <div className="mt-10">
         <h3 className="text-lg font-bold text-gray-900 sm:text-xl">
-          Top Recruiters in <span className="text-red-500">Online MBA</span>
+          Top Recruiters
         </h3>
 
         <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
-          Multiple top recruiters of the top MNCs in India and abroad can
-          hire online MBA course graduates and offer higher packages.
-          However, there is a top company list that provides good salary
-          packages yearly to the Online MBA course degree pursuer; get
-          through it.
-        </p>
-
-        <p className="mt-2 max-w-4xl text-xs italic text-slate-400 sm:text-sm">
-          *The Naukri Jobs or Companies portal can cover the salary data
-          range or top companies that hire online MBA course pursuers.
+          Multiple top recruiters of top MNCs hire course graduates and offer competitive packages.
         </p>
       </div>
 
@@ -130,7 +143,7 @@ export default function CareerScope() {
       <div className="mt-6 rounded-xl border border-slate-200 overflow-hidden">
         <div className="bg-red-500 px-6 py-4">
           <h3 className="text-center text-sm font-bold text-white sm:text-base">
-            Top MNCs that Hire Online MBA Course Pursuants
+            Top Hiring Companies
           </h3>
         </div>
 
@@ -147,11 +160,11 @@ export default function CareerScope() {
           </div>
         </div>
 
-        {RECRUITERS.map((rec, i) => (
+        {recruitersList.map((rec: any, i: number) => (
           <div
-            key={rec.company}
+            key={rec.company || i}
             className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr] ${
-              i !== RECRUITERS.length - 1 ? "border-b border-slate-200" : ""
+              i !== recruitersList.length - 1 ? "border-b border-slate-200" : ""
             } ${i % 2 === 1 ? "bg-red-50/30" : "bg-white"}`}
           >
             <div className="px-6 py-3.5 sm:border-r border-slate-200">
@@ -174,9 +187,7 @@ export default function CareerScope() {
           <Info className="h-3.5 w-3.5" strokeWidth={2.5} />
         </span>
         <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-          Salary figures shown above are estimated and sourced from platforms
-          like Naukri and Glassdoor. Actual packages may vary based on your
-          experience, specialization, negotiation, and the hiring company.
+          Salary figures shown above are estimated and sourced from job platforms. Actual packages may vary based on experience and specialization.
         </p>
       </div>
     </section>

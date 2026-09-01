@@ -11,7 +11,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
-const steps = [
+const defaultSteps = [
   {
     number: "01",
     title: "Open the university webpage",
@@ -47,11 +47,16 @@ const steps = [
   },
 ];
 
-export default function MbaAdmissionProcedure({ data }: { data?: any }) {
-  const heading = data?.heading || "Admission Procedure";
+interface MbaAdmissionProcedureProps {
+  data?: any;
+  title?: string;
+}
+
+export default function MbaAdmissionProcedure({ data, title }: MbaAdmissionProcedureProps) {
+  const heading = data?.heading || title || "Online MBA Admission Procedure";
   const list = data?.list && Array.isArray(data.list) && data.list.length > 0
     ? data.list
-    : steps;
+    : defaultSteps;
 
   const ICONS = [Globe, LogIn, ClipboardCheck, UserPlus, Wallet];
 
@@ -82,8 +87,7 @@ export default function MbaAdmissionProcedure({ data }: { data?: any }) {
           <Calculator className="h-4 w-4" strokeWidth={2} />
         </span>
         <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
-          Choose the university for Online MBA admission by checking their
-          return on investment through the{" "}
+          Choose the university for admission by checking their return on investment through the{" "}
           <span className="font-semibold text-red-500 underline decoration-red-200 underline-offset-2 group-hover:decoration-red-400">
             Online University ROI Calculator
           </span>

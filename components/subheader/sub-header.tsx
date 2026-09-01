@@ -1,61 +1,90 @@
-
 "use client";
+
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Home } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+export interface SubHeaderItemProp {
+  id: string;
+  title: string;
+  url: string;
+  urlType?: "relative" | "anchor";
+}
+
+interface SubHeaderProps {
+  subHeaders?: SubHeaderItemProp[];
+  courseSlug?: string;
+}
+
 interface NavItem {
   id: string;
   label: string;
+  href?: string;
+  isAnchor?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { id: "about", label: "Program Overview" },
-  { id: "subject-syllabus", label: "Subjects/Syllabus" },
-  { id: "eligibility-duration", label: "Eligibility & Duration" },
-  { id: "program-fees", label: "Program Fees" },
-  { id: "admission-procedure", label: "Admission Procedure" },
-  { id: "top-specializations", label: "Top Specializations" },
-  { id: "education-loans", label: "EducationLoan/EMIs" },
-  { id: "worth-it", label: "Worth It?" },
-  { id: "career-scope", label: "Career Scope" },
-  { id: "coupons", label: "Coupons" },
+const DEFAULT_NAV_ITEMS: NavItem[] = [
+  { id: "about", label: "Program Overview", isAnchor: true },
+  { id: "subject-syllabus", label: "Subjects/Syllabus", href: "/online-mba/subject-syllabus" },
+  { id: "eligibility-duration", label: "Eligibility & Duration", href: "/online-mba/eligibility-duration" },
+  { id: "program-fees", label: "Program Fees", href: "/online-mba/program-fees" },
+  { id: "admission-procedure", label: "Admission Procedure", href: "/online-mba/admission-procedure" },
+  { id: "top-specializations", label: "Top Specializations", href: "/online-mba/top-specializations" },
+  { id: "education-loans", label: "EducationLoan/EMIs", href: "/online-mba/education-loans" },
+  { id: "worth-it", label: "Worth It?", href: "/online-mba/worth-it" },
+  { id: "career-scope", label: "Career Scope", href: "/online-mba/career-scope" },
+  { id: "coupons", label: "Coupons", href: "/online-mba/coupons" },
+];
 
-  // 25 Aug panding id conect
- 
-];   
-const BASE_PATH = "/online-mba";
-
-const LINK_MAP: Record<string, string> = {
-  "who-can-apply": "/programs/doctorate/ggu/who-can-apply",
-  "subject-syllabus": "/online-mba/subject-syllabus",
-  "eligibility-duration": "/online-mba/eligibility-duration",
-  "program-fees": "/online-mba/program-fees",
-  "admission-procedure": "/online-mba/admission-procedure",
- "top-specializations": "/online-mba/top-specializations",
-  "education-loans": "/online-mba/education-loans",
-  "worth-it": "/online-mba/worth-it",
-  "career-scope": "/online-mba/career-scope",
-  "coupons": "/online-mba/coupons",
-  
-};
-
-export default function SubHeader() {
+export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: SubHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const mainHeaderHeight = 70; // must match your main header CSS height (px)
-  const stickyTriggerOffset = 400; // scroll distance before subheader becomes sticky
+  const mainHeaderHeight = 70;
+  const stickyTriggerOffset = 400;
   const [subHeaderHeight, setSubHeaderHeight] = useState<number>(56);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // measure subheader height (for scroll offsets)
+  const cleanCourseSlug = (courseSlug || "online-mba").replace(/^\/+|\/+$/g, "");
+  const basePath = `/${cleanCourseSlug}`;
+
+  const isOnlineMbaRoute = pathname === "/online-mba" || pathname.startsWith("/online-mba/");
+
+  // If no sub-headers punched in CMS and this is NOT the static /online-mba route, do not render sub-header bar
+  if ((!subHeaders || subHeaders.length === 0) && !isOnlineMbaRoute) {
+    return null;
+  }
+
+  // Build items from CMS subHeaders or fallback DEFAULT_NAV_ITEMS for online-mba
+  const items: NavItem[] =
+    subHeaders && subHeaders.length > 0
+      ? subHeaders.map((sh) => {
+          const rawUrl = (sh.url || "").trim();
+          const isAnchor = sh.urlType === "anchor" || rawUrl.startsWith("#");
+          if (isAnchor) {
+            const anchorId = rawUrl.replace(/^#/, "").toLowerCase();
+            return {
+              id: anchorId,
+              label: sh.title,
+              isAnchor: true,
+            };
+          } else {
+            const relSlug = rawUrl.replace(/^\/+|\/+$/g, "").toLowerCase();
+            return {
+              id: relSlug,
+              label: sh.title,
+              href: `${basePath}/${relSlug}`,
+              isAnchor: false,
+            };
+          }
+        })
+      : DEFAULT_NAV_ITEMS;
+
   useLayoutEffect(() => {
     const update = () => {
       const h = navRef.current?.offsetHeight ?? 56;
@@ -66,7 +95,6 @@ export default function SubHeader() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // measure and track horizontal scroll position for arrow visibility
   const updateScrollButtons = () => {
     const el = scrollRef.current;
     if (!el) return;
@@ -85,7 +113,6 @@ export default function SubHeader() {
       el.removeEventListener("scroll", updateScrollButtons);
       window.removeEventListener("resize", updateScrollButtons);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollByAmount = (direction: "left" | "right") => {
@@ -99,21 +126,19 @@ export default function SubHeader() {
   };
 
   useEffect(() => {
-    // Only run scroll-based section detection on the base page,
-    // since anchor sections (#about, #syllabus, etc.) only exist there.
-    if (pathname !== BASE_PATH) return;
+    if (pathname !== basePath) return;
 
     const handleScroll = () => {
       setIsSticky(window.scrollY > stickyTriggerOffset);
 
-      // Determine which section is currently in view and update active tab
       const offset =
         (window.scrollY > stickyTriggerOffset
           ? subHeaderHeight
           : mainHeaderHeight + subHeaderHeight) + 20;
 
       let currentId = activeId;
-      for (const item of NAV_ITEMS) {
+      for (const item of items) {
+        if (!item.isAnchor) continue;
         const el = document.getElementById(item.id);
         if (!el) continue;
         const top = el.getBoundingClientRect().top;
@@ -127,20 +152,17 @@ export default function SubHeader() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, basePath, subHeaderHeight, activeId, items]);
 
-  // Keep sticky behavior working even on non-base pages (just no active-section tracking)
   useEffect(() => {
-    if (pathname === BASE_PATH) return;
+    if (pathname === basePath) return;
     const handleScroll = () =>
       setIsSticky(window.scrollY > stickyTriggerOffset);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, [pathname, basePath]);
 
-  // Toggle main header hidden class when isSticky changes
   useEffect(() => {
     const mainHeader = document.getElementById("main-header");
     if (!mainHeader) return;
@@ -156,16 +178,14 @@ export default function SubHeader() {
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
     if (!el) {
-      if (pathname !== BASE_PATH) {
-        router.push(`${BASE_PATH}#${id}`);
+      if (pathname !== basePath) {
+        router.push(`${basePath}#${id}`);
       }
       return;
     }
 
     setActiveId(id);
 
-    // When subheader is replacing the main header, offset by subHeaderHeight
-    // Otherwise offset by mainHeaderHeight + subHeaderHeight to keep section below headers
     const offset = isSticky
       ? subHeaderHeight
       : mainHeaderHeight + subHeaderHeight;
@@ -189,14 +209,13 @@ export default function SubHeader() {
         pointerEvents: "auto",
       }}
     >
-      {/* Hide the horizontal scrollbar across browsers while keeping scroll usable */}
       <style jsx>{`
         .subheader-scroll {
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* IE / old Edge */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
         }
         .subheader-scroll::-webkit-scrollbar {
-          display: none; /* Chrome, Safari, new Edge */
+          display: none;
           height: 0;
         }
         .subheader-scroll {
@@ -280,12 +299,10 @@ export default function SubHeader() {
             justifyContent: "flex-start",
           }}
         >
-          {NAV_ITEMS.map((item) => {
-            // Route-based items are active when their pathname matches the current route.
-            // Anchor-based items are active based on scroll position, but only on the base page.
-            const isActive = LINK_MAP[item.id]
-              ? pathname === LINK_MAP[item.id]
-              : pathname === BASE_PATH && item.id === activeId;
+          {items.map((item) => {
+            const isActive = item.href
+              ? pathname === item.href
+              : pathname === basePath && item.id === activeId;
 
             const commonStyles = {
               flex: "0 0 auto",
@@ -300,12 +317,11 @@ export default function SubHeader() {
                 : "3px solid transparent",
             };
 
-            // Items with separate routes
-            if (LINK_MAP[item.id]) {
+            if (item.href) {
               return (
                 <Link
                   key={item.id}
-                  href={LINK_MAP[item.id]}
+                  href={item.href}
                   className="subheader-item"
                   style={{
                     ...commonStyles,
@@ -317,7 +333,6 @@ export default function SubHeader() {
               );
             }
 
-            // Anchor items (scroll to section)
             return (
               <button
                 key={item.id}

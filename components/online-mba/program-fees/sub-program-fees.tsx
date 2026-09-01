@@ -3,7 +3,7 @@
 import React from "react";
 import { Check, BadgeCheck } from "lucide-react";
 
-const BENEFITS: string[] = [
+const DEFAULT_BENEFITS: string[] = [
   "Join Community for peer interaction",
   "Get placement support via webinars & networking sessions",
   "Dedicated Buddy for your queries",
@@ -12,7 +12,7 @@ const BENEFITS: string[] = [
   "A career advisor for life",
 ];
 
-const PAYMENT_OPTIONS: string[] = [
+const DEFAULT_PAYMENT_OPTIONS: string[] = [
   "One-time payment option available",
   "Allowed to pay semester-wise",
   "Annual payments are also allowed",
@@ -25,7 +25,7 @@ interface UniversityFee {
   details: string[];
 }
 
-const UNIVERSITY_FEES: UniversityFee[] = [
+const DEFAULT_UNIVERSITY_FEES: UniversityFee[] = [
   {
     university: "Golden Gate University Online MBA",
     courseFees: "INR 4.30 lakhs",
@@ -34,10 +34,7 @@ const UNIVERSITY_FEES: UniversityFee[] = [
   {
     university: "Birchwood University Online MBA",
     courseFees: "INR 4.03 lakhs",
-    details: [
-      "Full program fees—INR 4.03 lakhs",
-      "Registration fees—INR 17,079",
-    ],
+    details: ["Full program fees—INR 4.03 lakhs", "Registration fees—INR 17,079"],
   },
   {
     university: "BIMTECH Online MBA",
@@ -47,37 +44,17 @@ const UNIVERSITY_FEES: UniversityFee[] = [
   {
     university: "NMIMS Online MBA",
     courseFees: "INR 2.20 lakh (If you pay semester-wise)",
-    details: [
-      "Registration fees—INR 1200",
-      "Yearly fees—INR 105,000",
-      "Semester-wise fees: INR 55,000",
-    ],
+    details: ["Registration fees—INR 1200", "Yearly fees—INR 105,000", "Semester-wise fees: INR 55,000"],
   },
   {
     university: "Amity University Online MBA",
     courseFees: "INR 2.25 lakhs",
-    details: [
-      "Semester-wise fees: INR 56,300",
-      "Full program fees—INR 2.25 lakhs",
-    ],
+    details: ["Semester-wise fees: INR 56,300", "Full program fees—INR 2.25 lakhs"],
   },
   {
     university: "DY Patil University Online MBA",
     courseFees: "INR 1.89 Lakhs",
     details: ["Semester-wise Program Fees—INR 50,000"],
-  },
-  {
-    university: "OP Jindal Global University Online MBA",
-    courseFees: "INR 1.80 Lakhs",
-    details: ["Full program fees—INR 1.80 lakhs"],
-  },
-  {
-    university: "UPES Online MBA",
-    courseFees: "INR 1.75 lakhs",
-    details: [
-      "Semester-wise fees: INR 43,750",
-      "Full program fees—INR 1.75 lakhs",
-    ],
   },
   {
     university: "Manipal Online MBA",
@@ -87,69 +64,54 @@ const UNIVERSITY_FEES: UniversityFee[] = [
   {
     university: "LPU Online MBA",
     courseFees: "INR 2 Lakhs",
-    details: [
-      "Registration Fee (One Time)—INR 1000",
-      "Per Semester Fee—INR 50,000",
-      "Exam Fees (semester-wise)—INR 2000",
-    ],
-  },
-  {
-    university: "Liverpool John Moores Online MBA",
-    courseFees: "INR 4.85 Lakhs",
-    details: ["Full Payment Fee—INR 4.85 Lakhs"],
-  },
-  {
-    university: "SRM University Online MBA",
-    courseFees: "INR 1.10 Lakhs",
-    details: ["Semester-wise Program Fees—INR 27,500"],
-  },
-  {
-    university: "Amrita University Online MBA",
-    courseFees: "INR 1.70 Lakhs",
-    details: [
-      "Semester-wise Program Fees—INR 42,500",
-      "Exam Fees (semester-wise)—INR 2500",
-      "Registration Fees (one-time)—INR 500",
-    ],
-  },
-  {
-    university: "Chandigarh University Online MBA",
-    courseFees: "INR 1.65 Lakhs",
-    details: ["Semester-wise Program Fees—INR 41,250"],
-  },
-  {
-    university: "Alliance University Online MBA",
-    courseFees: "INR 1.60 lakhs",
-    details: [
-      "Semester-wise Program Fees—INR 40,000",
-      "Registration fees (one time)—INR 5,000",
-    ],
-  },
-  {
-    university: "Parul University Online MBA",
-    courseFees: "INR 1.50 Lakhs",
-    details: [
-      "Semester-wise Fees—INR 37,500",
-      "Full Fee (One Time)—INR 90,000",
-    ],
-  },
-  {
-    university: "Sikkim Manipal University Online MBA",
-    courseFees: "INR 1.10 Lakhs",
-    details: [
-      "Semester-wise Program Fees—INR 27,500",
-      "Application Fees—INR 500",
-    ],
+    details: ["Registration Fee (One Time)—INR 1000", "Per Semester Fee—INR 50,000", "Exam Fees (semester-wise)—INR 2000"],
   },
 ];
 
-export default function SubProgramFees() {
+interface SubProgramFeesProps {
+  data?: any;
+  title?: string;
+}
+
+export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
+  const heading = data?.heading || title || "Program Fees for Online MBA";
+  const startingPrice = data?.startingPrice || "₹ 6,776/month";
+  const feeRange = data?.feeRange || "Program Fee: ₹ 62,200 – ₹ 20,50,000";
+
+  const benefitsList = data?.benefits
+    ? typeof data.benefits === "string"
+      ? data.benefits.split("\n").map((s: string) => s.trim()).filter(Boolean)
+      : Array.isArray(data.benefits)
+      ? data.benefits
+      : DEFAULT_BENEFITS
+    : DEFAULT_BENEFITS;
+
+  const paymentOptionsList = data?.paymentOptions
+    ? typeof data.paymentOptions === "string"
+      ? data.paymentOptions.split("\n").map((s: string) => s.trim()).filter(Boolean)
+      : Array.isArray(data.paymentOptions)
+      ? data.paymentOptions
+      : DEFAULT_PAYMENT_OPTIONS
+    : DEFAULT_PAYMENT_OPTIONS;
+
+  const universityFeesList = data?.universityFees && Array.isArray(data.universityFees) && data.universityFees.length > 0
+    ? data.universityFees
+    : DEFAULT_UNIVERSITY_FEES;
+
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          Program Fees for <span className="text-red-500">Online MBA</span>
+          {heading.includes("Online MBA") ? (
+            <>
+              {heading.split("Online MBA")[0]}
+              <span className="text-red-500">Online MBA</span>
+              {heading.split("Online MBA")[1]}
+            </>
+          ) : (
+            heading
+          )}
         </h2>
       </div>
 
@@ -160,14 +122,13 @@ export default function SubProgramFees() {
         </span>
 
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_260px] lg:items-center">
-          {/* Benefits list */}
           <div>
             <h3 className="text-base font-bold text-slate-900 sm:text-lg">
               Benefits of learning from us
             </h3>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {BENEFITS.map((benefit) => (
-                <li key={benefit} className="flex items-start gap-2.5">
+              {benefitsList.map((benefit: string, idx: number) => (
+                <li key={idx} className="flex items-start gap-2.5">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
@@ -179,16 +140,15 @@ export default function SubProgramFees() {
             </ul>
           </div>
 
-          {/* Price + CTA */}
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 text-center">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               Starting at
             </p>
             <p className="mt-1 text-2xl font-extrabold text-slate-900 sm:text-3xl">
-              ₹ 6,776<span className="text-base font-semibold">/month</span>
+              {startingPrice}
             </p>
             <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-              Program Fee: ₹ 62,200 &ndash; ₹ 20,50,000
+              {feeRange}
             </p>
 
             <button className="mt-4 w-full rounded-full bg-red-500 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-500/30 transition-colors hover:bg-red-600">
@@ -206,13 +166,7 @@ export default function SubProgramFees() {
       {/* Fee overview text */}
       <div className="mt-8 max-w-4xl">
         <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
-          The online MBA full program fees are around INR 30,000 to INR 5
-          lakhs, nationally and internationally, and totally depend on the
-          universities, course specializations, facilities &amp;
-          accreditations. The online MBA program fees can be paid
-          semester-wise, yearly, and annually as well; however, which
-          includes the admission fees, examination fees, and registration
-          fees.
+          The full program fees are affordable and flexible, designed to fit semester-wise, yearly, and annual installment plans.
         </p>
 
         <p className="mt-4 text-sm font-semibold text-slate-900 sm:text-base">
@@ -220,8 +174,8 @@ export default function SubProgramFees() {
         </p>
 
         <ul className="mt-3 space-y-2.5">
-          {PAYMENT_OPTIONS.map((option) => (
-            <li key={option} className="flex items-start gap-3">
+          {paymentOptionsList.map((option: string, idx: number) => (
+            <li key={idx} className="flex items-start gap-3">
               <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
               <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
                 {option}
@@ -234,18 +188,16 @@ export default function SubProgramFees() {
       {/* Fee comparison table */}
       <div className="mt-10">
         <h3 className="text-lg font-bold text-gray-900 sm:text-xl">
-          Fee Comparison between Top Universities that Offer{" "}
-          <span className="text-red-500">Online MBA</span> Courses
+          Fee Comparison between Top Universities
         </h3>
 
         <div className="mt-5 rounded-xl border border-slate-200 overflow-hidden">
           <div className="bg-red-500 px-6 py-4">
             <h4 className="text-center text-sm font-bold text-white sm:text-base">
-              Top Universities&apos; Online MBA Course Fees
+              Course Fees Overview
             </h4>
           </div>
 
-          {/* Column headers */}
           <div className="hidden sm:grid sm:grid-cols-[2fr_1fr_2fr] bg-slate-50 border-b border-slate-200">
             <div className="px-6 py-3 border-r border-slate-200">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -264,12 +216,11 @@ export default function SubProgramFees() {
             </div>
           </div>
 
-          {/* Rows */}
-          {UNIVERSITY_FEES.map((row, i) => (
+          {universityFeesList.map((row: any, i: number) => (
             <div
-              key={row.university}
+              key={row.university || i}
               className={`grid grid-cols-1 sm:grid-cols-[2fr_1fr_2fr] ${
-                i !== UNIVERSITY_FEES.length - 1
+                i !== universityFeesList.length - 1
                   ? "border-b border-slate-200"
                   : ""
               } ${i % 2 === 1 ? "bg-red-50/30" : "bg-white"}`}
@@ -288,9 +239,9 @@ export default function SubProgramFees() {
 
               <div className="px-6 pb-4 sm:py-4">
                 <ul className="space-y-1.5">
-                  {row.details.map((d) => (
+                  {(Array.isArray(row.details) ? row.details : [row.details || "Full program fee"]).map((d: string, dIdx: number) => (
                     <li
-                      key={d}
+                      key={dIdx}
                       className="flex items-start gap-2 text-sm leading-relaxed text-slate-600 sm:text-base"
                     >
                       <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-slate-400" />

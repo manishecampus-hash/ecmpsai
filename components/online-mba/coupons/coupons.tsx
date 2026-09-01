@@ -12,7 +12,7 @@ interface Coupon {
   usedToday: number;
 }
 
-const COUPONS: Coupon[] = [
+const DEFAULT_COUPONS: Coupon[] = [
   {
     code: "ALLI516",
     university: "Alliance University Online",
@@ -63,8 +63,18 @@ const COUPONS: Coupon[] = [
   },
 ];
 
-export default function Coupons() {
+interface CouponsProps {
+  data?: any;
+  title?: string;
+}
+
+export default function Coupons({ data, title }: CouponsProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const heading = data?.heading || title || "Coupons for Online MBA";
+  const couponsList = data?.coupons && Array.isArray(data.coupons) && data.coupons.length > 0
+    ? data.coupons
+    : DEFAULT_COUPONS;
 
   const handleApply = async (code: string) => {
     try {
@@ -80,23 +90,32 @@ export default function Coupons() {
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          Coupons for <span className="text-red-500">Online MBA</span>
+          {heading.includes("Online MBA") ? (
+            <>
+              {heading.split("Online MBA")[0]}
+              <span className="text-red-500">Online MBA</span>
+              {heading.split("Online MBA")[1]}
+            </>
+          ) : (
+            heading
+          )}
         </h2>
       </div>
 
       <div className="flex flex-col gap-5 max-w-4xl">
-        {COUPONS.map((coupon) => {
-          const isCopied = copiedCode === coupon.code;
+        {couponsList.map((coupon: any, i: number) => {
+          const code = coupon.code || `OFFER${i + 1}`;
+          const isCopied = copiedCode === code;
 
           return (
             <div
-              key={coupon.code}
+              key={code}
               className="relative flex overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
             >
               {/* Code stub */}
               <div className="relative flex w-16 sm:w-20 shrink-0 items-center justify-center bg-red-500">
                 <span className="rotate-180 text-[11px] sm:text-xs font-bold tracking-widest text-white [writing-mode:vertical-rl]">
-                  {coupon.code}
+                  {code}
                 </span>
 
                 {/* Perforation dots */}
@@ -116,32 +135,32 @@ export default function Coupons() {
               {/* Content */}
               <div className="flex flex-1 flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <div className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-extrabold text-slate-600">
-                    {coupon.logoText}
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[10px] font-extrabold text-slate-600 uppercase">
+                    {coupon.logoText || code.substring(0, 2)}
                   </span>
 
                   <div>
                     <p className="text-sm font-bold text-slate-900 sm:text-base">
-                      {coupon.discount}
+                      {coupon.discount || "Flat Discount"}
                       <span className="ml-1 text-red-500">*</span>
                     </p>
                     <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
-                      {coupon.appliedNote}
+                      {coupon.appliedNote || "Discount applied on this course"}
                     </p>
                     <div className="mt-1.5 flex items-center gap-3">
                       <span className="text-xs font-medium text-slate-600">
-                        {coupon.university}
+                        {coupon.university || "Partner University"}
                       </span>
                       <span className="flex items-center gap-1 rounded-full bg-slate-50 border border-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-500">
                         <Users className="h-3 w-3" />
-                        {coupon.usedToday} people used today
+                        {coupon.usedToday || 50} people used today
                       </span>
                     </div>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => handleApply(coupon.code)}
+                  onClick={() => handleApply(code)}
                   className={`flex shrink-0 items-center justify-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold text-white shadow-md transition-colors sm:min-w-[130px] ${
                     isCopied
                       ? "bg-green-500 shadow-green-500/30"

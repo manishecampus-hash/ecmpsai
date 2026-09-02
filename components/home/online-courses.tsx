@@ -17,6 +17,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { BrochureForm } from "./../form/brochure-form";
+import { ApplicationForm } from "../form/common-form";
 
 // Real data with actual content
 const programsData = [
@@ -389,6 +390,7 @@ export default function ProgramsSection() {
   const [activeMode, setActiveMode] = useState("all");
   const [activeCardId, setActiveCardId] = useState<number | null>(null);
 const [showBrochureForm, setShowBrochureForm] = useState(false);
+const [showApplicationForm, setShowApplicationForm] = useState(false);
 
 const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -1078,35 +1080,27 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       borderTop: "1px solid #f1f5f9",
                     }}
                   >
-                    <a
-                      href={program.slug}
-                      style={{
-                        flex: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "6px",
-                        border: "1.5px solid #cbd5e1",
-                        background: "#fff",
-                        padding: "8px 10px",
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        color: "#0f172a",
-                        textDecoration: "none",
-                        transition: "border-color 0.2s, background 0.2s",
-                        whiteSpace: "nowrap",
-                      }}
-                     onMouseEnter={(e) => {
-  e.currentTarget.style.boxShadow =
-    "0 8px 32px rgba(0,0,0,0.14)";
-}}
-onMouseLeave={(e) => {
-  e.currentTarget.style.boxShadow =
-    "0 2px 12px rgba(0,0,0,0.08)";
-}}
-                    >
-                      View Program
-                    </a>
+         <button
+  type="button"
+  onClick={() => setShowApplicationForm(true)}
+  style={{
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "6px",
+    border: "1.5px solid #cbd5e1",
+    background: "#fff",
+    padding: "8px 10px",
+    fontSize: "12px",
+    fontWeight: 700,
+    color: "#0f172a",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+  }}
+>
+  View Program
+</button>
                     {program.isFree ? (
   <a
     href={program.slug}
@@ -1219,6 +1213,34 @@ onMouseLeave={(e) => {
         }}
         onBack={() => {
           setShowBrochureForm(false);
+        }}
+      />
+    </div>
+  </div>
+)}
+{showApplicationForm && (
+  <div
+    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
+    onClick={() => setShowApplicationForm(false)}
+  >
+    <div
+      className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        onClick={() => setShowApplicationForm(false)}
+        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-xl text-gray-600 shadow"
+      >
+        ×
+      </button>
+
+      <ApplicationForm
+        onSubmit={() => {
+          setShowApplicationForm(false);
+        }}
+        onBack={() => {
+          setShowApplicationForm(false);
         }}
       />
     </div>

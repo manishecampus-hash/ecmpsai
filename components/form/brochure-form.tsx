@@ -402,7 +402,7 @@ export function BrochureForm({
               type="tel"
               placeholder={
                 selectedCountry.code === "in"
-                  ? "98765 43210"
+                  ? ""
                   : "Enter phone number"
               }
               value={formData.mobile.replace(/\D/g, "")}

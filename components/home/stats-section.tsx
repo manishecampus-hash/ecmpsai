@@ -22,6 +22,7 @@ function Counter({
 
     const timer = setInterval(() => {
       start += increment;
+
       if (start >= end) {
         setCount(end);
         clearInterval(timer);
@@ -35,7 +36,9 @@ function Counter({
 
   return (
     <span>
-      {isDecimal ? count.toFixed(1) : Math.floor(count).toLocaleString()}
+      {isDecimal
+        ? count.toFixed(1)
+        : Math.floor(count).toLocaleString()}
       {suffix}
     </span>
   );
@@ -50,46 +53,86 @@ export function StatsSection() {
   ];
 
   return (
-    <section
-      style={{
-        background:
-          "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
-      }}
-      className="relative w-full px-4 py-10 text-slate-100 sm:px-6"
-    >
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-6 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
-            Your goals are our goals
-          </span>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl text-white">
-            Invest In Yourself <span className="text-red-500">Today</span>
-          </h2>
-        </div>
+    <>
+      <style>{`
+        .stats-section {
+          width: 100%;
+          min-height: calc(100vw * 0.48);
+          display: flex;
+          align-items: center;
+        }
 
-        <div className="rounded-2xl border border-white/10 bg-[#111827] p-4 sm:p-5 shadow-[0_12px_30px_rgba(0,0,0,0.28)]">
-          <div className="grid grid-cols-2 divide-y divide-white/5 sm:grid-cols-4 sm:divide-x sm:divide-y-0 sm:divide-white/10">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center justify-center px-3 py-4 text-center"
-              >
-                <div className="mb-1 text-2xl font-black text-[#ff3b4f] sm:text-3xl">
-                  <Counter
-                    end={stat.value}
-                    suffix={stat.suffix}
-                    isDecimal={stat.isDecimal}
-                  />
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-300 sm:text-xs">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+        @media (min-width: 640px) {
+          .stats-section {
+            min-height: calc(100vw * 0.375);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .stats-section {
+            min-height: calc(100vw * 0.21875);
+          }
+        }
+
+        @media (min-width: 1280px) {
+          .stats-section {
+            min-height: calc(100vw * 0.21875);
+          }
+        }
+
+        @media (min-width: 1920px) {
+          .stats-section {
+            min-height: calc(100vw * 0.21875);
+          }
+        }
+      `}</style>
+
+      <section
+        className="stats-section relative w-full px-4 py-6 text-slate-100 sm:px-6"
+        style={{
+          background:
+            "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
+        }}
+      >
+        <div className="mx-auto w-full max-w-7xl">
+
+          <div className="mb-4 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-900 sm:text-xs">
+              <Handshake className="h-3.5 w-3.5 text-red-500" />
+              Your goals are our goals
+            </span>
+
+            <h2 className="mt-1.5 text-xl font-extrabold tracking-tight text-white sm:text-3xl md:text-4xl">
+              Invest In Yourself{" "}
+              <span className="text-red-500">Today</span>
+            </h2>
           </div>
+
+          <div className="rounded-2xl border border-white/10 bg-[#111827] p-3 shadow-[0_12px_30px_rgba(0,0,0,0.28)] sm:p-4">
+            <div className="grid grid-cols-2 divide-y divide-white/5 sm:grid-cols-4 sm:divide-x sm:divide-y-0 sm:divide-white/10">
+              {stats.map((stat, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center justify-center px-2 py-2.5 text-center sm:px-3 sm:py-3"
+                >
+                  <div className="mb-0.5 text-xl font-black text-[#ff3b4f] sm:text-2xl md:text-3xl">
+                    <Counter
+                      end={stat.value}
+                      suffix={stat.suffix}
+                      isDecimal={stat.isDecimal}
+                    />
+                  </div>
+
+                  <div className="text-[9px] font-bold uppercase tracking-wide text-slate-300 sm:text-[10px] md:text-xs">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

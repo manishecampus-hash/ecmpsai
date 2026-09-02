@@ -59,12 +59,12 @@ export default function BottomNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-0.5 transition-all duration-300 ${
-                  active ? "bg-red-50" : "hover:bg-gray-100 active:scale-95"
+                className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl py-0.5 transition-all duration-300 ${
+                  active ? "" : "hover:bg-gray-100 active:scale-95"
                 }`}
               >
                 <div
-                  className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
+                  className={`flex h-7 w-7 items-center justify-center rounded-[10px] transition-all duration-300 ${
                     active
                       ? "bg-[#ef4444] text-white shadow-md shadow-[#ef4444]/30"
                       : "text-black"

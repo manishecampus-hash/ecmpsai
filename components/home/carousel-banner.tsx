@@ -451,7 +451,7 @@ const staticSlides = [
   {
     id: "static-1",
    
-    desktop: "/banner/31aug.svg",
+    desktop: "/banner/newbn.svg",
     mobile: "/banner/Untitled design (7).svg",
     slug: "",
     title: "",
@@ -460,7 +460,7 @@ const staticSlides = [
   },
   {
     id: "static-2",    
-    desktop: "/banner/new31.svg",
+    desktop: "/banner/2sep.svg",
     mobile: "/banner/Untitled design (8).svg",
     slug: "",
     title: "",
@@ -470,7 +470,7 @@ const staticSlides = [
 
    {
     id: "static-3",   
-    desktop: "/banner/newbn.svg",
+    desktop: "/banner/new31.svg",
     mobile: "/banner/Untitled design (9).svg",   
     slug: "",
     title: "",
@@ -593,12 +593,31 @@ export function CarouselBanner() {
   return (
     <>
       <style>{`
-        .cb-container {
-          width: 100vw;
-          margin-left: calc(-50vw + 50%);
-          padding: 0;
-          position: relative;
-        }
+      //  comment 2 sep  old
+        // .cb-container {
+        //   width: 100vw;
+        //   margin-left: calc(-50vw + 50%);
+        //   padding: 0;
+        //   position: relative;
+        // }   
+
+        // mobile left and right spacing add
+
+.cb-container {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 0;
+  position: relative;
+}
+
+/* Mobile only */
+@media (max-width: 639px) {
+  .cb-container {
+    padding-left: 5px;
+    padding-right: 5px;
+    box-sizing: border-box;
+  }
+}
 
         .cb-wrap {
           position: relative;

@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -106,6 +106,7 @@ export function ApplicationForm({
   onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
 }) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [selectedCountry, setSelectedCountry] = useState(
@@ -236,6 +237,7 @@ export function ApplicationForm({
             mobile: formData.mobile,
           });
         }
+        router.push("/thank-you");
       } else {
         alert(data.message || "Something went wrong ❌");
       }
@@ -372,7 +374,7 @@ export function ApplicationForm({
               type="tel"
               placeholder={
                 selectedCountry.code === "in"
-                  ? "98765 43210"
+                  ? ""
                   : "Enter phone number"
               }
               value={formData.mobile.replace(/\D/g, "")}

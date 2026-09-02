@@ -1,5 +1,6 @@
 import { StatsSection } from "@/components/home/stats-section";
 import UniversitySection from "@/components/home/university-section";
+import { Footer } from "@/components/layout/footer";
 
 export const metadata = {
   title: "Apply Now — eCampus",
@@ -14,6 +15,7 @@ export default function ApplyPage() {
       <StatsSection />
       {/* Partner universities grid */}
       <UniversitySection />
+      <Footer/>
     </main>
   );
 }

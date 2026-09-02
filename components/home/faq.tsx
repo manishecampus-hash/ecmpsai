@@ -45,23 +45,25 @@ export default function FAQ() {
 
   return (
     <Section className="w-full bg-white p-0 m-0">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter] p-3 pb-0">
-        {/* FAQ Grid Wrapper with 2-Column Layout */}
-       <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-          {/* LEFT COLUMN: Header & Support Desk Info (Span 4) */}
-          <div className="text-center lg:col-span-4 lg:sticky lg:top-8 lg:text-left">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+        {/* FAQ Grid Wrapper */}
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
+          {/* LEFT COLUMN: Header & Support Desk Info */}
+          <div className="flex flex-col items-center text-center lg:col-span-4 lg:sticky lg:top-8 lg:items-start lg:text-left">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
               <Handshake className="h-3.5 w-3.5 text-red-500" />
               FAQ
             </span>
 
-   <h2 className="mt-2 whitespace-nowrap text-[23px] font-extrabold leading-[1.2] tracking-[-0.5px] text-gray-900 sm:text-[28px] lg:whitespace-normal lg:text-[36px]">
-  Frequently Asked <span className="text-red-500">Questions</span>
-</h2>
+            {/* Responsive Heading */}
+            <h2 className="mt-4 text-2xl font-extrabold leading-tight tracking-[-0.5px] text-gray-900 sm:text-3xl lg:text-4xl">
+              Frequently Asked <span className="text-red-500">Questions</span>
+            </h2>
+
             {/* Support Desk Info Card - Hidden on mobile */}
-            <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
+            <div className="mt-8 hidden w-full rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
               <div className="flex items-center gap-3 text-slate-700">
-                <MessageSquare className="h-5 w-5 text-red-500" />
+                <MessageSquare className="h-5 w-5 text-red-500 flex-shrink-0" />
                 <span className="text-sm font-bold">Still have doubts?</span>
               </div>
 
@@ -72,30 +74,30 @@ export default function FAQ() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: FAQ Accordion (Span 8) */}
-          <div className="space-y-4 lg:col-span-8">
+          {/* RIGHT COLUMN: FAQ Accordion */}
+          <div className="w-full space-y-3 lg:col-span-8 lg:space-y-4">
             {faqs.map((faq, index) => {
               const isOpen = openIndexes.includes(index);
 
               return (
                 <div
                   key={faq.question}
-                  className="rounded-2xl border border-slate-200 bg-white shadow-[0_6px_18px_rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)]"
+                  className="rounded-xl sm:rounded-2xl border border-slate-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.06)] sm:shadow-[0_6px_18px_rgba(15,23,42,0.08)] transition-all duration-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.1)] sm:hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)]"
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full flex items-center justify-between p-5 text-left"
+                    className="w-full flex items-start justify-between gap-3 p-4 sm:p-5 text-left active:bg-slate-50"
                   >
-                    <h3 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.3px] text-slate-950 pr-4">
+                    <h3 className="flex-1 text-base sm:text-lg font-semibold leading-snug tracking-[-0.3px] text-slate-950">
                       {faq.question}
                     </h3>
 
                     <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 ${
+                      className={`flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 ${
                         isOpen ? "rotate-180 bg-red-50" : ""
                       }`}
                     >
-                      <ChevronDown className="h-5 w-5 text-red-500" />
+                      <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
                     </div>
                   </button>
 
@@ -107,7 +109,7 @@ export default function FAQ() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-5 text-[14px] leading-6 text-slate-600">
+                      <p className="px-4 pb-4 sm:px-5 sm:pb-5 text-sm sm:text-base leading-6 text-slate-600">
                         {faq.answer}
                       </p>
                     </div>

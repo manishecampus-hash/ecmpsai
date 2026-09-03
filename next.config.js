@@ -4,6 +4,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -919,23 +919,16 @@ function MobileDrawer({
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Link href="/login" onClick={onClose}>
-                <Button
-                  variant="outline"
-                  className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
-                >
-                  Sign Up
-                </Button>
-              </Link>
-              {/* <Button
-                className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
+              <Button
+                variant="outline"
                 onClick={() => {
                   onSignup();
                   onClose();
                 }}
+                className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
               >
                 Sign Up
-              </Button> */}
+              </Button>
             </div>
           )}
         </div>

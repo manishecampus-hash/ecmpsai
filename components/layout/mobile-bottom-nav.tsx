@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, GitCompare, Briefcase, User } from "lucide-react";
+import { Home, Search, GitCompare, Briefcase, Phone } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/search", label: "Search", icon: Search },
   { href: "/compare", label: "Compare", icon: GitCompare },
   { href: "/careers", label: "Careers", icon: Briefcase },
-  { href: "/login", label: "Profile", icon: User },
+  { href: "/contact-us", label: "Contact", icon: Phone },
 ];
 
 export function MobileBottomNav() {

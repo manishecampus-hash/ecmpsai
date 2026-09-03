@@ -319,8 +319,8 @@ export default function SignupPage() {
           {step !== "success" && (
             <p className="text-center text-sm text-slate-500 mt-5">
               Already have an account?{" "}
-              <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
-                Sign in
+              <Link href="/" className="font-semibold text-indigo-600 hover:text-indigo-700">
+                Go to Home
               </Link>
             </p>
           )}

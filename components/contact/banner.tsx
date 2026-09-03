@@ -133,15 +133,43 @@ const Banner = () => {
               and support.
             </p>
 
-           
+            {/* Quick Contact Badges */}
+            <div className="mt-5 flex flex-wrap gap-3 items-center">
+              <a
+                href="tel:18001216201"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-bold hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all shadow-xs"
+              >
+                <Phone size={16} className="text-red-500 shrink-0" />
+                <span>1800-121-6201 (Toll Free)</span>
+              </a>
 
-            
+              <a
+                href="mailto:support@ecampusapp.com"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-xs sm:text-sm font-bold hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-xs"
+              >
+                <Mail size={16} className="text-blue-500 shrink-0" />
+                <span>support@ecampusapp.com</span>
+              </a>
+            </div>
+
             <div className="mt-6 sm:mt-7 flex flex-col gap-3 sm:gap-4 sm:flex-row">
-              <button className="inline-flex h-9 sm:h-11 w-fit items-center gap-1 justify-center self-start rounded-[13px] bg-[#f83d46] px-4 sm:px-5 text-xs sm:text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]">
-              <Send size={16} className="sm:size-[19px]" gap-3 />
-               Speak to Counsellor
-              </button>
+              <a
+                href="tel:18001216201"
+                className="inline-flex h-9 sm:h-11 w-fit items-center gap-2 justify-center self-start rounded-[13px] bg-[#f83d46] px-4 sm:px-5 text-xs sm:text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99]"
+              >
+                <Phone size={16} className="sm:size-[19px]" />
+                Call Counsellor Now
+              </a>
 
+              <a
+                href="https://wa.me/919355907564"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-9 sm:h-11 w-fit items-center gap-2 justify-center self-start rounded-[13px] border border-slate-200 bg-white px-4 sm:px-5 text-xs sm:text-sm font-bold text-slate-800 shadow-sm transition hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 active:scale-[0.99]"
+              >
+                <MessageCircle size={16} className="sm:size-[19px] text-emerald-500" />
+                WhatsApp Chat
+              </a>
             </div>
 
            

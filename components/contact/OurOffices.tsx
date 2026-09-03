@@ -149,8 +149,8 @@ const offices: OfficeCardProps[] = [
     address:
       "Dubai Office - 3006, X3 Tower, Jumeirah Lakes Tower, Dubai, U.A.E",
     imageUrl: "/contact/dubai.png",
-    phone: "+971-4-XXX-XXXX",
-    email: "dubai@company.com",
+    phone: "1800-121-6201",
+    email: "support@ecampusapp.com",
   },
   {
     city: "Aligarh",

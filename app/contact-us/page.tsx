@@ -1,7 +1,7 @@
 "use client";
 
 import Banner from "@/components/contact/banner";
-// import CTA from "@/components/contact/cta";
+import ContactCards from "@/components/contact/ContactCards";
 import OurOffices from "@/components/contact/OurOffices";
 
 import { Footer } from "@/components/layout/footer";
@@ -10,9 +10,8 @@ const ContactUs = () => {
   return (
     <>
       <Banner />
+      <ContactCards />
       <OurOffices />
-      {/* <ScrollBallEffect /> */}
-      {/* <CTA /> */}
       <Footer />
     </>
   );

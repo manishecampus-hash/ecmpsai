@@ -1,0 +1,93 @@
+
+> nextjs@0.1.0 dev
+> next dev -p 3001
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.96:3001
+- Environments: .env
+✓ Ready in 868ms
+
+ HEAD / 200 in 4.6s (next.js: 1904ms, proxy.ts: 605ms, application-code: 2.1s)
+ GET / 200 in 591ms (next.js: 9ms, proxy.ts: 100ms, application-code: 482ms)
+[browser] Image with src "http://localhost:3001/banner/Untitled%20design%20(7).svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "http://localhost:3001/banner/newbn.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "http://localhost:3001/banner/2sep.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/2image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/1image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/3image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/4image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/5image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/6image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/9image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/10image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/7image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/8image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /contact-us 200 in 360ms (next.js: 117ms, proxy.ts: 49ms, application-code: 194ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:997:28)
+   995 |     fetch(`${apiUrl}/menus/programs`)
+   996 |       .then((res) => {
+>  997 |         if (!res.ok) throw new Error("Programs menu not found");
+       |                            ^
+   998 |         return res.json();
+   999 |       })
+  1000 |       .then((data) => { (components/layout/navbar.tsx:1024:17)
+[browser] Received `true` for a non-boolean attribute `gap-3`.
+
+If you want to write it to the DOM, pass a string instead: gap-3="true" or gap-3={value.toString()}. 
+ GET / 200 in 387ms (next.js: 4ms, proxy.ts: 52ms, application-code: 331ms)
+[browser] Image with src "http://localhost:3001/banner/Untitled%20design%20(7).svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "http://localhost:3001/banner/newbn.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/2image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/1image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/3image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/4image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/5image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:997:28)
+   995 |     fetch(`${apiUrl}/menus/programs`)
+   996 |       .then((res) => {
+>  997 |         if (!res.ok) throw new Error("Programs menu not found");
+       |                            ^
+   998 |         return res.json();
+   999 |       })
+  1000 |       .then((data) => { (components/layout/navbar.tsx:1024:17)
+[browser] Image with src "http://localhost:3001/banner/2sep.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "/career/6image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/8image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/7image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/9image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/10image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "http://localhost:3001/banner/new31.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+ GET /contact-us 200 in 103ms (next.js: 6ms, proxy.ts: 43ms, application-code: 55ms)
+[browser] Received `true` for a non-boolean attribute `gap-3`.
+
+If you want to write it to the DOM, pass a string instead: gap-3="true" or gap-3={value.toString()}. 
+
+warn - The class `ease-[cubic-bezier(0.68,-0.55,0.27,1.55)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.68,-0.55,0.27,1.55)&rsqb;` to silence this warning.
+✓ Compiled in 5.1s
+✓ Compiled in 3.6s
+ GET /contact-us 200 in 776ms (next.js: 251ms, proxy.ts: 257ms, application-code: 268ms)
+ GET /contact-us 200 in 302ms (next.js: 7ms, proxy.ts: 200ms, application-code: 95ms)
+ GET /contact-us 200 in 121ms (next.js: 4ms, proxy.ts: 49ms, application-code: 68ms)
+✓ Compiled in 1578ms
+ GET /contact-us 200 in 801ms (next.js: 189ms, proxy.ts: 281ms, application-code: 331ms)
+ GET /contact-us 200 in 346ms (next.js: 10ms, proxy.ts: 262ms, application-code: 73ms)
+ GET /contact-us 200 in 102ms (next.js: 4ms, proxy.ts: 43ms, application-code: 54ms)
+✓ Compiled in 1350ms
+ HEAD /contact-us 200 in 1101ms (next.js: 16ms, proxy.ts: 63ms, application-code: 1022ms)
+ GET /contact-us 200 in 304ms (next.js: 11ms, proxy.ts: 52ms, application-code: 241ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:997:28)
+   995 |     fetch(`${apiUrl}/menus/programs`)
+   996 |       .then((res) => {
+>  997 |         if (!res.ok) throw new Error("Programs menu not found");
+       |                            ^
+   998 |         return res.json();
+   999 |       })
+  1000 |       .then((data) => { (components/layout/navbar.tsx:1024:17)

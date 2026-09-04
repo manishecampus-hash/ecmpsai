@@ -229,3 +229,526 @@ warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bez
 ✓ Compiled in 1090ms
  HEAD / 200 in 651ms (next.js: 20ms, proxy.ts: 237ms, application-code: 393ms)
  GET / 200 in 545ms (next.js: 13ms, proxy.ts: 47ms, application-code: 485ms)
+✓ Compiled in 6.1s
+ GET /study 200 in 1578ms (next.js: 597ms, proxy.ts: 715ms, application-code: 266ms)
+ GET /study 200 in 247ms (next.js: 13ms, proxy.ts: 79ms, application-code: 155ms)
+ GET /study 200 in 163ms (next.js: 11ms, proxy.ts: 44ms, application-code: 108ms)
+ GET /online-mba 200 in 946ms (next.js: 63ms, proxy.ts: 49ms, application-code: 834ms)
+[browser] Updating a style property during rerender (borderBottom) when a conflicting property is set (border) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values. 
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/subject-syllabus 200 in 99ms (next.js: 37ms, proxy.ts: 36ms, application-code: 26ms)
+ GET /online-mba 200 in 398ms (next.js: 14ms, proxy.ts: 341ms, application-code: 43ms)
+[browser] Updating a style property during rerender (borderBottom) when a conflicting property is set (border) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values. 
+ GET /online-mba/subject-syllabus 200 in 67ms (next.js: 4ms, proxy.ts: 36ms, application-code: 28ms)
+ GET /online-mba/subject-syllabus 200 in 196ms (next.js: 4ms, proxy.ts: 35ms, application-code: 157ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 497ms (next.js: 35ms, proxy.ts: 61ms, application-code: 401ms)
+ GET /b-tech-for-working-professional 200 in 2.4s (next.js: 1729ms, proxy.ts: 53ms, application-code: 607ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+○ Compiling /[slug]/[subSlug] ...
+ GET /online-mba/subject-syllabus 200 in 417ms (next.js: 33ms, proxy.ts: 60ms, application-code: 324ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 230ms (next.js: 5ms, proxy.ts: 37ms, application-code: 189ms)
+ GET /btech-for-working-professionals-in-kerala 200 in 564ms (next.js: 90ms, proxy.ts: 36ms, application-code: 437ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /btech-for-working-professionals-in-mumbai 200 in 445ms (next.js: 84ms, proxy.ts: 32ms, application-code: 329ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online 200 in 497ms (next.js: 86ms, proxy.ts: 34ms, application-code: 377ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/eligibility-duration 200 in 328ms (next.js: 60ms, proxy.ts: 67ms, application-code: 201ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba 200 in 87ms (next.js: 8ms, proxy.ts: 42ms, application-code: 37ms)
+[browser] Updating a style property during rerender (borderBottom) when a conflicting property is set (border) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values. 
+ GET /online-mba/eligibility-duration 200 in 124ms (next.js: 40ms, proxy.ts: 51ms, application-code: 33ms)
+ GET /doctor-of-business-administration-online/program-fees 200 in 282ms (next.js: 64ms, proxy.ts: 36ms, application-code: 181ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/program-fees 200 in 103ms (next.js: 35ms, proxy.ts: 35ms, application-code: 33ms)
+ GET /doctor-of-business-administration-online/program-fees 200 in 510ms (next.js: 119ms, proxy.ts: 47ms, application-code: 343ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/program-fees 200 in 394ms (next.js: 77ms, proxy.ts: 40ms, application-code: 277ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/eligibility-duration 200 in 61ms (next.js: 3ms, proxy.ts: 35ms, application-code: 22ms)
+ GET /doctor-of-business-administration-online/eligibility-duration 200 in 296ms (next.js: 59ms, proxy.ts: 45ms, application-code: 191ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/admission-procedure 200 in 270ms (next.js: 58ms, proxy.ts: 40ms, application-code: 172ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/admission-procedure 200 in 113ms (next.js: 35ms, proxy.ts: 48ms, application-code: 30ms)
+ GET /doctor-of-business-administration-online/admission-procedure 200 in 454ms (next.js: 93ms, proxy.ts: 37ms, application-code: 324ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/top-specializations 200 in 731ms (next.js: 384ms, proxy.ts: 316ms, application-code: 31ms)
+ GET /doctor-of-business-administration-online/top-specializations 200 in 566ms (next.js: 59ms, proxy.ts: 38ms, application-code: 469ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/top-specializations 200 in 493ms (next.js: 85ms, proxy.ts: 42ms, application-code: 367ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/education-loans 200 in 1627ms (next.js: 1539ms, proxy.ts: 49ms, application-code: 39ms)
+ GET /doctor-of-business-administration-online/education-loan-emi 200 in 341ms (next.js: 75ms, proxy.ts: 39ms, application-code: 226ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/education-loans 200 in 188ms (next.js: 3ms, proxy.ts: 42ms, application-code: 142ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/education-loan-emi 200 in 492ms (next.js: 91ms, proxy.ts: 41ms, application-code: 360ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/education-loan-emi 200 in 458ms (next.js: 96ms, proxy.ts: 43ms, application-code: 318ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/worth-it 200 in 1293ms (next.js: 1207ms, proxy.ts: 50ms, application-code: 36ms)
+ GET /doctor-of-business-administration-online/worth-it 200 in 461ms (next.js: 131ms, proxy.ts: 50ms, application-code: 279ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online/career-scope 200 in 359ms (next.js: 69ms, proxy.ts: 62ms, application-code: 229ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba/career-scope 200 in 2.1s (next.js: 1979ms, proxy.ts: 61ms, application-code: 64ms)
+ GET /online-mba/career-scope 200 in 103ms (next.js: 3ms, proxy.ts: 42ms, application-code: 57ms)
+ GET /doctor-of-business-administration-online/eligibility-duration 200 in 431ms (next.js: 74ms, proxy.ts: 55ms, application-code: 302ms)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /online-mba 200 in 124ms (next.js: 16ms, proxy.ts: 53ms, application-code: 55ms)
+[browser] Updating a style property during rerender (borderBottom) when a conflicting property is set (border) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values. 
+ GET / 200 in 87ms (next.js: 7ms, proxy.ts: 48ms, application-code: 31ms)
+[browser] Image with src "http://localhost:3001/banner/Untitled%20design%20(7).svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "http://localhost:3001/banner/newbn.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Image with src "/career/3image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/1image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/4image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/2image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/5image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/7image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/9image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/6image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/10image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/career/8image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "http://localhost:3001/banner/2sep.svg" has "fill" and parent element with invalid "position". Provided "static" should be one of absolute,fixed,relative.
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online 200 in 546ms (next.js: 104ms, proxy.ts: 46ms, application-code: 395ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+ GET /doctor-of-business-administration-online 200 in 1121ms (next.js: 174ms, proxy.ts: 317ms, application-code: 629ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)
+○ Compiling /universities ...
+ GET /universities 200 in 4.4s (next.js: 4.3s, proxy.ts: 43ms, application-code: 90ms)
+ GET /universities 200 in 103ms (next.js: 5ms, proxy.ts: 46ms, application-code: 51ms)
+ GET /universities 200 in 108ms (next.js: 3ms, proxy.ts: 36ms, application-code: 69ms)
+ GET /universities 200 in 97ms (next.js: 6ms, proxy.ts: 39ms, application-code: 52ms)
+○ Compiling /universities/[slug] ...
+ GET /contact-us 200 in 208ms (next.js: 87ms, proxy.ts: 48ms, application-code: 73ms)
+ GET /universities/ssbm-geneva 200 in 59s (next.js: 5.6s, proxy.ts: 74ms, application-code: 54s)
+Redirect proxy error: Error [AbortError]: This operation was aborted
+    at async proxy (proxy.ts:29:17)
+  27 |     const timeoutId = setTimeout(() => controller.abort(), 1500);
+  28 |
+> 29 |     const res = await fetch(requestUrl, {
+     |                 ^
+  30 |       signal: controller.signal,
+  31 |       headers: {
+  32 |         "Accept": "application/json" {
+  code: 20,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+✓ Finished writing to filesystem cache in 57s
+ GET /universities/manipal-university-jaipur-online 200 in 67s (next.js: 8.9s, proxy.ts: 78ms, application-code: 58s)
+ GET /universities/amity-university-online 200 in 75s (next.js: 16.4s, proxy.ts: 50ms, application-code: 58s)
+ GET /universities/amity-university-online 200 in 7.0s (next.js: 1409ms, proxy.ts: 5.1s, application-code: 485ms)
+ GET /universities 200 in 149ms (next.js: 33ms, proxy.ts: 55ms, application-code: 61ms)
+ GET /universities/chandigarh-university-online 200 in 396ms (next.js: 216ms, proxy.ts: 37ms, application-code: 144ms)
+ GET /contact-us 200 in 121ms (next.js: 10ms, proxy.ts: 74ms, application-code: 37ms)
+ GET /universities 200 in 186ms (next.js: 55ms, proxy.ts: 48ms, application-code: 83ms)
+ GET /universities/chandigarh-university-online 200 in 373ms (next.js: 170ms, proxy.ts: 53ms, application-code: 150ms)
+✓ Compiled in 1392ms
+ GET /universities/chandigarh-university-online 200 in 729ms (next.js: 138ms, proxy.ts: 44ms, application-code: 547ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Error fetching programs menu: Error: Programs menu not found
+    at Navbar.useEffect (components/layout/navbar.tsx:990:28)
+  988 |     fetch(`${apiUrl}/menus/programs`)
+  989 |       .then((res) => {
+> 990 |         if (!res.ok) throw new Error("Programs menu not found");
+      |                            ^
+  991 |         return res.json();
+  992 |       })
+  993 |       .then((data) => { (components/layout/navbar.tsx:1017:17)

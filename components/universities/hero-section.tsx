@@ -1203,7 +1203,8 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { ApplicationForm } from "@/components/form/common-form";
 import {
   Star,
   BookOpen,
@@ -1301,6 +1302,7 @@ export default function UniversityHeroWithStats({
   trustedText = "Trusted by 10,000+ learners",
   university,
 }: Props) {
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
   const banner = university?.details?.banner || {};
   const bannerHeading = banner.heading || university?.name || title;
   const bannerSubheading =
@@ -1464,7 +1466,9 @@ export default function UniversityHeroWithStats({
   {/* Top Buttons */}
   <div className="grid grid-cols-2 gap-3">
     <button
-      className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm"
+      type="button"
+      onClick={() => setShowApplicationForm(true)}
+      className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm cursor-pointer"
     >
       <Send className="h-4 w-4 shrink-0" fill="currentColor" />
       <span className="truncate">
@@ -1490,18 +1494,15 @@ export default function UniversityHeroWithStats({
 
   {/* Bottom Buttons */}
   <div className="grid grid-cols-2 gap-3">
-    <button
-      onClick={() => {
-        document.getElementById("courses")?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }}
-      className="inline-flex h-10 w-full items-center justify-start gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
+    <a
+      href="https://wa.me/919355907564"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex h-10 w-full items-center justify-start gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm cursor-pointer no-underline"
     >
       <WhatsAppIcon className="h-4 w-4 shrink-0 text-green-500" />
       <span className="whitespace-nowrap">Chat with University</span>
-    </button>
+    </a>
 
     <button
       onClick={() => {
@@ -1591,6 +1592,34 @@ export default function UniversityHeroWithStats({
           </div>
         </div>
       </div>
+      {showApplicationForm && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
+          onClick={() => setShowApplicationForm(false)}
+        >
+          <div
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowApplicationForm(false)}
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-xl text-gray-600 shadow cursor-pointer"
+            >
+              ×
+            </button>
+
+            <ApplicationForm
+              onSubmit={() => {
+                setShowApplicationForm(false);
+              }}
+              onBack={() => {
+                setShowApplicationForm(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -14,13 +14,6 @@ export default function ChildFooter() {
             Privacy Policy
           </Link>
           <span className="hidden sm:inline text-slate-800">|</span>
-          <Link
-            href="/cancellation-refund"
-            className="hover:text-red-500 transition-colors duration-300"
-          >
-            Cancellation &amp; Refund
-          </Link>
-          <span className="hidden sm:inline text-slate-800">|</span>
           <span className="text-slate-400">ISO 27001:2013</span>
           <span className="hidden sm:inline text-slate-800">|</span>
           <span className="text-slate-400">ISO 9001:2015</span>

@@ -484,7 +484,9 @@ import UniversityResultsList, {
   getUniversitiesByCourse,
 } from "@/components/discovery/degree-finder/university-result-card";
 import { Sparkles } from "lucide-react";
-import { ApplicationForm } from "./application-form";
+// import { ApplicationForm } from "./application-form";
+
+import { ApplicationForm } from "..//./../form/common-form";
 
 // ── Step Indicator ────────────────────────────────────────────────────────────
 

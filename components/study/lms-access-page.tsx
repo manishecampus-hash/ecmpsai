@@ -30,6 +30,64 @@ const iconMap: Record<string, React.ElementType> = {
   Globe,
 };
 
+// URL Mapping based on university name/slug matches
+function getLmsUrl(university: University): string {
+  // If lmsUrl exists on data object directly, use it
+  if ((university as any).lmsUrl) {
+    return (university as any).lmsUrl;
+  }
+
+  const name = university.name.toLowerCase();
+  const slug = university.slug.toLowerCase();
+
+  if (name.includes("jain") || slug.includes("jain")) {
+    return "https://learn.onlinejain.com/login/index.php";
+  }
+  if (name.includes("sikkim") || slug.includes("sikkim") || slug.includes("smu")) {
+    return "https://login.smu.onlinemanipal.com/";
+  }
+  if (name.includes("jaipur") || slug.includes("jaipur") || slug.includes("muj")) {
+    return "https://mujlms.manipal.edu/d2l/login?target=%2fcontent%2f&sessionExpired=0";
+  }
+  if (name.includes("andhra") || slug.includes("andhra")) {
+    return "https://lms.andhrauniversityonline.in/";
+  }
+  if (name.includes("manipal") || slug.includes("manipal")) {
+    return "https://www.muonline.ac.in/studentzone/login.php";
+  }
+    if (name.includes("sharda") || slug.includes("sharda")) {
+    return "https://learn.shardaonline.ac.in/login/index.php";
+  }
+    if (name.includes("chandigarh") || slug.includes("chandigarh")) {
+    return "https://lms.onlinecu.in/login/index.php";
+  }
+   if (name.includes("galgotias") || slug.includes("galgotias")) {
+    return "https://gulms.galgotiasuniversity.org/login/index.php";
+  }
+    if (name.includes("dy") || slug.includes("dy")) {
+    return "https://dypatiluniversityonline.com/login";
+  }
+
+    if (name.includes("bits") || slug.includes("bits")) {
+    return "https://idp.bits-pilani.ac.in/idp/Authn/UserPassword";
+  }
+
+    if (name.includes("mats") || slug.includes("mats")) {
+    return " https://erp.matsuniversityonline.com/";
+  }
+   if (name.includes("amity") || slug.includes("amity")) {
+    return "https://amityopenlearn.com/login/signup.php?";
+  }
+
+  if (name.includes("mangalayatan") || slug.includes("mangalayatan")) {
+    return "https://erp.mangalayatan.in/lmsportal/Student/Login.aspx?utm_source=chatgpt.com";
+  }
+ 
+
+  // Fallback link if no LMS URL is found
+  return `/apply?university=${university.slug}`;
+}
+
 export default function LmsAccessPage(): JSX.Element {
   const [inputValue, setInputValue] = useState<string>("");
   const [query, setQuery] = useState<string>("");
@@ -255,6 +313,9 @@ export default function LmsAccessPage(): JSX.Element {
             {filteredUniversities.map((university) => {
               const LocationIcon =
                 iconMap[university.locationIcon] ?? MapPin;
+              
+              const lmsUrl = getLmsUrl(university);
+              const isExternal = lmsUrl.startsWith("http");
 
               return (
                 <div
@@ -301,13 +362,25 @@ export default function LmsAccessPage(): JSX.Element {
 
                   {/* Card Footer: Access LMS Button */}
                   <div className="pt-4 border-t border-slate-100">
-                    <Link
-                      href={`/apply?university=${university.slug}`}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-red-600/20 transition-all duration-200 group-hover:shadow-lg group-hover:shadow-red-600/30 active:scale-[0.98]"
-                    >
-                      <span>Access LMS</span>
-                      <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
+                    {isExternal ? (
+                      <a
+                        href={lmsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-red-600/20 transition-all duration-200 group-hover:shadow-lg group-hover:shadow-red-600/30 active:scale-[0.98]"
+                      >
+                        <span>Access LMS</span>
+                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={lmsUrl}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-red-600/20 transition-all duration-200 group-hover:shadow-lg group-hover:shadow-red-600/30 active:scale-[0.98]"
+                      >
+                        <span>Access LMS</span>
+                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               );

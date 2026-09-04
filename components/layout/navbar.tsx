@@ -1248,7 +1248,7 @@ export function Navbar() {
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2"> 
-                  {/* <Button  31 Aug temp comment 
+                  {/* <Button  
                     size="sm"
                     onClick={() => setShowSignupModal(true)}
                     className="bg-white text-gray-800 border border-gray-300 rounded-full hover:bg-gray-100 hover:text-gray-900"

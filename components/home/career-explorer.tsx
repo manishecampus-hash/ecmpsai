@@ -477,7 +477,7 @@
 "use client";
 
 import { careerExplorerData } from "@/data/career-explorer";
-import { ArrowRight, Briefcase, TrendingUp, X } from "lucide-react";
+import { ArrowRight, BadgeCheck, Briefcase, BriefcaseBusiness, Lightbulb, TrendingUp, X } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { ApplicationForm } from "@/components/form/common-form";
@@ -630,9 +630,9 @@ const CareerExplorer = () => {
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
           {/* Header */}
           <div className="mb-6 text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
-              <Briefcase className="h-3.5 w-3.5 text-red-500" />
-              Skill
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
+              <Lightbulb className="h-3.5 w-3.5 text-red-500" />
+              Upskill
             </span>
 
             <h2 className="mt-2 whitespace-nowrap text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
@@ -715,7 +715,7 @@ const CareerExplorer = () => {
                 onClick={() => setShowAllCards((prev) => !prev)}
                 className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md"
               >
-                {showAllCards ? "Show Less" : "More Cards"}
+                {showAllCards ? "Show Less" : "Show More"}
                 <ArrowRight
                   size={15}
                   className={`transition-transform duration-300 ${

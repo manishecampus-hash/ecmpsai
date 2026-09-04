@@ -15,6 +15,7 @@ import {
   Handshake,
   CheckCircle2,
   ArrowRight,
+  GraduationCap,
 } from "lucide-react";
 import { BrochureForm } from "./../form/brochure-form";
 import { ApplicationForm } from "../form/common-form";
@@ -25,8 +26,7 @@ const programsData = [
 {
     id: 1,
     title: "MBA - Master of Business Administration",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+   image: "/onlinecourses/mba.svg",
     ribbon: "DEGREE",
     learners: "3.8K+ Students",
     duration: "2 Years",
@@ -43,8 +43,7 @@ const programsData = [
 {
     id: 2,
     title: "B.Tech - CS Engineering",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    image: "/onlinecourses/bcse.svg",
     ribbon: "DEGREE",
     learners: "5.2K+ Students",
     duration: "3 Years",
@@ -64,8 +63,7 @@ const programsData = [
   {
     id: 3,
     title: "B.Tech - Mechanical Engineering",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+   image: "/onlinecourses/btm.svg",
     ribbon: "DEGREE",
     learners: "7.2K+ Students",
     duration: "3 Years",
@@ -84,9 +82,8 @@ const programsData = [
   },
   {
     id: 4,
-    title: "B.Tech - Civil Engineering",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    title: "B.Tech - Civil Engineering", 
+    image: "/onlinecourses/bce.svg",
     ribbon: "DEGREE",
     learners: "6.9K+ Students",
     duration: "3 Years",
@@ -106,8 +103,7 @@ const programsData = [
   {
     id: 5,
     title: "B.Tech - Electrical Engineering",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    image: "/onlinecourses/5.svg",
     ribbon: "DEGREE",
     learners: "6.1K+ Students",
     duration: "3 Years",
@@ -126,9 +122,8 @@ const programsData = [
   },
   {
     id: 6,
-    title: "B.Tech - ECE ",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    title: "B.Tech - ECE ", 
+    image: "/onlinecourses/6.svg",
     ribbon: "DEGREE",
     learners: "3.4K+ Students",
     duration: "3 Years",
@@ -148,8 +143,7 @@ const programsData = [
   {
     id: 7,
     title: "BBA - Bachelor of Business Administration",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+    image: "/onlinecourses/7.svg",
     ribbon: "DEGREE",
     learners: "3.8K+ Students",
     duration: "3 Years",
@@ -166,8 +160,7 @@ const programsData = [
   {
     id: 8,
     title: "BCA - Bachelor of Computer Application",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+ image: "/onlinecourses/8.svg",
     ribbon: "DEGREE",
     learners: "3.8K+ Students",
     duration: "3 Years",
@@ -183,8 +176,7 @@ const programsData = [
    {
     id: 9,
     title: "BA - Bachelor of Arts",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+   image: "/onlinecourses/9.svg",
     ribbon: "DEGREE",
     learners: "3.7K+ Students",
     duration: "3 Years",
@@ -200,8 +192,7 @@ const programsData = [
    {
     id: 10,
     title: "BCOM - Bachelor of Commerce",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+   image: "/onlinecourses/10.svg",
     ribbon: "DEGREE",
     learners: "5.1K+ Students",
     duration: "3 Years",
@@ -220,8 +211,7 @@ const programsData = [
   {
     id: 11,
     title: "Chief Technology Officer & AI Leadership Programme",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+   image: "/onlinecourses/11.svg",
     ribbon: "CERTIFICATE",
     learners: "20.2K+ Students",
     duration: "6 months",
@@ -238,8 +228,7 @@ const programsData = [
   {
     id: 12,
     title: "Ex. Diploma in Machine Learning & AI with MLOps, Gen AI & Agentic AI",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
+     image: "/onlinecourses/12.svg",
     ribbon: "CERTIFICATE",
     learners: "10.7K+ Students",
     duration: "12 months",
@@ -713,7 +702,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
         {/* Header */}
         <div className="text-center mb-8 font-[Inter]">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            <GraduationCap className="h-3.5 w-3.5 text-red-500" />
             In-Demand Courses
           </span>
 
@@ -966,7 +955,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       alt={program.title}
                       loading="lazy"
                     />
-                    <div
+                    {/* <div
                       style={{
                         position: "absolute",
                         top: "12px",
@@ -982,7 +971,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       }}
                     >
                       {program.ribbon}
-                    </div>
+                    </div> */}
                     {/* Mode Badge */}
                     <div
                       style={{

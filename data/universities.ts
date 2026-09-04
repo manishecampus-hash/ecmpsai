@@ -19,7 +19,7 @@ export const universities: University[] = [
     locationIcon: "MapPin",
   },
   {
-    slug: "jain-university-online",
+    slug: "",
     name: "Jain University Online",
     courses: "9 UG • 23 PG",
     location: "Bengaluru",

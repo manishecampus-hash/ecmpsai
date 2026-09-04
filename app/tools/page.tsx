@@ -1,5 +1,6 @@
 "use client";
 
+import { Footer } from "@/components/layout/footer";
 import {
   ArrowRight,
   BookOpen,
@@ -333,20 +334,7 @@ const ToolsPage = () => {
         </p>
       )}
 
-      {/* Trust bar */}
-      <section className="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-4">
-        {trustBar.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
-              <Icon size={18} />
-            </div>
-            <div>
-              <p className="text-[13px] font-bold text-slate-900">{title}</p>
-              <p className="text-[11px] text-slate-500">{desc}</p>
-            </div>
-          </div>
-        ))}
-      </section>
+      <Footer/>
     </main>
   );
 };

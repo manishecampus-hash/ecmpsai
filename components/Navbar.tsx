@@ -195,7 +195,7 @@ export function Navbar() {
                     size="sm"
                     className="bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-full px-5"
                   >
-                    Sign Up     gggg
+                    Sign Up     
                   </Button>
                 </div>
               ))}

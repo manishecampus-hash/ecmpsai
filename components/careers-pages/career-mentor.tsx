@@ -58,40 +58,7 @@ export function CareerMentor() {
           </p>
         </div>
 
-        {/* Career Roles */}
-        <div className="mx-auto max-w-5xl rounded-2xl border border-gray-200 p-5 md:p-7">
-          <h3 className="mb-4 text-lg font-bold text-slate-900">
-            Careers in Software Engineering
-          </h3>
-
-          <div className="grid gap-x-10 gap-y-1.5 sm:grid-cols-2">
-            {[...softwareRoles, ...infraRoles].map((role) => (
-              <div key={role} className="flex items-start gap-3">
-                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-600" />
-
-                <span className="text-sm leading-6 text-slate-700">{role}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Companies */}
-        <div className="mx-auto mt-5 max-w-5xl">
-          <p className="mb-4 text-sm font-semibold text-gray-500">
-            Our alumni work at top companies
-          </p>
-
-          <div className="grid grid-cols-3 items-center gap-x-8 gap-y-5 sm:grid-cols-4 md:grid-cols-8">
-            {companies.map((company) => (
-              <span
-                key={company.name}
-                className={`text-center text-lg font-bold ${company.className}`}
-              >
-                {company.name}
-              </span>
-            ))}
-          </div>
-        </div>
+          
       </div>
     </section>
   );

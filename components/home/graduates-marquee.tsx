@@ -703,15 +703,16 @@
 //   );
 // }
 
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  Handshake,
   Quote,
   Star,
+  Trophy,
   X,
 } from "lucide-react";
 
@@ -735,16 +736,8 @@ function StarRating({
         <Star
           key={i}
           className="h-4 w-4"
-          fill={
-            i < Math.round(rating)
-              ? "#fbbf24"
-              : "transparent"
-          }
-          color={
-            i < Math.round(rating)
-              ? "#fbbf24"
-              : "#cbd5e1"
-          }
+          fill={i < Math.round(rating) ? "#fbbf24" : "transparent"}
+          color={i < Math.round(rating) ? "#fbbf24" : "#cbd5e1"}
           strokeWidth={1.8}
         />
       ))}
@@ -753,7 +746,48 @@ function StarRating({
 }
 
 /* =========================================================
-   FEATURED CARD
+   PROFILE DP
+   ONLY avatarSrc IS USED HERE
+========================================================= */
+
+function ProfileAvatar({
+  graduate,
+  size = "large",
+}: {
+  graduate: GraduateTestimonialT;
+  size?: "large" | "small";
+}) {
+  const sizeClass =
+    size === "large"
+      ? "h-32 w-32 text-3xl"
+      : "h-9 w-9 text-[10px]";
+
+  return (
+    <div
+      className={`overflow-hidden rounded-full ${sizeClass}`}
+    >
+      {graduate.avatarSrc ? (
+        <img
+          src={graduate.avatarSrc}
+          alt={graduate.name}
+          className="h-full w-full object-cover object-center"
+        />
+      ) : (
+        <div
+          className="flex h-full w-full items-center justify-center font-black text-white"
+          style={{
+            background: graduate.avatarColor,
+          }}
+        >
+          {graduate.initials}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =========================================================
+   FEATURED TESTIMONIAL
 ========================================================= */
 
 function FeaturedGraduate({
@@ -761,16 +795,10 @@ function FeaturedGraduate({
   onOpen,
 }: {
   graduate: GraduateTestimonialT;
-  onOpen: (g: GraduateTestimonialT) => void;
+  onOpen: (graduate: GraduateTestimonialT) => void;
 }) {
   return (
-    <div
-      className="relative mx-auto w-full max-w-[980px] cursor-pointer"
-      onClick={() => onOpen(graduate)}
-    >
-      {/* Soft Glow */}
-      <div className="absolute -inset-5 rounded-[38px] bg-red-500/[0.06] blur-2xl" />
-
+    <div className="relative mx-auto w-full max-w-[980px]">
       <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_25px_70px_rgba(15,23,42,0.10)]">
 
         {/* Top Accent */}
@@ -782,56 +810,27 @@ function FeaturedGraduate({
               LEFT PROFILE
           ================================================= */}
 
-          <div className="relative flex flex-col items-center justify-center overflow-hidden bg-slate-50 px-8 py-10 text-center md:px-10">
+          <div className="relative flex flex-col items-center justify-center overflow-hidden bg-white px-8 py-10 text-center md:px-10">
 
-            {/* Background Circles */}
-            <div className="absolute -left-20 -top-20 h-48 w-48 rounded-full bg-red-500/[0.05]" />
-
-            <div className="absolute -bottom-24 -right-16 h-52 w-52 rounded-full bg-red-500/[0.05]" />
-
-            {/* Profile Image */}
+            {/* DP */}
             <div className="relative mb-5">
-
               <div className="absolute -inset-2 rounded-full border border-red-200" />
 
-              <div className="relative h-32 w-32 overflow-hidden rounded-full border-[6px] border-white bg-slate-100 shadow-lg">
-
-                {graduate.avatarSrc ? (
-                  <img
-                    src={graduate.avatarSrc}
-                    alt={graduate.name}
-                    className="h-full w-full object-cover object-top"
-                  />
-                ) : (
-                  <div
-                    className="flex h-full w-full items-center justify-center text-3xl font-black text-white"
-                    style={{
-                      background: graduate.avatarColor,
-                    }}
-                  >
-                    {graduate.initials}
-                  </div>
-                )}
-
-              </div>
-
-              {/* Small Badge */}
-              <div className="absolute -bottom-1 right-0 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-red-500 text-white">
-                <Handshake className="h-4 w-4" />
+              <div className="relative h-32 w-32 overflow-hidden rounded-full border-[6px] border-white bg-white shadow-lg">
+                <ProfileAvatar
+                  graduate={graduate}
+                  size="large"
+                />
               </div>
             </div>
 
-            <h3 className="relative text-xl font-extrabold text-slate-900">
+            <h3 className="relative text-lg font-extrabold text-slate-900">
               {graduate.name}
             </h3>
 
             <p className="relative mt-1 text-sm font-medium text-slate-500">
               {graduate.role}
             </p>
-
-            <div className="relative mt-3 inline-flex rounded-full bg-red-50 px-4 py-1.5 text-xs font-bold text-red-500">
-              DBA Graduate
-            </div>
 
             <div className="relative mt-4">
               <StarRating rating={graduate.rating} />
@@ -844,8 +843,8 @@ function FeaturedGraduate({
 
           <div className="relative flex flex-col justify-center px-7 py-10 sm:px-10 md:px-14">
 
-            {/* Quote Icon */}
-            <div className="absolute right-8 top-7 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+            {/* Quote */}
+            <div className="absolute right-8 top-7 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-red-500">
               <Quote
                 className="h-8 w-8"
                 fill="currentColor"
@@ -862,11 +861,8 @@ function FeaturedGraduate({
             </div>
 
             {/* Testimonial */}
-            <p className="max-w-[690px] text-[21px] font-semibold leading-[1.65] text-slate-800 sm:text-[24px] md:text-[27px]">
-              “
-              {graduate.testimonial ??
-                "This program completely transformed my career path and gave me the confidence to grow as a professional."}
-              ”
+            <p className="max-w-[690px] text-lg font-semibold leading-[1.65] text-slate-800 sm:text-xl md:text-2xl">
+              "{graduate.testimonial}"
             </p>
 
             {/* Bottom */}
@@ -882,13 +878,14 @@ function FeaturedGraduate({
                 </p>
               </div>
 
+              {/* =================================================
+                  READ FULL STORY
+              ================================================= */}
+
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpen(graduate);
-                }}
-                className="rounded-full border border-red-200 bg-red-50 px-5 py-2.5 text-xs font-bold text-red-500 transition hover:bg-red-500 hover:text-white"
+                onClick={() => onOpen(graduate)}
+                className="rounded-full border border-red-500 bg-white px-5 py-2.5 text-xs font-bold text-red-500 transition hover:bg-red-500 hover:text-white"
               >
                 Read Full Story
               </button>
@@ -902,7 +899,7 @@ function FeaturedGraduate({
 }
 
 /* =========================================================
-   MAIN SECTION
+   MAIN COMPONENT
 ========================================================= */
 
 export function GraduatesMarquee({
@@ -910,13 +907,10 @@ export function GraduatesMarquee({
 }: {
   graduates?: GraduateTestimonialT[];
 }) {
-  const [activeIndex, setActiveIndex] =
-    useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const [selected, setSelected] =
-    useState<GraduateTestimonialT | null>(
-      null
-    );
+    useState<GraduateTestimonialT | null>(null);
 
   /* =======================================================
      AUTOPLAY
@@ -927,84 +921,83 @@ export function GraduatesMarquee({
 
     const timer = setInterval(() => {
       setActiveIndex((prev) => {
-        return (
-          (prev + 1) % graduates.length
-        );
+        return (prev + 1) % graduates.length;
       });
     }, 5000);
 
     return () => clearInterval(timer);
   }, [graduates.length]);
 
-  const activeGraduate =
-    graduates[activeIndex];
+  const activeGraduate = graduates[activeIndex];
 
   /* =======================================================
      NAVIGATION
   ======================================================= */
 
   const previous = () => {
-    setActiveIndex((prev) =>
-      prev === 0
-        ? graduates.length - 1
-        : prev - 1
-    );
+    setActiveIndex((prev) => {
+      if (prev === 0) {
+        return graduates.length - 1;
+      }
+
+      return prev - 1;
+    });
   };
 
   const next = () => {
-    setActiveIndex(
-      (prev) =>
-        (prev + 1) % graduates.length
-    );
+    setActiveIndex((prev) => {
+      return (prev + 1) % graduates.length;
+    });
   };
+
+  /* =======================================================
+     CLOSE MODAL WITH ESC
+  ======================================================= */
+
+  useEffect(() => {
+    if (!selected) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelected(null);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selected]);
 
   return (
     <>
       {/* =====================================================
-          SECTION
+          TESTIMONIAL SECTION
       ===================================================== */}
 
-      <section className="relative w-full overflow-hidden  py-14 sm:py-16">
+      <section className="relative w-full overflow-hidden bg-white">
 
-        {/* Background */}
-        <div className="pointer-events-none absolute inset-0">
-
-          <div className="absolute left-[-180px] top-[-160px] h-[420px] w-[420px] rounded-full  blur-3xl" />
-
-          <div className="absolute bottom-[-180px] right-[-150px] h-[420px] w-[420px] rounded-full  blur-3xl" />
-
-          <div className="absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full  blur-3xl" />
-
-        </div>
-
-        <div className="relative z-10 mx-auto w-full max-w-[1240px] px-5 sm:px-7 lg:px-8">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16">
 
           {/* =================================================
               HEADER
           ================================================= */}
 
-          <div className="mb-12 text-center">
+          <div className="mb-6 text-center">
 
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-red-500 shadow-sm">
-              <Handshake className="h-4 w-4" />
-              Success Stories
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-red-500 shadow-sm">
+              <Trophy className="h-4 w-4" />
+
+             
             </div>
 
-            <h2 className="text-[32px] font-black tracking-tight text-slate-950 sm:text-[42px] md:text-[48px]">
 
-              What Our Graduates{" "}
-
-              <span className="relative inline-block text-red-500">
-
-                Say
-
-                <span className="absolute -bottom-1 left-0 h-1 w-full rotate-[-2deg] rounded-full bg-red-500" />
-
-              </span>
-
+ <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
+               Success Stories What Our{" "}
+              <span className="text-red-500">Graduates</span>
             </h2>
 
-     
           </div>
 
           {/* =================================================
@@ -1019,34 +1012,29 @@ export function GraduatesMarquee({
           )}
 
           {/* =================================================
-              CONTROLS
+              ARROWS + DOTS
           ================================================= */}
 
-          <div className="mt-8 flex items-center justify-center gap-5">
+          <div className="mt-5 flex items-center justify-center gap-5">
 
             {/* Previous */}
             <button
               type="button"
               onClick={previous}
               aria-label="Previous testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
 
             {/* Dots */}
             <div className="flex items-center gap-2">
-
               {graduates.map((_, index) => (
                 <button
                   key={index}
                   type="button"
-                  aria-label={`Show testimonial ${
-                    index + 1
-                  }`}
-                  onClick={() =>
-                    setActiveIndex(index)
-                  }
+                  aria-label={`Show testimonial ${index + 1}`}
+                  onClick={() => setActiveIndex(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     activeIndex === index
                       ? "w-8 bg-red-500"
@@ -1054,7 +1042,6 @@ export function GraduatesMarquee({
                   }`}
                 />
               ))}
-
             </div>
 
             {/* Next */}
@@ -1062,7 +1049,7 @@ export function GraduatesMarquee({
               type="button"
               onClick={next}
               aria-label="Next testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-500"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
             >
               <ArrowRight className="h-5 w-5" />
             </button>
@@ -1070,50 +1057,31 @@ export function GraduatesMarquee({
           </div>
 
           {/* =================================================
-              MINI PROFILE NAVIGATION
+              MINI DP NAVIGATION
           ================================================= */}
 
-          <div className="mt-7 flex justify-center">
+          <div className="mt-5 flex justify-center">
 
             <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
 
-              {graduates
-                .slice(0, 5)
-                .map((graduate, index) => (
-                  <button
-                    key={`${graduate.name}-${index}`}
-                    type="button"
-                    onClick={() =>
-                      setActiveIndex(index)
-                    }
-                    aria-label={`Show ${graduate.name}`}
-                    className={`relative h-9 w-9 overflow-hidden rounded-full border-2 transition-all duration-300 ${
-                      activeIndex === index
-                        ? "scale-110 border-red-500"
-                        : "border-white opacity-55 hover:opacity-100"
-                    }`}
-                  >
-
-                    {graduate.avatarSrc ? (
-                      <img
-                        src={graduate.avatarSrc}
-                        alt={graduate.name}
-                        className="h-full w-full object-cover object-top"
-                      />
-                    ) : (
-                      <div
-                        className="flex h-full w-full items-center justify-center text-[10px] font-bold text-white"
-                        style={{
-                          background:
-                            graduate.avatarColor,
-                        }}
-                      >
-                        {graduate.initials}
-                      </div>
-                    )}
-
-                  </button>
-                ))}
+              {graduates.slice(0, 5).map((graduate, index) => (
+                <button
+                  key={`${graduate.name}-${index}`}
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  aria-label={`Show ${graduate.name}`}
+                  className={`relative h-9 w-9 overflow-hidden rounded-full border-2 transition-all duration-300 ${
+                    activeIndex === index
+                      ? "scale-110 border-red-500"
+                      : "border-white opacity-55 hover:opacity-100"
+                  }`}
+                >
+                  <ProfileAvatar
+                    graduate={graduate}
+                    size="small"
+                  />
+                </button>
+              ))}
 
             </div>
           </div>
@@ -1123,21 +1091,20 @@ export function GraduatesMarquee({
 
       {/* =====================================================
           FULL STORY MODAL
+
+          IMPORTANT:
+          storySrc is used ONLY here.
+          avatarSrc is NOT used here.
       ===================================================== */}
 
       {selected && (
         <div
           className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm"
-          onClick={() =>
-            setSelected(null)
-          }
+          onClick={() => setSelected(null)}
         >
-
           <div
-            className="relative flex max-h-[94vh] w-full max-w-[720px] flex-col overflow-hidden rounded-[26px] bg-white shadow-2xl"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
+            className="relative flex max-h-[94vh] w-full max-w-[650px] flex-col overflow-hidden rounded-[24px] bg-white shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
 
             {/* =================================================
@@ -1146,88 +1113,57 @@ export function GraduatesMarquee({
 
             <button
               type="button"
-              onClick={() =>
-                setSelected(null)
-              }
+              onClick={() => setSelected(null)}
               aria-label="Close"
-              className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-700 shadow-lg transition hover:bg-red-50 hover:text-red-500"
+              className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-800 shadow-lg transition hover:bg-slate-100"
             >
               <X className="h-5 w-5" />
             </button>
 
             {/* =================================================
-                FULL IMAGE
+                FULL STORY IMAGE
             ================================================= */}
 
-            <div className="flex max-h-[68vh] min-h-[300px] w-full items-center justify-center overflow-hidden bg-slate-100">
-
-              {selected.avatarSrc ? (
+            {selected.storySrc ? (
+              <div className="max-h-[72vh] w-full overflow-y-auto bg-white">
                 <img
-                  src={selected.avatarSrc}
-                  alt={selected.name}
-                  className="max-h-[68vh] w-full object-contain object-center"
+                  src={selected.storySrc}
+                  alt={`${selected.name} full story`}
+                  className="mx-auto block h-auto w-full object-contain"
                 />
-              ) : (
-                <div
-                  className="flex min-h-[300px] w-full items-center justify-center text-7xl font-black text-white"
-                  style={{
-                    background:
-                      selected.avatarColor,
-                  }}
-                >
-                  {selected.initials}
-                </div>
-              )}
-
-            </div>
-
-            {/* =================================================
-                STORY CONTENT
-            ================================================= */}
-
-            <div className="max-h-[30vh] overflow-y-auto p-7 sm:p-8">
-
-              <div className="flex items-start justify-between gap-5">
-
+              </div>
+            ) : (
+              <div className="flex min-h-[350px] items-center justify-center bg-slate-50 px-6 text-center">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">
-                    {selected.name}
-                  </h3>
-
-                  <p className="mt-1 text-sm font-medium text-slate-500">
-                    {selected.role}
+                  <p className="text-base font-bold text-slate-700">
+                    Story image not available
                   </p>
 
-                  <div className="mt-3">
-                    <StarRating
-                      rating={
-                        selected.rating
-                      }
-                    />
-                  </div>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Please add a storySrc for this testimonial.
+                  </p>
                 </div>
-
-                <span className="shrink-0 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-500">
-                  DBA Graduate
-                </span>
-
               </div>
+            )}
 
-              {/* Story */}
-              <div className="mt-6 rounded-2xl bg-red-50 p-5 sm:p-6">
+            {/* =================================================
+                DETAILS
+            ================================================= */}
 
-                <Quote
-                  className="mb-3 h-7 w-7 text-red-500"
-                  fill="currentColor"
+            <div className="shrink-0 border-t border-slate-100 bg-white px-6 py-5 text-center sm:px-8">
+
+              <h3 className="text-xl font-black text-slate-900">
+                {selected.name}
+              </h3>
+
+              <p className="mt-1 text-sm font-medium text-slate-500">
+                {selected.role}
+              </p>
+
+              <div className="mt-3 flex justify-center">
+                <StarRating
+                  rating={selected.rating}
                 />
-
-                <p className="text-base leading-7 text-slate-700">
-                  “
-                  {selected.testimonial ??
-                    "This program completely transformed my career path and gave me the confidence to grow as a professional."}
-                  ”
-                </p>
-
               </div>
 
             </div>

@@ -15,6 +15,7 @@ import {
   Handshake,
   CheckCircle2,
   ArrowRight,
+  GraduationCap,
 } from "lucide-react";
 import { BrochureForm } from "./../form/brochure-form";
 import { ApplicationForm } from "../form/common-form";
@@ -713,7 +714,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
         {/* Header */}
         <div className="text-center mb-8 font-[Inter]">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            <GraduationCap className="h-3.5 w-3.5 text-red-500" />
             In-Demand Courses
           </span>
 

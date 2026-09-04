@@ -38,7 +38,7 @@
 import React from "react";
 import { OfferCarousel } from "@/components/ui/offer-carousel";
 import { popularCourses } from "@/data/popular-courses";
-import { Handshake, Sparkles } from "lucide-react";
+import { Handshake, Sparkles, TrendingUp } from "lucide-react";
 
 export function PopularCoursesSection() {
   return (
@@ -47,7 +47,7 @@ export function PopularCoursesSection() {
         {/* Unified Center Header with Standard Preview Typography */}
         <div className="text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            <TrendingUp className="h-3.5 w-3.5 text-red-500" />
             Trending Courses
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">

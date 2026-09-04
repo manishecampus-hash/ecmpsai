@@ -121,7 +121,6 @@
 // export default OurOffices;
 
 "use client";
-
 import React from "react";
 import Image from "next/image";
 
@@ -130,8 +129,6 @@ interface OfficeCardProps {
   address: string;
   imageUrl: string;
   tag?: string;
-  phone: string;
-  email: string;
 }
 
 const offices: OfficeCardProps[] = [
@@ -140,8 +137,6 @@ const offices: OfficeCardProps[] = [
     tag: "Headquarters",
     address: "B-46, 2nd Floor, Sector 2, Noida, Uttar Pradesh – 201301",
     imageUrl: "/contact/noida-map.png",
-    phone: "1800-121-6201",
-    email: "support@ecampusapp.com",
   },
   {
     city: "Dubai",
@@ -149,8 +144,6 @@ const offices: OfficeCardProps[] = [
     address:
       "Dubai Office - 3006, X3 Tower, Jumeirah Lakes Tower, Dubai, U.A.E",
     imageUrl: "/contact/dubai.png",
-    phone: "1800-121-6201",
-    email: "support@ecampusapp.com",
   },
   {
     city: "Aligarh",
@@ -158,8 +151,6 @@ const offices: OfficeCardProps[] = [
     address:
       "Bankner Nadrai Gate, Opp. Khusi Restaurant, Gandhi Kunj, Kasganj, UP – 207123",
     imageUrl: "/contact/aligarh.png",
-    phone: "1800-121-6201",
-    email: "support@ecampusapp.com",
   },
 ];
 
@@ -183,7 +174,6 @@ const OurOffices: React.FC = () => {
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8 sm:mb-14 md:mb-20 text-center">
         Our Offices
       </h2>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
         {offices.map((office) => (
           <OfficeCard key={office.city} {...office} />
@@ -198,8 +188,6 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
   address,
   imageUrl,
   tag,
-  phone,
-  email,
 }) => {
   return (
     <div className="group relative rounded-2xl sm:rounded-3xl bg-white border border-gray-100 shadow-xl transition-all duration-300 hover:shadow-2xl">
@@ -217,7 +205,6 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
             />
           </div>
         </div>
-
         {/* STRONG TAG */}
         {tag && (
           <div className="absolute top-3 sm:top-6 right-3 sm:right-6 z-20">
@@ -231,7 +218,6 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
             </span>
           </div>
         )}
-
         {/* TEXT CONTENT */}
         <div className="space-y-4 sm:space-y-5 transition-all duration-300">
           <div>
@@ -241,41 +227,6 @@ const OfficeCard: React.FC<OfficeCardProps> = ({
             <p className="text-gray-500 text-xs sm:text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-600 mt-2">
               {address}
             </p>
-          </div>
-
-          {/* CONTACT INFO SECTION */}
-          <div className="border-t border-gray-200 pt-4 space-y-3">
-            {/* PHONE */}
-            <div className="flex items-center gap-3 group/contact">
-              <span className="text-lg sm:text-xl text-blue-600">📞</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] sm:text-xs text-gray-400 font-medium">
-                  PHONE
-                </p>
-                <a
-                  href={`tel:${phone.replace(/[^\d+]/g, '')}`}
-                  className="text-gray-800 text-xs sm:text-sm font-semibold hover:text-blue-600 transition-colors truncate"
-                >
-                  {phone}
-                </a>
-              </div>
-            </div>
-
-            {/* EMAIL */}
-            <div className="flex items-center gap-3 group/contact">
-              <span className="text-lg sm:text-xl text-green-600">✉️</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] sm:text-xs text-gray-400 font-medium">
-                  EMAIL
-                </p>
-                <a
-                  href={`mailto:${email}`}
-                  className="text-gray-800 text-xs sm:text-sm font-semibold hover:text-green-600 transition-colors truncate"
-                >
-                  {email} 
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>

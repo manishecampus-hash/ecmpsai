@@ -66,7 +66,7 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
 
   return (
     <main className="min-h-screen">
-      <SubHeader />
+      <SubHeader university={university} />
       <HeroSection university={university} />
 
       <AboutProgram university={university} />

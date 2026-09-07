@@ -479,7 +479,17 @@ const NAV_ITEMS: NavItem[] = [
   { id: "faq", label: "FAQs" },
 ];
 
-export default function SubHeader() {
+interface SubHeaderProps {
+  university?: any;
+  universityName?: string;
+}
+
+export default function SubHeader({ university, universityName }: SubHeaderProps = {}) {
+  const dynamicName = universityName || university?.name || "Amity";
+  const navItems: NavItem[] = NAV_ITEMS.map((item) =>
+    item.id === "why" ? { ...item, label: `Why ${dynamicName}` } : item
+  );
+
   const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -543,7 +553,7 @@ export default function SubHeader() {
           : mainHeaderHeight + subHeaderHeight) + 20;
 
       let currentId = activeId;
-      for (const item of NAV_ITEMS) {
+      for (const item of navItems) {
         const el = document.getElementById(item.id);
         if (!el) continue;
         const top = el.getBoundingClientRect().top;
@@ -702,7 +712,7 @@ export default function SubHeader() {
             flex: "1 1 auto",
           }}
         >
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = item.id === activeId;
 
             return (

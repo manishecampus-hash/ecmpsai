@@ -40,7 +40,9 @@ const programsData = [
     deadline: "Applications closes on 31 Oct",
   },
   
-{
+  /* 
+  // Temporarily commented out - Engineering programs (may be used later)
+  {
     id: 2,
     title: "B.Tech - CS Engineering",
     image: "/onlinecourses/bcse.svg",
@@ -140,6 +142,7 @@ const programsData = [
     ],
     deadline: "Application closes on 31 Oct",
   },
+  */
   {
     id: 7,
     title: "BBA - Bachelor of Business Administration",
@@ -264,7 +267,7 @@ const programsData = [
 
 const courseTabs = [
   { id: "all", label: "All Courses" },
-  { id: "engineering", label: "Engineering" },
+  // { id: "engineering", label: "Engineering" },
   { id: "degree", label: "Degree" },
   { id: "aiml", label: "AI & ML" },
   { id: "genai", label: "Generative AI" },

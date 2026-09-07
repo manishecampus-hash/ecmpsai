@@ -20,19 +20,19 @@ export const DEFAULT_GRADUATES: GraduateTestimonialT[] = [
     // Full story image
     storySrc: "/graduates/feedbacknew1.png",
 
-    name: "Imran",
+    name: "Imran Khan",
     role: "MBA, Jul'25",
     rating: 5,
     testimonial: "Career transformation success story.",
   },
 
   {
-    initials: "MJ",
+    initials: "SR",
     avatarColor: "#f97316",
     avatarSrc: "/graduates/priya.png",
     storySrc: "/graduates/feedback2.png",
-    name: "Marcus Johnson",
-    role: "B.Tech, Jun'25",
+    name: "Simran Rajput",
+    role: "MBA, July'25",
     rating: 5,
     testimonial: "Amazing mentorship and learning support.",
   },
@@ -49,12 +49,12 @@ export const DEFAULT_GRADUATES: GraduateTestimonialT[] = [
   },
 
   {
-    initials: "JW",
+    initials: "PK",
     avatarColor: "#64748b",
     avatarSrc: "/graduates/marcus.png",
     storySrc: "/graduates/f4.png",
-    name: "James Wilson",
-    role: "MBA, May'25",
+    name: "Prateek Kumar",
+    role: "BBA, July'25",
     rating: 4,
     testimonial: "Flexible and practical program.",
   },

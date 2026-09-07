@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import HighlightedText from "@/components/universities/HighlightedText";
 import { Users, Check, Copy } from "lucide-react";
 
 interface Coupon {
@@ -90,10 +91,12 @@ export default function Coupons({ data, title }: CouponsProps) {
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          {heading.includes("Online MBA") ? (
+          {heading.includes("*") ? (
+            <HighlightedText text={heading} className="text-[#ee2c3c]" />
+          ) : heading.includes("Online MBA") ? (
             <>
               {heading.split("Online MBA")[0]}
-              <span className="text-red-500">Online MBA</span>
+              <span className="text-[#ee2c3c]">Online MBA</span>
               {heading.split("Online MBA")[1]}
             </>
           ) : (

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import HighlightedText from "@/components/universities/HighlightedText";
 
 const defaultSem1 = [
   "Entrepreneurial Practice",
@@ -79,7 +80,9 @@ export default function SubjectSyllabus({ data, title }: SubjectSyllabusProps) {
       {/* Header */}
       <div className="mb-6 text-center">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          {heading.includes("Online MBA") ? (
+          {heading.includes("*") ? (
+            <HighlightedText text={heading} className="text-[#ee2c3c]" />
+          ) : heading.includes("Online MBA") ? (
             <>
               <span className="text-[#ee2c3c]">Online MBA</span>{" "}
               {heading.replace("Online MBA", "").trim()}

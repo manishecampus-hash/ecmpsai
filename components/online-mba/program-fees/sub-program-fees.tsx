@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import HighlightedText from "@/components/universities/HighlightedText";
 import { Check, BadgeCheck } from "lucide-react";
 
 const DEFAULT_BENEFITS: string[] = [
@@ -103,10 +104,12 @@ export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          {heading.includes("Online MBA") ? (
+          {heading.includes("*") ? (
+            <HighlightedText text={heading} className="text-[#ee2c3c]" />
+          ) : heading.includes("Online MBA") ? (
             <>
               {heading.split("Online MBA")[0]}
-              <span className="text-red-500">Online MBA</span>
+              <span className="text-[#ee2c3c]">Online MBA</span>
               {heading.split("Online MBA")[1]}
             </>
           ) : (

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import HighlightedText from "@/components/universities/HighlightedText";
 
 const DEFAULT_ELIGIBILITY_POINTS: string[] = [
   "3 years of Graduation from any recognized university/college/institution",
@@ -39,7 +40,9 @@ export default function SubEligibilityDuration({ data, title }: SubEligibilityDu
       {/* Eligibility */}
       <div className="max-w-4xl">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          {heading.includes("Online MBA") ? (
+          {heading.includes("*") ? (
+            <HighlightedText text={heading} className="text-[#ee2c3c]" />
+          ) : heading.includes("Online MBA") ? (
             <>
               <span className="text-red-500">Online MBA</span>{" "}
               {heading.replace("Online MBA", "").trim()}

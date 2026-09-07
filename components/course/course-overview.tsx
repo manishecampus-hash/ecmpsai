@@ -21,12 +21,6 @@ export default function CourseOverview({ data }: { data?: any }) {
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             {heading.includes("*") ? (
               <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Overview") ? (
-              <>
-                {heading.split("Overview")[0]}
-                <span className="text-[#ee2c3c]">Overview</span>
-                {heading.split("Overview")[1]}
-              </>
             ) : (
               heading
             )}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import HighlightedText from "@/components/universities/HighlightedText";
 import {
   Landmark,
   Megaphone,
@@ -74,9 +75,11 @@ export default function TopSpecializations({ data, title }: TopSpecializationsPr
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          {heading.includes("Top Specializations") ? (
+          {heading.includes("*") ? (
+            <HighlightedText text={heading} className="text-[#ee2c3c]" />
+          ) : heading.includes("Top Specializations") ? (
             <>
-              <span className="text-red-500">Top Specializations</span>{" "}
+              <span className="text-[#ee2c3c]">Top Specializations</span>{" "}
               {heading.replace("Top Specializations", "").trim()}
             </>
           ) : (

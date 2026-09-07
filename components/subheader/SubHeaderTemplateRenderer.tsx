@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import SubOverview from "@/components/online-mba/overview/sub-overview";
 import SubjectSyllabus from "@/components/online-mba/subject-syllabus/subject-syllabus";
 import SubEligibilityDuration from "@/components/online-mba/eligibility-duration/eligibility-duration";
 import SubProgramFees from "@/components/online-mba/program-fees/sub-program-fees";
@@ -10,6 +11,7 @@ import EducationLoans from "@/components/online-mba/education-loans/education-lo
 import WorthIt from "@/components/online-mba/worth-it/worth-it";
 import CareerScope from "@/components/online-mba/career-scope/career-scope";
 import Coupons from "@/components/online-mba/coupons/coupons";
+import HighlightedText from "@/components/universities/HighlightedText";
 
 export interface SubHeaderData {
   id: string;
@@ -31,6 +33,9 @@ export default function SubHeaderTemplateRenderer({ subHeader }: SubHeaderTempla
   const { template, templateData, title, content } = subHeader;
 
   switch (template) {
+    case "overview":
+      return <SubOverview data={templateData} title={title} content={content} />;
+
     case "syllabus":
       return <SubjectSyllabus data={templateData} title={title} />;
 
@@ -64,7 +69,7 @@ export default function SubHeaderTemplateRenderer({ subHeader }: SubHeaderTempla
         <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
           <div className="mb-6">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              {title}
+              <HighlightedText text={title} />
             </h1>
           </div>
           {content ? (

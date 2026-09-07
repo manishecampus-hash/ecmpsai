@@ -70,14 +70,14 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
             const anchorId = rawUrl.replace(/^#/, "").toLowerCase();
             return {
               id: anchorId,
-              label: sh.title,
+              label: (sh.title || "").replace(/\*/g, "").trim(),
               isAnchor: true,
             };
           } else {
             const relSlug = rawUrl.replace(/^\/+|\/+$/g, "").toLowerCase();
             return {
               id: relSlug,
-              label: sh.title,
+              label: (sh.title || "").replace(/\*/g, "").trim(),
               href: `${basePath}/${relSlug}`,
               isAnchor: false,
             };

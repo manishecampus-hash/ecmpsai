@@ -3,28 +3,36 @@ import React from "react";
 interface HighlightedTextProps {
   text?: string | null;
   className?: string;
+  defaultColor?: string;
 }
 
-export default function HighlightedText({ text, className }: HighlightedTextProps) {
-  if (!text) {
+export default function HighlightedText({
+  text,
+  className,
+  defaultColor = "#ee2c3c",
+}: HighlightedTextProps) {
+  if (!text || typeof text !== "string") {
     return null;
   }
 
-  // Split text by matching pairs of asterisks (e.g., *Questions*)
-  const parts = text.split(/(\*[^*]+\*)/g);
+  // Regex to match *word*, **word**, etc.
+  const regex = /(\*{1,2}[^*]+\*{1,2})/g;
+  const parts = text.split(regex);
 
   return (
     <>
       {parts.map((part, index) => {
-        const isHighlighted = part.startsWith("*") && part.endsWith("*") && part.length >= 2;
+        const isAsteriskWrapped =
+          (part.startsWith("**") && part.endsWith("**") && part.length > 4) ||
+          (part.startsWith("*") && part.endsWith("*") && part.length > 2);
 
-        if (isHighlighted) {
-          const content = part.slice(1, -1);
+        if (isAsteriskWrapped) {
+          const content = part.replace(/^\*+|\*+$/g, "");
           return (
             <span
               key={index}
-              className={className || "text-orange-600"}
-              style={className ? undefined : { color: "var(--orange-brand)" }}
+              className={className || "text-[#ee2c3c]"}
+              style={{ color: defaultColor }}
             >
               {content}
             </span>

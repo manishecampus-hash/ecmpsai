@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import HeroSection from "@/components/universities/hero-section";
@@ -16,15 +17,23 @@ import ExaminationPatternSection from "@/components/universities/examination-pat
 import ApSection from "@/components/universities/aproveltest";
 import PlacementPartners from "@/components/universities/placement-partners";
 
+interface SeoSettings {
+  title?: string;
+  tags?: string;
+  description?: string;
+  rewriteUrl?: string;
+  sitemap?: boolean;
+  indexing?: boolean;
+  crawl?: boolean;
+}
+
 interface UniversityPageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-export default async function UniversityPage({ params }: UniversityPageProps) {
-  const { slug } = await params;
-
+async function getUniversityData(slug: string) {
   let dbUniversity: any = null;
   try {
     const apiUrl =
@@ -43,18 +52,19 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
     console.error("Failed to fetch university details from database:", error);
   }
   if (!dbUniversity) {
-    notFound();
+    return null;
   }
 
   const localUniversity = universities.find(
     (item) =>
       item.slug === slug ||
-      item.name.toLowerCase().replace(/ online$/i, "").trim() === dbUniversity.name.toLowerCase().replace(/ online$/i, "").trim() ||
+      item.name.toLowerCase().replace(/ online$/i, "").trim() ===
+        dbUniversity.name?.toLowerCase().replace(/ online$/i, "").trim() ||
       (dbUniversity.slug && item.slug === dbUniversity.slug.split("/").pop())
   );
 
   // Merge database university data with static fallbacks
-  const university = {
+  return {
     name: localUniversity?.name || dbUniversity?.name,
     image: localUniversity?.image || dbUniversity?.logoUrl,
     ...localUniversity,
@@ -63,6 +73,48 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       ...dbUniversity?.details,
     },
   };
+}
+
+export async function generateMetadata({
+  params,
+}: UniversityPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const university = await getUniversityData(slug);
+
+  if (!university) {
+    return {
+      title: "University Not Found | eCampus",
+    };
+  }
+
+  const seo: SeoSettings = university.seoSettings || {};
+  const fallbackTitle = university.name
+    ? `${university.name} - Online Degrees & Admissions | eCampus`
+    : "University Details | eCampus";
+  const fallbackDescription =
+    university.about?.description ||
+    (university.name
+      ? `Explore online degree programs, fee structure, eligibility, and approvals for ${university.name} on eCampus.`
+      : "");
+
+  const title = seo.title?.trim() || fallbackTitle;
+  const description = seo.description?.trim() || fallbackDescription;
+  const keywords = seo.tags?.trim() || undefined;
+
+  return {
+    title,
+    description,
+    keywords,
+  };
+}
+
+export default async function UniversityPage({ params }: UniversityPageProps) {
+  const { slug } = await params;
+  const university = await getUniversityData(slug);
+
+  if (!university) {
+    notFound();
+  }
 
   return (
     <main className="min-h-screen">

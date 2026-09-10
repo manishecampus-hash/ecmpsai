@@ -142,21 +142,67 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
   return (
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
       <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
-      <CourseHeroSection data={detailsObj?.banner} />
-      <CourseUniversitySection universities={universities} />
-      <CourseOverview data={detailsObj?.about} />
-      <KeyHighlights data={detailsObj?.keyHighlights} />
-      <EligibilityDuration data={detailsObj?.eligibility || detailsObj?.specializations} />
-      <CourseSyllabus data={detailsObj?.syllabus} />
-      <FeesAndEnrollment data={detailsObj?.courseFees || detailsObj?.fees} />
-      <CourseEnrol data={detailsObj?.processFlow} />
-      <CourseSpecializations data={detailsObj?.specializations} />
-      <UgcValidity data={detailsObj?.accreditation} />
-      <OnlineVsRegular data={detailsObj?.onlineVsRegular || detailsObj?.comparison} />
-      <TypesOfOnlineCourse data={detailsObj?.typesOfCourse} />
-      <CourseOffer data={detailsObj?.courseOffer} />
-      <Professionals data={detailsObj?.workingProfessionals || detailsObj?.professionals} />
-      <CourseFAQ data={detailsObj?.supportDesk} />
+
+      <section id="hero-section">
+        <CourseHeroSection data={detailsObj?.banner} />
+      </section>
+
+      <section id="university-section">
+        <CourseUniversitySection universities={universities} />
+      </section>
+
+      <section id="about">
+        <CourseOverview data={detailsObj?.about} />
+      </section>
+
+      <section id="key-highlights">
+        <KeyHighlights data={detailsObj?.keyHighlights} />
+      </section>
+
+      <section id="eligibility-duration">
+        <EligibilityDuration data={detailsObj?.eligibility || detailsObj?.specializations} />
+      </section>
+
+      <section id="subject-syllabus">
+        <CourseSyllabus data={detailsObj?.syllabus} />
+      </section>
+
+      <section id="program-fees">
+        <FeesAndEnrollment data={detailsObj?.courseFees || detailsObj?.fees} />
+      </section>
+
+      <section id="admission-procedure">
+        <CourseEnrol data={detailsObj?.processFlow} />
+      </section>
+
+      <section id="top-specializations">
+        <CourseSpecializations data={detailsObj?.specializations} />
+      </section>
+
+      <section id="accreditation">
+        <UgcValidity data={detailsObj?.accreditation} />
+      </section>
+
+      <section id="online-vs-regular">
+        <OnlineVsRegular data={detailsObj?.onlineVsRegular || detailsObj?.comparison} />
+      </section>
+
+      <section id="types-of-course">
+        <TypesOfOnlineCourse data={detailsObj?.typesOfCourse} />
+      </section>
+
+      <section id="course-offer">
+        <CourseOffer data={detailsObj?.courseOffer} />
+      </section>
+
+      <section id="working-professionals">
+        <Professionals data={detailsObj?.workingProfessionals || detailsObj?.professionals} />
+      </section>
+
+      <section id="faq-support">
+        <CourseFAQ data={detailsObj?.supportDesk} />
+      </section>
+
       <Footer />
     </main>
   );

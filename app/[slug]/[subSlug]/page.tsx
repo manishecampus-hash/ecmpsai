@@ -76,31 +76,52 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:4001";
+  const shSeo = (subHeader as any)?.seoSettings;
+
+  const title =
+    shSeo?.title?.trim() || `${subHeader.title} - ${course.name} | eCampus`;
+
   const metaDescription =
+    shSeo?.description?.trim() ||
     subHeader.templateData?.description ||
     subHeader.templateData?.introText ||
     course.seoSettings?.description ||
     course.description;
 
+  const keywords = shSeo?.tags?.trim() || course.seoSettings?.tags;
+
+  const canonicalUrl =
+    shSeo?.rewriteUrl?.trim() || `${baseUrl}/${course.slug}/${subSlug}`;
+
+  const isIndex =
+    shSeo?.indexing !== undefined
+      ? shSeo.indexing !== false
+      : course.seoSettings?.indexing !== false;
+
+  const isFollow =
+    shSeo?.crawl !== undefined
+      ? shSeo.crawl !== false
+      : course.seoSettings?.crawl !== false;
+
   return {
-    title: `${subHeader.title} - ${course.name} | eCampus`,
+    title,
     description: metaDescription,
-    keywords: course.seoSettings?.tags,
+    keywords,
     alternates: {
-      canonical: `${baseUrl}/${course.slug}/${subSlug}`,
+      canonical: canonicalUrl,
     },
     robots: {
-      index: course.seoSettings?.indexing !== false,
-      follow: course.seoSettings?.crawl !== false,
+      index: isIndex,
+      follow: isFollow,
       googleBot: {
-        index: course.seoSettings?.indexing !== false,
-        follow: course.seoSettings?.crawl !== false,
+        index: isIndex,
+        follow: isFollow,
       },
     },
     openGraph: {
-      title: `${subHeader.title} - ${course.name}`,
+      title,
       description: metaDescription,
-      url: `${baseUrl}/${course.slug}/${subSlug}`,
+      url: canonicalUrl,
       siteName: "eCampus",
       type: "website",
       images: course.image ? [{ url: course.image }] : [],

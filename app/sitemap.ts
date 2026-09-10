@@ -33,9 +33,9 @@ async function getRootCourses() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:4001";
-  
-  // 1. Static routes of the web application
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ecampusapp.com";
+
+  // 1. Standard Static Routes
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${baseUrl}`, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     { url: `${baseUrl}/apply`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
@@ -45,16 +45,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/contact-us`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/discover`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
     { url: `${baseUrl}/search`, lastModified: new Date(), changeFrequency: "daily", priority: 0.6 },
-    { url: `${baseUrl}/tools`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/study`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${baseUrl}/universities`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
   ];
 
-  // 2. Dynamic blog routes from the database
+  // 2. Dynamic Blog Routes
   const dbBlogs = await getBlogs();
-  const blogRoutes = dbBlogs
+  const blogRoutes: MetadataRoute.Sitemap = dbBlogs
     .filter((blog: any) => {
-      // Exclude inactive blogs
       if (blog.status === "inactive") return false;
-      // Exclude if sitemap is explicitly set to false in SEO Settings
       if (blog.seoSettings && blog.seoSettings.sitemap === false) return false;
       return true;
     })
@@ -68,23 +67,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  // 3. Dynamic root course routes from the database
+  // 3. Dynamic Root Courses & Sub-Header Page Routes
   const dbCourses = await getRootCourses();
-  const courseRoutes = dbCourses
-    .filter((course: any) => {
-      if (course.status === "inactive") return false;
-      if (course.seoSettings && course.seoSettings.sitemap === false) return false;
-      return true;
-    })
-    .map((course: any) => {
-      const slug = (course.slug || "").replace(/^\/+|\/+$/g, "");
-      return {
-        url: `${baseUrl}/${slug}`,
+  const courseRoutes: MetadataRoute.Sitemap = [];
+
+  for (const course of dbCourses) {
+    if (course.status === "inactive") continue;
+    if (course.seoSettings && course.seoSettings.sitemap === false) continue;
+
+    const courseSlug = (course.slug || "").replace(/^\/+|\/+$/g, "");
+    if (courseSlug) {
+      // Main root course URL
+      courseRoutes.push({
+        url: `${baseUrl}/${courseSlug}`,
         lastModified: course.updatedAt ? new Date(course.updatedAt) : new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      };
-    });
+        changeFrequency: "weekly",
+        priority: 0.9,
+      });
+
+      // Sub-header page URLs (only relative URLs, skipping anchors #)
+      if (Array.isArray(course.subHeaders)) {
+        for (const sh of course.subHeaders) {
+          if (sh.urlType === "relative" && sh.url) {
+            if (sh.seoSettings && sh.seoSettings.sitemap === false) continue;
+            const subSlug = (sh.url || "").replace(/^\/+|\/+$/g, "");
+            if (subSlug) {
+              courseRoutes.push({
+                url: `${baseUrl}/${courseSlug}/${subSlug}`,
+                lastModified: course.updatedAt ? new Date(course.updatedAt) : new Date(),
+                changeFrequency: "weekly",
+                priority: 0.8,
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 
   return [...staticRoutes, ...blogRoutes, ...courseRoutes];
 }

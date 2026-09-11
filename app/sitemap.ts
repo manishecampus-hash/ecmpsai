@@ -32,6 +32,21 @@ async function getRootCourses() {
   return [];
 }
 
+async function getLandingPages() {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/landing-pages`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.error("Error fetching landing pages for sitemap:", err);
+  }
+  return [];
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ecampusapp.com";
 
@@ -105,5 +120,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticRoutes, ...blogRoutes, ...courseRoutes];
+  // 4. Dynamic Landing Page Routes
+  const dbLandingPages = await getLandingPages();
+  const landingPageRoutes: MetadataRoute.Sitemap = dbLandingPages
+    .filter((lp: any) => {
+      if (lp.status === "inactive") return false;
+      if (lp.seoSettings && lp.seoSettings.sitemap === false) return false;
+      return true;
+    })
+    .map((lp: any) => {
+      const slug = (lp.slug || "").replace(/^\/+|\/+$/g, "");
+      return {
+        url: `${baseUrl}/lp/${slug}`,
+        lastModified: lp.updatedAt ? new Date(lp.updatedAt) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.9,
+      };
+    });
+
+  return [...staticRoutes, ...blogRoutes, ...courseRoutes, ...landingPageRoutes];
 }
+

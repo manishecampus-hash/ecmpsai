@@ -10,8 +10,8 @@ interface PageProps {
   searchParams: Promise<{ preview?: string }>;
 }
 
-const BACKEND_API_URL =
-  process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
+const FRONTEND_API_URL =
+  process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
 async function fetchLandingPage(
   slug: string,
@@ -19,7 +19,7 @@ async function fetchLandingPage(
 ): Promise<LandingPageData | null> {
   try {
     const res = await fetch(
-      `${BACKEND_API_URL}/api/landing-pages/by-slug/${encodeURIComponent(slug)}${
+      `${FRONTEND_API_URL}/landing-pages/${encodeURIComponent(slug)}${
         preview ? "?preview=true" : ""
       }`,
       {

@@ -66,13 +66,11 @@ export default function LmsAccessPage({
 
     const frontendApi =
       process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
-    const backendApi =
-      process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
 
     let fetchedList: any[] = [];
     let success = false;
 
-    // 1. Try Frontend API first (standard for ecmpsai)
+    // Fetch from Frontend API (standard for ecmpsai microservice)
     try {
       const res = await fetch(`${frontendApi}/universities`);
       if (res.ok) {
@@ -86,26 +84,7 @@ export default function LmsAccessPage({
         }
       }
     } catch (err) {
-      console.warn("Frontend universities API unavailable, attempting backend fallback:", err);
-    }
-
-    // 2. Fallback to Backend API if frontend API did not succeed
-    if (!success) {
-      try {
-        const res = await fetch(`${backendApi}/api/universities?limit=1000`);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            fetchedList = data;
-            success = true;
-          } else if (Array.isArray(data?.universities)) {
-            fetchedList = data.universities;
-            success = true;
-          }
-        }
-      } catch (err) {
-        console.error("Backend universities API also failed:", err);
-      }
+      console.error("Frontend universities API error:", err);
     }
 
     if (!success) {

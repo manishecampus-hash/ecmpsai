@@ -41,443 +41,102 @@ export default function UniversityPrograms({
 }: UniversityProgramsProps) {
   return (
     <section className="relative z-10 w-full overflow-hidden bg-white !m-0 !p-0">
-
-      {/* Background Decoration */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          left-0
-          top-0
-          h-40
-          w-40
-          rounded-full
-          bg-red-50/60
-          blur-3xl
-        "
-      />
-
-      <div
-        className="
-          pointer-events-none
-          absolute
-          bottom-0
-          right-0
-          h-48
-          w-48
-          rounded-full
-          bg-red-50/50
-          blur-3xl
-        "
-      />
+      {/* Background Subtle Auras */}
+      <div className="pointer-events-none absolute left-0 top-0 h-72 w-72 rounded-full bg-red-50/50 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-red-50/40 blur-3xl" />
 
       {/* Main Container */}
-      <div
-        className="
-          relative
-          z-10
-          mx-auto
-          w-full
-          max-w-7xl
-          px-4
-          py-8
-          font-[Inter]
-          sm:px-6
-          sm:py-10
-          lg:px-16
-          lg:py-12
-        "
-      >
-
-        {/* =====================================================
-            HEADING
-        ====================================================== */}
-
-        <div className="mb-6 text-center sm:mb-8">
-
-          <h2
-            className="
-              m-0
-              text-[22px]
-              font-extrabold
-              leading-tight
-              tracking-[-0.4px]
-              text-slate-900
-              sm:text-[27px]
-              lg:text-[30px]
-            "
-          >
-            Programs From Top{" "}
-            <span className="text-red-500">
-              Online Universities
-            </span>
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-14 font-sans sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+        {/* ================= HEADING ================= */}
+        <div className="mx-auto max-w-3xl mb-10 sm:mb-12 lg:mb-14 text-center">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
+            Programs From Top <span className="text-red-600 font-extrabold">Online Universities</span>
           </h2>
-
-          <div
-            className="
-              mx-auto
-              mt-2
-              h-1
-              w-12
-              rounded-full
-              bg-red-500
-              shadow-[0_3px_8px_rgba(239,68,68,0.3)]
-            "
-          />
-
+          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Explore globally accredited Doctor of Business Administration programs curated for working executives and business leaders.
+          </p>
+          <div className="mx-auto mt-4 h-1 w-12 rounded-full bg-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
         </div>
 
-
-        {/* =====================================================
-            UNIVERSITY GRID
-        ====================================================== */}
-
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-4
-            sm:grid-cols-2
-            sm:gap-5
-            lg:grid-cols-3
-            lg:justify-items-center
-          "
-        >
-
+        {/* ================= UNIVERSITY GRID ================= */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {dbaUniversities.map((university) => {
-
-            const LocationIcon =
-              university.locationIcon === "Globe"
-                ? Globe
-                : MapPin;
+            const LocationIcon = university.locationIcon === "Globe" ? Globe : MapPin;
 
             return (
-
               <article
                 key={university.slug}
-                className="
-                  group
-                  relative
-                  w-full
-                  max-w-[330px]
-                  overflow-hidden
-                  rounded-xl
-                  border
-                  border-slate-200
-                  bg-white
-                  p-1
-                  shadow-[0_3px_10px_rgba(15,23,42,0.06)]
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
-                  hover:border-red-200
-                  hover:shadow-[0_12px_28px_rgba(15,23,42,0.12)]
-                "
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl"
               >
-
-                {/* =================================================
-                    IMAGE
-                ================================================== */}
-
-                <div
-                  className="
-                    relative
-                    h-[105px]
-                    overflow-hidden
-                    rounded-lg
-                    bg-slate-100
-                    sm:h-[112px]
-                  "
-                >
-
+                {/* IMAGE AREA */}
+                <div className="relative h-44 w-full overflow-hidden bg-slate-100 sm:h-48">
                   <img
                     src={university.image}
                     alt={university.name}
-                    className="
-                      h-full
-                      w-full
-                      object-cover
-                      transition-transform
-                      duration-500
-                      group-hover:scale-[1.04]
-                    "
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
 
-                  {/* Image Overlay */}
-
-                  <div
-                    className="
-                      pointer-events-none
-                      absolute
-                      inset-0
-                      bg-gradient-to-t
-                      from-slate-900/25
-                      via-transparent
-                      to-transparent
-                    "
-                  />
-
-                  {/* Online DBA Badge */}
-
-                  <div
-                    className="
-                      absolute
-                      left-2
-                      top-2
-                      flex
-                      items-center
-                      gap-1
-                      rounded-md
-                      bg-white/95
-                      px-1.5
-                      py-1
-                      text-[8px]
-                      font-bold
-                      text-red-600
-                      shadow-sm
-                      backdrop-blur-sm
-                    "
-                  >
-
-                    <span
-                      className="
-                        h-1.5
-                        w-1.5
-                        rounded-full
-                        bg-red-500
-                      "
-                    />
-
+                  {/* Online DBA Chip */}
+                  <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-red-600 shadow-xs backdrop-blur-xs">
+                    <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
                     Online DBA
-
                   </div>
-
                 </div>
 
-
-                {/* =================================================
-                    CARD CONTENT
-                ================================================== */}
-
-                <div className="px-2.5 pb-2.5 pt-2">
-
+                {/* CARD CONTENT */}
+                <div className="flex flex-1 flex-col p-5">
                   {/* University Name */}
-
-                  <h3
-                    className="
-                      m-0
-                      line-clamp-2
-                      min-h-[32px]
-                      text-[12px]
-                      font-extrabold
-                      leading-[1.35]
-                      text-slate-900
-                      transition-colors
-                      group-hover:text-red-500
-                    "
-                  >
+                  <h3 className="m-0 text-base font-bold leading-snug text-slate-900 group-hover:text-red-600 line-clamp-2 min-h-[48px] transition-colors sm:text-lg">
                     {university.name}
                   </h3>
 
-
-                  {/* =================================================
-                      META DETAILS
-                  ================================================== */}
-
-                  <div className="mt-2 space-y-1.5">
-
+                  {/* META DETAILS */}
+                  <div className="mt-4 space-y-2.5 text-xs sm:text-[13px] font-medium text-slate-600">
                     {/* Location */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-1.5
-                        text-[9px]
-                        font-medium
-                        text-slate-600
-                      "
-                    >
-
-                      <LocationIcon
-                        className="
-                          h-3
-                          w-3
-                          shrink-0
-                          text-red-500
-                        "
-                        strokeWidth={2.5}
-                      />
-
-                      <span className="truncate">
-                        {university.location}
-                      </span>
-
-                      <span className="text-slate-300">
-                        •
-                      </span>
-
-                      <span className="truncate">
-                        {university.region}
-                      </span>
-
+                    <div className="flex items-center gap-2">
+                      <LocationIcon className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
+                      <span className="truncate">{university.location}</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="truncate">{university.region}</span>
                     </div>
 
-
-                    {/* Program */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-1.5
-                        text-[9px]
-                        font-medium
-                        text-slate-600
-                      "
-                    >
-
-                      <GraduationCap
-                        className="
-                          h-3
-                          w-3
-                          shrink-0
-                          text-red-500
-                        "
-                        strokeWidth={2.5}
-                      />
-
-                      <span>
-                        Doctorate • DBA
-                      </span>
-
+                    {/* Program Type */}
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
+                      <span>Doctorate • DBA</span>
                     </div>
 
-
-                    {/* Learning */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-1.5
-                        text-[9px]
-                        font-medium
-                        text-slate-600
-                      "
-                    >
-
-                      <Clock3
-                        className="
-                          h-3
-                          w-3
-                          shrink-0
-                          text-red-500
-                        "
-                        strokeWidth={2.5}
-                      />
-
-                      <span>
-                        Flexible Online Learning
-                      </span>
-
+                    {/* Learning Format */}
+                    <div className="flex items-center gap-2">
+                      <Clock3 className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
+                      <span>Flexible Online Learning</span>
                     </div>
 
-
-                    {/* Recognition */}
-
-                    <div
-                      className="
-                        flex
-                        items-center
-                        gap-1.5
-                        text-[9px]
-                        font-medium
-                        text-slate-600
-                      "
-                    >
-
-                      <Award
-                        className="
-                          h-3
-                          w-3
-                          shrink-0
-                          text-red-500
-                        "
-                        strokeWidth={2.5}
-                      />
-
-                      <span className="truncate">
-                        University Recognized Program
-                      </span>
-
+                    {/* Accreditation */}
+                    <div className="flex items-center gap-2">
+                      <Award className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
+                      <span className="truncate">University Recognized Program</span>
                     </div>
-
                   </div>
 
-
-                  {/* =================================================
-                      APPLY BUTTON
-                  ================================================== */}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onApplyClick?.(university.name)
-                    }
-                    className="
-                      group/btn
-                      mx-auto
-                      mt-2.5
-                      flex
-                      h-[28px]
-                      w-[120px]
-                      items-center
-                      justify-center
-                      gap-1.5
-                      rounded-md
-                      bg-gradient-to-r
-                      from-red-500
-                      to-red-600
-                      text-[10px]
-                      font-extrabold
-                      text-white
-                      shadow-[0_4px_10px_rgba(239,68,68,0.22)]
-                      transition-all
-                      duration-300
-                      hover:-translate-y-[1px]
-                      hover:from-red-600
-                      hover:to-red-700
-                      hover:shadow-[0_6px_14px_rgba(239,68,68,0.3)]
-                      active:translate-y-0
-                    "
-                  >
-
-                    Apply Now
-
-                    <ArrowRight
-                      className="
-                        h-3
-                        w-3
-                        transition-transform
-                        duration-300
-                        group-hover/btn:translate-x-0.5
-                      "
-                    />
-
-                  </button>
-
+                  {/* APPLY BUTTON */}
+                  <div className="mt-auto pt-6">
+                    <button
+                      type="button"
+                      onClick={() => onApplyClick?.(university.name)}
+                      className="group/btn flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-xs sm:text-sm font-bold text-white shadow-xs transition-all duration-200 hover:from-red-700 hover:to-red-600 hover:shadow-md active:translate-y-0"
+                    >
+                      <span>Apply Now</span>
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                    </button>
+                  </div>
                 </div>
-
               </article>
-
             );
           })}
-
         </div>
-
       </div>
-
     </section>
   );
 }

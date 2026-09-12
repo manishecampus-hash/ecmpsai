@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   ArrowRight,
   Sparkles,
@@ -9,6 +9,7 @@ import {
   Award,
 } from "lucide-react";
 import HighlightedTitle from "./highlighted-title";
+import ApplyNowModal from "@/components/form/apply-now-modal";
 
 export interface LandingPageHeroData {
   mainHeading: string;
@@ -40,6 +41,8 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
   const isDbaTransition =
     badgeText.toLowerCase().includes("mr") && badgeText.toLowerCase().includes("dr");
 
+  const [showApplyModal, setShowApplyModal] = useState(false);
+
   const handlePrimaryCtaClick = (e: React.MouseEvent) => {
     if (hero.primaryCtaUrl?.startsWith("http") && !onCtaClick) {
       return;
@@ -48,7 +51,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
     if (onCtaClick) {
       onCtaClick();
     } else {
-      window.dispatchEvent(new CustomEvent("open-signup"));
+      setShowApplyModal(true);
     }
   };
 
@@ -214,6 +217,11 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
           </div>
         </div>
       </div>
+
+      <ApplyNowModal
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+      />
     </section>
   );
 }

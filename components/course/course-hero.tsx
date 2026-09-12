@@ -15,6 +15,7 @@ import {
   Sparkles,
   Download,
 } from "lucide-react";
+import ApplyNowModal from "@/components/form/apply-now-modal";
 
 const ICON_MAP: Record<string, React.ComponentType<any>> = {
   CalendarDays,
@@ -59,6 +60,7 @@ export default function CourseHeroSection({
 
   const [aiText, setAiText] = useState("");
   const [isTypingDone, setIsTypingDone] = useState(false);
+  const [showApplyModal, setShowApplyModal] = useState(false);
 
   useEffect(() => {
     if (!descriptionText) return;
@@ -146,7 +148,7 @@ export default function CourseHeroSection({
                       if (onCta1Click) {
                         onCta1Click();
                       } else {
-                        window.dispatchEvent(new CustomEvent("open-signup"));
+                        setShowApplyModal(true);
                       }
                     }}
                     className="inline-flex h-11 w-full items-center justify-center rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:w-fit sm:min-w-[120px]"
@@ -274,6 +276,11 @@ export default function CourseHeroSection({
           </aside>
         </div>
       </div>
+
+      <ApplyNowModal
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+      />
     </section>
   );
 }

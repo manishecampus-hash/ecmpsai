@@ -49,14 +49,7 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       )}
 
       {/* 1. Hero Section */}
-      {data.hero && (
-        <LandingPageHero
-          hero={data.hero}
-          onCtaClick={() => {
-            window.dispatchEvent(new CustomEvent("open-signup"));
-          }}
-        />
-      )}
+      {data.hero && <LandingPageHero hero={data.hero} />}
 
       {/* 2. Trust / Statistics */}
       {data.statistics && <LandingPageStats stats={data.statistics} />}

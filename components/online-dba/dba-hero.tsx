@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
+import ApplyNowModal from "@/components/form/apply-now-modal";
 
 interface DBAHeroProps {
   onCtaClick?: () => void;
@@ -12,6 +13,8 @@ export function DBAHero({
   onCtaClick,
   ctaText = "Let's Talk About Your Career Goals",
 }: DBAHeroProps) {
+  const [showApplyModal, setShowApplyModal] = useState(false);
+
   return (
     <section className="relative z-10 w-full !m-0 !p-0">
       {/* SAME WIDTH / ALIGNMENT AS CAREER SECTION */}
@@ -48,7 +51,7 @@ export function DBAHero({
                 if (onCtaClick) {
                   onCtaClick();
                 } else {
-                  window.dispatchEvent(new CustomEvent("open-signup"));
+                  setShowApplyModal(true);
                 }
               }}
               className="group mt-1 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-md bg-red-500 px-5 text-sm font-bold text-white shadow-lg shadow-red-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-600 hover:shadow-red-500/30 sm:min-h-[50px] sm:px-6"
@@ -134,6 +137,11 @@ export function DBAHero({
 
         </div>
       </div>
+
+      <ApplyNowModal
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+      />
     </section>
   );
 }

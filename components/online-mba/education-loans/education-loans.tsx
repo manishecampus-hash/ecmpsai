@@ -54,7 +54,7 @@ export default function EducationLoans({ data, title }: EducationLoansProps) {
 
       {/* EMI calculator callout */}
       <a
-        href="https://collegevidya.com/tool/education-loan-emi-calculator/"
+        href="/tools"
         target="_blank"
         rel="noopener noreferrer"
         className="group mt-6 flex max-w-4xl items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 px-5 py-4 transition-colors hover:bg-red-50"

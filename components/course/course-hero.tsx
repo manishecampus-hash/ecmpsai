@@ -28,7 +28,13 @@ const ICON_MAP: Record<string, React.ComponentType<any>> = {
   Star,
 };
 
-export default function CourseHeroSection({ data }: { data?: any }) {
+export default function CourseHeroSection({
+  data,
+  onCta1Click,
+}: {
+  data?: any;
+  onCta1Click?: () => void;
+}) {
   const heading = data?.heading || data?.title;
 
   // If title is not present, hide whole section
@@ -134,7 +140,17 @@ export default function CourseHeroSection({ data }: { data?: any }) {
             {(cta1 || cta2) && (
               <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row sm:items-center sm:gap-4">
                 {cta1 && (
-                  <button className="inline-flex h-11 w-full items-center justify-center rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:w-fit sm:min-w-[120px]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onCta1Click) {
+                        onCta1Click();
+                      } else {
+                        window.dispatchEvent(new CustomEvent("open-signup"));
+                      }
+                    }}
+                    className="inline-flex h-11 w-full items-center justify-center rounded-[13px] bg-[#f83d46] px-5 text-sm font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:w-fit sm:min-w-[120px]"
+                  >
                     {cta1}
                   </button>
                 )}

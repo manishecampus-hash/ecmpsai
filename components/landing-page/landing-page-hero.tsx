@@ -40,6 +40,18 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
   const isDbaTransition =
     badgeText.toLowerCase().includes("mr") && badgeText.toLowerCase().includes("dr");
 
+  const handlePrimaryCtaClick = (e: React.MouseEvent) => {
+    if (hero.primaryCtaUrl?.startsWith("http") && !onCtaClick) {
+      return;
+    }
+    e.preventDefault();
+    if (onCtaClick) {
+      onCtaClick();
+    } else {
+      window.dispatchEvent(new CustomEvent("open-signup"));
+    }
+  };
+
   return (
     <section className="relative z-10 w-full overflow-hidden bg-gradient-to-b from-red-50/40 via-white to-white !m-0 !p-0">
       {/* Top subtle radial aura */}
@@ -71,10 +83,11 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
-              {hero.primaryCtaUrl?.startsWith("http") || hero.primaryCtaUrl?.startsWith("#") ? (
+              {hero.primaryCtaUrl?.startsWith("http") && !onCtaClick ? (
                 <a
-                  href={hero.primaryCtaUrl || "#"}
-                  onClick={onCtaClick}
+                  href={hero.primaryCtaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(239,68,68,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_12px_28px_rgba(239,68,68,0.38)] active:translate-y-0 sm:min-h-[52px] sm:px-7 sm:text-[15px]"
                 >
                   <span>{ctaText}</span>
@@ -86,7 +99,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
               ) : (
                 <button
                   type="button"
-                  onClick={onCtaClick}
+                  onClick={handlePrimaryCtaClick}
                   className="group inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(239,68,68,0.28)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_12px_28px_rgba(239,68,68,0.38)] active:translate-y-0 sm:min-h-[52px] sm:px-7 sm:text-[15px]"
                 >
                   <span>{ctaText}</span>

@@ -482,8 +482,31 @@ const staticSlides = [
 const SWIPE_THRESHOLD = 50;
 const LOCK_AXIS_THRESHOLD = 10;
 
-export function CarouselBanner() {
-  const [slidesData, setSlidesData] = useState<any[]>(staticSlides);
+export function CarouselBanner({ banners }: { banners?: any[] }) {
+  const initialSlides = React.useMemo(() => {
+    if (banners && banners.length > 0) {
+      return banners.map((b: any, idx: number) => ({
+        id: b.id || `banner-${idx}`,
+        desktop: b.image || b.desktop,
+        mobile: b.mobileImage || b.image || b.mobile || b.desktop,
+        altText: b.altText || b.title || `eCampus Banner ${idx + 1}`,
+        slug: b.isClickable ? (b.redirectUrl || "") : "",
+        redirectType: b.redirectType || "relative",
+        title: b.title || "",
+        category: b.description || "",
+        isDynamic: false,
+      }));
+    }
+    return staticSlides;
+  }, [banners]);
+
+  const [slidesData, setSlidesData] = useState<any[]>(initialSlides);
+
+  useEffect(() => {
+    setSlidesData(initialSlides);
+    setCurrentSlide(0);
+  }, [initialSlides]);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -892,71 +915,78 @@ export function CarouselBanner() {
             className="cb-track"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {slidesData.map((s, i) => (
-              <div key={s.id} className="cb-slide">
-                {s.slug ? (
-                  <Link
-                    href={s.slug}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "100%",
-                      position: "relative",
-                    }}
-                  >
-                    <div className="img-mobile">
-                      <Image
-                        src={s.mobile}
-                        alt={s.title || `Mobile Banner ${s.id}`}
-                        fill
-                        priority={i === 0}
-                        className="banner-img"
-                        draggable={false}
-                      />
+            {slidesData.map((s, i) => {
+              const isExternal = s.redirectType === "external" || (s.slug && s.slug.startsWith("http"));
+              const slideAlt = s.altText || s.title || `Desktop Banner ${s.id}`;
+              const imageContent = (
+                <>
+                  <div className="img-mobile">
+                    <Image
+                      src={s.mobile}
+                      alt={s.altText || s.title || `Mobile Banner ${s.id}`}
+                      fill
+                      priority={i === 0}
+                      className="banner-img"
+                      draggable={false}
+                    />
+                  </div>
+                  <div className="img-desktop">
+                    <Image
+                      src={s.desktop}
+                      alt={slideAlt}
+                      fill
+                      priority={i === 0}
+                      className="banner-img"
+                      draggable={false}
+                    />
+                  </div>
+                  {s.isDynamic && (
+                    <div className="cb-overlay">
+                      <span className="cb-category">{s.category}</span>
+                      <h3 className="cb-title">{s.title}</h3>
                     </div>
-                    <div className="img-desktop">
-                      <Image
-                        src={s.desktop}
-                        alt={s.title || `Desktop Banner ${s.id}`}
-                        fill
-                        priority={i === 0}
-                        className="banner-img"
-                        draggable={false}
-                      />
+                  )}
+                </>
+              );
+
+              return (
+                <div key={s.id} className="cb-slide">
+                  {s.slug ? (
+                    isExternal ? (
+                      <a
+                        href={s.slug}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          height: "100%",
+                          position: "relative",
+                        }}
+                      >
+                        {imageContent}
+                      </a>
+                    ) : (
+                      <Link
+                        href={s.slug}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          height: "100%",
+                          position: "relative",
+                        }}
+                      >
+                        {imageContent}
+                      </Link>
+                    )
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+                      {imageContent}
                     </div>
-                    {s.isDynamic && (
-                      <div className="cb-overlay">
-                        <span className="cb-category">{s.category}</span>
-                        <h3 className="cb-title">{s.title}</h3>
-                      </div>
-                    )}
-                  </Link>
-                ) : (
-                  <>
-                    <div className="img-mobile">
-                      <Image
-                        src={s.mobile}
-                        alt={`Mobile Banner ${s.id}`}
-                        fill
-                        priority={i === 0}
-                        className="banner-img"
-                        draggable={false}
-                      />
-                    </div>
-                    <div className="img-desktop">
-                      <Image
-                        src={s.desktop}
-                        alt={`Desktop Banner ${s.id}`}
-                        fill
-                        priority={i === 0}
-                        className="banner-img"
-                        draggable={false}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {slidesData.length > 1 && (

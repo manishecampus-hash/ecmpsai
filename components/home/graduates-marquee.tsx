@@ -769,7 +769,7 @@ function ProfileAvatar({
       {graduate.avatarSrc ? (
         <img
           src={graduate.avatarSrc}
-          alt={graduate.name}
+          alt={(graduate as any).altText || graduate.name}
           className="h-full w-full object-cover object-center"
         />
       ) : (
@@ -1128,7 +1128,7 @@ export function GraduatesMarquee({
               <div className="max-h-[72vh] w-full overflow-y-auto bg-white">
                 <img
                   src={selected.storySrc}
-                  alt={`${selected.name} full story`}
+                  alt={(selected as any).altText ? `${(selected as any).altText} - Full Story` : `${selected.name} full story`}
                   className="mx-auto block h-auto w-full object-contain"
                 />
               </div>

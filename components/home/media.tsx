@@ -11,7 +11,7 @@ import {
   Newspaper,
 } from "lucide-react";
 import type { CSSProperties, SyntheticEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 
 const CARD_WIDTH = 300;
 const GAP = 28;
@@ -67,14 +67,30 @@ const LOGO_STYLES: Record<
   },
 };
 
-export function MediaSection() {
+export function MediaSection({ articles }: { articles?: any[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
   const [visible, setVisible] = useState(4);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
 
-  const items = pressArticles;
+  const items = React.useMemo(() => {
+    if (articles && articles.length > 0) {
+      return articles.map((a: any) => ({
+        name: a.name,
+        image: a.image,
+        altText: a.altText || a.name,
+        logo: a.logo || "",
+        href: a.redirectUrl || a.href || "#",
+        description: a.mainText || a.description || "",
+        highlightText: a.highlightText || "",
+        headline: a.headline || "",
+        ctaText: a.ctaText || "Read clipping",
+      }));
+    }
+    return pressArticles;
+  }, [articles]);
+
   const pageCount = Math.max(1, items.length - visible + 1);
 
   useEffect(() => {
@@ -98,8 +114,8 @@ export function MediaSection() {
   const checkScroll = () => {
     const el = trackRef.current;
     if (!el) return;
-    setShowLeft(el.scrollLeft > 5);
-    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
+    setShowLeft(el.scrollLeft > 10);
+    setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
   };
 
   useEffect(() => {
@@ -110,11 +126,17 @@ export function MediaSection() {
   const scroll = (direction: "left" | "right") => {
     const el = trackRef.current;
     if (!el) return;
-    const amount = CARD_WIDTH + GAP;
-    el.scrollBy({
-      left: direction === "left" ? -amount : amount,
+    const distance = CARD_WIDTH + GAP;
+    const newPage =
+      direction === "left"
+        ? Math.max(0, page - 1)
+        : Math.min(items.length - visible, page + 1);
+    setPage(newPage);
+    el.scrollTo({
+      left: newPage * distance,
       behavior: "smooth",
     });
+    setTimeout(checkScroll, 350);
   };
 
   const scrollToPage = (index: number) => {
@@ -126,16 +148,30 @@ export function MediaSection() {
     });
   };
 
+  const renderDescription = (text: string, highlight?: string) => {
+    if (!highlight || !highlight.trim()) return text;
+    const parts = text.split(new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"));
+    return parts.map((part, idx) =>
+      part.toLowerCase() === highlight.toLowerCase() ? (
+        <span key={idx} className="font-semibold text-[#1B2230] underline decoration-red-400/60 decoration-2 underline-offset-2">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
-    <section className="relative z-10 w-full">
-      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
-        <div className="text-center mb-4">
+    <section className="relative w-full py-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+        <div className="text-center mb-6">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <Newspaper className="h-3.5 w-3.5 text-[#ef4444]" />
-            Media
+            <Newspaper className="h-3.5 w-3.5 text-red-500" />
+            Media & Press
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 whitespace-nowrap sm:text-3xl md:text-4xl">
-            The Press <span className="text-[#ef4444]">Wall</span>
+            In The <span className="text-red-500">News</span>
           </h2>
         </div>
 
@@ -170,10 +206,11 @@ export function MediaSection() {
             className="scrollbar-hide flex gap-7 overflow-x-auto scroll-smooth px-0 py-2"
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {items.map((article, i) => {
+            {items.map((article: any, i: number) => {
               const logoStyle = LOGO_STYLES[article.name] || {
-                bg: "bg-[#1B2230]",
-                text: "text-white",
+                bgGradient: "linear-gradient(135deg, #1B2230 0%, #2A364F 100%)",
+                textColor: "#FFFFFF",
+                glowColor: "rgba(27, 34, 48, 0.4)",
               };
 
               return (
@@ -208,7 +245,7 @@ export function MediaSection() {
                   <div className="relative h-36 w-full overflow-hidden border-y border-[#1B2230]/5 bg-slate-100 grayscale-[10%]">
                     <img
                       src={article.image}
-                      alt={article.name}
+                      alt={article.altText || article.name}
                       className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
                       onError={(e) => {
                         e.currentTarget.src =
@@ -259,11 +296,11 @@ export function MediaSection() {
                     </div>
 
                     <p className="text-sm leading-relaxed text-[#1B2230]/65">
-                      {article.description}
+                      {renderDescription(article.description, article.highlightText)}
                     </p>
 
                     <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[#B33A3A] transition-transform group-hover:translate-x-0.5">
-                      Read clipping
+                      {article.ctaText || "Read clipping"}
                       <ArrowUpRight className="h-4 w-4" />
                     </span>
                   </div>

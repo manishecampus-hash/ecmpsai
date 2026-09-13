@@ -40,7 +40,27 @@ import { OfferCarousel } from "@/components/ui/offer-carousel";
 import { popularCourses } from "@/data/popular-courses";
 import { Handshake, Sparkles, TrendingUp } from "lucide-react";
 
-export function PopularCoursesSection() {
+export function PopularCoursesSection({ courses }: { courses?: any[] }) {
+  const offers = React.useMemo(() => {
+    if (courses && courses.length > 0) {
+      return courses.map((c, idx) => ({
+        id: c.id || idx + 1,
+        imageSrc: c.image || c.imageSrc,
+        imageAlt: c.altText || c.imageAlt || c.title,
+        tag: c.tag || "Popular",
+        title: c.title,
+        brandLogoSrc: "",
+        duration: c.duration || "",
+        fee: c.fee || "",
+        mode: "Online" as const,
+        icon: "graduation-cap" as const,
+        href: c.redirectUrl || c.href || "",
+        videoSrc: c.videoSrc,
+      }));
+    }
+    return popularCourses;
+  }, [courses]);
+
   return (
     <section className="relative w-full">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
@@ -57,7 +77,7 @@ export function PopularCoursesSection() {
 
         {/* Dynamic Carousel Component */}
         <div className="w-full">
-          <OfferCarousel offers={popularCourses} />
+          <OfferCarousel offers={offers} />
         </div>
       </div>
     </section>

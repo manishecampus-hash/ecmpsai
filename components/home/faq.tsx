@@ -1,7 +1,7 @@
 "use client";
 
 import { Handshake, ChevronDown, MessageSquare } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Section } from "../ui/section";
 
 const faqs = [
@@ -32,10 +32,15 @@ const faqs = [
   },
 ];
 
-export default function FAQ() {
+export default function FAQ({ items }: { items?: { question: string; answer: string }[] }) {
+  const currentFaqs = items && items.length > 0 ? items : faqs;
   const [openIndexes, setOpenIndexes] = useState<number[]>(
-    faqs.map((_, index) => index),
+    currentFaqs.map((_, index) => index),
   );
+
+  useEffect(() => {
+    setOpenIndexes(currentFaqs.map((_, index) => index));
+  }, [items]);
 
   const toggleFAQ = (index: number) => {
     setOpenIndexes((prev) =>
@@ -82,7 +87,7 @@ export default function FAQ() {
 
           {/* RIGHT COLUMN: FAQ Accordion */}
           <div className="w-full !mb-0 space-y-3 lg:col-span-8 lg:space-y-3">
-            {faqs.map((faq, index) => {
+            {currentFaqs.map((faq, index) => {
               const isOpen = openIndexes.includes(index);
 
               return (

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/layout/navbar";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,6 +40,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18451315310"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-aw-18451315310" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-18451315310');
+          `}
+        </Script>
+      </head>
       <body
         className={`${inter.className} antialiased min-h-screen flex flex-col bg-white text-gray-900`}
       >

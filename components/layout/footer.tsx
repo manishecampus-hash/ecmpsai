@@ -136,8 +136,8 @@ export function Footer() {
                 className="object-contain object-left"
               />
             </div>
-            <p className="text-[14.5px] leading-relaxed text-slate-300/90 font-medium tracking-wide">
-           eCampus is India's trusted higher education platform helping students and working professionals discover the right degree, certification, executive, and doctorate programs. Compare universities, explore career-focused courses, and get expert guidance to make informed education decisions that support your professional growth.
+            <p className="text-sm leading-relaxed text-slate-400 font-normal">
+              eCampus is India&apos;s trusted higher education platform helping students and working professionals discover the right degree, certification, executive, and doctorate programs. Compare universities, explore career-focused courses, and get expert guidance to make informed education decisions that support your professional growth.
             </p>
            
             <div className="flex flex-col gap-2.5">

@@ -17,6 +17,21 @@ async function getBlogs() {
   return [];
 }
 
+async function getUniversities() {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/universities`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.error("Error fetching universities for sitemap:", err);
+  }
+  return [];
+}
+
 async function getRootCourses() {
   const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
   try {
@@ -82,7 +97,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  // 3. Dynamic Root Courses & Sub-Header Page Routes
+  // 3. Dynamic University Detail Routes
+  const dbUniversities = await getUniversities();
+  const universityRoutes: MetadataRoute.Sitemap = dbUniversities
+    .filter((uni: any) => {
+      if (uni.status === "inactive") return false;
+      if (uni.seoSettings && uni.seoSettings.sitemap === false) return false;
+      return true;
+    })
+    .map((uni: any) => {
+      let slug = "";
+      if (uni.slug) {
+        slug = uni.slug.split("/").pop() || "";
+      } else if (uni.seoSettings?.rewriteUrl) {
+        slug = uni.seoSettings.rewriteUrl.split("/").pop() || "";
+      }
+      if (!slug) {
+        slug = (uni.name || "")
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/[\s_-]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+      return {
+        url: `${baseUrl}/universities/${slug}`,
+        lastModified: uni.updatedAt ? new Date(uni.updatedAt) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      };
+    })
+    .filter((route: any) => route.url && !route.url.endsWith("/universities/"));
+
+  // 4. Dynamic Root Courses & Sub-Header Page Routes
   const dbCourses = await getRootCourses();
   const courseRoutes: MetadataRoute.Sitemap = [];
 
@@ -120,7 +167,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // 4. Dynamic Landing Page Routes
+  // 5. Dynamic Landing Page Routes
   const dbLandingPages = await getLandingPages();
   const landingPageRoutes: MetadataRoute.Sitemap = dbLandingPages
     .filter((lp: any) => {
@@ -138,6 +185,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  return [...staticRoutes, ...blogRoutes, ...courseRoutes, ...landingPageRoutes];
+  return [...staticRoutes, ...blogRoutes, ...universityRoutes, ...courseRoutes, ...landingPageRoutes];
 }
-

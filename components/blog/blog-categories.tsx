@@ -5,8 +5,8 @@ import Link from "next/link";
 import { BookOpen, ChevronDown } from "lucide-react";
 import { Blog } from "@/data/blog-data";
 
-const INITIAL_VISIBLE_COUNT = 6;
-const LOAD_MORE_COUNT = 6;
+const INITIAL_VISIBLE_COUNT = 8;
+const LOAD_MORE_COUNT = 8;
 
 export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
   const [activeCategory, setActiveCategory] = useState("Latest Articles");
@@ -165,7 +165,7 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
                 onClick={() => setVisibleCount((c) => c + LOAD_MORE_COUNT)}
                 className="rounded-xl bg-white px-7 py-3 text-base font-bold text-gray-700 shadow-sm transition hover:bg-gray-100"
               >
-                View 6 More →
+                View 8 More →
               </button>
             </div>
           )}

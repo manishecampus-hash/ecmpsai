@@ -83,7 +83,7 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
               <div className="px-6 py-4 flex items-center text-slate-300">Factor</div>
               <div className="px-6 py-4 flex items-center gap-2 bg-[#ee2c3c] text-white">
                 <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-                Online Degree / MBA
+                Online Degree
               </div>
               <div className="px-6 py-4 flex items-center gap-2 bg-slate-800 text-slate-200">
                 <span className="h-2 w-2 rounded-full bg-slate-400" />
@@ -101,9 +101,8 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
                 return (
                   <div
                     key={i}
-                    className={`grid md:grid-cols-[180px_1fr_1fr] gap-3 md:gap-0 p-5 md:p-0 ${
-                      i % 2 === 0 ? "bg-slate-50/50" : "bg-white"
-                    } hover:bg-slate-50 transition-colors`}
+                    className={`grid md:grid-cols-[180px_1fr_1fr] gap-3 md:gap-0 p-5 md:p-0 ${i % 2 === 0 ? "bg-slate-50/50" : "bg-white"
+                      } hover:bg-slate-50 transition-colors`}
                   >
                     {/* Factor Label */}
                     <div className="md:px-6 md:py-4 flex items-center font-bold text-slate-900 text-sm md:text-base border-b md:border-b-0 border-slate-100 pb-2 md:pb-0">

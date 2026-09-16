@@ -168,7 +168,13 @@ export default function UniversitySection() {
   const [showAll, setShowAll] = useState(false);
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState("All");
-  const [uniList, setUniList] = useState<any[]>([]);
+  const [uniList, setUniList] = useState<any[]>(() =>
+    universities.map((u) => ({
+      ...u,
+      id: u.slug,
+      type: "Engineering",
+    }))
+  );
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");

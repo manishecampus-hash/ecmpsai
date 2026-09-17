@@ -8,6 +8,11 @@
     --orange-brand: rgb(239 68 61);
   }
 
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+
   html {
     @apply bg-white;
     scrollbar-color: rgba(0, 0, 0, 0.15) transparent;

@@ -107,48 +107,43 @@ function mapDbBlogToBlog(dbBlog: any) {
   };
 }
 
-async function getBlogBySlug(slug: string) {
+import { cache } from "react";
+
+const getBlogBySlug = cache(async (slug: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  const cleanSlug = slug.replace(/^\/+|\/+$/g, "").toLowerCase().trim();
+
   try {
-    const res = await fetch(`${apiUrl}/blogs`, {
-      next: { revalidate: 10 },
+    const res = await fetch(`${apiUrl}/blogs/by-slug/${encodeURIComponent(cleanSlug)}`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
-      const dbBlogs = await res.json();
-      
-      const normalize = (s: string) => s.replace(/^\/+|\/+$/g, "").toLowerCase().trim();
-      const targetSlug = normalize(slug);
-      
-      const matched = dbBlogs.find((item: any) => normalize(item.url || "") === targetSlug);
-      if (matched) {
-        if (matched.status === "inactive") {
-          return null; // treat inactive blogs as non-existent/not found
-        }
-        return matched;
+      const dbBlog = await res.json();
+      if (dbBlog && dbBlog.id) {
+        if (dbBlog.status === "inactive") return null;
+        return dbBlog;
       }
-    } else {
-      console.error(`Failed to fetch blogs from API: ${res.statusText}`);
     }
   } catch (err) {
-    console.error("Error fetching blog from API:", err);
+    console.error("Error fetching single blog from API:", err);
   }
-  
+
   // Fallback to local mock data
   const mockMatched = blogs.find(
-    (item) => item.slug.trim().toLowerCase() === slug.trim().toLowerCase()
+    (item) => item.slug.trim().toLowerCase() === cleanSlug
   );
   return mockMatched || null;
-}
+});
 
-async function getRelatedBlogs() {
+const getRelatedBlogs = cache(async () => {
   const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
   try {
-    const res = await fetch(`${apiUrl}/blogs`, {
-      next: { revalidate: 10 },
+    const res = await fetch(`${apiUrl}/blogs/related/posts`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const dbBlogs = await res.json();
-      if (dbBlogs && dbBlogs.length > 0) {
+      if (Array.isArray(dbBlogs) && dbBlogs.length > 0) {
         const activeBlogs = dbBlogs.filter((blog: any) => blog.status !== "inactive");
         return activeBlogs.map(mapDbBlogToBlog);
       }
@@ -156,8 +151,8 @@ async function getRelatedBlogs() {
   } catch (err) {
     console.error("Error fetching related blogs:", err);
   }
-  return blogs; // fallback to mock blogs
-}
+  return blogs.slice(0, 4);
+});
 
 export async function generateMetadata({
   params,

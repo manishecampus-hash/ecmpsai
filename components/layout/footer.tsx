@@ -8,70 +8,6 @@ import { Phone, MessageCircle } from "lucide-react";
 import { FooterCta } from "./footer-cta";
 import ChildFooter from "./child-footer";
 
-const navigation = {
-  categories: [
-    {
-      id: "programs",
-      name: "Programs",
-      sections: [
-        {
-          id: "dba",
-          name: "Online DBA Program",
-          items: [
-            { name: "Birchwood University", href: "/degrees/bachelors" },
-            { name: "EIMT", href: "/degrees/masters" },
-            { name: "Swiss School of Business", href: "/degrees/phd" },
-            { name: "ESGCI", href: "/degrees/phd" },
-            { name: "Rushford Business School", href: "/degrees/phd" },
-          ],
-        },
-        {
-          id: "cert",
-          name: "Certificate Program",
-          items: [
-            { name: "IIM K - HR Management", href: "/certifications" },
-            { name: "IIM K-AI Professional", href: "/executive" },
-          ],
-        },
-        {
-          id: "ug",
-          name: "Online UG Courses",
-          items: [
-            { name: "Online BBA", href: "/micro-credentials" },
-            { name: "Online BCA", href: "/mini-courses" },
-            { name: "Online BSC", href: "/corporate-training" },
-          ],
-        },
-        {
-          id: "pg",
-          name: "Online PG Courses",
-          items: [
-            { name: "MBA", href: "/subjects/business" },
-            { name: "MCA", href: "/subjects/technology" },
-            { name: "MA", href: "/subjects/data-science" },
-          ],
-        },
-        {
-          id: "popular",
-          name: "Popular Courses",
-          items: [
-            { name: "IIM K HR Analytics", href: "/about" },
-            { name: "1 Year MBA - O.P Jindal", href: "/blog" },
-          ],
-        },
-        {
-          id: "support",
-          name: "Support",
-          items: [
-            { name: "Help Center", href: "/help" },
-            { name: "Contact", href: "/contact" },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
 const socialLinkClass =
   "flex h-10 w-10 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900/20 text-slate-400 transition-all duration-300 hover:-translate-y-1 hover:border-red-500 hover:bg-red-500/10 hover:text-white";
 
@@ -79,9 +15,7 @@ const contactLinkClass =
   "group relative flex items-center justify-center gap-2 rounded-full border border-slate-800/80 bg-slate-900/20 px-5 py-2.5 transition-all duration-300 hover:bg-slate-900/50";
 
 export function Footer() {
-  const [footerSections, setFooterSections] = useState<any[]>(
-    navigation.categories[0].sections,
-  );
+  const [footerSections, setFooterSections] = useState<any[]>([]);
 
   useEffect(() => {
     const apiUrl =
@@ -98,7 +32,7 @@ export function Footer() {
 
     fetch(`${apiUrl}/menus/footer`)
       .then((res) => {
-        if (!res.ok) throw new Error("Footer menu not found");
+        if (!res.ok) return null;
         return res.json();
       })
       .then((data) => {
@@ -112,9 +46,13 @@ export function Footer() {
             })),
           }));
           setFooterSections(sections);
+        } else {
+          setFooterSections([]);
         }
       })
-      .catch((err) => console.error("Error fetching footer menu:", err));
+      .catch(() => {
+        setFooterSections([]);
+      });
   }, []);
 
   return (

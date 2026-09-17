@@ -604,7 +604,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
-import { categories as defaultCategories } from "@/data/header-menu";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
 import * as LucideIcons from "lucide-react";
@@ -613,14 +612,6 @@ type Student = {
   name?: string;
   email: string;
 };
-
-const navLinks = [
-  { label: "Discover", href: "/discover" },
-  { label: "Compare", href: "/compare" },
-  { label: "Universities", href: "/universities" },
-  { label: "Study", href: "/study" },
-  { label: "Contact Us", href: "/contact-us" },
-];
 
 function CategoryIcon({ icon, className }: { icon: any; className?: string }) {
   if (!icon) return <LucideIcons.BookOpen className={className} />;
@@ -952,11 +943,9 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
-  const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
-  const [programsMenu, setProgramsMenu] = useState<any[]>(defaultCategories);
-  const [activeCat, setActiveCat] = useState<string>(
-    defaultCategories[0]?.id || ""
-  );
+  const [headerNavLinks, setHeaderNavLinks] = useState<any[]>([]);
+  const [programsMenu, setProgramsMenu] = useState<any[]>([]);
+  const [activeCat, setActiveCat] = useState<string>("");
 
   useEffect(() => {
     if (programsMenu && programsMenu.length > 0 && !activeCat) {
@@ -989,10 +978,12 @@ export function Navbar() {
             target: item.target
           }));
           setHeaderNavLinks(links);
+        } else {
+          setHeaderNavLinks([]);
         }
       })
       .catch(() => {
-        // Silently retain default navigation links
+        setHeaderNavLinks([]);
       });
 
     // Fetch Programs Menu
@@ -1020,10 +1011,12 @@ export function Navbar() {
           if (fetchedCats.length > 0) {
             setActiveCat(fetchedCats[0].id);
           }
+        } else {
+          setProgramsMenu([]);
         }
       })
       .catch(() => {
-        // Silently retain defaultCategories
+        setProgramsMenu([]);
       });
   }, []);
 
@@ -1111,7 +1104,7 @@ export function Navbar() {
   };
 
   // Bottom nav links - first 4 items only
-  const bottomNavLinks = navLinks.slice(0, 4);
+  const bottomNavLinks = headerNavLinks.slice(0, 4);
 
   return (
     <>

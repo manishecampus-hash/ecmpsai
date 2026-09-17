@@ -950,3 +950,94 @@ Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.
 [browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-sep-10-2026-04_50_21-pm-1789039234150-gdglqa.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
  GET /sitemap.xml 200 in 10.0s (next.js: 5ms, proxy.ts: 13ms, application-code: 10.0s)
  GET /sitemap.xml 200 in 30.6s (next.js: 135ms, proxy.ts: 9ms, application-code: 30.5s)
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-sep-10-2026-04_50_21-pm-1789039234150-gdglqa.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 5.2s
+ GET /universities 200 in 2.0s (next.js: 88ms, proxy.ts: 354ms, application-code: 1573ms)
+✓ Compiled in 2.8s
+ GET /blog 200 in 4.2s (next.js: 368ms, proxy.ts: 481ms, application-code: 3.4s)
+Redirect proxy error: Error [AbortError]: This operation was aborted
+    at async proxy (proxy.ts:29:17)
+  27 |     const timeoutId = setTimeout(() => controller.abort(), 1500);
+  28 |
+> 29 |     const res = await fetch(requestUrl, {
+     |                 ^
+  30 |       signal: controller.signal,
+  31 |       headers: {
+  32 |         "Accept": "application/json" {
+  code: 20,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+Redirect proxy error: Error [AbortError]: This operation was aborted
+    at async proxy (proxy.ts:29:17)
+  27 |     const timeoutId = setTimeout(() => controller.abort(), 1500);
+  28 |
+> 29 |     const res = await fetch(requestUrl, {
+     |                 ^
+  30 |       signal: controller.signal,
+  31 |       headers: {
+  32 |         "Accept": "application/json" {
+  code: 20,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+✓ Compiled in 37s
+ GET / 200 in 4.0s (next.js: 305ms, proxy.ts: 371ms, application-code: 3.3s)
+ GET /blog 200 in 9.1s (next.js: 3.3s, proxy.ts: 432ms, application-code: 5.3s)
+ GET /blog 200 in 5.1s (next.js: 1471ms, proxy.ts: 2.9s, application-code: 725ms)
+ GET /blog 200 in 23.8s (next.js: 11.5s, proxy.ts: 258ms, application-code: 12.0s)
+ GET /blog 200 in 445ms (next.js: 194ms, proxy.ts: 66ms, application-code: 186ms)
+ GET /blog 200 in 5.7s (next.js: 753ms, proxy.ts: 3.0s, application-code: 1884ms)
+ GET /blog 200 in 796ms (next.js: 19ms, proxy.ts: 62ms, application-code: 716ms)
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames

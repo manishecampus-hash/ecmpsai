@@ -604,7 +604,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
-// import { categories } from "@/data/header-menu";
+import { categories as defaultCategories } from "@/data/header-menu";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
 import * as LucideIcons from "lucide-react";
@@ -953,8 +953,10 @@ export function Navbar() {
   const pathname = usePathname();
 
   const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
-  const [programsMenu, setProgramsMenu] = useState<any[]>([]);
-  const [activeCat, setActiveCat] = useState<string>("");
+  const [programsMenu, setProgramsMenu] = useState<any[]>(defaultCategories);
+  const [activeCat, setActiveCat] = useState<string>(
+    defaultCategories[0]?.id || ""
+  );
 
   useEffect(() => {
     if (programsMenu && programsMenu.length > 0 && !activeCat) {
@@ -976,7 +978,7 @@ export function Navbar() {
     // Fetch Header Links
     fetch(`${apiUrl}/menus/header`)
       .then((res) => {
-        if (!res.ok) throw new Error("Header menu not found");
+        if (!res.ok) return null;
         return res.json();
       })
       .then((data) => {
@@ -989,12 +991,14 @@ export function Navbar() {
           setHeaderNavLinks(links);
         }
       })
-      .catch((err) => console.error("Error fetching header menu:", err));
+      .catch(() => {
+        // Silently retain default navigation links
+      });
 
     // Fetch Programs Menu
     fetch(`${apiUrl}/menus/programs`)
       .then((res) => {
-        if (!res.ok) throw new Error("Programs menu not found");
+        if (!res.ok) return null;
         return res.json();
       })
       .then((data) => {
@@ -1016,13 +1020,10 @@ export function Navbar() {
           if (fetchedCats.length > 0) {
             setActiveCat(fetchedCats[0].id);
           }
-        } else {
-          setProgramsMenu([]);
         }
       })
-      .catch((err) => {
-        console.error("Error fetching programs menu:", err);
-        setProgramsMenu([]);
+      .catch(() => {
+        // Silently retain defaultCategories
       });
   }, []);
 

@@ -1,116 +1,21 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { Handshake } from "lucide-react";
-// import { universities } from "@/data/universities";
-
-// const DESKTOP_INITIAL_COUNT = 15;
-// const MOBILE_INITIAL_COUNT = 6;
-
-// export default function UniversitySection() {
-//   const [isMobile, setIsMobile] = useState(false);
-//   const [showAll, setShowAll] = useState(false);
-
-//   useEffect(() => {
-//     const mediaQuery = window.matchMedia("(max-width: 639px)");
-//     const updateIsMobile = () => setIsMobile(mediaQuery.matches);
-//     updateIsMobile();
-//     mediaQuery.addEventListener("change", updateIsMobile);
-//     return () => mediaQuery.removeEventListener("change", updateIsMobile);
-//   }, []);
-
-//   const initialCount = isMobile ? MOBILE_INITIAL_COUNT : DESKTOP_INITIAL_COUNT;
-//   const displayedUniversities = showAll
-//     ? universities
-//     : universities.slice(0, initialCount);
-
-//   return (
-//     <section className="w-full py-12 px-4 bg-white">
-//       <div className="text-center mb-8">
-//         <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-//           <Handshake className="h-3.5 w-3.5 text-red-500" />
-//           University
-//         </span>
-
-//         <h2 className="mt-2 text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl md:text-4xl">
-//           Our Partner <span className="text-red-500">Universities</span>
-//         </h2>
-
-//         <div className="h-1 w-12 bg-red-600 mx-auto mt-3 rounded-full" />
-//       </div>
-
-//       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto">
-//         {displayedUniversities.map((uni, index) => (
-//           <Link
-//             key={index}
-//             href={`/universities/${uni.slug}`}
-//             className="group flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all duration-300"
-//           >
-//             <div className="w-full h-14 flex items-center justify-center mb-2">
-//               <div className="relative w-full h-full">
-//                 <Image
-//                   src={uni.image}
-//                   alt={uni.name}
-//                   fill
-//                   className="object-contain group-hover:scale-105 transition-transform duration-300"
-//                 />
-//               </div>
-//             </div>
-
-//             <h3 className="text-[11px] sm:text-xs font-medium text-gray-800 text-center leading-snug line-clamp-2 min-h-[28px]">
-//               {uni.name}
-//             </h3>
-
-//             <span className="mt-1 text-[9px] text-gray-400 uppercase tracking-wide">
-//               {uni.location}
-//             </span>
-//           </Link>
-//         ))}
-//       </div>
-
-//       {universities.length > initialCount && (
-//         <div className="text-center mt-8">
-//           <button
-//             onClick={() => setShowAll((prev) => !prev)}
-//             className="inline-flex items-center gap-2 px-5 py-2 bg-red-600 text-white rounded-full text-[11px] font-semibold hover:bg-red-700 transition-colors duration-300"
-//           >
-//             {showAll ? "See Less" : "View More"}
-//           </button>
-//         </div>
-//       )}
-//     </section>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Handshake, Search, X, MapPin, Globe, ChevronDown } from "lucide-react";
+import { Handshake, Search, X, MapPin, Globe } from "lucide-react";
 import { universities } from "@/data/universities";
 
-const DESKTOP_INITIAL_COUNT = 15;
-const MOBILE_INITIAL_COUNT = 6;
+const DESKTOP_PAGE_SIZE = 15;
+const MOBILE_PAGE_SIZE = 6;
 
-const TYPE_FILTERS = [
-  "All",
-  "Engineering",
-  "Business",
-  "Arts",
-  "Medicine",
-  "Law",
-];
-
-// Icon map for location icons - LARGER SIZE
+// Icon map for location icons
 const iconMap: Record<string, React.ReactNode> = {
-  MapPin: <MapPin className="w-4 h-4 shrink-0" />,
-  Globe: <Globe className="w-4 h-4 shrink-0" />,
+  MapPin: <MapPin className="w-3.5 h-3.5 shrink-0" />,
+  Globe: <Globe className="w-3.5 h-3.5 shrink-0" />,
 };
 
-// Region color mapping - LIGHT BACKGROUND WITH COLORED TEXT
+// Region color mapping
 const regionBgColor: Record<string, string> = {
   "North India": "bg-red-50 text-red-700 hover:bg-red-100",
   "South India": "bg-green-50 text-green-700 hover:bg-green-100",
@@ -165,9 +70,8 @@ function getRegionFromLocation(loc: string): string {
 
 export default function UniversitySection() {
   const [isMobile, setIsMobile] = useState(false);
-  const [showAll, setShowAll] = useState(false);
   const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(DESKTOP_PAGE_SIZE);
   const [uniList, setUniList] = useState<any[]>(() =>
     universities.map((u) => ({
       ...u,
@@ -175,6 +79,8 @@ export default function UniversitySection() {
       type: "Engineering",
     }))
   );
+
+  const pageSize = isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE;
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
@@ -220,7 +126,7 @@ export default function UniversitySection() {
               region,
               locationIcon,
               slug,
-              type: "Engineering", // fallback filter
+              type: "Engineering",
             };
           });
           setUniList(mapped);
@@ -234,29 +140,29 @@ export default function UniversitySection() {
       });
   }, []);
 
-  // Reset pagination on any filter change
-  useEffect(() => {
-    setShowAll(false);
-  }, [query, activeType]);
-
+  // Filtered universities based on search query
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return uniList.filter((u) => {
-      const matchSearch =
-        !q ||
+    if (!q) return uniList;
+    return uniList.filter(
+      (u) =>
         u.name.toLowerCase().includes(q) ||
-        (u.location ?? "").toLowerCase().includes(q);
-      const matchType = activeType === "All" || (u as any).type === activeType;
-      return matchSearch && matchType;
-    });
-  }, [uniList, query, activeType]);
+        (u.location ?? "").toLowerCase().includes(q) ||
+        (u.region ?? "").toLowerCase().includes(q)
+    );
+  }, [uniList, query]);
 
-  const initialCount = isMobile ? MOBILE_INITIAL_COUNT : DESKTOP_INITIAL_COUNT;
-  const displayed = showAll ? filtered : filtered.slice(0, initialCount);
+  // Reset pagination whenever search query or device mode changes
+  useEffect(() => {
+    setVisibleCount(isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE);
+  }, [query, isMobile]);
+
+  const displayed = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <section className="w-full py-12 px-4 bg-white">
-      {/* ── Header (unchanged) ── */}
+      {/* ── Header ── */}
       <div className="text-center mb-8">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
           <Handshake className="h-3.5 w-3.5 text-red-500" />
@@ -268,26 +174,51 @@ export default function UniversitySection() {
         <div className="h-1 w-12 bg-red-600 mx-auto mt-3 rounded-full" />
       </div>
 
-      {/* ── Search + Filter Row ── */}
-      <div className="max-w-6xl mx-auto mb-6 space-y-3">
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Search bar - fixed compact width, no more awkward stretch */}
+      {/* ── Search Bar & Counter ── */}
+      <div className="max-w-xl mx-auto mb-8">
+        <div className="relative flex items-center">
+          <Search className="absolute left-4 h-4 w-4 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search university by name, city or state..."
+            className="w-full pl-11 pr-10 py-3 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100 transition-all"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="absolute right-3.5 p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
-        {/* Result count */}
-        <p className="text-[11px] text-gray-400 text-center">
-          {filtered.length}{" "}
-          {filtered.length === 1 ? "university" : "universities"} found
+        {/* Result summary */}
+        <p className="mt-2.5 text-xs text-gray-500 text-center">
+          Showing {Math.min(visibleCount, filtered.length)} of {filtered.length}{" "}
+          {filtered.length === 1 ? "university" : "universities"}
+          {query && ` matching "${query}"`}
         </p>
       </div>
 
-      {/* ── Grid with Modern Pill Location ── */}
+      {/* ── Grid with Location Badges ── */}
       {filtered.length === 0 ? (
-        <p className="text-center text-sm text-gray-400 py-16">
-          No universities match your search. Try different filters.
-        </p>
+        <div className="py-16 text-center max-w-md mx-auto">
+          <p className="text-sm font-medium text-gray-600">
+            No universities found matching &ldquo;{query}&rdquo;
+          </p>
+          <button
+            onClick={() => setQuery("")}
+            className="mt-3 inline-flex items-center text-xs font-semibold text-red-600 hover:text-red-700 underline"
+          >
+            Clear search filters
+          </button>
+        </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
           {displayed.map((uni, index) => {
             const bgColor =
               regionBgColor[uni.region] ||
@@ -295,9 +226,9 @@ export default function UniversitySection() {
 
             return (
               <Link
-                key={index}
+                key={uni.id || index}
                 href={`/universities/${uni.slug}`}
-                className="group flex flex-col items-center justify-center p-2 rounded-xl border border-gray-100 bg-white hover:shadow-lg transition-all duration-300 hover:border-red-300"
+                className="group flex flex-col items-center justify-between p-3 rounded-xl border border-gray-100 bg-white hover:shadow-lg transition-all duration-300 hover:border-red-300"
               >
                 <div className="w-full h-14 flex items-center justify-center mb-2">
                   <div className="relative w-full h-full">
@@ -309,16 +240,16 @@ export default function UniversitySection() {
                     />
                   </div>
                 </div>
-                <h3 className="text-[11px] sm:text-xs font-medium text-gray-800 text-center leading-snug line-clamp-2 min-h-[28px]">
+                <h3 className="text-[11px] sm:text-xs font-medium text-gray-800 text-center leading-snug line-clamp-2 min-h-[28px] w-full">
                   {uni.name}
                 </h3>
 
-                {/* ── MODERN PILL LOCATION BADGE ── */}
+                {/* ── Location Badge ── */}
                 <div
-                  className={`mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-full font-semibold text-[9px] uppercase tracking-wide transition-all duration-300 group-hover:shadow-md ${bgColor}`}
+                  className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold text-[9px] uppercase tracking-wide transition-all duration-300 group-hover:shadow-sm ${bgColor}`}
                 >
                   {iconMap[uni.locationIcon]}
-                  <span>{uni.location}</span>
+                  <span className="truncate max-w-[120px]">{uni.location}</span>
                 </div>
               </Link>
             );
@@ -326,14 +257,14 @@ export default function UniversitySection() {
         </div>
       )}
 
-      {/* ── View More / See Less (unchanged) ── */}
-      {filtered.length > initialCount && (
-        <div className="text-center mt-8">
+      {/* ── Load More Pagination Button ── */}
+      {hasMore && (
+        <div className="text-center mt-10">
           <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="inline-flex items-center gap-2 px-5 py-2 bg-red-600 text-white rounded-full text-[11px] font-semibold hover:bg-red-700 transition-colors duration-300"
+            onClick={() => setVisibleCount((prev) => prev + pageSize)}
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-full text-xs font-semibold hover:bg-red-700 shadow-sm hover:shadow-md transition-all duration-300 active:scale-95"
           >
-            {showAll ? "See Less" : "View More"}
+            Load More Universities ({filtered.length - visibleCount} remaining)
           </button>
         </div>
       )}

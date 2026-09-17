@@ -9,6 +9,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-nunito)', 'sans-serif'],
+        heading: ['var(--font-quicksand)', 'sans-serif'],
+        nunito: ['var(--font-nunito)', 'sans-serif'],
+        quicksand: ['var(--font-quicksand)', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

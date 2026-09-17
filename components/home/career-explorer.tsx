@@ -627,7 +627,7 @@ const CareerExplorer = () => {
   return (
     <>
       <section className="relative z-10 w-full">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16">
           {/* Header */}
           <div className="mb-6 text-center">
             <span className="inline-flex items-center gap-1 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">

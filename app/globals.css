@@ -15,12 +15,14 @@
 
   body {
     @apply bg-white text-gray-900;
-    * {
-      font-family: var(--font-inter);
-    }
+    font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-quicksand), var(--font-nunito), sans-serif;
   }
 
   input,
@@ -305,16 +307,29 @@
   border-color: #e5e7eb !important;
 }
 
-/* Force Inter Font Globally */
+/* Typography: Nunito for body, Quicksand for headings */
 body,
-body * {
-  font-family: var(--font-inter);
+body button,
+body input,
+body textarea,
+body select {
+  font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Force Inter, Inter Fallback for About Us Section */
-#why,
-#why * {
-  font-family: "Inter", "Inter Fallback", sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-quicksand), var(--font-nunito), sans-serif;
+}
+
+/* Force any legacy hardcoded Inter classes or styles to use Nunito */
+.font-\[Inter\],
+[class*="font-[Inter]"] {
+  font-family: var(--font-nunito), sans-serif !important;
 }
 
 

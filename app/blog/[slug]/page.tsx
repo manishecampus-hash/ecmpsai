@@ -100,7 +100,7 @@ function mapDbBlogToBlog(dbBlog: any) {
     readTime,
     reads: typeof dbBlog.view === "number" ? `${dbBlog.view} Reads` : "0 Reads",
     view: typeof dbBlog.view === "number" ? String(dbBlog.view) : "0",
-    slug: dbBlog.url || "",
+    slug: (dbBlog.url || dbBlog.slug || "").replace(/^\/+|\/+$/g, ""),
     tags: dbBlog.tags || [],
     headings,
     content: html,

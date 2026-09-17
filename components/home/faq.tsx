@@ -52,7 +52,7 @@ export default function FAQ({ items }: { items?: { question: string; answer: str
 
   return (
     <Section className="!m-0 !mt-0 !mb-0 !p-0 !pt-0 !pb-0 w-full bg-white">
-      <div className="mx-auto w-full max-w-7xl !m-0 mx-auto px-4 sm:px-6 lg:px-16 font-[Inter] !pb-0 !mb-0">
+      <div className="mx-auto w-full max-w-7xl !m-0 mx-auto px-4 sm:px-6 lg:px-16 !pb-0 !mb-0">
         {/* FAQ Grid Wrapper */}
         <div className="grid gap-6 !mb-0 lg:grid-cols-12 lg:items-start">
           

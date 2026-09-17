@@ -701,9 +701,9 @@ const carouselRef = useRef<HTMLDivElement>(null);
         }
       `}</style>
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16 font-[Inter]">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16">
         {/* Header */}
-        <div className="text-center mb-8 font-[Inter]">
+        <div className="text-center mb-8">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <GraduationCap className="h-3.5 w-3.5 text-red-500" />
             In-Demand Courses

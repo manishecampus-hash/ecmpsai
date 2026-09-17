@@ -203,7 +203,7 @@ export default function UniversitySection() {
         <div className="max-w-3xl mx-auto mb-10 space-y-4">
           {/* Search Box */}
           <div className="relative flex items-center">
-            <Search className="absolute left-4.5 h-4 w-4 text-slate-400 pointer-events-none" />
+            <Search className="absolute left-5 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
               value={query}

@@ -588,6 +588,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   UserCircle,
   ChevronDown,
@@ -601,6 +602,7 @@ import {
   BookOpen,
   Building2,
   Phone,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignupModal } from "@/components/layout/signup-modal";
@@ -906,14 +908,24 @@ function MobileDrawer({
                   Hi, {displayName}
                 </span>
               </div>
+              <Link href="/dashboard" onClick={onClose}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-700"
+                >
+                  <UserCircle className="w-4 h-4 mr-2" />
+                  Profile
+                </Button>
+              </Link>
               <Button
                 onClick={() => {
                   onLogout();
                   onClose();
                 }}
                 variant="ghost"
-                className="w-full justify-start text-gray-700"
+                className="w-full justify-start text-red-600 hover:text-red-700"
               >
+                <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
             </>
@@ -950,6 +962,9 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
@@ -1085,10 +1100,37 @@ export function Navbar() {
     return () => window.removeEventListener("open-signup", handleOpenSignup);
   }, []);
 
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+
+    const handleClickOutsideProfile = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutsideProfile);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutsideProfile);
+  }, [profileMenuOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("ecampus_student");
     window.dispatchEvent(new Event("ecampus-auth-change"));
     setStudent(null);
+  };
+
+  const requestLogout = () => {
+    setProfileMenuOpen(false);
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    handleLogout();
+    setShowLogoutConfirm(false);
   };
 
   const isActive = (href: string) => {
@@ -1231,21 +1273,48 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               {/* Desktop auth */}
               {student ? (
-                <div className="hidden sm:flex items-center gap-3">
-                  <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5">
+                <div
+                  ref={profileMenuRef}
+                  className="relative hidden sm:block"
+                  onMouseEnter={() => setProfileMenuOpen(true)}
+                  onMouseLeave={() => setProfileMenuOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setProfileMenuOpen((v) => !v)}
+                    className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 transition-colors hover:bg-gray-100"
+                  >
                     <UserCircle className="w-4 h-4 text-indigo-600" />
                     <span className="text-sm font-semibold text-gray-900">
                       Hi, {displayName}
                     </span>
-                  </div>
-                  <Button
-                    onClick={handleLogout}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Logout
-                  </Button>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-gray-400 transition-transform ${
+                        profileMenuOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 top-full mt-1 w-44 rounded-xl border border-gray-100 bg-white py-1.5 shadow-lg z-50">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-2 px-3.5 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <UserCircle className="w-4 h-4 text-gray-400" />
+                        Profile
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={requestLogout}
+                        className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2"> 
@@ -1304,7 +1373,7 @@ export function Navbar() {
         onClose={closeAll}
         student={student}
         displayName={displayName}
-        onLogout={handleLogout}
+        onLogout={requestLogout}
         onSignup={() => setShowSignupModal(true)}
         pathname={pathname}
         navLinks={headerNavLinks}
@@ -1318,6 +1387,69 @@ export function Navbar() {
         onClose={() => setShowSignupModal(false)}
         onSwitchToLogin={() => setShowSignupModal(false)}
       />
+
+      {/* Logout confirmation */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowLogoutConfirm(false)}
+            />
+            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.92, y: 10 }}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-white p-7 text-center shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Decorative glow */}
+                <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-red-100 blur-2xl" />
+
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.08, type: "spring", stiffness: 400, damping: 18 }}
+                  className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 ring-8 ring-red-50/60"
+                >
+                  <LogOut className="h-7 w-7 text-red-600" />
+                </motion.div>
+
+                <h3 className="relative mt-5 text-xl font-bold text-gray-900">
+                  Log out?
+                </h3>
+                <p className="relative mt-1.5 text-sm leading-relaxed text-gray-500">
+                  Do you want to logout of your eCampus account?
+                </p>
+
+                <div className="relative mt-6 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowLogoutConfirm(false)}
+                    className="flex-1 rounded-full border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmLogout}
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-red-600 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/25 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/30"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    Yes, Logout
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Navbar } from "@/components/layout/navbar";
+import { AppShell } from "@/components/layout/app-shell";
 import Script from "next/script";
 
 const inter = Inter({
@@ -64,9 +64,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <Navbar />
-
-          <main className="flex-1 pt-16">{children}</main>
+          <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>

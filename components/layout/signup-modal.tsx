@@ -2590,14 +2590,18 @@
 
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   X,
   ArrowLeft,
   ChevronDown,
   ArrowRight,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { courseOptions } from "@/data/course-options";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -2618,13 +2622,15 @@ const countryCodes = [
   { code: "+81", flag: "🇯🇵", name: "JP" },
 ];
 
-type Step = "phone" | "otp";
+type Step = "phone" | "otp" | "details";
 type SignupMode = "mobile" | "email";
 
 export function SignupModal({
   isOpen,
   onClose,
 }: SignupModalProps) {
+  const router = useRouter();
+
   const [step, setStep] = useState<Step>("phone");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
@@ -2637,6 +2643,31 @@ export function SignupModal({
   const [resendCooldown, setResendCooldown] = useState(0);
   const [assuredOptIn, setAssuredOptIn] = useState(false);
   const [mode, setMode] = useState<SignupMode>("mobile");
+
+  // ── Details step (shown once OTP is verified) ──
+  const [courses, setCourses] = useState<string[]>([]);
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [showReferral, setShowReferral] = useState(false);
+  const [whatsappOptIn, setWhatsappOptIn] = useState(true);
+  const coursesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!coursesOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        coursesRef.current &&
+        !coursesRef.current.contains(event.target as Node)
+      ) {
+        setCoursesOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, [coursesOpen]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -2726,13 +2757,8 @@ export function SignupModal({
         throw new Error(data.message || "Verification failed");
       }
 
-      localStorage.setItem(
-        "ecampus_student",
-        JSON.stringify({ phone: fullPhone }),
-      );
-
-      window.dispatchEvent(new Event("ecampus-auth-change"));
-      onClose();
+      // OTP verified — move to the details step to finish onboarding.
+      setStep("details");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -2812,6 +2838,45 @@ export function SignupModal({
     setError("");
   };
 
+  const toggleCourse = (course: string) => {
+    setCourses((prev) =>
+      prev.includes(course)
+        ? prev.filter((c) => c !== course)
+        : [...prev, course],
+    );
+  };
+
+  const handleDetailsSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    const student = {
+      name: name.trim(),
+      email: email.trim(),
+      phone: mode === "mobile" ? fullPhone : undefined,
+      coursesInterested: courses,
+      referralCode: referralCode.trim() || undefined,
+      whatsappOptIn,
+      joinedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("ecampus_student", JSON.stringify(student));
+    window.dispatchEvent(new Event("ecampus-auth-change"));
+
+    onClose();
+    router.push("/dashboard");
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -2822,19 +2887,16 @@ export function SignupModal({
 
       {/* Modal wrapper */}
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
-        <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
-          {/* Fixed / stable modal size */}
+        <div
+          className={`flex min-h-full items-center justify-center p-3 sm:p-4 ${
+            step === "details" ? "pt-24 sm:pt-28" : ""
+          }`}
+        >
+          {/* Fixed / stable modal size — identical for every step */}
           <div
-            className="
-              relative
-              w-full
-              max-w-[380px]
-              min-h-[430px]
-              overflow-hidden
-              rounded-2xl
-              bg-white
-              shadow-2xl
-            "
+            className={`relative w-full min-h-[430px] overflow-hidden rounded-2xl bg-white shadow-2xl ${
+              step === "details" ? "max-w-[440px]" : "max-w-[380px]"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
@@ -2879,8 +2941,25 @@ export function SignupModal({
               </button>
             )}
 
-            <div className="flex min-h-[430px] flex-col bg-white px-5 py-6 sm:px-7 sm:py-7">
-              <div className="mx-auto flex w-full max-w-[330px] flex-1 flex-col">
+            {/* Flip transition between steps */}
+            <div style={{ perspective: 1200 }}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, rotateY: -90 }}
+                  animate={{ opacity: 1, rotateY: 0 }}
+                  exit={{ opacity: 0, rotateY: 90 }}
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
+                  className={`flex min-h-[430px] flex-col bg-white px-5 sm:px-7 ${
+                    step === "details" ? "py-5 sm:py-6" : "py-6 sm:py-7"
+                  }`}
+                >
+              <div
+                className={`mx-auto flex w-full flex-1 flex-col ${
+                  step === "details" ? "max-w-[380px]" : "max-w-[330px]"
+                }`}
+              >
                 {/* Logo */}
                 <div className="flex justify-center">
                   <img
@@ -2893,19 +2972,23 @@ export function SignupModal({
                 {/* Heading */}
                 <div className="mt-4">
                   <h2 className="text-center text-xl font-bold leading-tight text-gray-900 sm:text-2xl">
-                    {step === "otp"
-                      ? "Enter OTP"
-                      : mode === "email"
-                        ? "Create Account"
-                        : "Welcome to eCampus!"}
+                    {step === "details"
+                      ? "Enter your details to get started"
+                      : step === "otp"
+                        ? "Enter OTP"
+                        : mode === "email"
+                          ? "Create Account"
+                          : "Welcome to eCampus!"}
                   </h2>
 
                   <p className="mx-auto mt-1.5 max-w-[300px] text-center text-sm leading-5 text-gray-600">
-                    {step === "otp"
-                      ? `OTP sent to ${fullPhone}`
-                      : mode === "email"
-                        ? "Complete your details to continue."
-                        : "Create your account to explore top online programs"}
+                    {step === "details"
+                      ? "You're verified! Tell us a bit about yourself."
+                      : step === "otp"
+                        ? `OTP sent to ${fullPhone}`
+                        : mode === "email"
+                          ? "Complete your details to continue."
+                          : "Create your account to explore top online programs"}
                   </p>
                 </div>
 
@@ -3241,8 +3324,146 @@ export function SignupModal({
                   </form>
                 )}
 
+                {/* Details (post-OTP onboarding) */}
+                {step === "details" && (
+                  <form
+                    onSubmit={handleDetailsSubmit}
+                    className="mt-4 flex flex-col gap-3"
+                  >
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-xs font-semibold text-gray-500">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          autoComplete="name"
+                          placeholder="Enter your full name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                          autoFocus
+                          className="h-[46px] w-full rounded-xl border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-xs font-semibold text-gray-500">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="h-[46px] w-full rounded-xl border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                        />
+                      </div>
+                    </div>
+
+                    <div ref={coursesRef} className="relative">
+                      <label className="mb-1 block text-xs font-semibold text-gray-500">
+                        Course Interested
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => setCoursesOpen((v) => !v)}
+                        className="flex h-[46px] w-full items-center justify-between rounded-xl border border-gray-300 bg-white px-3.5 text-left text-sm outline-none transition-all focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                      >
+                        <span
+                          className={
+                            courses.length
+                              ? "truncate text-gray-900"
+                              : "text-gray-400"
+                          }
+                        >
+                          {courses.length
+                            ? courses.join(", ")
+                            : "Select courses"}
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 flex-shrink-0 text-gray-400 transition-transform ${
+                            coursesOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+
+                      {coursesOpen && (
+                        <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-10 max-h-56 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg">
+                          {courseOptions.map((course) => {
+                            const selected = courses.includes(course);
+                            return (
+                              <button
+                                key={course}
+                                type="button"
+                                onClick={() => toggleCourse(course)}
+                                className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-gray-700 transition hover:bg-red-50"
+                              >
+                                <span
+                                  className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border ${
+                                    selected
+                                      ? "border-red-600 bg-red-600 text-white"
+                                      : "border-gray-300"
+                                  }`}
+                                >
+                                  {selected && <Check className="h-3 w-3" />}
+                                </span>
+                                {course}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {!showReferral ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowReferral(true)}
+                        className="text-left text-sm font-semibold text-red-600 hover:text-red-700 hover:underline"
+                      >
+                        Have a Referral Code?
+                      </button>
+                    ) : (
+                      <div>
+                        <label className="mb-1 block text-xs font-semibold text-gray-500">
+                          Referral Code
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter referral code"
+                          value={referralCode}
+                          onChange={(e) => setReferralCode(e.target.value)}
+                          className="h-[46px] w-full rounded-xl border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                        />
+                      </div>
+                    )}
+
+                    <label className="flex cursor-pointer items-center gap-2.5 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={whatsappOptIn}
+                        onChange={(e) => setWhatsappOptIn(e.target.checked)}
+                        className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
+                      />
+                      Send me updates on Whatsapp
+                    </label>
+
+                    <Button
+                      type="submit"
+                      className="mt-1 h-12 w-full rounded-full bg-red-600 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/30"
+                    >
+                      Get Started
+                    </Button>
+                  </form>
+                )}
+
                 {/* Terms */}
-                <div className="mt-auto pt-6">
+                <div className={`mt-auto ${step === "details" ? "pt-4" : "pt-6"}`}>
                   <p className="mx-auto max-w-[310px] text-center text-[11px] leading-[17px] text-gray-600 sm:text-xs">
                     By continuing, you agree to our{" "}
                     <a
@@ -3261,6 +3482,8 @@ export function SignupModal({
                   </p>
                 </div>
               </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>

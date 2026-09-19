@@ -58,7 +58,7 @@ export function Footer() {
   return (
     <footer
       id="footer"
-      className="relative mt-6 w-full bg-gradient-to-b from-[#0F131E] to-[#080B11] border-t border-slate-800/60 sm:mt-8 lg:mt-10"
+      className="relative mt-6 w-full bg-gradient-to-b from-[#0F131E] to-[#080B11] border-t border-slate-800/60 sm:mt-8 lg:mt-10 font-nunito"
     >
       <div className="relative mx-auto flex max-w-[1440px] flex-col gap-8 px-4 pb-0 pt-10 sm:px-6 sm:pt-12 lg:px-8">
         <div className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">

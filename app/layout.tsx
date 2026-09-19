@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Quicksand } from "next/font/google";
+import { Inter, Quicksand, Nunito } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/layout/navbar";
 import Script from "next/script";
@@ -17,6 +17,13 @@ const quicksand = Quicksand({
   display: "swap",
   variable: "--font-quicksand",
   weight: ["500", "600", "700"],
+});
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-nunito",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${quicksand.variable} font-sans`}
+      className={`${inter.variable} ${quicksand.variable} ${nunito.variable} font-sans`}
       suppressHydrationWarning
     >
       <head>

@@ -13,7 +13,7 @@ const config: Config = {
         sans: ['var(--font-inter)', 'sans-serif'],
         inter: ['var(--font-inter)', 'sans-serif'],
         heading: ['var(--font-quicksand)', 'var(--font-inter)', 'sans-serif'],
-        nunito: ['var(--font-inter)', 'sans-serif'],
+        nunito: ['var(--font-nunito)', 'sans-serif'],
         quicksand: ['var(--font-quicksand)', 'sans-serif'],
       },
       backgroundImage: {

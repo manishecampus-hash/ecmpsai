@@ -710,6 +710,7 @@ import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  CheckCircle2,
   Quote,
   Star,
   Trophy,
@@ -759,8 +760,8 @@ function ProfileAvatar({
 }) {
   const sizeClass =
     size === "large"
-      ? "h-32 w-32 text-3xl"
-      : "h-9 w-9 text-[10px]";
+      ? "h-24 w-24 sm:h-28 sm:w-28 text-2xl"
+      : "h-full w-full text-[10px]";
 
   return (
     <div
@@ -798,98 +799,80 @@ function FeaturedGraduate({
   onOpen: (graduate: GraduateTestimonialT) => void;
 }) {
   return (
-    <div className="relative mx-auto w-full max-w-[980px]">
-      <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_25px_70px_rgba(15,23,42,0.10)]">
+    <div className="relative mx-auto w-full max-w-[880px]">
+      <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)] hover:shadow-[0_18px_48px_rgba(15,23,42,0.1)] transition-all duration-300">
+        {/* Top Accent Line */}
+        <div className="h-1 w-full bg-gradient-to-r from-red-500/20 via-red-500 to-red-500/20" />
 
-        {/* Top Accent */}
-        <div className="h-1 w-full bg-gradient-to-r from-transparent via-red-500 to-transparent" />
-
-        <div className="grid min-h-[430px] md:grid-cols-[0.9fr_1.5fr]">
-
+        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] divide-y md:divide-y-0 md:divide-x divide-slate-100">
           {/* =================================================
-              LEFT PROFILE
+              LEFT PROFILE COLUMN
           ================================================= */}
-
-          <div className="relative flex flex-col items-center justify-center overflow-hidden bg-white px-8 py-10 text-center md:px-10">
-
+          <div className="relative flex flex-col items-center justify-center bg-slate-50/50 md:bg-white p-7 text-center">
             {/* DP */}
-            <div className="relative mb-5">
-              <div className="absolute -inset-2 rounded-full border border-red-200" />
-
-              <div className="relative h-32 w-32 overflow-hidden rounded-full border-[6px] border-white bg-white shadow-lg">
-                <ProfileAvatar
-                  graduate={graduate}
-                  size="large"
-                />
+            <div className="relative mb-3.5">
+              <div className="relative h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-full ring-4 ring-red-100/70 p-1 bg-white shadow-sm transition-transform duration-300 group-hover:scale-105">
+                <ProfileAvatar graduate={graduate} size="large" />
               </div>
             </div>
 
-            <h3 className="relative text-lg font-extrabold text-slate-900">
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-snug">
               {graduate.name}
             </h3>
 
-            <p className="relative mt-1 text-sm font-medium text-slate-500">
+            <p className="mt-0.5 text-xs sm:text-sm font-medium text-slate-500">
               {graduate.role}
             </p>
 
-            <div className="relative mt-4">
+            <div className="mt-2.5">
               <StarRating rating={graduate.rating} />
             </div>
+
+            <span className="mt-3.5 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10.5px] font-semibold text-emerald-700 border border-emerald-200/60 shadow-2xs">
+              <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Verified Graduate
+            </span>
           </div>
 
           {/* =================================================
-              RIGHT TESTIMONIAL
+              RIGHT TESTIMONIAL COLUMN
           ================================================= */}
-
-          <div className="relative flex flex-col justify-center px-7 py-10 sm:px-10 md:px-14">
-
-            {/* Quote */}
-            <div className="absolute right-8 top-7 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-red-500">
-              <Quote
-                className="h-8 w-8"
-                fill="currentColor"
-              />
-            </div>
-
-            {/* Label */}
-            <div className="mb-5 flex items-center gap-2">
-              <span className="h-1.5 w-8 rounded-full bg-red-500" />
-
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-red-500">
+          <div className="relative flex flex-col justify-between p-7 sm:p-9 lg:p-10">
+            {/* Header: Badge & Quote Icon */}
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50/70 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
                 Graduate Experience
-              </span>
+              </div>
+
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-500 shadow-2xs">
+                <Quote className="h-4 w-4 fill-current" />
+              </div>
             </div>
 
-            {/* Testimonial */}
-            <p className="max-w-[690px] text-lg font-semibold leading-[1.65] text-slate-800 sm:text-xl md:text-2xl">
+            {/* Testimonial Quote */}
+            <blockquote className="my-2 sm:my-3 text-lg sm:text-xl lg:text-2xl font-bold leading-relaxed text-slate-800 tracking-tight">
               "{graduate.testimonial}"
-            </p>
+            </blockquote>
 
-            {/* Bottom */}
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-6">
-
+            {/* Bottom Meta & Read Full Story */}
+            <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-bold text-slate-900">
+                <p className="text-xs sm:text-sm font-bold text-slate-900">
                   Career transformation
                 </p>
-
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500">
                   Real experience from our graduate community
                 </p>
               </div>
 
-              {/* =================================================
-                  READ FULL STORY
-              ================================================= */}
-
               <button
                 type="button"
                 onClick={() => onOpen(graduate)}
-                className="rounded-full border border-red-500 bg-white px-5 py-2.5 text-xs font-bold text-red-500 transition hover:bg-red-500 hover:text-white"
+                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-red-500 bg-white px-5 py-2 text-xs font-bold text-red-600 shadow-2xs hover:bg-red-500 hover:text-white transition-all duration-200 active:scale-95 group/btn"
               >
                 Read Full Story
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-0.5" />
               </button>
-
             </div>
           </div>
         </div>
@@ -935,22 +918,12 @@ export function GraduatesMarquee({
   ======================================================= */
 
   const previous = () => {
-    setActiveIndex((prev) => {
-      if (prev === 0) {
-        return graduates.length - 1;
-      }
-
-      return prev - 1;
-    });
+    setActiveIndex((prev) => (prev === 0 ? graduates.length - 1 : prev - 1));
   };
 
   const next = () => {
-    setActiveIndex((prev) => {
-      return (prev + 1) % graduates.length;
-    });
-  };
-
-  /* =======================================================
+    setActiveIndex((prev) => (prev + 1) % graduates.length);
+  };  /* =======================================================
      CLOSE MODAL WITH ESC
   ======================================================= */
 
@@ -976,34 +949,36 @@ export function GraduatesMarquee({
           TESTIMONIAL SECTION
       ===================================================== */}
 
-      <section className="relative w-full overflow-hidden bg-white">
+      <section className="relative w-full overflow-hidden bg-gradient-to-b from-white via-slate-50/40 to-white py-12 sm:py-16 lg:py-20">
+        {/* Subtle ambient decorative glows */}
+        <div className="pointer-events-none absolute -left-20 top-16 h-60 w-60 rounded-full bg-red-100/30 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 bottom-10 h-60 w-60 rounded-full bg-red-100/25 blur-3xl" />
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16">
-
           {/* =================================================
               HEADER
           ================================================= */}
+          <div className="mb-10 sm:mb-12 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200/80 bg-red-50/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600 shadow-2xs">
+              <Trophy className="h-3.5 w-3.5 text-red-500" />
+              Success Stories
+            </span>
 
-          <div className="mb-6 text-center">
-
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-red-500 shadow-sm">
-              <Trophy className="h-4 w-4" />
-
-             
-            </div>
-
-
- <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-               Success Stories What Our{" "}
-              <span className="text-red-500">Graduates</span>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              Success Stories — What Our{" "}
+              <span className="text-red-500">Graduates Say</span>
             </h2>
 
+            <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-normal">
+              Real career transformations, student experiences, and reviews from our alumni community.
+            </p>
+
+            <div className="h-1 w-12 bg-red-500 mx-auto mt-3.5 rounded-full shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
           </div>
 
           {/* =================================================
               FEATURED TESTIMONIAL
           ================================================= */}
-
           {activeGraduate && (
             <FeaturedGraduate
               graduate={activeGraduate}
@@ -1012,78 +987,48 @@ export function GraduatesMarquee({
           )}
 
           {/* =================================================
-              ARROWS + DOTS
+              CAROUSEL CONTROLS: PREVIOUS / NEXT & PROGRESS
           ================================================= */}
-
-          <div className="mt-5 flex items-center justify-center gap-5">
-
-            {/* Previous */}
+          <div className="mt-8 flex items-center justify-center gap-4">
+            {/* Previous Button */}
             <button
               type="button"
               onClick={previous}
               aria-label="Previous testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-50/60 hover:text-red-600 hover:shadow-md active:scale-95 group"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
             </button>
 
-            {/* Dots */}
-            <div className="flex items-center gap-2">
-              {graduates.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  aria-label={`Show testimonial ${index + 1}`}
-                  onClick={() => setActiveIndex(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    activeIndex === index
-                      ? "w-8 bg-red-500"
-                      : "w-2 bg-slate-300 hover:bg-slate-400"
-                  }`}
-                />
-              ))}
+            {/* Slide Progress Dots */}
+            <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white px-4 py-2.5 shadow-xs">
+              {graduates.map((_, index) => {
+                const isActive = activeIndex === index;
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    aria-label={`Go to testimonial ${index + 1}`}
+                    onClick={() => setActiveIndex(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "w-8 bg-red-500 shadow-xs shadow-red-500/30"
+                        : "w-2 bg-slate-200 hover:bg-slate-300"
+                    }`}
+                  />
+                );
+              })}
             </div>
 
-            {/* Next */}
+            {/* Next Button */}
             <button
               type="button"
               onClick={next}
               aria-label="Next testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-50/60 hover:text-red-600 hover:shadow-md active:scale-95 group"
             >
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </button>
-
-          </div>
-
-          {/* =================================================
-              MINI DP NAVIGATION
-          ================================================= */}
-
-          <div className="mt-5 flex justify-center">
-
-            <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
-
-              {graduates.slice(0, 5).map((graduate, index) => (
-                <button
-                  key={`${graduate.name}-${index}`}
-                  type="button"
-                  onClick={() => setActiveIndex(index)}
-                  aria-label={`Show ${graduate.name}`}
-                  className={`relative h-9 w-9 overflow-hidden rounded-full border-2 transition-all duration-300 ${
-                    activeIndex === index
-                      ? "scale-110 border-red-500"
-                      : "border-white opacity-55 hover:opacity-100"
-                  }`}
-                >
-                  <ProfileAvatar
-                    graduate={graduate}
-                    size="small"
-                  />
-                </button>
-              ))}
-
-            </div>
           </div>
 
         </div>

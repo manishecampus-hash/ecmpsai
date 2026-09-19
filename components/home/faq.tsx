@@ -35,11 +35,11 @@ const faqs = [
 export default function FAQ({ items }: { items?: { question: string; answer: string }[] }) {
   const currentFaqs = items && items.length > 0 ? items : faqs;
   const [openIndexes, setOpenIndexes] = useState<number[]>(
-    currentFaqs.map((_, index) => index),
+    currentFaqs.length > 0 ? [0] : []
   );
 
   useEffect(() => {
-    setOpenIndexes(currentFaqs.map((_, index) => index));
+    setOpenIndexes(currentFaqs.length > 0 ? [0] : []);
   }, [items]);
 
   const toggleFAQ = (index: number) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Handshake } from "lucide-react";
+import { Handshake, Award, TrendingUp, Users, Sparkles } from "lucide-react";
 
 function Counter({
   end,
@@ -46,93 +46,84 @@ function Counter({
 
 export function StatsSection() {
   const stats = [
-    { value: 100, suffix: "+", label: "Listed Universities" },
-    { value: 4.6, isDecimal: true, suffix: "/5", label: "Program Rating" },
-    { value: 50, suffix: "%", label: "Avg. Hike Post Program*" },
-    { value: 10000, suffix: "+", label: "Learners Associated" },
+    {
+      value: 100,
+      suffix: "+",
+      label: "Listed Universities",
+      icon: Award,
+    },
+    {
+      value: 4.6,
+      isDecimal: true,
+      suffix: "/5",
+      label: "Program Rating",
+      icon: Sparkles,
+    },
+    {
+      value: 50,
+      suffix: "%",
+      label: "Avg. Hike Post Program*",
+      icon: TrendingUp,
+    },
+    {
+      value: 10000,
+      suffix: "+",
+      label: "Learners Associated",
+      icon: Users,
+    },
   ];
 
   return (
-    <>
-      <style>{`
-        .stats-section {
-          width: 100%;
-          min-height: calc(100vw * 0.48);
-          display: flex;
-          align-items: center;
-        }
+    <section className="relative w-full bg-gradient-to-b from-[#0B0F19] via-[#0F1422] to-[#0B0F19] px-4 py-12 text-slate-100 sm:px-6 sm:py-16 overflow-hidden border-b border-slate-800/80">
+      {/* Background glow effects */}
+      <div className="absolute top-0 right-1/4 h-64 w-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
 
-        @media (min-width: 640px) {
-          .stats-section {
-            min-height: calc(100vw * 0.375);
-          }
-        }
+      <div className="relative mx-auto w-full max-w-6xl">
+        <div className="mb-8 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-700/80 bg-slate-800/60 backdrop-blur px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-200">
+            <Handshake className="h-3.5 w-3.5 text-red-500" />
+            Empowering Your Future
+          </span>
 
-        @media (min-width: 1024px) {
-          .stats-section {
-            min-height: calc(100vw * 0.21875);
-          }
-        }
+          <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            Invest In Yourself <span className="text-red-500">Today</span>
+          </h1>
+          <p className="mt-2 text-xs sm:text-sm text-slate-400 max-w-xl mx-auto font-normal leading-relaxed">
+            Discover top UGC-recognized &amp; NAAC A+ accredited online universities. Compare programs, fees, and career outcomes.
+          </p>
+        </div>
 
-        @media (min-width: 1280px) {
-          .stats-section {
-            min-height: calc(100vw * 0.21875);
-          }
-        }
-
-        @media (min-width: 1920px) {
-          .stats-section {
-            min-height: calc(100vw * 0.21875);
-          }
-        }
-      `}</style>
-
-      <section
-        className="stats-section relative w-full px-4 py-6 text-slate-100 sm:px-6"
-        style={{
-          background:
-            "radial-gradient(circle at top right, rgba(255, 59, 79, 0.12), transparent 35%), #05070d",
-        }}
-      >
-        <div className="mx-auto w-full max-w-7xl">
-
-          <div className="mb-4 text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-900 sm:text-xs">
-              <Handshake className="h-3.5 w-3.5 text-red-500" />
-              Your goals are our goals
-            </span>
-
-            <h2 className="mt-1.5 text-xl font-extrabold tracking-tight text-white sm:text-3xl md:text-4xl">
-              Invest In Yourself{" "}
-              <span className="text-red-500">Today</span>
-            </h2>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-[#111827] p-3 shadow-[0_12px_30px_rgba(0,0,0,0.28)] sm:p-4">
-            <div className="grid grid-cols-2 divide-y divide-white/5 sm:grid-cols-4 sm:divide-x sm:divide-y-0 sm:divide-white/10">
-              {stats.map((stat, index) => (
+        {/* Stats Grid */}
+        <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-4 sm:p-6 shadow-[0_16px_36px_rgba(0,0,0,0.35)]">
+          <div className="grid grid-cols-2 divide-y divide-slate-800/60 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center px-2 py-2.5 text-center sm:px-3 sm:py-3"
+                  className="flex flex-col items-center justify-center p-3 sm:p-4 text-center group"
                 >
-                  <div className="mb-0.5 text-xl font-black text-[#ff3b4f] sm:text-2xl md:text-3xl">
-                    <Counter
-                      end={stat.value}
-                      suffix={stat.suffix}
-                      isDecimal={stat.isDecimal}
-                    />
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Icon className="h-4 w-4 text-red-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                      <Counter
+                        end={stat.value}
+                        suffix={stat.suffix}
+                        isDecimal={stat.isDecimal}
+                      />
+                    </span>
                   </div>
 
-                  <div className="text-[9px] font-bold uppercase tracking-wide text-slate-300 sm:text-[10px] md:text-xs">
+                  <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                     {stat.label}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -113,44 +113,49 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
         <div>
           {visibleBlogs.length > 0 ? (
             <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {visibleBlogs.map((blog, index) => (
-                <Link
-                  key={blog.id}
-                  href={`/blog/${blog.slug}`}
-                  className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="h-48 w-full overflow-hidden bg-gray-200">
-                    <picture>
-                      {blog.mobileImageSrc && (
-                        <source media="(max-width: 640px)" srcSet={blog.mobileImageSrc} />
-                      )}
-                      <img
-                        src={blog.imageSrc}
-                        alt={blog.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                    </picture>
-                  </div>
+              {visibleBlogs.map((blog) => {
+                const cleanSlug = (blog.slug || "").replace(/^\/+|\/+$/g, "");
+                return (
+                  <Link
+                    key={blog.id}
+                    href={`/blog/${cleanSlug}`}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer"
+                  >
+                    <div className="h-48 w-full overflow-hidden bg-gray-200">
+                      <picture>
+                        {blog.mobileImageSrc && (
+                          <source media="(max-width: 640px)" srcSet={blog.mobileImageSrc} />
+                        )}
+                        <img
+                          src={blog.imageSrc}
+                          alt={blog.title}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                      </picture>
+                    </div>
 
-                  <div className="p-6">
-                    <p className="mb-4 text-xs font-bold uppercase text-gray-500">
-                      {blog.category}
-                    </p>
-                    <h3 className="mb-5 line-clamp-2 text-lg font-bold leading-snug text-gray-800">
-                      {blog.title}
-                    </h3>
-                    <p className="mb-2 text-sm text-gray-500">
-                      By{" "}
-                      <span className="font-bold text-gray-700">
-                        {blog.author}
-                      </span>
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      {blog.date} · {blog.reads}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                    <div className="flex flex-1 flex-col p-6">
+                      <p className="mb-4 text-xs font-bold uppercase text-gray-500">
+                        {blog.category}
+                      </p>
+                      <h3 className="mb-5 line-clamp-2 text-lg font-bold leading-snug text-gray-800 group-hover:text-red-600 transition-colors">
+                        {blog.title}
+                      </h3>
+                      <div className="mt-auto">
+                        <p className="mb-2 text-sm text-gray-500">
+                          By{" "}
+                          <span className="font-bold text-gray-700">
+                            {blog.author}
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          {blog.date} · {blog.reads}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center text-gray-500">

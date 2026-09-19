@@ -1041,3 +1041,182 @@ Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.
     at ignore-listed frames
 Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
     at ignore-listed frames
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+✓ Finished filesystem cache database compaction in 12.2s
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_34_50-pm-1782561936583-retiiv.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_10_44-pm-1782560526782-uh2sdu.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-28-2026-03_22_24-pm-1--1782715335275-j2blk6.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_06_11-pm-1782560250404-7sxvld.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /universities 200 in 162ms (next.js: 45ms, proxy.ts: 60ms, application-code: 58ms)
+[browser] Image with src "/universities/Untitled design (3).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/jain.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/onlinemanipal.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/manipal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/MU.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/SMU.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/dy-patil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/gla.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/andhra.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/cu.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/sharda.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/utranchal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/shoolini.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/galgotias.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/mats.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /universities 200 in 303ms (next.js: 7ms, proxy.ts: 52ms, application-code: 244ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/Untitled design (3).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/jain.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/onlinemanipal.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/MU.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/SMU.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/manipal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/andhra.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/dy-patil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/sharda.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/gla.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/cu.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/utranchal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/shoolini.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/galgotias.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/mats.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_34_50-pm-1782561936583-retiiv.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_10_44-pm-1782560526782-uh2sdu.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-28-2026-03_22_24-pm-1--1782715335275-j2blk6.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_06_11-pm-1782560250404-7sxvld.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 3.6s
+⨯ ReferenceError: navLinks is not defined
+    at Navbar (components/layout/navbar.tsx:946:56)
+  944 |   const pathname = usePathname();
+  945 |
+> 946 |   const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
+      |                                                        ^
+  947 |   const [programsMenu, setProgramsMenu] = useState<any[]>(defaultCategories);
+  948 |   const [activeCat, setActiveCat] = useState<string>(
+  949 |     defaultCategories[0]?.id || "" {
+  digest: '4276235907'
+}
+⨯ ReferenceError: navLinks is not defined
+    at Navbar (components/layout/navbar.tsx:946:56)
+  944 |   const pathname = usePathname();
+  945 |
+> 946 |   const [headerNavLinks, setHeaderNavLinks] = useState(navLinks);
+      |                                                        ^
+  947 |   const [programsMenu, setProgramsMenu] = useState<any[]>(defaultCategories);
+  948 |   const [activeCat, setActiveCat] = useState<string>(
+  949 |     defaultCategories[0]?.id || "" {
+  digest: '4276235907'
+}
+ GET /blog 200 in 2.4s (next.js: 358ms, proxy.ts: 256ms, application-code: 1796ms)
+ GET /universities 200 in 2.4s (next.js: 628ms, proxy.ts: 255ms, application-code: 1535ms)
+ GET /universities 500 in 2.3s (next.js: 29ms, proxy.ts: 746ms, application-code: 1519ms)
+ GET /blog 200 in 1537ms (next.js: 4ms, proxy.ts: 1314ms, application-code: 218ms)
+ GET /blog 500 in 2.6s (next.js: 84ms, proxy.ts: 751ms, application-code: 1757ms)
+✓ Compiled in 1373ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ReferenceError: navLinks is not defined
+    at Navbar (components/layout/navbar.tsx:1107:26)
+  1105 |
+  1106 |   // Bottom nav links - first 4 items only
+> 1107 |   const bottomNavLinks = navLinks.slice(0, 4);
+       |                          ^
+  1108 |
+  1109 |   return (
+  1110 |     <> {
+  digest: '164808564'
+}
+⨯ ReferenceError: navLinks is not defined
+    at Navbar (components/layout/navbar.tsx:1107:26)
+  1105 |
+  1106 |   // Bottom nav links - first 4 items only
+> 1107 |   const bottomNavLinks = navLinks.slice(0, 4);
+       |                          ^
+  1108 |
+  1109 |   return (
+  1110 |     <> {
+  digest: '164808564'
+}
+ GET /universities 500 in 665ms (next.js: 22ms, proxy.ts: 73ms, application-code: 569ms)
+ GET /blog 500 in 1015ms (next.js: 111ms, proxy.ts: 74ms, application-code: 830ms)
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 1066ms
+ GET /universities 200 in 735ms (next.js: 98ms, proxy.ts: 380ms, application-code: 256ms)
+ GET /blog 200 in 999ms (next.js: 8ms, proxy.ts: 53ms, application-code: 937ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+Failed to set fetch cache http://localhost:5000/blogs Error: Failed to set Next.js data cache for http://localhost:5000/blogs, items over 2MB can not be cached (2103615 bytes)
+    at ignore-listed frames
+✓ Finished filesystem cache database compaction in 30.4s
+ GET /universities 200 in 15.7s (next.js: 15.3s, proxy.ts: 66ms, application-code: 270ms)
+✓ Compiled in 22.6s
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/Untitled design (3).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/jain.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/onlinemanipal.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/MU.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/SMU.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/manipal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/andhra.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/dy-patil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/sharda.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/gla.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/cu.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/utranchal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/shoolini.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/galgotias.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/mats.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 457ms (next.js: 54ms, proxy.ts: 50ms, application-code: 353ms)
+✓ Compiled in 4s
+ GET /universities 200 in 1072ms (next.js: 213ms, proxy.ts: 246ms, application-code: 613ms)
+ GET /universities 200 in 667ms (next.js: 43ms, proxy.ts: 126ms, application-code: 498ms)
+ GET /blog 200 in 2.6s (next.js: 389ms, proxy.ts: 50ms, application-code: 2.1s)
+ GET /blog 200 in 1814ms (next.js: 224ms, proxy.ts: 94ms, application-code: 1496ms)
+✓ Compiled in 4.8s
+ GET /universities 200 in 3.1s (next.js: 41ms, proxy.ts: 90ms, application-code: 2.9s)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_34_50-pm-1782561936583-retiiv.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_10_44-pm-1782560526782-uh2sdu.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-28-2026-03_22_24-pm-1--1782715335275-j2blk6.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-jun-27-2026-05_06_11-pm-1782560250404-7sxvld.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://ecampus-admin-ui.b-cdn.net/blogs/chatgpt-image-sep-10-2026-04_50_21-pm-1789039234150-gdglqa.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /universities 200 in 491ms (next.js: 53ms, proxy.ts: 368ms, application-code: 70ms)
+[browser] Image with src "/universities/onlinemanipal.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/Untitled design (3).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/jain.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/MU.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/manipal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/SMU.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/andhra.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/dy-patil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/sharda.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/gla.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/cu.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/utranchal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/shoolini.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/galgotias.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/mats.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /universities 200 in 515ms (next.js: 66ms, proxy.ts: 130ms, application-code: 319ms)
+[browser] Image with src "/image/logo.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/Untitled design (3).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/jain.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/onlinemanipal.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/MU.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/SMU.webp" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/manipal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/andhra.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/dy-patil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/sharda.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/gla.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/cu.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/utranchal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/shoolini.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/galgotias.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/universities/mats.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes

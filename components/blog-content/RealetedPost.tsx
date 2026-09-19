@@ -54,68 +54,71 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
 
       {/* Desktop Grid — 3 columns */}
       <div className="hidden gap-6 sm:grid sm:grid-cols-3">
-        {limitedPosts.map((post) => (
-          <Link
-            key={post.id}
-            href={`/blog/${post.slug}`}
-            className="group block overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-            style={{
-              background: "var(--bg-surface)",
-              borderColor: "var(--border)",
-            }}
-          >
-            <div className="relative h-44 w-full overflow-hidden">
-              <Image
-                src={post.imageSrc}
-                alt={post.title}
-                fill
-                className={`object-cover transition-transform duration-500 group-hover:scale-105 ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
-              />
-              {post.mobileImageSrc && (
+        {limitedPosts.map((post) => {
+          const cleanSlug = (post.slug || "").replace(/^\/+|\/+$/g, "");
+          return (
+            <Link
+              key={post.id}
+              href={`/blog/${cleanSlug}`}
+              className="group block overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              style={{
+                background: "var(--bg-surface)",
+                borderColor: "var(--border)",
+              }}
+            >
+              <div className="relative h-44 w-full overflow-hidden">
                 <Image
-                  src={post.mobileImageSrc}
+                  src={post.imageSrc}
                   alt={post.title}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105 block sm:hidden"
+                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
                 />
-              )}
-            </div>
-            <div className="p-4">
-              <span
-                className="inline-flex rounded-full px-2 py-1 text-[10px] font-semibold"
-                style={{
-                  background: "var(--accent-soft)",
-                  color: "var(--accent)",
-                }}
-              >
-                {post.category}
-              </span>
-              <h3
-                className="mt-2 line-clamp-2 font-bold leading-snug"
-                style={{ color: "var(--text-primary)", fontSize: "1rem" }}
-              >
-                {post.title}
-              </h3>
-              <p
-                className="mt-2 line-clamp-2 text-xs opacity-80"
-                style={{ color: "var(--text-muted)" }}
-              >
-                {post.description}
-              </p>
-              <div
-                className="mt-4 flex items-center gap-3 text-[10px]"
-                style={{ color: "var(--text-muted)" }}
-              >
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> {post.date}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock3 className="h-3 w-3" /> {post.readTime}
-                </span>
+                {post.mobileImageSrc && (
+                  <Image
+                    src={post.mobileImageSrc}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105 block sm:hidden"
+                  />
+                )}
               </div>
-            </div>
-          </Link>
-        ))}
+              <div className="p-4">
+                <span
+                  className="inline-flex rounded-full px-2 py-1 text-[10px] font-semibold"
+                  style={{
+                    background: "var(--accent-soft)",
+                    color: "var(--accent)",
+                  }}
+                >
+                  {post.category}
+                </span>
+                <h3
+                  className="mt-2 line-clamp-2 font-bold leading-snug"
+                  style={{ color: "var(--text-primary)", fontSize: "1rem" }}
+                >
+                  {post.title}
+                </h3>
+                <p
+                  className="mt-2 line-clamp-2 text-xs opacity-80"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {post.description}
+                </p>
+                <div
+                  className="mt-4 flex items-center gap-3 text-[10px]"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" /> {post.date}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock3 className="h-3 w-3" /> {post.readTime}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Mobile Auto Carousel */}
@@ -124,62 +127,65 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
         className="flex snap-x snap-mandatory overflow-x-auto pb-4 sm:hidden"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {limitedPosts.map((post) => (
-          <Link
-            key={post.id}
-            href={`/blog/${post.slug}`}
-            className="group min-w-full snap-center overflow-hidden rounded-2xl border"
-            style={{
-              background: "var(--bg-surface)",
-              borderColor: "var(--border)",
-            }}
-          >
-            <div className="relative h-52 w-full">
-              <Image
-                src={post.imageSrc}
-                alt={post.title}
-                fill
-                className={`object-cover ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
-              />
-              {post.mobileImageSrc && (
+        {limitedPosts.map((post) => {
+          const cleanSlug = (post.slug || "").replace(/^\/+|\/+$/g, "");
+          return (
+            <Link
+              key={post.id}
+              href={`/blog/${cleanSlug}`}
+              className="group min-w-full snap-center overflow-hidden rounded-2xl border"
+              style={{
+                background: "var(--bg-surface)",
+                borderColor: "var(--border)",
+              }}
+            >
+              <div className="relative h-52 w-full">
                 <Image
-                  src={post.mobileImageSrc}
+                  src={post.imageSrc}
                   alt={post.title}
                   fill
-                  className="object-cover block sm:hidden"
+                  className={`object-cover ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
                 />
-              )}
-            </div>
-            <div className="p-5">
-              <span
-                className="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                style={{
-                  background: "var(--accent-soft)",
-                  color: "var(--accent)",
-                }}
-              >
-                {post.category}
-              </span>
-              <h3
-                className="mt-3 text-lg font-bold"
-                style={{ color: "var(--text-primary)" }}
-              >
-                {post.title}
-              </h3>
-              <div
-                className="mt-4 flex items-center gap-4 text-xs opacity-70"
-                style={{ color: "var(--text-muted)" }}
-              >
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" /> {post.date}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock3 className="h-3.5 w-3.5" /> {post.readTime}
-                </span>
+                {post.mobileImageSrc && (
+                  <Image
+                    src={post.mobileImageSrc}
+                    alt={post.title}
+                    fill
+                    className="object-cover block sm:hidden"
+                  />
+                )}
               </div>
-            </div>
-          </Link>
-        ))}
+              <div className="p-5">
+                <span
+                  className="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                  style={{
+                    background: "var(--accent-soft)",
+                    color: "var(--accent)",
+                  }}
+                >
+                  {post.category}
+                </span>
+                <h3
+                  className="mt-3 text-lg font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {post.title}
+                </h3>
+                <div
+                  className="mt-4 flex items-center gap-4 text-xs opacity-70"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" /> {post.date}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock3 className="h-3.5 w-3.5" /> {post.readTime}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Dot indicators — mobile only */}

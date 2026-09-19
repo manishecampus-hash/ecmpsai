@@ -264,13 +264,15 @@ export default function BlogHero({
             transition: isDragging ? "none" : "transform 700ms ease-in-out",
           }}
         >
-          {sliderBlogs.map((sliderBlog) => (
-            <div key={sliderBlog.id} className="w-full shrink-0">
-              <div className="grid items-center gap-6 sm:gap-10 grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
-                <Link
-                  href={`/blog/${sliderBlog.slug}`}
-                  className="relative overflow-hidden rounded-[24px] w-full bg-gray-100"
-                  style={{ aspectRatio: "16/9" }}
+          {sliderBlogs.map((sliderBlog) => {
+            const cleanSlug = (sliderBlog.slug || "").replace(/^\/+|\/+$/g, "");
+            return (
+              <div key={sliderBlog.id} className="w-full shrink-0">
+                <div className="grid items-center gap-6 sm:gap-10 grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
+                  <Link
+                    href={`/blog/${cleanSlug}`}
+                    className="relative overflow-hidden rounded-[24px] w-full bg-gray-100"
+                    style={{ aspectRatio: "16/9" }}
                   onClick={(e) => {
                     if (Math.abs(dragOffset) > 5) e.preventDefault();
                   }}
@@ -335,8 +337,8 @@ export default function BlogHero({
                       </div>
                     </div>
                     <Link
-                      href={`/blog/${sliderBlog.slug}`}
-                      className="font-bold text-gray-700"
+                      href={`/blog/${cleanSlug}`}
+                      className="font-bold text-gray-700 hover:text-red-600 transition-colors"
                       onClick={(e) => {
                         if (Math.abs(dragOffset) > 5) e.preventDefault();
                       }}
@@ -347,7 +349,8 @@ export default function BlogHero({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

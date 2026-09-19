@@ -19,6 +19,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const host = request.headers.get("host")?.split(":")[0] || "";
+  if (host === "ecampusapp.com") {
+    return NextResponse.redirect(`https://www.ecampusapp.com${pathname}${search}`, 308);
+  }
+
   try {
     const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
     const requestUrl = `${apiUrl}/redirects/match?url=${encodeURIComponent(pathname)}`;

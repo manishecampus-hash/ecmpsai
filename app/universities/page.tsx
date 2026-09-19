@@ -1,21 +1,18 @@
-import { StatsSection } from "@/components/home/stats-section";
 import UniversitySection from "@/components/home/university-section";
 import { Footer } from "@/components/layout/footer";
 
 export const metadata = {
-  title: "Apply Now — eCampus",
+  title: "Top Online Universities in India — eCampus",
   description:
-    "Apply to top online universities through eCampus. Browse 100+ programs and get expert counselling.",
+    "Explore and compare India's top UGC-DEB approved & NAAC accredited online universities. Browse 100+ programs and get expert counselling.",
 };
 
-export default function ApplyPage() {
+export default function UniversitiesPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Stats banner — dark section with animated counters */}
-      <StatsSection />
-      {/* Partner universities grid */}
+      {/* Partner universities directory */}
       <UniversitySection />
-      <Footer/>
+      <Footer />
     </main>
   );
 }

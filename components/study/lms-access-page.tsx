@@ -171,49 +171,48 @@ export default function LmsAccessPage({
   }
 
   return (
-    <section className="relative min-h-screen bg-slate-50/80 pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24 overflow-hidden">
-      {/* Background Decorative Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-12 left-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-48 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
-      </div>
+    <section className="relative bg-gradient-to-b from-slate-50/80 via-white to-slate-50/40 py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Subtle ambient blur orbs */}
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-red-100/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-40 h-72 w-72 rounded-full bg-rose-100/20 blur-3xl" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-6xl">
         {/* Header Section */}
-        <div className="mb-8 text-center sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wider mb-4 shadow-2xs">
-            <ShieldCheck className="w-4 h-4 text-red-500" />
+        <div className="text-center mb-8 sm:mb-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600 shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-red-500" />
             Verified LMS Student Portal
-          </div>
+          </span>
 
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            Access Your University <span className="text-red-600">LMS</span>
+          <h1 className="mt-3 text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl lg:text-4xl">
+            Access Your University <span className="text-red-500">LMS</span>
           </h1>
 
-          <p className="mt-3 max-w-xl mx-auto text-sm text-slate-600 sm:text-base leading-relaxed">
+          <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-normal">
             Find and connect to your institution&apos;s official learning platform in seconds.
           </p>
+          <div className="h-1 w-12 bg-red-500 mx-auto mt-3.5 rounded-full shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
         </div>
 
         {/* Loading State: Card Skeletons */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm"
+                className="animate-pulse rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4 mb-5">
-                  <div className="h-14 w-32 sm:w-36 rounded-2xl bg-slate-100" />
+                  <div className="h-14 w-32 sm:w-36 rounded-xl bg-slate-100" />
                   <div className="h-6 w-24 rounded-full bg-slate-100" />
                 </div>
                 <div className="h-7 w-3/4 rounded-lg bg-slate-100 mb-4" />
                 <div className="flex gap-2 mb-6">
-                  <div className="h-6 w-24 rounded-xl bg-slate-100" />
-                  <div className="h-6 w-20 rounded-xl bg-slate-100" />
+                  <div className="h-6 w-24 rounded-lg bg-slate-100" />
+                  <div className="h-6 w-20 rounded-lg bg-slate-100" />
                 </div>
                 <div className="pt-4 border-t border-slate-100">
-                  <div className="h-11 w-full rounded-xl bg-slate-100" />
+                  <div className="h-10 w-full rounded-xl bg-slate-100" />
                 </div>
               </div>
             ))}
@@ -222,18 +221,18 @@ export default function LmsAccessPage({
 
         {/* Error State */}
         {!isLoading && error && (
-          <div className="rounded-3xl border border-red-100 bg-red-50/50 p-8 text-center sm:p-12 max-w-lg mx-auto shadow-xs">
+          <div className="rounded-2xl border border-red-100 bg-red-50/50 p-8 text-center sm:p-12 max-w-lg mx-auto shadow-xs">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-100 text-red-600">
               <AlertCircle className="h-7 w-7" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">{error}</h3>
-            <p className="mt-2 text-sm text-slate-600">
+            <h3 className="text-base font-bold text-slate-900">{error}</h3>
+            <p className="mt-1 text-xs text-slate-600">
               Could not retrieve the current university LMS list.
             </p>
             <button
               type="button"
               onClick={fetchUniversities}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-red-700 transition-all active:scale-95"
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-red-700 transition-all active:scale-95"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               <span>Try Again</span>
@@ -243,16 +242,16 @@ export default function LmsAccessPage({
 
         {/* Empty State: When NO universities have LMS enabled */}
         {!isLoading && !error && universities.length === 0 && (
-          <div className="rounded-3xl border border-slate-200/80 bg-white p-12 sm:p-16 text-center shadow-sm max-w-xl mx-auto my-6">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-100 shadow-2xs">
-              <GraduationCap className="h-8 w-8" />
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-10 sm:p-14 text-center shadow-sm max-w-xl mx-auto my-6">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-100 shadow-2xs">
+              <GraduationCap className="h-7 w-7" />
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
               University data coming soon.
             </h2>
 
-            <p className="mt-2 text-sm sm:text-base text-slate-500 max-w-md mx-auto leading-relaxed">
+            <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               We are currently configuring LMS access for partner institutions. Please check back shortly.
             </p>
           </div>
@@ -262,18 +261,14 @@ export default function LmsAccessPage({
         {!isLoading && !error && universities.length > 0 && (
           <>
             {/* Stats Bar */}
-            <div className="hidden sm:flex mb-10 flex-wrap justify-center gap-3 sm:mb-12 sm:gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8">
               {stats.map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-center gap-2.5 rounded-full border border-slate-200/80 bg-white/90 backdrop-blur-md px-4 py-2.5 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-red-200"
+                  className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white px-3.5 py-1.5 shadow-2xs text-xs font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50/60 transition-all"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 text-red-600">
-                    <item.icon className="h-4 w-4 shrink-0" />
-                  </div>
-                  <span className="whitespace-nowrap text-xs font-bold text-slate-700 sm:text-sm">
-                    {item.label}
-                  </span>
+                  <item.icon className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                  <span>{item.label}</span>
                 </div>
               ))}
             </div>
@@ -281,7 +276,7 @@ export default function LmsAccessPage({
             {/* Search Bar Section */}
             <div
               ref={searchWrapperRef}
-              className="relative mx-auto mb-12 w-full max-w-2xl"
+              className="relative mx-auto mb-10 w-full max-w-2xl"
             >
               <form onSubmit={handleSubmit} className="relative">
                 <label htmlFor="university-search" className="sr-only">
@@ -289,9 +284,7 @@ export default function LmsAccessPage({
                 </label>
 
                 <div className="relative flex items-center">
-                  <div className="absolute left-4 sm:left-5 pointer-events-none text-slate-400 z-10">
-                    <Search className="w-5 h-5" />
-                  </div>
+                  <Search className="absolute left-5 h-4 w-4 text-slate-400 pointer-events-none z-10" />
 
                   <input
                     id="university-search"
@@ -307,16 +300,16 @@ export default function LmsAccessPage({
                     onFocus={() => setIsDropdownOpen(true)}
                     placeholder="Search for your university..."
                     aria-label="Search for your university"
-                    className="h-14 w-full rounded-2xl border border-slate-200 bg-white pl-12 sm:pl-14 pr-32 sm:pr-36 text-sm text-slate-900 placeholder:text-slate-400 shadow-xl shadow-slate-200/40 outline-none transition-all focus:border-red-500 focus:ring-4 focus:ring-red-500/10 sm:h-16 sm:text-base font-medium"
+                    className="w-full pl-12 pr-28 sm:pr-32 py-3.5 rounded-full border border-slate-200/90 bg-white text-sm text-slate-900 placeholder-slate-400 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-500/10 transition-all"
                   />
 
-                  <div className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-2">
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                     {inputValue && (
                       <button
                         type="button"
                         aria-label="Clear search"
                         onClick={handleClear}
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -325,7 +318,7 @@ export default function LmsAccessPage({
                     <button
                       type="submit"
                       aria-label="Search"
-                      className="inline-flex h-10 items-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-4 text-xs font-bold text-white shadow-md shadow-red-600/20 transition-all hover:shadow-lg active:scale-95 sm:h-11 sm:px-5 sm:text-sm"
+                      className="inline-flex items-center justify-center rounded-full bg-slate-900 hover:bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all active:scale-95"
                     >
                       <span>Search</span>
                     </button>
@@ -342,18 +335,18 @@ export default function LmsAccessPage({
                         <button
                           type="button"
                           onClick={() => handleSuggestionClick(u.name)}
-                          className="w-full border-b border-slate-100 px-5 py-3.5 text-left text-sm font-medium text-slate-900 transition-colors last:border-b-0 hover:bg-red-50/60 flex items-center justify-between group"
+                          className="w-full border-b border-slate-100 px-5 py-3 text-left text-sm font-medium text-slate-900 transition-colors last:border-b-0 hover:bg-red-50/60 flex items-center justify-between group"
                         >
-                          <div className="flex items-center gap-3.5 min-w-0 pr-3">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                          <div className="flex items-center gap-3 min-w-0 pr-3">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
                               <Building2 className="h-4 w-4" />
                             </div>
 
                             <div className="min-w-0">
-                              <p className="font-bold text-slate-900 group-hover:text-red-600 transition-colors truncate text-sm sm:text-base">
+                              <p className="font-bold text-slate-900 group-hover:text-red-600 transition-colors truncate text-xs sm:text-sm">
                                 {u.name}
                               </p>
-                              <p className="text-xs font-medium text-slate-400 truncate">
+                              <p className="text-[11px] font-medium text-slate-400 truncate">
                                 {u.location} • {u.nirfBadge}
                               </p>
                             </div>
@@ -366,33 +359,48 @@ export default function LmsAccessPage({
                   </ul>
                 </div>
               )}
+
+              {/* Result Count Status */}
+              <div className="flex items-center justify-center gap-2 text-xs text-slate-500 pt-3">
+                <span>
+                  Showing <strong className="text-slate-800 font-bold">{filteredUniversities.length}</strong> {filteredUniversities.length === 1 ? "university" : "universities"}
+                </span>
+                {query && (
+                  <button
+                    onClick={handleClear}
+                    className="text-red-500 hover:text-red-600 font-semibold underline ml-1"
+                  >
+                    Reset search
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* University Cards Grid / Search Empty State */}
             {filteredUniversities.length === 0 ? (
-              <div className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-xl shadow-slate-200/50 sm:p-12">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
-                  <Search className="h-8 w-8" />
+              <div className="py-16 text-center max-w-md mx-auto rounded-2xl bg-white border border-slate-200/80 p-8 shadow-sm">
+                <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                  <Search className="h-5 w-5 text-slate-400" />
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-slate-800">
                   No universities found matching &quot;{query}&quot;
                 </h3>
 
-                <p className="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
+                <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
                   Try typing a different university name or location to find your portal.
                 </p>
 
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-red-700 transition-all"
+                  className="mt-4 inline-flex items-center gap-1 px-4 py-2 bg-slate-900 text-white rounded-full text-xs font-semibold hover:bg-red-600 transition"
                 >
                   Clear Search & Show All
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 {filteredUniversities.map((university) => {
                   const LocationIcon = iconMap[university.locationIcon] ?? MapPin;
                   const lmsUrl = buildLmsUrl(university.lmsSlug, university.lmsUrl);
@@ -401,12 +409,12 @@ export default function LmsAccessPage({
                   return (
                     <div
                       key={university.id}
-                      className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl hover:shadow-slate-300/40"
+                      className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 hover:border-red-400/80 hover:shadow-[0_12px_28px_rgba(0,0,0,0.07)] hover:-translate-y-1 transition-all duration-300"
                     >
                       <div>
                         {/* Top Header: Logo Box + Location Pill */}
-                        <div className="flex items-start justify-between gap-4 mb-5">
-                          <div className="flex h-14 w-32 sm:w-36 shrink-0 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50/80 p-2.5 transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:border-slate-200 overflow-hidden">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <div className="flex h-14 w-32 sm:w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/80 p-2 transition-all duration-300 group-hover:bg-white group-hover:border-slate-200 overflow-hidden">
                             <Image
                               src={university.logoUrl}
                               alt={university.name}
@@ -417,50 +425,50 @@ export default function LmsAccessPage({
                             />
                           </div>
 
-                          <div className="inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-100 px-3 py-1 text-xs font-bold text-red-600">
-                            <LocationIcon className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                          <div className="inline-flex items-center gap-1 rounded-full bg-rose-50/80 border border-rose-200/60 px-2.5 py-1 text-[10px] font-semibold text-rose-700">
+                            <LocationIcon className="h-3 w-3 text-slate-400 shrink-0" />
                             <span className="truncate max-w-[120px]">{university.location}</span>
                           </div>
                         </div>
 
-                        {/* University Title (Dynamic) */}
-                        <h3 className="text-lg sm:text-xl font-extrabold leading-snug tracking-tight text-slate-900 transition-colors duration-200 group-hover:text-red-600 mb-4">
+                        {/* University Title */}
+                        <h3 className="text-sm sm:text-base font-bold leading-snug text-slate-900 group-hover:text-red-600 transition-colors mb-3 line-clamp-2 min-h-[44px]">
                           {university.name}
                         </h3>
 
-                        {/* Meta Chips: NIRF Ranking & Establishment Year (Dynamic) */}
-                        <div className="flex flex-wrap items-center gap-2 mb-6">
-                          <div className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-50/80 border border-indigo-100/60 px-3 py-1.5 text-xs font-bold text-indigo-700">
+                        {/* Meta Chips */}
+                        <div className="flex flex-wrap items-center gap-2 mb-5">
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50/80 border border-indigo-100/60 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
                             <Award className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
                             <span>{university.nirfBadge}</span>
                           </div>
 
-                          <div className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100/80 border border-slate-200/60 px-3 py-1.5 text-xs font-bold text-slate-600">
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100/80 border border-slate-200/60 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
                             <Calendar className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                             <span>{university.estdBadge}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Card Footer: Access LMS Button (Dynamic from lmsSlug) */}
+                      {/* Card Footer: Access LMS Button */}
                       <div className="pt-4 border-t border-slate-100">
                         {isExternal ? (
                           <a
                             href={lmsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-red-600/20 transition-all duration-200 group-hover:shadow-lg group-hover:shadow-red-600/30 active:scale-[0.98]"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-red-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]"
                           >
-                            <span>Access LMS</span>
-                            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            <span>Access LMS Portal</span>
+                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                           </a>
                         ) : (
                           <Link
                             href={lmsUrl}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 px-5 py-3 text-sm font-bold text-white shadow-md shadow-red-600/20 transition-all duration-200 group-hover:shadow-lg group-hover:shadow-red-600/30 active:scale-[0.98]"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-red-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]"
                           >
-                            <span>Access LMS</span>
-                            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            <span>Access LMS Portal</span>
+                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                           </Link>
                         )}
                       </div>

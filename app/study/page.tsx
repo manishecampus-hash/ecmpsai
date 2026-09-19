@@ -1,11 +1,15 @@
 import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
 import LmsAccessPage from "@/components/study/lms-access-page";
 import {
   DynamicUniversity,
   formatLmsUniversities,
 } from "@/lib/lms";
 
+export const metadata = {
+  title: "University LMS Student Portal Access — eCampus",
+  description:
+    "Direct verified access to your university's Learning Management System (LMS). Connect to student portals for 100+ accredited universities.",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -40,11 +44,10 @@ export default async function StudyPage() {
   const initialUniversities = await getInitialLmsUniversities();
 
   return (
-    <>
-      <Navbar />
+    <main className="min-h-screen bg-white">
       <LmsAccessPage initialUniversities={initialUniversities} />
       <Footer />
-    </>
+    </main>
   );
 }
 

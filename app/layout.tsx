@@ -1,22 +1,22 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Nunito, Quicksand } from "next/font/google";
+import { Inter, Quicksand } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/layout/navbar";
 import Script from "next/script";
 
-const nunito = Nunito({
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-nunito",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 const quicksand = Quicksand({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-quicksand",
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${quicksand.variable}`}
+      className={`${inter.variable} ${quicksand.variable} font-sans`}
       suppressHydrationWarning
     >
       <head>
@@ -69,7 +69,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${nunito.className} antialiased min-h-screen flex flex-col bg-white text-gray-900`}
+        className={`${inter.className} antialiased min-h-screen flex flex-col bg-white text-slate-900`}
       >
         <ThemeProvider
           attribute="class"

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DIcons } from "dicons";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, Send, Pin, Globe } from "lucide-react";
 import { FooterCta } from "./footer-cta";
 import ChildFooter from "./child-footer";
 
@@ -16,6 +16,7 @@ const contactLinkClass =
 
 export function Footer() {
   const [footerSections, setFooterSections] = useState<any[]>([]);
+  const [socialMediaItems, setSocialMediaItems] = useState<any[]>([]);
 
   useEffect(() => {
     const apiUrl =
@@ -53,7 +54,50 @@ export function Footer() {
       .catch(() => {
         setFooterSections([]);
       });
+
+    fetch(`${apiUrl}/social-media`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSocialMediaItems(data);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const getSocialHoverClass = (platform: string) => {
+    const p = (platform || "").toLowerCase();
+    if (p.includes("instagram")) return "hover:text-pink-400 hover:border-pink-400/50 hover:bg-pink-400/10";
+    if (p.includes("linkedin")) return "hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/10";
+    if (p.includes("facebook")) return "hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-500/10";
+    if (p.includes("twitter") || p.includes("x")) return "hover:text-sky-400 hover:border-sky-400/50 hover:bg-sky-400/10";
+    if (p.includes("youtube")) return "hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10";
+    if (p.includes("whatsapp")) return "hover:text-emerald-400 hover:border-emerald-400/50 hover:bg-emerald-400/10";
+    if (p.includes("telegram")) return "hover:text-sky-400 hover:border-sky-400/50 hover:bg-sky-400/10";
+    if (p.includes("pinterest")) return "hover:text-rose-500 hover:border-rose-500/50 hover:bg-rose-500/10";
+    return "hover:text-indigo-400 hover:border-indigo-400/50 hover:bg-indigo-400/10";
+  };
+
+  const renderSocialIcon = (item: any) => {
+    if (item && item.customIconUrl) {
+      return (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img src={item.customIconUrl} alt={item.platform || "social"} className="h-4 w-4 object-contain" />
+      );
+    }
+    const platform = typeof item === "string" ? item : item?.platform;
+    const p = (platform || "").toLowerCase();
+    if (p.includes("instagram")) return <DIcons.Instagram className="h-4 w-4" />;
+    if (p.includes("linkedin")) return <DIcons.LinkedIn className="h-4 w-4" />;
+    if (p.includes("facebook")) return <DIcons.Facebook className="h-4 w-4" />;
+    if (p.includes("twitter") || p.includes("x")) return <DIcons.X className="h-4 w-4" />;
+    if (p.includes("youtube")) return <DIcons.YouTube className="h-4 w-4" />;
+    if (p.includes("whatsapp")) return <MessageCircle className="h-4 w-4" />;
+    if (p.includes("telegram")) return <Send className="h-4 w-4" />;
+    if (p.includes("pinterest")) return <Pin className="h-4 w-4" />;
+    if (p.includes("website") || p.includes("globe") || p.includes("other")) return <Globe className="h-4 w-4" />;
+    return null;
+  };
 
   return (
     <footer
@@ -78,28 +122,30 @@ export function Footer() {
               eCampus is India&apos;s trusted higher education platform helping students and working professionals discover the right degree, certification, executive, and doctorate programs. Compare universities, explore career-focused courses, and get expert guidance to make informed education decisions that support your professional growth.
             </p>
            
-            <div className="flex flex-col gap-2.5">
-              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
-                Follow us at
-              </span>
-              <div className="flex flex-wrap gap-2.5">
-                {[
-                  { Icon: DIcons.Instagram, color: "hover:text-pink-400 hover:border-pink-400/50 hover:bg-pink-400/10" },
-                  { Icon: DIcons.LinkedIn, color: "hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/10" },
-                  { Icon: DIcons.Facebook, color: "hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-500/10" },
-                  { Icon: DIcons.X, color: "hover:text-sky-400 hover:border-sky-400/50 hover:bg-sky-400/10" },
-                  { Icon: DIcons.YouTube, color: "hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10" },
-                ].map(({ Icon, color }, idx) => (
-                  <Link
-                    key={idx}
-                    href="#"
-                    className={`flex h-9 w-9 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900/20 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 ${color}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </Link>
-                ))}
+            {socialMediaItems.length > 0 && (
+              <div className="flex flex-col gap-2.5">
+                <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">
+                  Follow us at
+                </span>
+                <div className="flex flex-wrap gap-2.5">
+                  {socialMediaItems.map((item, idx) => {
+                    const icon = renderSocialIcon(item);
+                    if (!icon) return null;
+                    return (
+                      <a
+                        key={item.id || idx}
+                        href={item.url || "#"}
+                        target={item.target || "_blank"}
+                        rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+                        className={`flex h-9 w-9 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900/20 text-slate-400 transition-all duration-300 hover:-translate-y-0.5 ${getSocialHoverClass(item.platform)}`}
+                      >
+                        {icon}
+                      </a>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Columns 2-6: Dynamic Link Columns */}

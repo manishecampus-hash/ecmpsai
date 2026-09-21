@@ -182,21 +182,25 @@ export default function UniversitySection() {
   const hasMore = visibleCount < filtered.length;
 
   return (
-    <section className="w-full bg-slate-50/60 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+    <section className="relative w-full bg-gradient-to-b from-slate-50/80 via-white to-slate-50/40 py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Subtle ambient gradient backdrops */}
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-red-100/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 top-20 h-72 w-72 rounded-full bg-red-100/25 blur-3xl" />
+
+      <div className="relative z-10 mx-auto max-w-7xl">
         {/* ── Section Header ── */}
         <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600 shadow-2xs">
             <Handshake className="h-3.5 w-3.5 text-red-500" />
             Accredited Institutions
           </span>
-          <h2 className="mt-3 text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl lg:text-4xl">
+          <h1 className="mt-3 text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl lg:text-4xl">
             Our Partner <span className="text-red-500">Universities</span>
-          </h2>
+          </h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-normal">
             Choose from India&apos;s leading online universities accredited by UGC-DEB, AICTE, NAAC &amp; NIRF ranked.
           </p>
-          <div className="h-1 w-12 bg-red-500 mx-auto mt-3.5 rounded-full" />
+          <div className="h-1 w-12 bg-red-500 mx-auto mt-3.5 rounded-full shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
         </div>
 
         {/* ── Search & Filter Controls ── */}

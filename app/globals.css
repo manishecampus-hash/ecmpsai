@@ -6,6 +6,7 @@
   :root {
     color-scheme: light;
     --orange-brand: rgb(239 68 61);
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   @keyframes shimmer {
@@ -19,15 +20,25 @@
   }
 
   body {
-    @apply bg-white text-gray-900;
-    font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply bg-white text-slate-900;
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.011em;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-quicksand), var(--font-nunito), sans-serif;
+    font-family: var(--font-quicksand), var(--font-inter), sans-serif;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+  }
+
+  /* Market-standard readable body paragraphs and descriptions */
+  p {
+    color: #334155;
+    line-height: 1.625;
   }
 
   input,
@@ -106,7 +117,7 @@
   }
 
   .text-muted {
-    @apply text-gray-500;
+    @apply text-slate-600;
   }
 
   /* Gradient text */
@@ -312,13 +323,13 @@
   border-color: #e5e7eb !important;
 }
 
-/* Typography: Nunito for body, Quicksand for headings */
+/* Typography: Inter for body, descriptions & content; Quicksand for headings */
 body,
 body button,
 body input,
 body textarea,
 body select {
-  font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 h1,
@@ -328,13 +339,108 @@ h4,
 h5,
 h6,
 .font-heading {
-  font-family: var(--font-quicksand), var(--font-nunito), sans-serif;
+  font-family: var(--font-quicksand), var(--font-inter), sans-serif;
 }
 
-/* Force any legacy hardcoded Inter classes or styles to use Nunito */
+/* Ensure Inter font classes work properly */
 .font-\[Inter\],
+.font-inter,
 [class*="font-[Inter]"] {
+  font-family: var(--font-inter), sans-serif !important;
+}
+
+/* =========================================================================
+   Market-Standard Readability Enhancements (WCAG AAA Contrast)
+   ========================================================================= */
+
+/* High-contrast body text & descriptions (replaces washed-out 500/400 colors) */
+p.text-slate-500,
+p.text-gray-500,
+p.text-slate-400,
+p.text-gray-400,
+span.text-slate-500,
+span.text-gray-500,
+li.text-slate-500,
+li.text-gray-500 {
+  color: #334155; /* slate-700: deep, sharp, readable */
+}
+
+p.text-slate-600,
+p.text-gray-600,
+span.text-slate-600,
+span.text-gray-600,
+li.text-slate-600,
+li.text-gray-600 {
+  color: #334155; /* slate-700: optimal reading contrast */
+}
+
+/* Small text captions & badges: crisp slate-600 with medium weight to avoid spindly look */
+.text-xs.text-slate-500,
+.text-xs.text-gray-500,
+.text-xs.text-slate-400,
+.text-xs.text-gray-400 {
+  color: #475569; /* slate-600 */
+  font-weight: 500;
+}
+
+.text-sm.text-slate-500,
+.text-sm.text-gray-500,
+.text-sm.text-slate-400,
+.text-sm.text-gray-400 {
+  color: #334155; /* slate-700 */
+}
+
+/* =========================================================================
+   Footer Preservation: Keep exact original Nunito font, styling, & colors
+   ========================================================================= */
+#footer,
+#footer *,
+footer,
+footer * {
   font-family: var(--font-nunito), sans-serif !important;
+}
+
+#footer p,
+footer p {
+  color: inherit;
+  line-height: inherit;
+}
+
+#footer p.text-slate-400,
+footer p.text-slate-400,
+#footer span.text-slate-400,
+footer span.text-slate-400,
+#footer a.text-slate-400,
+footer a.text-slate-400,
+#footer .text-slate-400,
+footer .text-slate-400 {
+  color: #94a3b8 !important; /* Original Slate-400 on dark */
+}
+
+#footer p.text-slate-500,
+footer p.text-slate-500,
+#footer span.text-slate-500,
+footer span.text-slate-500,
+#footer .text-slate-500,
+footer .text-slate-500 {
+  color: #64748b !important; /* Original Slate-500 for copyright */
+}
+
+#footer span.text-slate-300,
+footer span.text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+#footer h4,
+footer h4 {
+  color: #f1f5f9 !important;
+}
+
+#footer a.text-white,
+footer a.text-white,
+#footer span.text-white,
+footer span.text-white {
+  color: #ffffff !important;
 }
 
 

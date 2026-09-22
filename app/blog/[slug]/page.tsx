@@ -605,17 +605,18 @@ export default async function BlogDetailsPage({
         .mobile-featured-image {
           width: 100%;
           margin: 0;
-          max-height: 180px;
           overflow: hidden;
           border-radius: 14px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+          background: #f8fafc;
         }
 
         .mobile-img-element {
           width: 100%;
-          height: 180px;
-          object-fit: cover;
+          height: auto;
+          max-height: 400px;
+          object-fit: contain;
           display: block;
         }
 
@@ -736,21 +737,6 @@ export default async function BlogDetailsPage({
         }
 
         @media (max-width: 480px) {
-          .mobile-featured-image,
-          .mobile-img-element {
-            max-height: 165px;
-            height: 165px;
-          }
-
-          .mobile-author-title {
-            font-size: 12.5px;
-          }
-
-          .mobile-meta-subline {
-            font-size: 10.5px;
-            gap: 4px;
-          }
-
           .mobile-blog-title {
             font-size: 18px;
           }

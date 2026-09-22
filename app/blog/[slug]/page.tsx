@@ -4,10 +4,10 @@ import { Poppins } from "next/font/google";
 import { notFound } from "next/navigation";
 import {
   ChevronRight,
+  Sparkles,
   Clock,
   Eye,
   Calendar,
-  Sparkles,
 } from "lucide-react";
 import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
@@ -286,49 +286,29 @@ export default async function BlogDetailsPage({
               </figure>
             ) : null}
 
-            {/* 2. Desktop Metadata Bar */}
-            <div className="blog-metadata-row">
-              <div className="meta-items-group">
-                <div className="meta-author-pill">
-                  <div className="author-avatar">{blog.authorInitial}</div>
-                  <span className="author-name">By {blog.author}</span>
-                </div>
-
-                <div className="meta-divider" />
-
-                <div className="meta-item">
+            {/* 2. Sleek Minimalist Desktop Metadata Bar */}
+            <div className="blog-metadata-bar">
+              <div className="meta-left-group">
+                <div className="author-avatar">{blog.authorInitial}</div>
+                <span className="author-name">By {blog.author}</span>
+                <span className="meta-dot">•</span>
+                <span className="meta-item">
                   <Clock className="meta-icon" />
                   <span>{blog.readTime}</span>
-                </div>
-
-                <div className="meta-divider" />
-
-                <div className="meta-item">
+                </span>
+                <span className="meta-dot">•</span>
+                <span className="meta-item">
                   <Eye className="meta-icon" />
-                  <span>
-                    <strong className="font-bold text-slate-800">
-                      {blog.view}
-                    </strong>{" "}
-                    Views
-                  </span>
-                </div>
-
-                <div className="meta-divider" />
-
-                <div className="meta-item">
+                  <span>{blog.view} views</span>
+                </span>
+                <span className="meta-dot">•</span>
+                <span className="meta-item">
                   <Calendar className="meta-icon" />
-                  <span>
-                    Updated on{" "}
-                    <strong className="font-bold text-slate-800">
-                      {blog.date}
-                    </strong>
-                  </span>
-                </div>
+                  <span>Updated {blog.date}</span>
+                </span>
               </div>
 
-              <div className="meta-share">
-                <ShareSaveButtons />
-              </div>
+              <ShareSaveButtons />
             </div>
 
             {/* 3. Blog Lead / Excerpt */}
@@ -348,8 +328,8 @@ export default async function BlogDetailsPage({
       </div>
 
       {/* ========================================================= */}
-      {/* MOBILE LAYOUT (< lg / lg:hidden) - POLISHED & COMPACT     */}
-      {/* Sequence: Featured Image -> Metadata Card -> Title -> TOC -> Content */}
+      {/* MOBILE LAYOUT (< lg / lg:hidden) - ULTRA COMPACT & CLEAN  */}
+      {/* Sequence: Featured Image -> Metadata Bar -> Title -> TOC -> Content */}
       {/* ========================================================= */}
       <div className="block lg:hidden blog-container">
         {/* Mobile Breadcrumb */}
@@ -373,37 +353,23 @@ export default async function BlogDetailsPage({
             </figure>
           ) : null}
 
-          {/* 2. Mobile Metadata Card */}
-          <div className="mobile-meta-container">
-            {/* Top row: Author & Share button */}
-            <div className="mobile-meta-top">
-              <div className="meta-author-pill">
-                <div className="author-avatar">{blog.authorInitial}</div>
-                <span className="author-name">By {blog.author}</span>
-              </div>
-
-              <ShareSaveButtons />
-            </div>
-
-            <div className="mobile-meta-divider" />
-
-            {/* Bottom row: Compact badges */}
-            <div className="mobile-meta-badges">
-              <span className="meta-badge">
-                <Clock className="mobile-meta-icon" />
+          {/* 2. Ultra-Compact Single-Line Mobile Author & Share Bar */}
+          <div className="mobile-single-line-bar">
+            <div className="mobile-single-left">
+              <div className="author-avatar-xs">{blog.authorInitial}</div>
+              <span className="mobile-author-name truncate">By {blog.author}</span>
+              <span className="dot-sep">•</span>
+              <span className="mobile-meta-badge shrink-0">
+                <Clock className="w-3 h-3 text-slate-400" />
                 <span>{blog.readTime}</span>
               </span>
-
-              <span className="meta-badge">
-                <Eye className="mobile-meta-icon" />
-                <span>{blog.view} Views</span>
-              </span>
-
-              <span className="meta-badge">
-                <Calendar className="mobile-meta-icon" />
-                <span>Updated on {blog.date}</span>
+              <span className="dot-sep">•</span>
+              <span className="mobile-meta-badge shrink-0">
+                <Eye className="w-3 h-3 text-slate-400" />
+                <span>{blog.view}</span>
               </span>
             </div>
+            <ShareSaveButtons className="mobile-share-pill" />
           </div>
 
           {/* 3. Blog Title Header */}
@@ -415,14 +381,14 @@ export default async function BlogDetailsPage({
             <h1 className="mobile-blog-title">{blog.title}</h1>
           </div>
 
-          {/* 4. Table of Contents (With subtle boundary & shadow) */}
+          {/* 4. Table of Contents */}
           <div className="mobile-toc-wrapper">
             <TableOfContents headings={blog.headings} />
           </div>
 
           {/* 5. Blog Excerpt & Main Content */}
           {blog.description && !isDbBlog && (
-            <div className="mobile-lead-box font-medium text-slate-700 leading-relaxed text-sm sm:text-base bg-red-50/40 p-4 rounded-2xl border-l-4 border-red-500 my-2">
+            <div className="mobile-lead-box font-medium text-slate-700 leading-relaxed text-sm bg-red-50/40 p-3.5 rounded-xl border-l-3 border-red-500 my-1">
               {blog.description}
             </div>
           )}
@@ -455,7 +421,7 @@ export default async function BlogDetailsPage({
           align-items: center;
           gap: 5px;
           min-width: 0;
-          padding: 16px 0 10px;
+          padding: 14px 0 10px;
           font-size: 11.5px;
           line-height: 1.4;
           color: #6b7280;
@@ -544,41 +510,32 @@ export default async function BlogDetailsPage({
 
         .blog-feature-image {
           width: 100%;
-          margin: 0 0 20px;
+          margin: 0 0 18px;
           overflow: hidden;
           border-radius: 16px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
         }
 
-        /* Desktop Metadata Bar */
-        .blog-metadata-row {
+        /* Desktop Minimalist Metadata Bar */
+        .blog-metadata-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          flex-wrap: wrap;
           gap: 16px;
-          padding: 12px 20px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 16px;
-          margin-bottom: 28px;
-          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+          padding: 12px 0;
+          border-top: 1px solid #f1f5f9;
+          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 24px;
         }
 
-        .meta-items-group {
+        .meta-left-group {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          gap: 16px;
-          font-size: 13.5px;
+          gap: 10px;
+          font-size: 13px;
           color: #475569;
-        }
-
-        .meta-author-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 9px;
         }
 
         .author-avatar {
@@ -590,41 +547,34 @@ export default async function BlogDetailsPage({
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 800;
-          font-size: 12px;
-          box-shadow: 0 2px 5px rgba(239, 68, 68, 0.25);
+          font-weight: 700;
+          font-size: 11.5px;
           flex-shrink: 0;
+          box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
         }
 
         .author-name {
           font-weight: 700;
           color: #0f172a;
-          font-size: 13.5px;
         }
 
-        .meta-divider {
-          width: 1px;
-          height: 15px;
-          background: #cbd5e1;
+        .meta-dot {
+          color: #cbd5e1;
+          font-size: 12px;
         }
 
         .meta-item {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          white-space: nowrap;
+          gap: 4px;
+          color: #64748b;
+          font-weight: 500;
         }
 
         .meta-icon {
-          width: 15px;
-          height: 15px;
-          color: #ef4444;
-          flex-shrink: 0;
-        }
-
-        .meta-share {
-          display: flex;
-          align-items: center;
+          width: 13px;
+          height: 13px;
+          color: #94a3b8;
         }
 
         .blog-lead {
@@ -643,89 +593,118 @@ export default async function BlogDetailsPage({
         }
 
         /* ========================================================= */
-        /* POLISHED MOBILE STYLING (< 1024px)                        */
+        /* ULTRA COMPACT & ELEGANT MOBILE STYLING (< 1024px)         */
         /* ========================================================= */
         .mobile-blog-wrapper {
           display: flex;
           flex-direction: column;
-          gap: 14px;
+          gap: 12px;
           padding-bottom: 50px;
         }
 
         .mobile-featured-image {
           width: 100%;
           margin: 0;
-          max-height: 195px;
+          max-height: 180px;
           overflow: hidden;
-          border-radius: 16px;
+          border-radius: 14px;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 2px 8px -1px rgba(15, 23, 42, 0.06);
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
         }
 
         .mobile-img-element {
           width: 100%;
-          height: 195px;
+          height: 180px;
           object-fit: cover;
           display: block;
         }
 
-        .mobile-meta-container {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          padding: 12px 14px;
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 16px;
-          box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
-        }
-
-        .mobile-meta-top {
+        /* Ultra-Compact Single-Line Mobile Author & Share Bar */
+        .mobile-single-line-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 10px;
+          gap: 8px;
+          padding: 6px 0;
+          border-top: 1px solid #f1f5f9;
+          border-bottom: 1px solid #f1f5f9;
+          margin: 2px 0 4px;
+          min-height: 32px;
         }
 
-        .mobile-meta-divider {
-          width: 100%;
-          height: 1px;
-          background: #f1f5f9;
-        }
-
-        .mobile-meta-badges {
+        .mobile-single-left {
           display: flex;
-          flex-wrap: wrap;
           align-items: center;
-          gap: 6px 10px;
-        }
-
-        .meta-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 4px 9px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
+          gap: 6px;
+          min-width: 0;
+          overflow: hidden;
           font-size: 11.5px;
-          font-weight: 600;
           color: #475569;
         }
 
-        .mobile-meta-icon {
-          width: 13px;
-          height: 13px;
-          color: #ef4444;
+        .author-avatar-xs {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 10px;
           flex-shrink: 0;
+        }
+
+        .mobile-author-name {
+          font-weight: 700;
+          color: #0f172a;
+          white-space: nowrap;
+        }
+
+        .dot-sep {
+          color: #cbd5e1;
+          font-size: 10px;
+          flex-shrink: 0;
+        }
+
+        .mobile-meta-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          color: #64748b;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .mobile-share-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          border-radius: 9999px;
+          border: 1px solid #e2e8f0;
+          background-color: #ffffff;
+          padding: 2.5px 8px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-share-pill:hover {
+          border-color: #fca5a5;
+          background-color: #fef2f2;
+          color: #dc2626;
         }
 
         .mobile-title-block {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          gap: 6px;
-          margin: 4px 0 2px;
+          gap: 4px;
+          margin: 2px 0;
         }
 
         .mobile-category-chip {
@@ -735,9 +714,9 @@ export default async function BlogDetailsPage({
           background: #fef2f2;
           color: #ef4444;
           border: 1px solid #fee2e2;
-          padding: 2px 8px;
+          padding: 2px 7px;
           border-radius: 6px;
-          font-size: 10.5px;
+          font-size: 10px;
           font-weight: 800;
           text-transform: uppercase;
           letter-spacing: 0.03em;
@@ -746,30 +725,34 @@ export default async function BlogDetailsPage({
         .mobile-blog-title {
           margin: 0;
           color: #0f172a;
-          font-size: clamp(19px, 5.2vw, 24px);
+          font-size: clamp(18px, 5vw, 23px);
           line-height: 1.28;
           font-weight: 800;
           letter-spacing: -0.015em;
         }
 
         .mobile-toc-wrapper {
-          margin: 2px 0 6px;
+          margin: 2px 0 4px;
         }
 
         @media (max-width: 480px) {
           .mobile-featured-image,
           .mobile-img-element {
-            max-height: 175px;
-            height: 175px;
+            max-height: 165px;
+            height: 165px;
           }
 
-          .meta-badge {
-            font-size: 11px;
-            padding: 3.5px 8px;
+          .mobile-author-title {
+            font-size: 12.5px;
+          }
+
+          .mobile-meta-subline {
+            font-size: 10.5px;
+            gap: 4px;
           }
 
           .mobile-blog-title {
-            font-size: 19px;
+            font-size: 18px;
           }
         }
       `}</style>

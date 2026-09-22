@@ -71,7 +71,7 @@ export function ShareSaveButtons({ className }: { className?: string }) {
         onClick={handleShareClick}
         className={
           className ||
-          "inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-red-600 hover:border-red-200 hover:bg-red-50/50 shadow-2xs transition-all cursor-pointer"
+          "inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:text-red-600 hover:border-red-300 hover:bg-red-50/50 shadow-2xs transition-all cursor-pointer"
         }
       >
         <Share2 className="h-3.5 w-3.5 text-red-500" />

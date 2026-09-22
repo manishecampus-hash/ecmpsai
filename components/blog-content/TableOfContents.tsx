@@ -7,9 +7,15 @@ type Heading = { id: string; text?: string; label?: string; level: number };
 
 const PREVIEW_COUNT = 4;
 
-export function TableOfContents({ headings }: { headings: Heading[] }) {
+export function TableOfContents({
+  headings,
+  collapsible = false,
+}: {
+  headings: Heading[];
+  collapsible?: boolean;
+}) {
   const [active, setActive] = useState<string>("");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!collapsible);
 
   useEffect(() => {
     if (!headings || headings.length === 0) return;
@@ -42,10 +48,11 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
     }
   };
 
-  const visibleHeadings = isExpanded
-    ? headings
-    : headings.slice(0, PREVIEW_COUNT);
-  const hasMore = headings.length > PREVIEW_COUNT;
+  const visibleHeadings =
+    collapsible && !isExpanded
+      ? headings.slice(0, PREVIEW_COUNT)
+      : headings;
+  const hasMore = collapsible && headings.length > PREVIEW_COUNT;
 
   return (
     <nav
@@ -53,7 +60,12 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
       className="w-full rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05),0_2px_6px_-1px_rgba(15,23,42,0.03)] font-sans transition-all duration-200 hover:border-slate-300"
     >
       {/* ── Header ── */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+      <div
+        onClick={() => collapsible && setIsExpanded(!isExpanded)}
+        className={`flex items-center justify-between pb-3 border-b border-slate-100 mb-3 ${
+          collapsible ? "cursor-pointer select-none" : ""
+        }`}
+      >
         <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-base">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-100/70 shadow-2xs">
             <ListOrdered className="h-4 w-4 stroke-[2.2]" />
@@ -61,9 +73,18 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
           <span>Table of Contents</span>
         </div>
 
-        <span className="text-[11px] font-bold text-slate-600 bg-slate-100/80 px-2.5 py-0.5 rounded-full border border-slate-200/60">
-          {headings.length} Topics
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold text-slate-600 bg-slate-100/80 px-2.5 py-0.5 rounded-full border border-slate-200/60">
+            {headings.length} Topics
+          </span>
+          {collapsible && (
+            <ChevronDown
+              className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
+          )}
+        </div>
       </div>
 
       {/* ── Items ── */}
@@ -101,7 +122,7 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
         })}
       </ul>
 
-      {/* ── View all / View less ── */}
+      {/* ── View all / View less (only if collapsible) ── */}
       {hasMore && (
         <div className="pt-2.5 mt-2 border-t border-slate-100 flex justify-end">
           <button

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock3 } from "lucide-react";
+import { Calendar, Clock3, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { Blog } from "@/data/blog-data";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 interface RelatedPostsProps {
   posts: Blog[];
@@ -13,197 +13,123 @@ interface RelatedPostsProps {
 
 export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const limitedPosts = posts
-    .filter((post) => post.id !== currentPostId)
-    .slice(0, 3);
+  const filteredPosts = posts.filter((post) => post.id !== currentPostId);
+  const displayPosts = filteredPosts.length > 0 ? filteredPosts : posts;
 
-  useEffect(() => {
-    const slider = sliderRef.current;
-    if (!slider || window.innerWidth >= 640 || limitedPosts.length <= 1) return;
+  if (displayPosts.length === 0) return null;
 
-    const interval = setInterval(() => {
-      const nextIndex =
-        currentIndex === limitedPosts.length - 1 ? 0 : currentIndex + 1;
-      slider.scrollTo({
-        left: nextIndex * slider.clientWidth,
-        behavior: "smooth",
-      });
-      setCurrentIndex(nextIndex);
-    }, 3500);
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -380, behavior: "smooth" });
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, [currentIndex, limitedPosts.length]);
-
-  if (limitedPosts.length === 0) return null;
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 380, behavior: "smooth" });
+    }
+  };
 
   return (
-    <section className="mt-16 w-full">
-      <h2
-        className="mb-6"
-        style={{
-          color: "var(--text-primary)",
-          fontFamily: "var(--font-heading)",
-          fontSize: "1.5rem",
-          fontWeight: 800,
-        }}
-      >
-        Related Articles
-      </h2>
+    <section className="mt-4 w-full">
+      {/* ── Section Header with Navigation ── */}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+          Related Articles
+        </h2>
 
-      {/* Desktop Grid — 3 columns */}
-      <div className="hidden gap-6 sm:grid sm:grid-cols-3">
-        {limitedPosts.map((post) => {
+        {displayPosts.length > 3 && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={scrollLeft}
+              aria-label="Previous articles"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-95 cursor-pointer"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollRight}
+              aria-label="Next articles"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-95 cursor-pointer"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Carousel Slider ── */}
+      <div
+        ref={sliderRef}
+        className="flex gap-5 sm:gap-6 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory no-scrollbar"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {displayPosts.map((post) => {
           const cleanSlug = (post.slug || "").replace(/^\/+|\/+$/g, "");
           return (
             <Link
               key={post.id}
               href={`/blog/${cleanSlug}`}
-              className="group block overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              style={{
-                background: "var(--bg-surface)",
-                borderColor: "var(--border)",
-              }}
+              className="group flex-shrink-0 w-[290px] sm:w-[340px] md:w-[360px] snap-start block overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-slate-300"
             >
-              <div className="relative h-44 w-full overflow-hidden">
+              {/* Card Thumbnail */}
+              <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
                 <Image
                   src={post.imageSrc}
                   alt={post.title}
                   fill
-                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
+                  sizes="(max-width: 640px) 290px, 360px"
+                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
+                    post.mobileImageSrc ? "hidden sm:block" : ""
+                  }`}
                 />
                 {post.mobileImageSrc && (
                   <Image
                     src={post.mobileImageSrc}
                     alt={post.title}
                     fill
+                    sizes="290px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105 block sm:hidden"
                   />
                 )}
               </div>
-              <div className="p-4">
-                <span
-                  className="inline-flex rounded-full px-2 py-1 text-[10px] font-semibold"
-                  style={{
-                    background: "var(--accent-soft)",
-                    color: "var(--accent)",
-                  }}
-                >
-                  {post.category}
-                </span>
-                <h3
-                  className="mt-2 line-clamp-2 font-bold leading-snug"
-                  style={{ color: "var(--text-primary)", fontSize: "1rem" }}
-                >
-                  {post.title}
-                </h3>
-                <p
-                  className="mt-2 line-clamp-2 text-xs opacity-80"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  {post.description}
-                </p>
-                <div
-                  className="mt-4 flex items-center gap-3 text-[10px]"
-                  style={{ color: "var(--text-muted)" }}
-                >
+
+              {/* Card Body */}
+              <div className="p-4 sm:p-5 flex flex-col justify-between">
+                <div>
+                  {/* Fixed 2-Line Height for Uniform Alignment */}
+                  <h3 className="line-clamp-2 h-[2.75rem] min-h-[2.75rem] font-bold text-slate-900 text-sm sm:text-base leading-snug group-hover:text-red-600 transition-colors">
+                    {post.title}
+                  </h3>
+
+                  {/* Fixed 2-Line Excerpt Height */}
+                  <p className="mt-2 line-clamp-2 h-[2.25rem] min-h-[2.25rem] text-xs text-slate-500 leading-relaxed">
+                    {post.description}
+                  </p>
+                </div>
+
+                {/* Bottom Metadata Section — Always Perfectly Aligned */}
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-slate-500">
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" /> {post.date}
+                    <Calendar className="h-3 w-3 text-slate-400" />
+                    <span>{post.date}</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <Clock3 className="h-3 w-3" /> {post.readTime}
+                    <Clock3 className="h-3 w-3 text-slate-400" />
+                    <span>{post.readTime}</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="h-3 w-3 text-slate-400" />
+                    <span>{post.reads || `${post.view} Reads`}</span>
                   </span>
                 </div>
               </div>
             </Link>
           );
         })}
-      </div>
-
-      {/* Mobile Auto Carousel */}
-      <div
-        ref={sliderRef}
-        className="flex snap-x snap-mandatory overflow-x-auto pb-4 sm:hidden"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {limitedPosts.map((post) => {
-          const cleanSlug = (post.slug || "").replace(/^\/+|\/+$/g, "");
-          return (
-            <Link
-              key={post.id}
-              href={`/blog/${cleanSlug}`}
-              className="group min-w-full snap-center overflow-hidden rounded-2xl border"
-              style={{
-                background: "var(--bg-surface)",
-                borderColor: "var(--border)",
-              }}
-            >
-              <div className="relative h-52 w-full">
-                <Image
-                  src={post.imageSrc}
-                  alt={post.title}
-                  fill
-                  className={`object-cover ${post.mobileImageSrc ? "hidden sm:block" : ""}`}
-                />
-                {post.mobileImageSrc && (
-                  <Image
-                    src={post.mobileImageSrc}
-                    alt={post.title}
-                    fill
-                    className="object-cover block sm:hidden"
-                  />
-                )}
-              </div>
-              <div className="p-5">
-                <span
-                  className="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                  style={{
-                    background: "var(--accent-soft)",
-                    color: "var(--accent)",
-                  }}
-                >
-                  {post.category}
-                </span>
-                <h3
-                  className="mt-3 text-lg font-bold"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {post.title}
-                </h3>
-                <div
-                  className="mt-4 flex items-center gap-4 text-xs opacity-70"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" /> {post.date}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock3 className="h-3.5 w-3.5" /> {post.readTime}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Dot indicators — mobile only */}
-      <div className="mt-3 flex justify-center gap-1.5 sm:hidden">
-        {limitedPosts.map((_, i) => (
-          <span
-            key={i}
-            style={{
-              width: i === currentIndex ? "20px" : "6px",
-              height: "6px",
-              borderRadius: "999px",
-              background:
-                i === currentIndex ? "var(--accent)" : "var(--border)",
-              transition: "all 0.3s",
-              display: "inline-block",
-            }}
-          />
-        ))}
       </div>
 
       <style jsx>{`
@@ -214,3 +140,5 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
     </section>
   );
 }
+
+export default RelatedPosts;

@@ -8,6 +8,7 @@ import {
   Clock,
   Eye,
   Calendar,
+  CheckCircle2,
 } from "lucide-react";
 import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
@@ -18,6 +19,7 @@ import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 import { Footer } from "@/components/layout/footer";
 import { BlogViewCounter } from "@/components/blog-content/BlogViewCounter";
 import { ApplicationForm } from "@/components/form/common-form";
+import { ScrollToTopButton } from "@/components/blog-content/ScrollToTopButton";
 import { cache } from "react";
 
 const poppins = Poppins({
@@ -246,17 +248,12 @@ export default async function BlogDetailsPage({
           <strong>{blog.title}</strong>
         </nav>
 
-        {/* Blog Main Title */}
-        <header className="blog-header-area">
-          <h1 className="blog-header-title">{blog.title}</h1>
-        </header>
-
         {/* Two Column Shell */}
         <section className="blog-two-column-layout">
           {/* LEFT COLUMN: SIDEBAR */}
           <aside className="blog-sidebar-col">
-            {/* 1. Table of Contents Card */}
-            <TableOfContents headings={blog.headings} />
+            {/* 1. Table of Contents Card (Non-collapsible / Full) */}
+            <TableOfContents headings={blog.headings} collapsible={false} />
 
             {/* 2. Apply Now Form Card */}
             <div className="sidebar-apply-card">
@@ -266,18 +263,24 @@ export default async function BlogDetailsPage({
 
           {/* RIGHT COLUMN: BLOG DETAILS */}
           <article className="blog-content-col">
-            {/* 1. Featured Image */}
+            {/* 1. Blog Main Title (Above Featured Image) */}
+            <header className="blog-header-area">
+              <h1 className="blog-header-title">{blog.title}</h1>
+            </header>
+
+            {/* 2. Featured Image (Widescreen Compact Banner) */}
             {blog.imageSrc ? (
               <figure className="blog-feature-image">
                 <Image
                   src={blog.imageSrc}
                   alt={blog.title}
                   width={900}
-                  height={540}
+                  height={360}
                   sizes="860px"
                   style={{
                     width: "100%",
-                    height: "auto",
+                    height: "340px",
+                    objectFit: "cover",
                     display: "block",
                     borderRadius: "16px",
                   }}
@@ -286,11 +289,14 @@ export default async function BlogDetailsPage({
               </figure>
             ) : null}
 
-            {/* 2. Sleek Minimalist Desktop Metadata Bar */}
+            {/* 3. Sleek Minimalist Desktop Metadata Bar */}
             <div className="blog-metadata-bar">
               <div className="meta-left-group">
                 <div className="author-avatar">{blog.authorInitial}</div>
-                <span className="author-name">By {blog.author}</span>
+                <span className="author-name inline-flex items-center gap-1">
+                  <span>By {blog.author}</span>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 fill-blue-50 shrink-0 stroke-[2.5]" />
+                </span>
                 <span className="meta-dot">•</span>
                 <span className="meta-item">
                   <Clock className="meta-icon" />
@@ -318,13 +324,13 @@ export default async function BlogDetailsPage({
 
             {/* 4. Complete Blog Body */}
             <BlogContent blog={blog} />
-
-            {/* 5. Related Posts */}
-            <div className="related-wrap">
-              <RelatedPosts posts={relatedPosts} currentPostId={blog.id} />
-            </div>
           </article>
         </section>
+
+        {/* 5. Related Posts (Full Width Container Alignment with Sidebar Signup Form) */}
+        <div className="related-wrap">
+          <RelatedPosts posts={relatedPosts} currentPostId={blog.id} />
+        </div>
       </div>
 
       {/* ========================================================= */}
@@ -357,7 +363,10 @@ export default async function BlogDetailsPage({
           <div className="mobile-single-line-bar">
             <div className="mobile-single-left">
               <div className="author-avatar-xs">{blog.authorInitial}</div>
-              <span className="mobile-author-name truncate">By {blog.author}</span>
+              <span className="mobile-author-name inline-flex items-center gap-1 truncate">
+                <span className="truncate">By {blog.author}</span>
+                <CheckCircle2 className="h-3 w-3 text-blue-500 fill-blue-50 shrink-0 stroke-[2.5]" />
+              </span>
               <span className="dot-sep">•</span>
               <span className="mobile-meta-badge shrink-0">
                 <Clock className="w-3 h-3 text-slate-400" />
@@ -374,16 +383,12 @@ export default async function BlogDetailsPage({
 
           {/* 3. Blog Title Header */}
           <div className="mobile-title-block">
-            <div className="mobile-category-chip">
-              <Sparkles className="h-3 w-3 text-red-500" />
-              <span>{blog.category || "General"}</span>
-            </div>
             <h1 className="mobile-blog-title">{blog.title}</h1>
           </div>
 
-          {/* 4. Table of Contents */}
+          {/* 4. Table of Contents (Collapsible on Mobile) */}
           <div className="mobile-toc-wrapper">
-            <TableOfContents headings={blog.headings} />
+            <TableOfContents headings={blog.headings} collapsible={true} />
           </div>
 
           {/* 5. Blog Excerpt & Main Content */}
@@ -402,6 +407,7 @@ export default async function BlogDetailsPage({
         </article>
       </div>
 
+      <ScrollToTopButton />
       <Footer />
 
       <style>{`
@@ -421,7 +427,7 @@ export default async function BlogDetailsPage({
           align-items: center;
           gap: 5px;
           min-width: 0;
-          padding: 14px 0 10px;
+          padding: 16px 0 20px;
           font-size: 11.5px;
           line-height: 1.4;
           color: #6b7280;
@@ -455,16 +461,16 @@ export default async function BlogDetailsPage({
         }
 
         .blog-header-area {
-          margin-bottom: 20px;
+          margin: 0 0 14px;
         }
 
         .blog-header-title {
           max-width: 100%;
           margin: 0;
           color: #0f172a;
-          font-size: clamp(22px, 2.2vw, 30px);
-          line-height: 1.28;
-          font-weight: 700;
+          font-size: clamp(24px, 2.5vw, 30px);
+          line-height: 1.25;
+          font-weight: 800;
           letter-spacing: -0.015em;
         }
 
@@ -489,16 +495,16 @@ export default async function BlogDetailsPage({
 
         .sidebar-apply-card {
           background: #ffffff;
-          border: 1px solid #e2e8f0;
+          border: 1.5px solid #cbd5e1;
           border-radius: 16px;
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
           overflow: hidden;
-          transition: box-shadow 0.2s ease, border-color 0.2s ease;
+          transition: all 0.2s ease;
         }
 
         .sidebar-apply-card:hover {
-          border-color: #cbd5e1;
-          box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+          border-color: #94a3b8;
+          box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.1);
         }
 
         /* Right Content Column */
@@ -510,11 +516,20 @@ export default async function BlogDetailsPage({
 
         .blog-feature-image {
           width: 100%;
-          margin: 0 0 18px;
+          max-height: 340px;
+          margin: 0 0 16px;
           overflow: hidden;
           border-radius: 16px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+          background: #f8fafc;
+        }
+
+        .blog-feature-image img {
+          width: 100%;
+          height: 340px;
+          object-fit: cover;
+          display: block;
         }
 
         /* Desktop Minimalist Metadata Bar */
@@ -587,8 +602,8 @@ export default async function BlogDetailsPage({
         }
 
         .related-wrap {
-          margin-top: 48px;
-          padding-top: 28px;
+          margin-top: 24px;
+          padding-top: 20px;
           border-top: 1px solid #f1f5f9;
         }
 
@@ -701,33 +716,14 @@ export default async function BlogDetailsPage({
         }
 
         .mobile-title-block {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px;
-          margin: 2px 0;
-        }
-
-        .mobile-category-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          background: #fef2f2;
-          color: #ef4444;
-          border: 1px solid #fee2e2;
-          padding: 2px 7px;
-          border-radius: 6px;
-          font-size: 10px;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.03em;
+          margin: 2px 0 4px;
         }
 
         .mobile-blog-title {
           margin: 0;
           color: #0f172a;
-          font-size: clamp(18px, 5vw, 23px);
-          line-height: 1.28;
+          font-size: clamp(18px, 5vw, 22px);
+          line-height: 1.26;
           font-weight: 800;
           letter-spacing: -0.015em;
         }
@@ -738,7 +734,7 @@ export default async function BlogDetailsPage({
 
         @media (max-width: 480px) {
           .mobile-blog-title {
-            font-size: 18px;
+            font-size: 19px;
           }
         }
       `}</style>

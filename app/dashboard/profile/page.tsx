@@ -246,6 +246,25 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+               <SectionCard title="Interested Programs">
+                {student.coursesInterested?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {student.coursesInterested.map((c) => (
+                      <span
+                        key={c}
+                        className="rounded-full bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-600"
+                      >
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No programs added yet. Use the AI Degree Matcher to discover
+                    courses tailored to you.
+                  </p>
+                )}
+              </SectionCard>
               <SectionCard title="Personal Information">
                 {editing ? (
                   <div className="space-y-4">
@@ -402,25 +421,7 @@ export default function ProfilePage() {
                 )}
               </SectionCard>
 
-              <SectionCard title="Interested Programs">
-                {student.coursesInterested?.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {student.coursesInterested.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded-full bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-600"
-                      >
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No programs added yet. Use the AI Degree Matcher to discover
-                    courses tailored to you.
-                  </p>
-                )}
-              </SectionCard>
+             
 
               <SectionCard title="Verification & Trust">
                 <div className="divide-y divide-gray-50">

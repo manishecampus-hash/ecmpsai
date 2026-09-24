@@ -3430,12 +3430,11 @@ export function SignupModal({
                               type="tel"
                               inputMode="numeric"
                               autoComplete="tel"
-                              placeholder="10-digit number"
+                              placeholder="Phone number"
                               value={phone}
                               onChange={(e) =>
-                                setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                                setPhone(e.target.value.replace(/\D/g, ""))
                               }
-                              maxLength={10}
                               required
                               className="min-w-0 flex-1 bg-white px-3 text-sm text-gray-900 outline-none placeholder:text-sm placeholder:text-gray-400"
                             />

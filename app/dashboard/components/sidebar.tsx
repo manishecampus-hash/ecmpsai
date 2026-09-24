@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   LayoutGrid,
@@ -12,21 +13,22 @@ import {
   ShieldCheck,
   Gift,
   MessageCircle,
+  UserCircle,
+  Settings,
   X,
 } from "lucide-react";
 
 const navItems = [
-  { label: "Overview", icon: LayoutGrid, active: true },
-  { label: "AI Degree Matcher", icon: Compass },
-  { label: "Learning Path", icon: GraduationCap },
-  { label: "Applications & Shortlist", icon: ClipboardList },
-  { label: "University Compare 360", icon: Scale },
-  { label: "Documents & Eligibility", icon: ShieldCheck },
-  { label: "Rewards & Referrals", icon: Gift },
-  { label: "AI Counselor Sara", icon: MessageCircle, live: true },
+  { id: "overview", label: "Overview", icon: LayoutGrid, href: "/dashboard" },
+  { id: "matcher", label: "AI Degree Matcher", icon: Compass, href: "/dashboard/matcher" },
+  { id: "counselor", label: "AI Counselor Sara", icon: MessageCircle, live: true },
+  { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
+  { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];
 
 function SidebarContent() {
+  const pathname = usePathname();
+
   return (
     <div className="flex h-full flex-col">
       {/* Brand */}
@@ -45,11 +47,11 @@ function SidebarContent() {
       {/* Counselor status */}
       <div className="mx-5 mt-5 flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-3.5 py-2.5">
         <span className="text-xs font-medium text-gray-500">
-          Counselor Status
+          Program Advisor
         </span>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600">
           <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-          Sara 4.0 Active
+          Vishal 
         </span>
       </div>
 
@@ -57,16 +59,24 @@ function SidebarContent() {
       <nav className="mt-5 flex-1 space-y-1 overflow-y-auto px-3 pb-5">
         {navItems.map((item) => {
           const Icon = item.icon;
+          const active = item.href ? pathname === item.href : false;
+          const className = `flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+            active
+              ? "bg-red-50 text-red-600"
+              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          }`;
+
+          if (item.href) {
+            return (
+              <Link key={item.id} href={item.href} className={className}>
+                <Icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                <span className="flex-1 truncate">{item.label}</span>
+              </Link>
+            );
+          }
+
           return (
-            <button
-              key={item.label}
-              type="button"
-              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors ${
-                item.active
-                  ? "bg-red-50 text-red-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
+            <button key={item.id} type="button" className={className}>
               <Icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
               <span className="flex-1 truncate">{item.label}</span>
               {item.live && (

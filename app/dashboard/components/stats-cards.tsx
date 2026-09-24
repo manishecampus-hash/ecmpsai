@@ -5,7 +5,7 @@ import { Landmark, Wallet, CheckCircle2 } from "lucide-react";
 const stats = [
   {
     label: "TARGET COMPATIBILITY",
-    title: "AI Matched Universities",
+    title: "AI Matched Courses",
     icon: Landmark,
     iconBg: "bg-red-50 text-red-500",
     value: "14 Best Fits",
@@ -18,7 +18,7 @@ const stats = [
     title: "Predicted Scholarship",
     icon: Wallet,
     iconBg: "bg-emerald-50 text-emerald-500",
-    value: "₹25,000",
+    value: "₹10,000",
     valueClass: "text-emerald-600",
     note: "Eligible for 4 merit waivers",
     pill: { text: "Pre-Approved", cls: "bg-emerald-50 text-emerald-600" },

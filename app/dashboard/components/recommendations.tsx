@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Star, Scale, Zap } from "lucide-react";
 import UniImage from "@/components/ui/uniImage";
 
@@ -41,12 +42,12 @@ export default function Recommendations() {
             career target
           </p>
         </div>
-        <button
-          type="button"
+        <Link
+          href="/dashboard/matcher"
           className="whitespace-nowrap text-sm font-semibold text-red-600 hover:text-red-700"
         >
           View All 14 Matches →
-        </button>
+        </Link>
       </div>
 
       <div className="mt-5 space-y-5">

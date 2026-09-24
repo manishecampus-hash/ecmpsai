@@ -3,7 +3,14 @@ export type StudentProfile = {
   email?: string;
   phone?: string;
   coursesInterested?: string[];
+  state?: string;
   referralCode?: string;
   whatsappOptIn?: boolean;
   joinedAt?: string;
+  advisorProfile?: {
+    goal?: string;
+    focusArea?: string;
+    format?: string;
+    budget?: string;
+  };
 };

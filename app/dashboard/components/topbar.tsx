@@ -2,23 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Search,
   Bell,
   ChevronDown,
   Menu,
   UserCircle,
-  LogOut,
+  Settings,
   Landmark,
   Wallet,
   FileCheck2,
   MessageCircle,
   CalendarClock,
   Sparkles,
+  Gift,
+  Copy,
+  Check,
 } from "lucide-react";
 import type { StudentProfile } from "../types";
+import type { SpinWheelReward } from "./spin-wheel/data";
 
 const notifications = [
   {
@@ -82,20 +84,41 @@ const notifications = [
 export default function Topbar({
   student,
   onOpenMobileMenu,
+  wonReward,
 }: {
   student: StudentProfile;
   onOpenMobileMenu: () => void;
+  wonReward?: SpinWheelReward | null;
 }) {
-  const router = useRouter();
   const displayName = student.name?.trim() || "Rahul Kumar";
   const initial = displayName.charAt(0).toUpperCase();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [rewardCopied, setRewardCopied] = useState(false);
+  const [rewardLandPulse, setRewardLandPulse] = useState(0);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const handleCopyReward = async () => {
+    if (!wonReward) return;
+    try {
+      await navigator.clipboard.writeText(wonReward.couponCode);
+      setRewardCopied(true);
+      setTimeout(() => setRewardCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable — nothing more to do here.
+    }
+  };
+
+  // The spin wheel's "claim" animation flies a badge here and pings this
+  // event on arrival, so the pill gives a little landing pulse.
+  useEffect(() => {
+    const handleLanded = () => setRewardLandPulse((n) => n + 1);
+    window.addEventListener("reward-pill-landed", handleLanded);
+    return () => window.removeEventListener("reward-pill-landed", handleLanded);
+  }, []);
 
   useEffect(() => {
     if (!profileMenuOpen) return;
@@ -131,21 +154,8 @@ export default function Topbar({
       document.removeEventListener("mousedown", handleClickOutside);
   }, [notificationsOpen]);
 
-  const requestLogout = () => {
-    setProfileMenuOpen(false);
-    setShowLogoutConfirm(true);
-  };
-
-  const confirmLogout = () => {
-    localStorage.removeItem("ecampus_student");
-    window.dispatchEvent(new Event("ecampus-auth-change"));
-    setShowLogoutConfirm(false);
-    router.push("/");
-  };
-
   return (
-    <>
-      <header className="sticky top-0 z-30 flex h-16 flex-shrink-0 items-center gap-3 border-b border-gray-100 bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 flex-shrink-0 items-center gap-3 border-b border-gray-100 bg-white px-4 sm:px-6">
         <button
           type="button"
           onClick={onOpenMobileMenu}
@@ -155,18 +165,41 @@ export default function Topbar({
           <Menu className="h-5 w-5" />
         </button>
 
-        {/* Search */}
-        <div className="hidden min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-2.5 transition-all focus-within:border-red-300 focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(220,38,38,0.08)] sm:flex">
-          <Search className="h-4 w-4 flex-shrink-0 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Ask eCampus AI or search degrees, colleges, skills..."
-            className="min-w-0 flex-1 appearance-none truncate rounded-none border-0 bg-transparent p-0 text-sm text-gray-700 shadow-none outline-none ring-0 placeholder:text-gray-400 focus:appearance-none focus:rounded-none focus:border-0 focus:bg-transparent focus:p-0 focus:text-sm focus:shadow-none focus:outline-none focus:ring-0"
-          />
-          <kbd className="hidden flex-shrink-0 rounded-md border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-400 md:inline">
-            ⌘K
-          </kbd>
-        </div>
+        {/* Scholarship reward — shows here once the user has spun the wheel */}
+        {wonReward && (
+          <motion.div
+            key={rewardLandPulse}
+            data-reward-target
+            initial={{ scale: 1, boxShadow: "0 0 0 0 rgba(220,38,38,0)" }}
+            animate={{
+              scale: [1, 1.08, 1],
+              boxShadow: [
+                "0 0 0 0 rgba(220,38,38,0)",
+                "0 0 0 6px rgba(220,38,38,0.22)",
+                "0 0 0 0 rgba(220,38,38,0)",
+              ],
+            }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="hidden min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 sm:flex"
+          >
+            <Gift className="h-4 w-4 flex-shrink-0 text-amber-600" />
+            <span className="min-w-0 flex-1 truncate text-sm text-gray-700">
+              <span className="font-semibold text-gray-900">You won {wonReward.label}!</span>{" "}
+              Code:{" "}
+              <span className="font-mono font-semibold text-red-600">
+                {wonReward.couponCode}
+              </span>
+            </span>
+            <button
+              type="button"
+              onClick={handleCopyReward}
+              aria-label="Copy coupon code"
+              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-amber-700 transition-colors hover:bg-amber-100"
+            >
+              {rewardCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            </button>
+          </motion.div>
+        )}
 
         <div className="ml-auto flex flex-shrink-0 items-center gap-2 sm:gap-3">
           <span className="hidden items-center gap-1.5 rounded-full border border-green-100 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 sm:inline-flex">
@@ -284,89 +317,25 @@ export default function Topbar({
             {profileMenuOpen && (
               <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border border-gray-100 bg-white py-1.5 shadow-lg">
                 <Link
-                  href="/dashboard"
+                  href="/dashboard/profile"
                   onClick={() => setProfileMenuOpen(false)}
                   className="flex items-center gap-2 px-3.5 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
                   <UserCircle className="h-4 w-4 text-gray-400" />
                   Profile
                 </Link>
-                <button
-                  type="button"
-                  onClick={requestLogout}
-                  className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                <Link
+                  href="/dashboard/settings"
+                  onClick={() => setProfileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3.5 py-2 text-sm text-gray-700 hover:bg-gray-50"
                 >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
+                  <Settings className="h-4 w-4 text-gray-400" />
+                  Settings
+                </Link>
               </div>
             )}
           </div>
         </div>
-      </header>
-
-      {/* Logout confirmation */}
-      <AnimatePresence>
-        {showLogoutConfirm && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowLogoutConfirm(false)}
-            />
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.92, y: 10 }}
-                transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-white p-7 text-center shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Decorative glow */}
-                <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-red-100 blur-2xl" />
-
-                <motion.div
-                  initial={{ scale: 0, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.08, type: "spring", stiffness: 400, damping: 18 }}
-                  className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 ring-8 ring-red-50/60"
-                >
-                  <LogOut className="h-7 w-7 text-red-600" />
-                </motion.div>
-
-                <h3 className="relative mt-5 text-xl font-bold text-gray-900">
-                  Log out?
-                </h3>
-                <p className="relative mt-1.5 text-sm leading-relaxed text-gray-500">
-                  Do you want to logout of your eCampus account?
-                </p>
-
-                <div className="relative mt-6 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowLogoutConfirm(false)}
-                    className="flex-1 rounded-full border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={confirmLogout}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-red-600 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/25 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/30"
-                  >
-                    <LogOut className="h-3.5 w-3.5" />
-                    Yes, Logout
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+    </header>
   );
 }

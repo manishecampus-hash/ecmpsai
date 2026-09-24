@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Quicksand, Nunito } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { AppShell } from "@/components/layout/app-shell";
+import { Navbar } from "@/components/layout/navbar";
 import Script from "next/script";
 
 const inter = Inter({
@@ -78,6 +78,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased min-h-screen flex flex-col bg-white text-slate-900`}
       >
+        <AnalyticsInjector />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

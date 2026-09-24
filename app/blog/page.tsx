@@ -1,8 +1,13 @@
+import { Poppins } from "next/font/google";
 import { blogs } from "@/data/blog-data";
 import BlogHero from "@/components/blog/blog-hero";
 import BlogCategories from "@/components/blog/blog-categories";
 import { Footer } from "@/components/layout/footer";
-// import RecommendedPrograms from "@/components/blog/recommended-programs";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 function mapDbBlogToBlog(dbBlog: any) {
   if (Array.isArray(dbBlog.content)) {
@@ -97,13 +102,19 @@ export default async function BlogPage() {
     const featuredBlog = blogsToShow[0] ?? allBlogs[0];
 
     return (
-        <main className="min-h-screen bg-white text-gray-700">
+        <main className={`min-h-screen bg-white text-gray-700 ${poppins.className}`}>
+            {/* Page Header Title */}
+            <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pt-6 pb-2 lg:px-8 text-center">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                eCampus Blogs
+              </h1>
+            </div>
+
             {/* Blog hero slider */}
             <BlogHero blog={featuredBlog} blogs={blogsToShow} />
 
             {/* Blog list receives full data so filtering and load more can work */}
             <BlogCategories blogs={sortedAllBlogs} />
-            {/* <RecommendedPrograms /> */}
             <Footer/>
         </main>
     );

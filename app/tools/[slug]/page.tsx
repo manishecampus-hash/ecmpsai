@@ -1,6 +1,29 @@
 "use client";
 
-import { ArrowLeft, Calculator } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Briefcase,
+  Calculator,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Copy,
+  GraduationCap,
+  HelpCircle,
+  Home,
+  Info,
+  Landmark,
+  Percent,
+  RotateCcw,
+  Ruler,
+  Scissors,
+  ShoppingBag,
+  Sparkles,
+  WalletCards,
+  Zap,
+} from "lucide-react";
+import { Footer } from "@/components/layout/footer";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
@@ -39,31 +62,34 @@ const conversionRows = [
 ];
 
 const popularCourses = [
-  ["Online B.Com", "Online M.Com"],
-  ["Online B.Sc", "Online M.Sc"],
-  ["Online BA", "Online MA"],
-  ["Online BBA", "Online MCA"],
-  ["Online BCA", "Online MBA"],
+  "Online B.Com",
+  "Online M.Com",
+  "Online B.Sc",
+  "Online M.Sc",
+  "Online BA",
+  "Online MA",
+  "Online BBA",
+  "Online MCA",
+  "Online BCA",
+  "Online MBA",
 ];
 
-const relatedCalculators = [
-  [
-    "Inch to Centimeter Calculator",
-    "Online University ROI Calculator",
-    "GPA To Percentage Calculator",
-  ],
-  ["SGPA to Percentage Calculator", "BMI Calculator", "Age Calculator"],
-  ["INR to USD Converter", "Fraction Calculator", "Convert Gallon Into Liter"],
-  [
-    "Meters & Feet Converter",
-    "Percentage Calculator",
-    "CGPA to Percentage Calculator",
-  ],
-  [
-    "feet to centimeters calculator",
-    "kilometer to miles calculator",
-    "square meter to square feet calculator",
-  ],
+const relatedCalculatorsData = [
+  { name: "Inch to Centimeter Calculator", slug: "inches-to-centimeters" },
+  { name: "Online University ROI Calculator", slug: "online-university-roi" },
+  { name: "GPA To Percentage Calculator", slug: "gpa-to-percentage" },
+  { name: "SGPA to Percentage Calculator", slug: "sgpa-to-percentage" },
+  { name: "BMI Calculator", slug: "bmi" },
+  { name: "Age Calculator", slug: "age" },
+  { name: "INR to USD Converter", slug: "inr-to-usd" },
+  { name: "Fraction Calculator", slug: "fraction" },
+  { name: "Convert Gallon Into Liter", slug: "gallon-to-liter" },
+  { name: "Meters & Feet Converter", slug: "meters-to-feet" },
+  { name: "Percentage Calculator", slug: "percentage" },
+  { name: "CGPA to Percentage Calculator", slug: "cgpa-to-percentage" },
+  { name: "Feet to Centimeter Calculator", slug: "feet-to-centimeter" },
+  { name: "Kilometer to Mile Calculator", slug: "kilometer-to-mile" },
+  { name: "Sq Ft to Sq Meter Converter", slug: "sq-ft-to-sq-meter" },
 ];
 
 const faqs = [
@@ -96,316 +122,499 @@ const faqs = [
 
 const numberValue = (value: string) => Number(value) || 0;
 
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="mt-9 text-2xl font-extrabold text-black">{children}</h2>
+const SectionHeader = ({
+  children,
+  icon: Icon,
+}: {
+  children: React.ReactNode;
+  icon?: React.ElementType;
+}) => (
+  <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5 border-b border-slate-100 pb-3">
+    {Icon && <Icon className="w-6 h-6 text-red-600 shrink-0" />}
+    <span>{children}</span>
+  </h2>
 );
 
 const InchToCentimeterPage = () => {
   const [inches, setInches] = useState("12");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState("30.48");
+  const [copied, setCopied] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  const calculate = () => {
-    setResult((numberValue(inches) * 2.54).toFixed(2));
+  const handlePreset = (val: string) => {
+    setInches(val);
+    setResult((numberValue(val) * 2.54).toFixed(2));
   };
 
-  const recalculate = () => {
+  const handleReset = () => {
+    setInches("");
     setResult("");
   };
 
-  return (
-    <main className="min-h-screen bg-white text-gray-950">
-      <section className="bg-black px-4 py-20 text-center text-white">
-        <h1 className="text-2xl font-bold md:text-4xl">
-          Inch to Centimeter Calculator
-        </h1>
-        <p className="mx-auto mt-8 max-w-3xl rounded-full bg-gray px-8 py-4 text-6lg">
-          Convert inches into centimeters instantly
-        </p>
+  const handleCopy = () => {
+    if (!result) return;
+    navigator.clipboard.writeText(`${result} cm`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-        <div className="mx-auto mt-20 max-w-3xl rounded-[32px] bg-white px-6 py-14 text-gray-900 md:px-16">
-          {result ? (
-            <div className="py-10 text-center">
-              <p className="text-5xl font-extrabold text-red-600 md:text-7xl">
-                {result} cm
-              </p>
-              <p className="mt-5 text-2xl text-gray-900">Centimeters</p>
-              <button
-                type="button"
-                onClick={recalculate}
-                className="mt-10 rounded-xl border-2 border-black px-8 py-3 text-xl font-semibold text-white-600 hover:bg-black hover:text-white"
-              >
-                Recalculate
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-center gap-4 text-2xl">
-                <span>I have</span>
-                <input
-                  value={inches}
-                  onChange={(event) => setInches(event.target.value)}
-                  className="w-28 border-b-2 border-gray-900 text-center text-3xl font-bold text-gray-500 outline-none"
-                  type="number"
-                />
-                <span>inches</span>
-              </div>
-              <p className="mt-8 text-xl italic text-gray-600">
-                let&apos;s convert it!
-              </p>
-              <p className="mt-14 text-xl">
-                Want to know how many centimeters this equals?
-              </p>
-              <button
-                type="button"
-                onClick={calculate}
-                className="mt-6 rounded-xl bg-black px-5 py-4 text-lg font-semibold text-white hover:bg-black "
-              >
-                Calculate
-              </button>
-            </>
-          )}
+  return (
+    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-16">
+      {/* Sleek Dark Hero Section */}
+      <section className="relative overflow-hidden bg-slate-900 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(239,68,68,0.25),rgba(255,255,255,0))] text-white pt-10 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          {/* Top Bar / Breadcrumb */}
+          <div className="flex items-center justify-between gap-4 mb-8">
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full border border-white/10 backdrop-blur-sm"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Calculators</span>
+            </Link>
+
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30">
+              <Ruler className="w-3.5 h-3.5" /> Unit Converter
+            </span>
+          </div>
+
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              Inch to Centimeter Calculator
+            </h1>
+            <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal">
+              Convert length from inches (
+              <span className="text-red-400 font-semibold">in</span>) to
+              centimeters (
+              <span className="text-red-400 font-semibold">cm</span>){" "}
+              instantly with high accuracy.
+            </p>
+          </div>
         </div>
       </section>
 
-      <article className="mx-auto max-w-3xl px-4 py-10 text-[15px] leading-7 text-black">
-        <h2 className="text-3xl font-extrabold">
-          Inch to Centimeter Calculator - Quick & Accurate Inch to cm Conversion
-          Tool
-        </h2>
-        <p className="mt-5">
-          The Inch to Centimeter Calculator is a fast, reliable, and easy-to-use
-          online tool that helps you convert measurements from inches to
-          centimeters instantly. This tool is designed for students,
-          professionals, online shoppers, designers, and everyday users who need
-          quick and accurate measurement conversions without manual
-          calculations.
-        </p>
-        <p className="mt-5">
-          Since different countries follow different measurement systems,
-          converting inches to centimeters has become a common requirement. This
-          calculator on eCampus eliminates confusion and provides precise
-          results in just one click.
-        </p>
-
-        <SectionTitle>What Is an Inch to Centimeter Calculator?</SectionTitle>
-        <p className="mt-4">
-          An Inch to Centimeter Calculator is an online conversion tool that
-          converts values measured in inches into centimeters. Inches are widely
-          used in countries like the USA, while centimeters are part of the
-          metric system followed in India and most parts of the world.
-        </p>
-
-        <SectionTitle>Inch to Centimeter Conversion Formula</SectionTitle>
-        <p className="mt-4">
-          The conversion between inches and centimeters is based on a standard
-          mathematical relationship:
-        </p>
-        <p className="mt-4 font-extrabold">1 inch = 2.54 centimeters</p>
-        <p className="mt-4">
-          To convert inches into centimeters, multiply the inch value by 2.54.
-        </p>
-        <p className="mt-4 font-bold">Example:</p>
-        <ul className="ml-6 mt-2 list-disc space-y-2">
-          <li>
-            6 inches x 2.54 = <strong>15.24 cm</strong>
-          </li>
-          <li>
-            15 inches x 2.54 = <strong>38.1 cm</strong>
-          </li>
-        </ul>
-
-        <SectionTitle>Inch to Centimeter Conversion Table</SectionTitle>
-        <p className="mt-4">
-          For quick reference, here is a commonly used Inch to Centimeter
-          conversion table.
-        </p>
-        <table className="mt-5 w-full border-collapse text-left text-sm">
-          <thead>
-            <tr>
-              <th className="border border-gray-400 px-4 py-3">Inches (in)</th>
-              <th className="border border-gray-400 px-4 py-3">
-                Centimeters (cm)
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {conversionRows.map((row) => (
-              <tr key={row[0]}>
-                <td className="border border-gray-300 px-4 py-2">{row[0]}</td>
-                <td className="border border-gray-300 px-4 py-2">{row[1]}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <SectionTitle>
-          How to Use the Inch to Centimeter Calculator on eCampus
-        </SectionTitle>
-        <ol className="ml-6 mt-4 list-decimal space-y-1">
-          <li>Enter the value in inches in the input box</li>
-          <li>Click on the Convert button</li>
-          <li>Instantly get the result in centimeters</li>
-        </ol>
-        <p className="mt-4">
-          No sign-up, no installation, and no technical knowledge required.
-        </p>
-
-        <SectionTitle>
-          Key Features of the Inch to Centimeter Calculator
-        </SectionTitle>
-        <ul className="ml-6 mt-4 list-disc space-y-1">
-          <li>Instant inch to cm conversion</li>
-          <li>Accurate results using standard conversion logic</li>
-          <li>Supports decimal and whole number values</li>
-          <li>Mobile-friendly and responsive design</li>
-          <li>Clean and distraction-free interface</li>
-          <li>Completely free to use</li>
-        </ul>
-
-        <SectionTitle>Who Can Use This Inch to cm Calculator?</SectionTitle>
-        <ol className="ml-6 mt-4 list-decimal space-y-3">
-          <li>
-            <strong>Students</strong>
-            <br />
-            Helpful for mathematics, physics, engineering, and technical
-            subjects where unit conversion is required.
-          </li>
-          <li>
-            <strong>Professionals</strong>
-            <br />
-            Used by architects, civil engineers, interior designers, and
-            technical professionals for accurate measurements.
-          </li>
-          <li>
-            <strong>Online Shoppers</strong>
-            <br />
-            Many international products list dimensions in inches. This tool
-            helps convert them into centimeters easily.
-          </li>
-          <li>
-            <strong>Tailors and Designers</strong>
-            <br />
-            Ensures correct size conversion for clothing, fabrics, and
-            accessories.
-          </li>
-          <li>
-            <strong>Everyday User</strong>
-            <br />
-            Perfect for home measurements like TV screens, furniture, and room
-            dimensions.
-          </li>
-        </ol>
-
-        <SectionTitle>Why Use This Inch to cm Calculator?</SectionTitle>
-        <ol className="ml-6 mt-4 list-decimal space-y-3">
-          <li>
-            <strong>Accuracy</strong>
-            <br />
-            Eliminates calculation mistakes and rounding errors.
-          </li>
-          <li>
-            <strong>Time-Saving</strong>
-            <br />
-            Provides instant results compared to manual conversion.
-          </li>
-          <li>
-            <strong>User-Friendly</strong>
-            <br />
-            No learning curve, anyone can use it easily.
-          </li>
-          <li>
-            <strong>Reliable</strong>
-            <br />
-            Uses the globally accepted conversion standard.
-          </li>
-        </ol>
-
-        <SectionTitle>Final Thoughts</SectionTitle>
-        <p className="mt-4">
-          The Inch to Centimeter Calculator on eCampus is a reliable and
-          practical solution for converting inches into centimeters accurately
-          and instantly. Whether you are a student, professional, or everyday
-          user, this tool helps you avoid confusion and saves valuable time.
-        </p>
-
-        <SectionTitle>
-          eCampus - Online Education, Career Guidance & Smart Tools
-        </SectionTitle>
-        <p className="mt-4">
-          eCampus is a modern online education and digital learning platform
-          created to support students and working professionals in their
-          academic journey. It provides access to online education resources,
-          career-oriented guidance, and smart tools that simplify learning and
-          decision-making.
-        </p>
-
-        <SectionTitle>Explore our Popular Online Course</SectionTitle>
-        <table className="mt-4 w-48 border-collapse text-center text-xs">
-          <thead>
-            <tr>
-              <th
-                className="border border-gray-300 bg-black px-3 py-2 text-white"
-                colSpan={2}
-              >
-                Online Course
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {popularCourses.map((row) => (
-              <tr key={row.join("-")}>
-                <td className="border border-gray-300 px-3 py-2 text-blue-600">
-                  {row[0]}
-                </td>
-                <td className="border border-black px-3 py-2 text-blue-600">
-                  {row[1]}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <table className="mt-16 w-full border-collapse text-center text-xs">
-          <thead>
-            <tr>
-              <th
-                className="border border-black bg-black px-3 py-3 text-white"
-                colSpan={3}
-              >
-                Free Online Calculators
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {relatedCalculators.map((row) => (
-              <tr key={row.join("-")}>
-                {row.map((item) => (
-                  <td key={item} className="border border-black px-3 py-2">
-                    {item}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <section className="mt-8 rounded-lg border border-gray-200 shadow-sm">
-          <h2 className="py-4 text-center text-2xl font-extrabold">
-            Frequently Asked Questions
-          </h2>
-          <div className="divide-y divide-gray-200">
-            {faqs.map((faq) => (
-              <details key={faq.question} className="group px-5 py-4">
-                <summary className="cursor-pointer list-none text-sm font-extrabold">
-                  {faq.question}
-                </summary>
-                <p className="mt-3 text-sm leading-6 text-gray-700">
-                  {faq.answer}
+      {/* Main Interactive Calculator Card */}
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 -mt-12 sm:-mt-16 relative z-10">
+        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-6 sm:p-10 text-slate-900">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600">
+                <Calculator className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  Interactive Converter
+                </h3>
+                <p className="text-xs text-slate-500">
+                  1 inch = 2.54 centimeters
                 </p>
-              </details>
-            ))}
+              </div>
+            </div>
+            {result && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset</span>
+              </button>
+            )}
           </div>
-        </section>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* Input Section */}
+            <div className="md:col-span-6 space-y-2">
+              <label
+                htmlFor="inch-input"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-500"
+              >
+                Inches (in)
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  id="inch-input"
+                  type="number"
+                  value={inches}
+                  onChange={(e) => {
+                    setInches(e.target.value);
+                    const val = numberValue(e.target.value);
+                    setResult(e.target.value ? (val * 2.54).toFixed(2) : "");
+                  }}
+                  placeholder="Enter value"
+                  className="w-full h-14 pl-4 pr-16 text-2xl font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                />
+                <span className="absolute right-4 text-sm font-extrabold text-red-600 bg-red-50 px-2.5 py-1 rounded-lg border border-red-100">
+                  in
+                </span>
+              </div>
+            </div>
+
+            {/* Equal Sign */}
+            <div className="md:col-span-1 flex justify-center text-slate-400 py-1 md:py-0">
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
+                =
+              </div>
+            </div>
+
+            {/* Output Section */}
+            <div className="md:col-span-5 space-y-2">
+              <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                Centimeters (cm)
+              </span>
+              <div className="h-14 px-4 bg-red-50/70 border border-red-100 rounded-2xl flex items-center justify-between">
+                <span className="text-2xl font-black text-red-600 tracking-tight">
+                  {result ? `${result}` : "0.00"}
+                </span>
+                <span className="text-sm font-extrabold text-red-700 bg-white px-2.5 py-1 rounded-lg border border-red-200/60 shadow-xs">
+                  cm
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Presets */}
+          <div className="mt-6 pt-5 border-t border-slate-100">
+            <p className="text-xs font-semibold text-slate-500 mb-2.5 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              <span>Quick Presets:</span>
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {["1", "6", "12", "15", "24", "36", "48", "60"].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => handlePreset(preset)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all ${
+                    inches === preset
+                      ? "bg-red-600 text-white border-red-600 shadow-sm"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
+                  }`}
+                >
+                  {preset}&quot;
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Result Actions Bar */}
+          {result && (
+            <div className="mt-6 p-4 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <p className="text-xs text-slate-400 font-medium">
+                  Converted Result
+                </p>
+                <p className="text-xl sm:text-2xl font-extrabold text-white">
+                  {inches || "0"} in ={" "}
+                  <span className="text-red-400">{result} cm</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors shadow-sm"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>Copy Result</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content Article */}
+      <article className="mx-auto max-w-4xl px-4 sm:px-6 py-12 text-slate-700 text-base leading-relaxed">
+        {/* Intro Card */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-4 mb-10">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+            Inch to Centimeter Calculator - Quick & Accurate Measurement
+            Converter
+          </h2>
+          <p className="text-slate-600">
+            The Inch to Centimeter Calculator is a fast, reliable, and
+            easy-to-use online tool that helps you convert measurements from
+            inches to centimeters instantly. Designed for students,
+            professionals, online shoppers, designers, and everyday users who
+            need quick and accurate measurement conversions without manual
+            calculations.
+          </p>
+          <p className="text-slate-600">
+            Since different countries follow different measurement systems,
+            converting inches to centimeters has become a common requirement.
+            This calculator on eCampus eliminates confusion and provides
+            precise results in just one click.
+          </p>
+        </div>
+
+        {/* Section: What is an Inch to Centimeter Calculator */}
+        <SectionHeader icon={Info}>
+          What Is an Inch to Centimeter Calculator?
+        </SectionHeader>
+        <div className="bg-white rounded-2xl p-6 border border-slate-200/70 shadow-xs mb-8">
+          <p className="text-slate-600">
+            An Inch to Centimeter Calculator is an online conversion tool that
+            converts values measured in inches into centimeters. Inches are
+            widely used in countries like the USA, while centimeters are part of
+            the metric system followed in India and most parts of the world.
+          </p>
+        </div>
+
+        {/* Section: Formula */}
+        <SectionHeader icon={Sparkles}>
+          Inch to Centimeter Conversion Formula
+        </SectionHeader>
+        <div className="bg-gradient-to-br from-red-50/80 via-white to-rose-50/40 rounded-2xl p-6 sm:p-8 border border-red-100 shadow-sm mb-10 space-y-4">
+          <p className="text-slate-700">
+            The conversion between inches and centimeters is based on a
+            standard mathematical relationship:
+          </p>
+          <div className="inline-block bg-red-600 text-white font-black text-xl sm:text-2xl px-6 py-3 rounded-2xl shadow-md">
+            1 inch = 2.54 centimeters
+          </div>
+          <p className="text-slate-700 font-medium">
+            To convert inches into centimeters, simply multiply the inch value
+            by{" "}
+            <code className="bg-red-100 text-red-900 px-2 py-0.5 rounded font-mono font-bold">
+              2.54
+            </code>
+            .
+          </p>
+          <div className="bg-white rounded-xl p-4 border border-red-100/80 space-y-2">
+            <p className="font-bold text-slate-900 text-sm">Examples:</p>
+            <ul className="space-y-1 text-sm text-slate-700">
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>
+                  6 inches × 2.54 ={" "}
+                  <strong className="text-slate-900">15.24 cm</strong>
+                </span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>
+                  15 inches × 2.54 ={" "}
+                  <strong className="text-slate-900">38.1 cm</strong>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Section: Conversion Table */}
+        <SectionHeader icon={Ruler}>
+          Inch to Centimeter Conversion Table
+        </SectionHeader>
+        <p className="text-slate-600 mb-4">
+          For quick reference, here is a commonly used Inch to Centimeter
+          conversion table:
+        </p>
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm mb-12">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-900 text-white font-semibold">
+                <tr>
+                  <th className="px-6 py-3.5 text-xs uppercase tracking-wider font-bold">
+                    Inches (in)
+                  </th>
+                  <th className="px-6 py-3.5 text-xs uppercase tracking-wider font-bold">
+                    Centimeters (cm)
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {conversionRows.map((row) => (
+                  <tr
+                    key={row[0]}
+                    className="even:bg-slate-50/60 hover:bg-red-50/40 transition-colors"
+                  >
+                    <td className="px-6 py-3 font-semibold text-slate-900">
+                      {row[0]}
+                    </td>
+                    <td className="px-6 py-3 font-medium text-red-600">
+                      {row[1]}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Section: How to Use */}
+        <SectionHeader icon={Zap}>
+          How to Use the Calculator on eCampus
+        </SectionHeader>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs relative">
+            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 font-extrabold flex items-center justify-center text-sm mb-3">
+              1
+            </div>
+            <h4 className="font-bold text-slate-900 mb-1">Enter Value</h4>
+            <p className="text-xs text-slate-600">
+              Type the measurement in inches into the input box above.
+            </p>
+          </div>
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs relative">
+            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 font-extrabold flex items-center justify-center text-sm mb-3">
+              2
+            </div>
+            <h4 className="font-bold text-slate-900 mb-1">
+              Instant Calculation
+            </h4>
+            <p className="text-xs text-slate-600">
+              The converted centimeter result updates automatically in
+              real-time.
+            </p>
+          </div>
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs relative">
+            <div className="w-8 h-8 rounded-xl bg-red-50 text-red-600 font-extrabold flex items-center justify-center text-sm mb-3">
+              3
+            </div>
+            <h4 className="font-bold text-slate-900 mb-1">Copy or Reset</h4>
+            <p className="text-xs text-slate-600">
+              Click to copy your formatted result or reset to start a new
+              conversion.
+            </p>
+          </div>
+        </div>
+
+        {/* Section: Who Can Use */}
+        <SectionHeader icon={Briefcase}>
+          Who Can Use This Inch to cm Calculator?
+        </SectionHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {[
+            {
+              title: "Students",
+              icon: GraduationCap,
+              desc: "Essential for mathematics, physics, engineering, and technical subjects.",
+            },
+            {
+              title: "Professionals",
+              icon: Briefcase,
+              desc: "Used by architects, civil engineers, interior designers, and technical pros.",
+            },
+            {
+              title: "Online Shoppers",
+              icon: ShoppingBag,
+              desc: "Convert global product dimensions (US/UK inches) to standard cm.",
+            },
+            {
+              title: "Tailors & Designers",
+              icon: Scissors,
+              desc: "Ensures correct size conversion for clothing, fabrics, and patterns.",
+            },
+            {
+              title: "Everyday Users",
+              icon: Home,
+              desc: "Perfect for home measurements like TVs, furniture, and room layouts.",
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-red-300 hover:shadow-md transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3">
+                <item.icon className="w-5 h-5" />
+              </div>
+              <h4 className="font-bold text-slate-900 mb-1">{item.title}</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Section: Explore Popular Online Courses */}
+        <SectionHeader icon={GraduationCap}>
+          Explore Popular Online Courses
+        </SectionHeader>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-12">
+          {popularCourses.map((course) => (
+            <div
+              key={course}
+              className="bg-white border border-slate-200 rounded-xl p-3 text-center text-xs font-semibold text-red-600 hover:border-red-500 hover:bg-red-50/40 transition-all cursor-pointer shadow-2xs"
+            >
+              {course}
+            </div>
+          ))}
+        </div>
+
+        {/* Section: Free Online Calculators Grid */}
+        <SectionHeader icon={Calculator}>Free Online Calculators</SectionHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-12">
+          {relatedCalculatorsData.map((calc) => (
+            <Link
+              key={calc.name}
+              href={`/tools/${calc.slug}`}
+              className="group bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs hover:border-red-400 hover:shadow-sm transition-all flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Calculator className="w-4 h-4 text-red-600 shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-semibold text-slate-800 truncate group-hover:text-red-600 transition-colors">
+                  {calc.name}
+                </span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            </Link>
+          ))}
+        </div>
+
+        {/* Section: FAQs Accordion */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8 mt-12">
+          <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+            <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+              <HelpCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">
+                Frequently Asked Questions
+              </h3>
+              <p className="text-xs text-slate-500">
+                Got questions? We have answers.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={faq.question}
+                  className="border border-slate-200/70 rounded-2xl overflow-hidden transition-all"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    className="w-full px-5 py-4 text-left font-bold text-sm text-slate-900 flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors"
+                  >
+                    <span>{faq.question}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0 ${
+                        isOpen ? "rotate-180 text-red-600" : ""
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/40 pt-3">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </article>
     </main>
   );
@@ -418,65 +627,252 @@ const GenericCalculatorPage = ({
   slug: string;
   title: string;
 }) => {
-  const [a, setA] = useState("");
-  const [b, setB] = useState("");
-  const [c, setC] = useState("");
-  const [date, setDate] = useState("");
+  const [a, setA] = useState("10");
+  const [b, setB] = useState("5");
+  const [c, setC] = useState("3");
+  const [date, setDate] = useState("2000-01-01");
   const [operation, setOperation] = useState("add");
+  const [copied, setCopied] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  const result = useMemo(() => {
+  // Set default sensible initial values based on slug
+  React.useEffect(() => {
+    if (slug.includes("gpa")) {
+      setA("8.5");
+    } else if (slug === "bmi") {
+      setA("70");
+      setB("170");
+    } else if (slug === "inr-to-usd") {
+      setA("8300");
+    } else if (slug === "gallon-to-liter") {
+      setA("5");
+    } else if (slug === "meters-to-feet") {
+      setA("10");
+    } else if (slug === "percentage") {
+      setA("15");
+      setB("200");
+    } else if (slug === "feet-to-centimeter") {
+      setA("6");
+    } else if (slug === "kilometer-to-mile") {
+      setA("10");
+    } else if (slug === "sq-ft-to-sq-meter") {
+      setA("1000");
+    } else if (slug === "online-university-roi") {
+      setA("150000");
+      setB("50000");
+      setC("3");
+    }
+  }, [slug]);
+
+  const { result, formulaText, unitTag, icon: ToolIcon, presets, toolFaqs } = useMemo(() => {
     const x = numberValue(a);
     const y = numberValue(b);
     const z = numberValue(c);
 
+    let res = "";
+    let formula = "";
+    let unit = "";
+    let Icon = Calculator;
+    let presetList: string[] = [];
+    let customFaqs = [
+      {
+        question: `How does the ${title} work?`,
+        answer: `This calculator processes your inputs using standard mathematical algorithms to deliver instant, accurate results on eCampus.`,
+      },
+      {
+        question: `Is the ${title} free to use?`,
+        answer: `Yes! All tools on eCampus are 100% free with unlimited access and zero sign-up required.`,
+      },
+      {
+        question: `Can I use this calculator on mobile devices?`,
+        answer: `Absolutely! The responsive UI is optimized for seamless performance across smartphones, tablets, and desktops.`,
+      },
+    ];
+
     switch (slug) {
       case "gpa-to-percentage":
       case "sgpa-to-percentage":
-      case "cgpa-to-percentage":
-        return `${(x * 9.5).toFixed(2)}%`;
+      case "cgpa-to-percentage": {
+        const pct = (x * 9.5).toFixed(2);
+        res = `${pct}%`;
+        formula = "Percentage (%) = GPA Score × 9.5";
+        unit = "%";
+        Icon = Percent;
+        presetList = ["7.0", "7.5", "8.0", "8.5", "9.0", "9.5", "10.0"];
+        customFaqs = [
+          {
+            question: "How is GPA converted to percentage?",
+            answer:
+              "In most Indian universities and boards (including CBSE, VTU, Mumbai University), percentage is calculated by multiplying your grade point average by 9.5.",
+          },
+          {
+            question: "Is 10 GPA equal to 95% or 100%?",
+            answer:
+              "Under the standard 9.5 multiplier rule, 10 GPA equals 95%. Some specific autonomous institutes use a direct 10x multiplier.",
+          },
+          {
+            question: "What is the difference between SGPA and CGPA?",
+            answer:
+              "SGPA (Semester Grade Point Average) evaluates marks for a single semester, while CGPA (Cumulative Grade Point Average) measures overall performance across all completed semesters.",
+          },
+        ];
+        break;
+      }
       case "bmi": {
-        const heightMeters = y / 100;
-        if (!heightMeters) return "Enter height";
-        return `${(x / (heightMeters * heightMeters)).toFixed(2)} BMI`;
+        const heightM = y / 100;
+        Icon = WalletCards;
+        if (!heightM || heightM <= 0) {
+          res = "Enter valid height";
+        } else {
+          const bmiVal = (x / (heightM * heightM)).toFixed(1);
+          let category = "Normal";
+          const numBmi = Number(bmiVal);
+          if (numBmi < 18.5) category = "Underweight";
+          else if (numBmi >= 25 && numBmi < 30) category = "Overweight";
+          else if (numBmi >= 30) category = "Obese";
+
+          res = `${bmiVal} BMI (${category})`;
+        }
+        formula = "BMI = Weight (kg) / [Height (m)]²";
+        unit = "BMI";
+        customFaqs = [
+          {
+            question: "What is a healthy BMI range?",
+            answer:
+              "According to the World Health Organization (WHO), a BMI between 18.5 and 24.9 is considered normal/healthy for adults.",
+          },
+          {
+            question: "What are the BMI categories?",
+            answer:
+              "Below 18.5 is Underweight, 18.5 to 24.9 is Normal weight, 25 to 29.9 is Overweight, and 30 or higher is classified as Obese.",
+          },
+        ];
+        break;
       }
       case "age": {
-        if (!date) return "Select date of birth";
-        const dob = new Date(date);
-        const now = new Date();
-        let years = now.getFullYear() - dob.getFullYear();
-        let months = now.getMonth() - dob.getMonth();
-        if (months < 0) {
-          years -= 1;
-          months += 12;
+        Icon = Calculator;
+        if (!date) {
+          res = "Select date of birth";
+        } else {
+          const dob = new Date(date);
+          const now = new Date();
+          let years = now.getFullYear() - dob.getFullYear();
+          let months = now.getMonth() - dob.getMonth();
+          let days = now.getDate() - dob.getDate();
+          if (days < 0) {
+            months -= 1;
+            days += 30;
+          }
+          if (months < 0) {
+            years -= 1;
+            months += 12;
+          }
+          res = `${years} Years, ${months} Months, ${days} Days`;
         }
-        return `${years} years ${months} months`;
+        formula = "Age = Current Date - Date of Birth";
+        unit = "Age";
+        break;
       }
-      case "inr-to-usd":
-        return `$${(x / 83).toFixed(2)} USD`;
-      case "fraction":
-        if (!y) return "Enter second number";
-        if (operation === "subtract") return `${(x - y).toFixed(2)}`;
-        if (operation === "multiply") return `${(x * y).toFixed(2)}`;
-        if (operation === "divide") return `${(x / y).toFixed(2)}`;
-        return `${(x + y).toFixed(2)}`;
-      case "gallon-to-liter":
-        return `${(x * 3.78541).toFixed(2)} liters`;
-      case "meters-to-feet":
-        return `${(x * 3.28084).toFixed(2)} feet`;
-      case "percentage":
-        return `${((x / 100) * y).toFixed(2)}`;
-      case "feet-to-centimeter":
-        return `${(x * 30.48).toFixed(2)} cm`;
-      case "kilometer-to-mile":
-        return `${(x * 0.621371).toFixed(2)} miles`;
-      case "sq-ft-to-sq-meter":
-        return `${(x * 0.092903).toFixed(2)} sq meters`;
-      case "online-university-roi":
-        return `ROI value: ${(y * (z || 1) - x).toFixed(2)}`;
+      case "inr-to-usd": {
+        Icon = Landmark;
+        res = `$${(x / 83).toFixed(2)} USD`;
+        formula = "USD ($) = INR (₹) / 83.00";
+        unit = "USD";
+        presetList = ["1000", "5000", "10000", "50000", "100000"];
+        break;
+      }
+      case "fraction": {
+        Icon = Calculator;
+        if (operation === "subtract") res = `${(x - y).toFixed(2)}`;
+        else if (operation === "multiply") res = `${(x * y).toFixed(2)}`;
+        else if (operation === "divide") res = y ? `${(x / y).toFixed(2)}` : "Cannot divide by 0";
+        else res = `${(x + y).toFixed(2)}`;
+        formula = `Result = ${x} ${operation === "add" ? "+" : operation === "subtract" ? "-" : operation === "multiply" ? "×" : "÷"} ${y}`;
+        break;
+      }
+      case "gallon-to-liter": {
+        Icon = Calculator;
+        res = `${(x * 3.78541).toFixed(2)} Liters`;
+        formula = "1 US Gallon = 3.78541 Liters";
+        unit = "Liters";
+        presetList = ["1", "5", "10", "20", "50"];
+        break;
+      }
+      case "meters-to-feet": {
+        Icon = Ruler;
+        res = `${(x * 3.28084).toFixed(2)} Feet`;
+        formula = "1 Meter = 3.28084 Feet";
+        unit = "Feet";
+        presetList = ["1", "5", "10", "50", "100"];
+        break;
+      }
+      case "percentage": {
+        Icon = Percent;
+        res = `${((x / 100) * y).toFixed(2)}`;
+        formula = `Value = (${x}% × ${y}) / 100`;
+        break;
+      }
+      case "feet-to-centimeter": {
+        Icon = Ruler;
+        res = `${(x * 30.48).toFixed(2)} cm`;
+        formula = "1 Foot = 30.48 Centimeters";
+        unit = "cm";
+        presetList = ["1", "5", "6", "10", "12"];
+        break;
+      }
+      case "kilometer-to-mile": {
+        Icon = Ruler;
+        res = `${(x * 0.621371).toFixed(2)} Miles`;
+        formula = "1 Kilometer = 0.621371 Miles";
+        unit = "Miles";
+        presetList = ["1", "5", "10", "42", "100"];
+        break;
+      }
+      case "sq-ft-to-sq-meter": {
+        Icon = Ruler;
+        res = `${(x * 0.092903).toFixed(2)} Sq Meters`;
+        formula = "1 Square Foot = 0.092903 Square Meters";
+        unit = "Sq M";
+        presetList = ["100", "500", "1000", "1500", "2000"];
+        break;
+      }
+      case "online-university-roi": {
+        Icon = GraduationCap;
+        const totalIncrease = y * (z || 1);
+        const roiVal = totalIncrease - x;
+        res = `₹${roiVal.toLocaleString("en-IN")} Net Return`;
+        formula = "Net ROI = (Yearly Salary Increase × Years) - Total Course Cost";
+        unit = "₹";
+        break;
+      }
       default:
-        return "Calculator ready";
+        res = "Calculator Ready";
+        formula = "Standard Conversion";
+        break;
     }
-  }, [a, b, c, date, operation, slug]);
+
+    return {
+      result: res,
+      formulaText: formula,
+      unitTag: unit,
+      icon: Icon,
+      presets: presetList,
+      toolFaqs: customFaqs,
+    };
+  }, [a, b, c, date, operation, slug, title]);
+
+  const handleCopy = () => {
+    if (!result) return;
+    navigator.clipboard.writeText(result);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleReset = () => {
+    setA("");
+    setB("");
+    setC("");
+  };
 
   const needsSecondInput = [
     "bmi",
@@ -487,109 +883,304 @@ const GenericCalculatorPage = ({
   const needsThirdInput = slug === "online-university-roi";
 
   return (
-    <main className="min-h-screen bg-[#fff8f8] px-4 py-10">
-      <section className="mx-auto max-w-2xl">
-        <Link
-          href="/tools"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-red-600"
-        >
-          <ArrowLeft size={16} />
-          Back to calculators
-        </Link>
+    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-16">
+      {/* Sleek Dark Hero Section */}
+      <section className="relative overflow-hidden bg-slate-900 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(239,68,68,0.25),rgba(255,255,255,0))] text-white pt-10 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          {/* Top Bar / Breadcrumb */}
+          <div className="flex items-center justify-between gap-4 mb-8">
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full border border-white/10 backdrop-blur-sm"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Calculators</span>
+            </Link>
 
-        <div className="overflow-hidden border border-gray-400 bg-white shadow-[4px_4px_0_rgba(0,0,0,0.18)]">
-          <div className="flex items-center gap-3 bg-red-600 px-5 py-5 text-white">
-            <Calculator size={30} />
-            <div>
-              <p className="text-xs font-bold uppercase">
-                Easy | Fast | Accurate
-              </p>
-              <h1 className="text-2xl font-extrabold">{title}</h1>
-            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30">
+              <ToolIcon className="w-3.5 h-3.5" /> eCampus Smart Tool
+            </span>
           </div>
 
-          <div className="space-y-4 p-5">
-            {slug === "age" ? (
-              <label className="block text-sm font-bold text-gray-700">
-                Date of birth
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                  className="mt-2 h-11 w-full border border-gray-300 px-3 text-gray-700 outline-none focus:border-red-500"
-                />
-              </label>
-            ) : (
-              <label className="block text-sm font-bold text-gray-700">
-                {slug === "bmi"
-                  ? "Weight in kg"
-                  : slug === "online-university-roi"
-                    ? "Total course cost"
-                    : "Value"}
-                <input
-                  type="number"
-                  value={a}
-                  onChange={(event) => setA(event.target.value)}
-                  className="mt-2 h-11 w-full border border-gray-300 px-3 text-gray-700 outline-none focus:border-red-500"
-                />
-              </label>
-            )}
-
-            {slug === "fraction" && (
-              <label className="block text-sm font-bold text-gray-700">
-                Operation
-                <select
-                  value={operation}
-                  onChange={(event) => setOperation(event.target.value)}
-                  className="mt-2 h-11 w-full border border-gray-300 px-3 text-gray-700 outline-none focus:border-red-500"
-                >
-                  <option value="add">Add</option>
-                  <option value="subtract">Subtract</option>
-                  <option value="multiply">Multiply</option>
-                  <option value="divide">Divide</option>
-                </select>
-              </label>
-            )}
-
-            {needsSecondInput && (
-              <label className="block text-sm font-bold text-gray-700">
-                {slug === "bmi"
-                  ? "Height in cm"
-                  : slug === "percentage"
-                    ? "Total value"
-                    : slug === "online-university-roi"
-                      ? "Yearly salary increase"
-                      : "Second value"}
-                <input
-                  type="number"
-                  value={b}
-                  onChange={(event) => setB(event.target.value)}
-                  className="mt-2 h-11 w-full border border-gray-300 px-3 text-gray-700 outline-none focus:border-red-500"
-                />
-              </label>
-            )}
-
-            {needsThirdInput && (
-              <label className="block text-sm font-bold text-gray-700">
-                Years
-                <input
-                  type="number"
-                  value={c}
-                  onChange={(event) => setC(event.target.value)}
-                  className="mt-2 h-11 w-full border border-gray-300 px-3 text-gray-700 outline-none focus:border-red-500"
-                />
-              </label>
-            )}
-
-            <div className="border border-red-200 bg-red-50 p-4">
-              <p className="text-xs font-bold uppercase text-red-600">Result</p>
-              <p className="mt-1 text-2xl font-extrabold text-gray-950">
-                {result}
-              </p>
-            </div>
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              {title}
+            </h1>
+            <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal">
+              Quick, accurate, and easy-to-use digital calculator designed for instant results.
+            </p>
           </div>
         </div>
       </section>
+
+      {/* Main Interactive Calculator Card */}
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 -mt-12 sm:-mt-16 relative z-10">
+        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-6 sm:p-10 text-slate-900">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600">
+                <ToolIcon className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">
+                  {title}
+                </h3>
+                <p className="text-xs text-slate-500">{formulaText}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-slate-100"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset</span>
+            </button>
+          </div>
+
+          {/* Form Controls */}
+          <div className="space-y-5">
+            {slug === "age" ? (
+              <div className="space-y-2">
+                <label htmlFor="dob-input" className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Date of Birth
+                </label>
+                <input
+                  id="dob-input"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full h-14 px-4 text-lg font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <label htmlFor="input-a" className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  {slug === "bmi"
+                    ? "Weight in Kilograms (kg)"
+                    : slug === "online-university-roi"
+                    ? "Total Course Cost (₹)"
+                    : slug === "percentage"
+                    ? "Percentage Value (%)"
+                    : "Enter Value"}
+                </label>
+                <input
+                  id="input-a"
+                  type="number"
+                  value={a}
+                  onChange={(e) => setA(e.target.value)}
+                  placeholder="Enter number..."
+                  className="w-full h-14 px-4 text-xl font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                />
+              </div>
+            )}
+
+            {slug === "fraction" && (
+              <div className="space-y-2">
+                <label htmlFor="op-select" className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Select Operation
+                </label>
+                <select
+                  id="op-select"
+                  value={operation}
+                  onChange={(e) => setOperation(e.target.value)}
+                  className="w-full h-14 px-4 text-base font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                >
+                  <option value="add">Add (+)</option>
+                  <option value="subtract">Subtract (-)</option>
+                  <option value="multiply">Multiply (×)</option>
+                  <option value="divide">Divide (÷)</option>
+                </select>
+              </div>
+            )}
+
+            {needsSecondInput && (
+              <div className="space-y-2">
+                <label htmlFor="input-b" className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  {slug === "bmi"
+                    ? "Height in Centimeters (cm)"
+                    : slug === "percentage"
+                    ? "Total Base Value"
+                    : slug === "online-university-roi"
+                    ? "Expected Yearly Salary Increase (₹)"
+                    : "Second Value"}
+                </label>
+                <input
+                  id="input-b"
+                  type="number"
+                  value={b}
+                  onChange={(e) => setB(e.target.value)}
+                  placeholder="Enter value..."
+                  className="w-full h-14 px-4 text-xl font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                />
+              </div>
+            )}
+
+            {needsThirdInput && (
+              <div className="space-y-2">
+                <label htmlFor="input-c" className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Time Horizon (Years)
+                </label>
+                <input
+                  id="input-c"
+                  type="number"
+                  value={c}
+                  onChange={(e) => setC(e.target.value)}
+                  placeholder="Enter years..."
+                  className="w-full h-14 px-4 text-xl font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-red-600 focus:ring-4 focus:ring-red-500/10 outline-none transition-all"
+                />
+              </div>
+            )}
+
+            {/* Presets Bar */}
+            {presets.length > 0 && (
+              <div className="pt-2">
+                <p className="text-xs font-semibold text-slate-500 mb-2 flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Quick Presets:</span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {presets.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setA(p)}
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all ${
+                        a === p
+                          ? "bg-red-600 text-white border-red-600 shadow-sm"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
+                      }`}
+                    >
+                      {p} {unitTag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Result Box */}
+            <div className="mt-6 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-slate-900/10">
+              <div className="text-center sm:text-left space-y-1">
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                  Calculated Result
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-red-400 tracking-tight">
+                  {result}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors shadow-sm"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-300" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>Copy Result</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Article */}
+      <article className="mx-auto max-w-4xl px-4 sm:px-6 py-12 text-slate-700 text-base leading-relaxed">
+        {/* Intro Card */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-4 mb-10">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+            {title} - Fast &amp; Accurate Digital Tool
+          </h2>
+          <p className="text-slate-600">
+            The {title} on eCampus is designed to provide immediate, reliable calculations without manual hassle or complex formulas. Built for students, working professionals, educators, and everyday users who require quick precision.
+          </p>
+        </div>
+
+        {/* Section: Formula Callout */}
+        <SectionHeader icon={Sparkles}>Formula &amp; Method</SectionHeader>
+        <div className="bg-gradient-to-br from-red-50/80 via-white to-rose-50/40 rounded-2xl p-6 sm:p-8 border border-red-100 shadow-sm mb-10 space-y-3">
+          <p className="text-slate-700 text-sm font-medium">
+            This tool uses the standard mathematical reference:
+          </p>
+          <div className="inline-block bg-red-600 text-white font-black text-lg sm:text-xl px-5 py-2.5 rounded-2xl shadow-sm">
+            {formulaText}
+          </div>
+        </div>
+
+        {/* Section: Free Online Calculators Grid */}
+        <SectionHeader icon={Calculator}>Explore More Free Calculators</SectionHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-12">
+          {relatedCalculatorsData.map((calc) => (
+            <Link
+              key={calc.name}
+              href={`/tools/${calc.slug}`}
+              className="group bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs hover:border-red-400 hover:shadow-sm transition-all flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Calculator className="w-4 h-4 text-red-600 shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-semibold text-slate-800 truncate group-hover:text-red-600 transition-colors">
+                  {calc.name}
+                </span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            </Link>
+          ))}
+        </div>
+
+        {/* Section: FAQs Accordion */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8 mt-12">
+          <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+            <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+              <HelpCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">
+                Frequently Asked Questions
+              </h3>
+              <p className="text-xs text-slate-500">
+                Got questions? We have answers.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {toolFaqs.map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div
+                  key={faq.question}
+                  className="border border-slate-200/70 rounded-2xl overflow-hidden transition-all"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                    className="w-full px-5 py-4 text-left font-bold text-sm text-slate-900 flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors"
+                  >
+                    <span>{faq.question}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0 ${
+                        isOpen ? "rotate-180 text-red-600" : ""
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/40 pt-3">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </article>
     </main>
   );
 };
@@ -599,14 +1190,20 @@ const ToolsDetailPage = () => {
   const slug = String(params.slug || "");
   const title = calculatorTitles[slug] || "Calculator";
 
-  if (
+  const isInchToCm =
     slug === "inches-to-centimeters" ||
-    slug === "inch-to-centimeter-calculator"
-  ) {
-    return <InchToCentimeterPage />;
-  }
+    slug === "inch-to-centimeter-calculator";
 
-  return <GenericCalculatorPage slug={slug} title={title} />;
+  return (
+    <>
+      {isInchToCm ? (
+        <InchToCentimeterPage />
+      ) : (
+        <GenericCalculatorPage slug={slug} title={title} />
+      )}
+      <Footer />
+    </>
+  );
 };
 
 export default ToolsDetailPage;

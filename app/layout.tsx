@@ -2,7 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Quicksand, Nunito } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Navbar } from "@/components/layout/navbar";
+import { AppShell } from "@/components/layout/app-shell";
+import { AnalyticsInjector } from "@/components/analytics/AnalyticsInjector";
+
 import Script from "next/script";
 
 const inter = Inter({

@@ -4,6 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
+import {
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  type Variants,
+} from "framer-motion";
+import { EASE_OUT, collapse, fadeUp } from "../components/motion";
 import type { StudentProfile } from "../types";
 import {
   Search,
@@ -276,6 +283,28 @@ const MIN_FEE = 20000;
 const MAX_FEE = 150000;
 const PAGE_SIZE = 6;
 
+// Page-to-page transition: the whole result list slides in the direction of travel
+const pageVariants: Variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 24 }),
+  center: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.3, ease: EASE_OUT, staggerChildren: 0.05 },
+  },
+  exit: (dir: number) => ({
+    opacity: 0,
+    x: dir * -24,
+    transition: { duration: 0.18, ease: "easeIn" },
+  }),
+};
+
+// Individual result cards: staggered fade-up on entry, quick fade on removal
+const cardVariants: Variants = {
+  enter: { opacity: 0, y: 14 },
+  center: { opacity: 1, y: 0, transition: { duration: 0.35, ease: EASE_OUT } },
+  exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+};
+
 function toggleInArray<T>(arr: T[], value: T): T[] {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 }
@@ -300,7 +329,15 @@ function Checkbox({
           checked ? "bg-red-600" : "border border-gray-300 bg-white"
         }`}
       >
-        {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+        {checked && (
+          <motion.span
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+          >
+            <Check className="h-3 w-3 text-white" strokeWidth={3} />
+          </motion.span>
+        )}
       </span>
       <span className="text-sm text-gray-700">{label}</span>
     </button>
@@ -320,7 +357,7 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition active:scale-95 ${
         active
           ? "bg-red-600 text-white"
           : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
@@ -378,8 +415,13 @@ function Dropdown({
         />
       </button>
 
-      {open && (
-        <div
+      <AnimatePresence>
+        {open && (
+        <motion.div
+          initial={{ opacity: 0, y: -6, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18, ease: EASE_OUT } }}
+          exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.12 } }}
+          style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
           className={`absolute top-full z-30 mt-2 w-full min-w-[11rem] overflow-hidden rounded-xl border border-gray-100 bg-white py-1.5 shadow-lg ${
             align === "right" ? "right-0" : "left-0"
           }`}
@@ -402,8 +444,9 @@ function Dropdown({
               {o.value === value && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
             </button>
           ))}
-        </div>
-      )}
+        </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -509,6 +552,24 @@ export default function AIDegreeMatcherPage() {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
+
+  // Direction of the last page change (1 = forward, -1 = back) drives the slide direction
+  const prevPageRef = useRef(currentPage);
+  const direction = currentPage >= prevPageRef.current ? 1 : -1;
+  useEffect(() => {
+    prevPageRef.current = currentPage;
+  }, [currentPage]);
+
+  const resultsTopRef = useRef<HTMLDivElement>(null);
+  const goToPage = (n: number) => {
+    if (n === currentPage) return;
+    setPage(n);
+    // Bring the top of the results back into view if the user has scrolled past it
+    const el = resultsTopRef.current;
+    if (el && el.getBoundingClientRect().top < 0) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const handleResetFilters = () => {
     setDegrees([]);
@@ -618,7 +679,7 @@ export default function AIDegreeMatcherPage() {
           setPage(1);
           setFiltersOpen(false);
         }}
-        className="mt-4 w-full rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+        className="mt-4 w-full rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
       >
         Apply Filters
       </button>
@@ -626,6 +687,7 @@ export default function AIDegreeMatcherPage() {
   );
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
       <Sidebar mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
@@ -633,7 +695,7 @@ export default function AIDegreeMatcherPage() {
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
         <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
-          <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+          <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
                 Find Your Perfect University
@@ -646,10 +708,10 @@ export default function AIDegreeMatcherPage() {
               <Sparkles className="h-3.5 w-3.5" />
               AI-Powered Recommendations
             </span>
-          </div>
+          </motion.div>
 
           {/* Search bar */}
-          <div className="mb-4 flex flex-col rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm transition-colors focus-within:border-red-300 focus-within:ring-4 focus-within:ring-red-50 sm:flex-row sm:items-center">
+          <motion.div {...fadeUp(0.06)} className="relative z-20 mb-4 flex flex-col rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm transition-colors focus-within:border-red-300 focus-within:ring-4 focus-within:ring-red-50 sm:flex-row sm:items-center">
             <div className="flex flex-1 items-center gap-2.5 px-3 py-2.5">
               <Search className="h-[18px] w-[18px] flex-shrink-0 text-gray-400" />
               <input
@@ -672,16 +734,16 @@ export default function AIDegreeMatcherPage() {
             </div>
             <button
               type="button"
-              onClick={() => setPage(1)}
-              className="mt-1.5 flex flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 sm:ml-1.5 sm:mt-0"
+              onClick={() => goToPage(1)}
+              className="mt-1.5 flex flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98] sm:ml-1.5 sm:mt-0"
             >
               <Search className="h-4 w-4" />
               Search Universities
             </button>
-          </div>
+          </motion.div>
 
           {/* AI recommendation banner */}
-          <div className="mb-5 rounded-2xl border border-red-100 bg-red-50/60 px-4 py-3.5 sm:px-5">
+          <motion.div {...fadeUp(0.12)} className="mb-5 rounded-2xl border border-red-100 bg-red-50/60 px-4 py-3.5 sm:px-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-start gap-2.5">
                 <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
@@ -697,17 +759,28 @@ export default function AIDegreeMatcherPage() {
                 onClick={() => setWhyMatchOpen((v) => !v)}
                 className="whitespace-nowrap text-xs font-semibold text-red-600 hover:underline"
               >
-                Why this match? {whyMatchOpen ? "▲" : "→"}
+                Why this match?{" "}
+                <motion.span
+                  animate={{ rotate: whyMatchOpen ? -90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="inline-block"
+                >
+                  →
+                </motion.span>
               </button>
             </div>
-            {whyMatchOpen && (
-              <p className="mt-2.5 border-t border-red-100 pt-2.5 text-xs leading-relaxed text-gray-600">
-                Matches are calculated from your AI Advisor questionnaire goals, uploaded
-                academic transcript, and your preferred budget range — the closer a program
-                aligns with all three, the higher its match score.
-              </p>
-            )}
-          </div>
+            <AnimatePresence initial={false}>
+              {whyMatchOpen && (
+                <motion.div key="why" {...collapse} className="overflow-hidden">
+                  <p className="mt-2.5 border-t border-red-100 pt-2.5 text-xs leading-relaxed text-gray-600">
+                    Matches are calculated from your AI Advisor questionnaire goals, uploaded
+                    academic transcript, and your preferred budget range — the closer a program
+                    aligns with all three, the higher its match score.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           <div className="flex flex-1 flex-col gap-5 lg:flex-row lg:items-start">
             {/* Filters — desktop; stays pinned in view while the results column scrolls */}
@@ -727,13 +800,28 @@ export default function AIDegreeMatcherPage() {
               </span>
               <span className="text-xs text-gray-400">{filtersOpen ? "Hide" : "Show"}</span>
             </button>
-            {filtersOpen && <div className="lg:hidden">{filterPanel}</div>}
+            <AnimatePresence initial={false}>
+              {filtersOpen && (
+                <motion.div key="mobile-filters" {...collapse} className="overflow-hidden lg:hidden">
+                  {filterPanel}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Results */}
             <div className="min-w-0 flex-1 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div ref={resultsTopRef} className="relative z-10 flex scroll-mt-4 flex-wrap items-center justify-between gap-2">
                 <p className="text-sm text-gray-500">
-                  <span className="font-bold text-gray-900">{sorted.length}</span> Universities Found
+                  <motion.span
+                    key={sorted.length}
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: EASE_OUT }}
+                    className="inline-block font-bold text-gray-900"
+                  >
+                    {sorted.length}
+                  </motion.span>{" "}
+                  Universities Found
                 </p>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="flex-shrink-0 text-gray-500">Sort by</span>
@@ -753,8 +841,15 @@ export default function AIDegreeMatcherPage() {
                 </div>
               </div>
 
+              <AnimatePresence mode="wait" custom={direction}>
               {pageItems.length === 0 ? (
-                <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm">
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.25, ease: EASE_OUT } }}
+                  exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                  className="rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm"
+                >
                   <p className="text-sm font-semibold text-gray-900">No universities match your filters</p>
                   <p className="mt-1 text-sm text-gray-500">
                     Try widening your budget or clearing a few filters.
@@ -762,18 +857,28 @@ export default function AIDegreeMatcherPage() {
                   <button
                     type="button"
                     onClick={handleResetFilters}
-                    className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                    className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 active:scale-[0.98]"
                   >
                     Reset All Filters
                   </button>
-                </div>
+                </motion.div>
               ) : (
-                <div className="space-y-4">
+                <motion.div
+                  key={`page-${currentPage}`}
+                  custom={direction}
+                  variants={pageVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="space-y-4"
+                >
+                  <AnimatePresence mode="popLayout">
                   {pageItems.map((u) => {
                     const compared = compareIds.includes(u.id);
                     return (
+                      // Motion lives on a wrapper so framer's transforms don't override the card's CSS hover lift
+                      <motion.div key={u.id} layout="position" variants={cardVariants} exit="exit">
                       <div
-                        key={u.id}
                         className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 sm:flex-row sm:items-center"
                       >
                         <div className="relative h-36 w-full flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-40">
@@ -836,37 +941,48 @@ export default function AIDegreeMatcherPage() {
                           <button
                             type="button"
                             onClick={() => toggleCompare(u.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-semibold transition sm:flex-none sm:w-full ${
+                            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-semibold transition active:scale-[0.97] sm:flex-none sm:w-full ${
                               compared
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                                 : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
                             }`}
                           >
-                            {compared ? <Check className="h-3.5 w-3.5" /> : <Scale className="h-3.5 w-3.5" />}
+                            <motion.span
+                              key={compared ? "added" : "compare"}
+                              initial={{ scale: 0.5, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                              className="flex"
+                            >
+                              {compared ? <Check className="h-3.5 w-3.5" /> : <Scale className="h-3.5 w-3.5" />}
+                            </motion.span>
                             {compared ? "Added" : "Compare"}
                           </button>
                           <button
                             type="button"
-                            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 hover:shadow-md sm:flex-none sm:w-full"
+                            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 hover:shadow-md active:scale-[0.97] sm:flex-none sm:w-full"
                           >
                             <Zap className="h-3.5 w-3.5 fill-white" />
                             1-Click Apply
                           </button>
                         </div>
                       </div>
+                      </motion.div>
                     );
                   })}
-                </div>
+                  </AnimatePresence>
+                </motion.div>
               )}
+              </AnimatePresence>
 
               {/* Pagination */}
               {sorted.length > 0 && (
-                <div className="flex items-center justify-center gap-1.5 pt-2">
+                <motion.div layout="position" className="flex items-center justify-center gap-1.5 pt-2">
                   <button
                     type="button"
                     disabled={currentPage === 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
                     aria-label="Previous page"
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -875,26 +991,33 @@ export default function AIDegreeMatcherPage() {
                     <button
                       key={n}
                       type="button"
-                      onClick={() => setPage(n)}
-                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition ${
-                        n === currentPage
-                          ? "bg-red-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                      onClick={() => goToPage(n)}
+                      aria-current={n === currentPage ? "page" : undefined}
+                      className={`relative flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+                        n === currentPage ? "text-white" : "text-gray-600 hover:bg-gray-100"
                       }`}
                     >
-                      {n}
+                      {/* Active indicator glides between page numbers */}
+                      {n === currentPage && (
+                        <motion.span
+                          layoutId="matcher-active-page"
+                          transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                          className="absolute inset-0 rounded-full bg-red-600 shadow-sm"
+                        />
+                      )}
+                      <span className="relative">{n}</span>
                     </button>
                   ))}
                   <button
                     type="button"
                     disabled={currentPage === totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
                     aria-label="Next page"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
-                </div>
+                </motion.div>
               )}
             </div>
           </div>
@@ -902,8 +1025,15 @@ export default function AIDegreeMatcherPage() {
       </div>
 
       {/* Sticky compare bar */}
+      <AnimatePresence>
       {compareIds.length >= 2 && (
-        <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
+        <motion.div
+          key="compare-bar"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 380, damping: 30 } }}
+          exit={{ opacity: 0, y: 40, transition: { duration: 0.18 } }}
+          className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4"
+        >
           <div className="flex items-center gap-3 rounded-full bg-gray-900 py-2 pl-4 pr-2 text-white shadow-2xl">
             <span className="text-sm font-medium">
               {compareIds.length} universities selected
@@ -924,8 +1054,10 @@ export default function AIDegreeMatcherPage() {
               <X className="h-4 w-4" />
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
+    </MotionConfig>
   );
 }

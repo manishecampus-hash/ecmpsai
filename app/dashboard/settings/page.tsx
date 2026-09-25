@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import type { StudentProfile } from "../types";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import {
+  backdropMotion,
+  dialogMotion,
+  fadeUp,
+  staggerContainer,
+  staggerItem,
+} from "../components/motion";
 import {
   Bell,
   ShieldCheck,
@@ -56,22 +64,44 @@ function Toggle({
   label: string;
 }) {
   return (
-    <button
+    <motion.button
       type="button"
       role="switch"
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-        checked ? "bg-red-600" : "bg-gray-200"
+      whileTap="pressed"
+      className={`group relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full p-0.5 shadow-inner outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 ${
+        checked
+          ? "bg-gradient-to-r from-red-500 to-red-600"
+          : "bg-gray-200 hover:bg-gray-300"
       }`}
     >
-      <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-          checked ? "translate-x-[22px]" : "translate-x-0.5"
-        }`}
-      />
-    </button>
+      {/* Knob: springs across, squishes slightly while pressed, shows a check when on */}
+      <motion.span
+        initial={false}
+        animate={{ x: checked ? 20 : 0 }}
+        variants={{ pressed: { scaleX: 1.15 } }}
+        transition={{ type: "spring", stiffness: 500, damping: 32 }}
+        style={{ originX: checked ? 1 : 0 }}
+        className="flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-[0_1px_3px_rgba(15,23,42,0.25),0_1px_1px_rgba(15,23,42,0.08)]"
+      >
+        <AnimatePresence initial={false}>
+          {checked && (
+            <motion.span
+              key="on"
+              initial={{ scale: 0, rotate: -45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className="flex"
+            >
+              <Check className="h-3.5 w-3.5 text-red-600" strokeWidth={3} />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.span>
+    </motion.button>
   );
 }
 
@@ -85,13 +115,16 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+    <motion.div
+      variants={staggerItem}
+      className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6"
+    >
       <h2 className="text-base font-bold text-gray-900">{title}</h2>
       {description && (
         <p className="mt-1 text-sm text-gray-500">{description}</p>
       )}
       <div className="mt-4">{children}</div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -135,6 +168,7 @@ export default function SettingsPage() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
       <Sidebar
         mobileOpen={mobileMenuOpen}
@@ -148,17 +182,20 @@ export default function SettingsPage() {
         />
 
         <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
-          <div className="mb-5">
+          <motion.div {...fadeUp(0)} className="mb-5">
             <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
               Settings
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Manage your notifications, security, and account preferences.
             </p>
-          </div>
+          </motion.div>
 
           {/* Horizontal tab bar */}
-          <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-2 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <motion.div
+            {...fadeUp(0.06)}
+            className="mb-5 flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-2 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          >
             <div className="flex flex-1 items-center gap-1.5 overflow-x-auto">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
@@ -168,31 +205,58 @@ export default function SettingsPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors ${
+                    aria-pressed={active}
+                    className={`relative flex flex-shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors ${
                       active
-                        ? "bg-red-50 text-red-600"
+                        ? "text-red-600"
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >
-                    <Icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-                    {tab.label}
+                    {/* Active background glides between tabs */}
+                    {active && (
+                      <motion.span
+                        layoutId="settings-active-tab"
+                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                        className="absolute inset-0 rounded-xl bg-red-50"
+                      />
+                    )}
+                    <Icon className="relative h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                    <span className="relative">{tab.label}</span>
                   </button>
                 );
               })}
             </div>
 
-            <button
-              type="button"
-              onClick={() => setLogoutConfirmOpen(true)}
-              className="flex flex-shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
-            >
-              <LogOut className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-              Log Out
-            </button>
-          </div>
+            {/* Log Out belongs to account controls, so it only appears on the Account & Security tab */}
+            <AnimatePresence initial={false}>
+              {activeTab === "security" && (
+                <motion.button
+                  key="logout"
+                  type="button"
+                  onClick={() => setLogoutConfirmOpen(true)}
+                  initial={{ opacity: 0, x: 8 }}
+                  animate={{ opacity: 1, x: 0, transition: { duration: 0.2 } }}
+                  exit={{ opacity: 0, x: 8, transition: { duration: 0.15 } }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex flex-shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                >
+                  <LogOut className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                  Log Out
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Content — spans the full page width */}
-          <div className="w-full space-y-5">
+          <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            variants={staggerContainer(0.07, 0.1)}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="w-full space-y-5"
+          >
             {activeTab === "notifications" && (
               <SectionCard
                 title="Notification Preferences"
@@ -283,7 +347,7 @@ export default function SettingsPage() {
                     </div>
                     <button
                       type="button"
-                      className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+                      className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
                     >
                       Update Password
                     </button>
@@ -402,14 +466,29 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={handleCopyReferral}
-                      className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm transition active:scale-95 ${
+                        referralCopied
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
                     >
-                      {referralCopied ? (
-                        <Check className="h-3.5 w-3.5" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5" />
-                      )}
-                      {referralCopied ? "Copied" : "Copy Code"}
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                          key={referralCopied ? "copied" : "copy"}
+                          initial={{ opacity: 0, scale: 0.6 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.6 }}
+                          transition={{ duration: 0.15 }}
+                          className="flex items-center gap-1.5"
+                        >
+                          {referralCopied ? (
+                            <Check className="h-3.5 w-3.5" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" />
+                          )}
+                          {referralCopied ? "Copied" : "Copy Code"}
+                        </motion.span>
+                      </AnimatePresence>
                     </button>
                   </div>
                 </SectionCard>
@@ -478,22 +557,27 @@ export default function SettingsPage() {
                     </div>
                   </SectionCard>
 
-                  <p className="text-center text-xs text-gray-400">
+                  <motion.p variants={staggerItem} className="text-center text-xs text-gray-400">
                     eCampus Student Dashboard · Version 1.0.0
-                  </p>
+                  </motion.p>
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
+      <AnimatePresence>
       {logoutConfirmOpen && (
-        <div
+        <motion.div
+          key="logout-backdrop"
+          {...backdropMotion}
           className="fixed inset-0 z-[80] flex items-center justify-center bg-[#0a1428]/70 p-4 backdrop-blur-sm"
           onClick={() => setLogoutConfirmOpen(false)}
         >
-          <div
+          <motion.div
+            {...dialogMotion}
             role="dialog"
             aria-modal="true"
             className="relative w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl"
@@ -520,21 +604,23 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={() => setLogoutConfirmOpen(false)}
-                className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
               >
                 Log Out
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
+    </MotionConfig>
   );
 }

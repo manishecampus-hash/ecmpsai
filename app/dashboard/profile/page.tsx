@@ -5,6 +5,14 @@ import Link from "next/link";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import type { StudentProfile } from "../types";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import {
+  EASE_OUT,
+  collapse,
+  fadeUp,
+  staggerContainer,
+  staggerItem,
+} from "../components/motion";
 import {
   Camera,
   Check,
@@ -35,13 +43,16 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+    <motion.div
+      variants={staggerItem}
+      className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6"
+    >
       <h2 className="text-base font-bold text-gray-900">{title}</h2>
       {description && (
         <p className="mt-1 text-sm text-gray-500">{description}</p>
       )}
       <div className="mt-4">{children}</div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -106,6 +117,7 @@ export default function ProfilePage() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
       <Sidebar
         mobileOpen={mobileMenuOpen}
@@ -119,7 +131,7 @@ export default function ProfilePage() {
         />
 
         <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
+          <motion.div {...fadeUp(0)} className="mb-5 flex items-center justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
                 Profile
@@ -130,20 +142,33 @@ export default function ProfilePage() {
             </div>
             <Link
               href="/dashboard/settings"
-              className="flex flex-shrink-0 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+              className="flex flex-shrink-0 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.97]"
             >
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Settings</span>
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="w-full space-y-5">
-            <div className="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 via-rose-50 to-white p-5 sm:p-6">
+          <motion.div
+            variants={staggerContainer(0.08, 0.06)}
+            initial="enter"
+            animate="center"
+            className="w-full space-y-5"
+          >
+            <motion.div
+              variants={staggerItem}
+              className="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 via-rose-50 to-white p-5 sm:p-6"
+            >
               <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
                 <div className="relative flex-shrink-0">
-                  <span className="flex h-20 w-20 items-center justify-center rounded-full bg-red-600 text-2xl font-bold text-white shadow-sm">
+                  <motion.span
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.15 }}
+                    className="flex h-20 w-20 items-center justify-center rounded-full bg-red-600 text-2xl font-bold text-white shadow-sm"
+                  >
                     {initial}
-                  </span>
+                  </motion.span>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -154,7 +179,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     aria-label="Change profile photo"
-                    className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gray-900 text-white shadow-sm transition hover:bg-gray-700"
+                    className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gray-900 text-white shadow-sm transition hover:scale-110 hover:bg-gray-700 active:scale-95"
                   >
                     <Camera className="h-3.5 w-3.5" />
                   </button>
@@ -191,15 +216,23 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {!editing && (
-                  <button
-                    type="button"
-                    onClick={() => setEditing(true)}
-                    className="flex-shrink-0 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
-                  >
-                    Edit Profile
-                  </button>
-                )}
+                <AnimatePresence initial={false}>
+                  {!editing && (
+                    <motion.button
+                      key="edit-profile"
+                      type="button"
+                      onClick={() => setEditing(true)}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.18 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex-shrink-0 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
+                      Edit Profile
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className="mt-5 max-w-xl">
@@ -212,26 +245,30 @@ export default function ProfilePage() {
                   </span>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-white">
-                  <div
-                    className="h-full rounded-full bg-red-500 transition-all"
-                    style={{ width: `${profileCompletion}%` }}
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${profileCompletion}%` }}
+                    transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.3 }}
+                    className="h-full rounded-full bg-red-500"
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Quick stats — same figures shown on the main dashboard, surfaced here for a single-glance account summary */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <motion.div
+              variants={staggerContainer(0.05)}
+              className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+            >
               {[
                 { icon: Landmark, iconClass: "bg-red-50 text-red-500", label: "AI Matches", value: "14" },
                 { icon: Wallet, iconClass: "bg-emerald-50 text-emerald-500", label: "Scholarship", value: "₹10,000" },
                 { icon: CheckCircle2, iconClass: "bg-blue-50 text-blue-500", label: "App Readiness", value: "88%" },
                 { icon: Sparkles, iconClass: "bg-amber-50 text-amber-600", label: "AI Readiness", value: "94/100" },
               ].map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm sm:p-4"
-                >
+                // Motion on a wrapper so the card's CSS hover lift isn't overridden
+                <motion.div key={s.label} variants={staggerItem}>
+                <div className="h-full rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-4">
                   <span
                     className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.iconClass}`}
                   >
@@ -242,10 +279,14 @@ export default function ProfilePage() {
                   </p>
                   <p className="text-[11px] text-gray-500">{s.label}</p>
                 </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <motion.div
+              variants={staggerContainer(0.07)}
+              className="grid grid-cols-1 gap-5 lg:grid-cols-2"
+            >
                <SectionCard title="Interested Programs">
                 {student.coursesInterested?.length ? (
                   <div className="flex flex-wrap gap-2">
@@ -266,8 +307,15 @@ export default function ProfilePage() {
                 )}
               </SectionCard>
               <SectionCard title="Personal Information">
+                <AnimatePresence mode="wait" initial={false}>
                 {editing ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="edit"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: EASE_OUT } }}
+                    exit={{ opacity: 0, y: -4, transition: { duration: 0.15 } }}
+                    className="space-y-4"
+                  >
                     <div>
                       <label className="mb-1.5 block text-xs font-semibold text-gray-500">
                         Full Name
@@ -320,27 +368,37 @@ export default function ProfilePage() {
                       <button
                         type="button"
                         onClick={handleSaveProfile}
-                        className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+                        className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
                       >
                         Save Changes
                       </button>
                       <button
                         type="button"
                         onClick={handleCancelEdit}
-                        className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                        className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]"
                       >
                         Cancel
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 ) : (
-                  <div className="space-y-3.5">
-                    {savedFlash && (
-                      <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-sm font-medium text-emerald-700">
-                        <Check className="h-4 w-4 flex-shrink-0" />
-                        Profile updated successfully.
-                      </div>
-                    )}
+                  <motion.div
+                    key="view"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: EASE_OUT } }}
+                    exit={{ opacity: 0, y: -4, transition: { duration: 0.15 } }}
+                    className="space-y-3.5"
+                  >
+                    <AnimatePresence initial={false}>
+                      {savedFlash && (
+                        <motion.div key="saved" {...collapse} className="overflow-hidden">
+                          <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-sm font-medium text-emerald-700">
+                            <Check className="h-4 w-4 flex-shrink-0" />
+                            Profile updated successfully.
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     <div className="flex items-center gap-3 text-sm">
                       <Mail className="h-4 w-4 flex-shrink-0 text-gray-400" />
                       <span className="text-gray-500">Email</span>
@@ -374,8 +432,9 @@ export default function ProfilePage() {
                           : "2026"}
                       </span>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
+                </AnimatePresence>
               </SectionCard>
 
               <SectionCard
@@ -477,10 +536,11 @@ export default function ProfilePage() {
                   ))}
                 </div>
               </SectionCard>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </main>
       </div>
     </div>
+    </MotionConfig>
   );
 }

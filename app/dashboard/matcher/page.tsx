@@ -10,7 +10,7 @@ import {
   motion,
   type Variants,
 } from "framer-motion";
-import { EASE_OUT, collapse, fadeUp } from "../components/motion";
+import { EASE_OUT, backdropMotion, collapse, fadeUp } from "../components/motion";
 import type { StudentProfile } from "../types";
 import {
   Search,
@@ -25,6 +25,10 @@ import {
   ChevronRight,
   ChevronDown,
   X,
+  Monitor,
+  Shuffle,
+  Building2,
+  type LucideIcon,
 } from "lucide-react";
 
 type Mode = "Online" | "Hybrid" | "Campus";
@@ -305,28 +309,87 @@ const cardVariants: Variants = {
   exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
 };
 
+const MODE_ICONS: Record<Mode, LucideIcon> = {
+  Online: Monitor,
+  Hybrid: Shuffle,
+  Campus: Building2,
+};
+
+const FEE_PRESETS = [
+  { label: "Any", value: MAX_FEE },
+  { label: "≤ ₹50K", value: 50000 },
+  { label: "≤ ₹75K", value: 75000 },
+  { label: "≤ ₹1L", value: 100000 },
+];
+
+type FilterState = {
+  search: string;
+  location: string;
+  degrees: Degree[];
+  specializations: Specialization[];
+  modes: Mode[];
+  maxFee: number;
+  accreditations: Accreditation[];
+  features: FeatureTag[];
+};
+type FacetKey = "degree" | "specialization" | "mode" | "accreditation" | "feature";
+
+// `skip` ignores one filter group so facet counts show how many results each option would give
+function matchesFilters(u: UniversityListing, f: FilterState, skip?: FacetKey) {
+  const q = f.search.trim().toLowerCase();
+  if (
+    q &&
+    !(
+      u.name.toLowerCase().includes(q) ||
+      u.program.toLowerCase().includes(q) ||
+      u.specialization.toLowerCase().includes(q)
+    )
+  )
+    return false;
+  if (f.location !== "Any Location" && u.location !== f.location) return false;
+  if (skip !== "degree" && f.degrees.length && !f.degrees.includes(u.degree)) return false;
+  if (skip !== "specialization" && f.specializations.length && !f.specializations.includes(u.specialization))
+    return false;
+  if (skip !== "mode" && f.modes.length && !f.modes.includes(u.mode)) return false;
+  if (u.fee > f.maxFee) return false;
+  if (skip !== "accreditation" && f.accreditations.length && !f.accreditations.some((a) => u.accreditations.includes(a)))
+    return false;
+  if (skip !== "feature" && f.features.length && !f.features.some((x) => u.features.includes(x)))
+    return false;
+  return true;
+}
+
+const formatFeeShort = (fee: number) =>
+  fee >= 100000 ? `₹${(fee / 100000).toFixed(fee % 100000 ? 1 : 0)}L` : `₹${fee / 1000}K`;
+
 function toggleInArray<T>(arr: T[], value: T): T[] {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 }
 
-function Checkbox({
+function OptionRow({
   checked,
   onChange,
   label,
+  count,
 }: {
   checked: boolean;
   onChange: () => void;
   label: string;
+  count: number;
 }) {
+  const disabled = count === 0 && !checked;
   return (
     <button
       type="button"
+      role="checkbox"
+      aria-checked={checked}
       onClick={onChange}
-      className="flex w-full items-center gap-2.5 py-1.5 text-left"
+      disabled={disabled}
+      className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
     >
       <span
-        className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded transition-colors ${
-          checked ? "bg-red-600" : "border border-gray-300 bg-white"
+        className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
+          checked ? "border-red-600 bg-red-600" : "border-gray-300 bg-white group-hover:border-gray-400"
         }`}
       >
         {checked && (
@@ -334,36 +397,83 @@ function Checkbox({
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            className="flex"
           >
-            <Check className="h-3 w-3 text-white" strokeWidth={3} />
+            <Check className="h-3 w-3 text-white" strokeWidth={3.5} />
           </motion.span>
         )}
       </span>
-      <span className="text-sm text-gray-700">{label}</span>
+      <span className={`flex-1 text-sm ${checked ? "font-medium text-gray-900" : "text-gray-600"}`}>
+        {label}
+      </span>
+      <span className="min-w-[1.5rem] rounded-full bg-gray-100 px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums text-gray-500">
+        {count}
+      </span>
     </button>
   );
 }
 
-function Pill({
+function ChoiceChip({
   active,
   onClick,
-  children,
+  label,
+  count,
 }: {
   active: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  label: string;
+  count: number;
 }) {
+  const disabled = count === 0 && !active;
   return (
     <button
       type="button"
+      aria-pressed={active}
       onClick={onClick}
-      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition active:scale-95 ${
+      disabled={disabled}
+      className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${
         active
-          ? "bg-red-600 text-white"
-          : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+          ? "border-red-500 bg-red-50 text-red-700"
+          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
       }`}
     >
-      {children}
+      {active && <Check className="h-3 w-3" strokeWidth={3} />}
+      {label}
+      <span className={`tabular-nums ${active ? "text-red-400" : "text-gray-400"}`}>{count}</span>
+    </button>
+  );
+}
+
+function ModeTile({
+  mode,
+  active,
+  onClick,
+  count,
+}: {
+  mode: Mode;
+  active: boolean;
+  onClick: () => void;
+  count: number;
+}) {
+  const Icon = MODE_ICONS[mode];
+  const disabled = count === 0 && !active;
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      disabled={disabled}
+      className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${
+        active
+          ? "border-red-500 bg-red-50 text-red-700 shadow-sm shadow-red-100"
+          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+      }`}
+    >
+      <Icon className={`h-[18px] w-[18px] ${active ? "text-red-600" : "text-gray-400"}`} strokeWidth={1.8} />
+      <span className="text-xs font-semibold">{mode}</span>
+      <span className={`text-[10px] tabular-nums ${active ? "text-red-400" : "text-gray-400"}`}>
+        {count} {count === 1 ? "program" : "programs"}
+      </span>
     </button>
   );
 }
@@ -453,17 +563,41 @@ function Dropdown({
 
 function FilterSection({
   title,
+  selected = 0,
+  defaultOpen = true,
   children,
 }: {
   title: string;
+  selected?: number;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(defaultOpen || selected > 0);
   return (
-    <div className="border-b border-gray-100 py-4 first:pt-0 last:border-b-0 last:pb-0">
-      <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wide text-gray-500">
-        {title}
-      </h3>
-      {children}
+    <div className="border-b border-gray-100 last:border-b-0">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-2 py-3.5 text-left"
+      >
+        <span className="flex-1 text-[13px] font-semibold text-gray-900">{title}</span>
+        {selected > 0 && (
+          <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
+            {selected}
+          </span>
+        )}
+        <ChevronDown
+          className={`h-4 w-4 flex-shrink-0 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div key="body" {...collapse} className="overflow-hidden">
+            <div className="pb-4">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -496,34 +630,34 @@ export default function AIDegreeMatcherPage() {
     [],
   );
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return UNIVERSITIES.filter((u) => {
-      if (
-        q &&
-        !(
-          u.name.toLowerCase().includes(q) ||
-          u.program.toLowerCase().includes(q) ||
-          u.specialization.toLowerCase().includes(q)
-        )
-      )
-        return false;
-      if (location !== "Any Location" && u.location !== location) return false;
-      if (degrees.length && !degrees.includes(u.degree)) return false;
-      if (specializations.length && !specializations.includes(u.specialization))
-        return false;
-      if (modes.length && !modes.includes(u.mode)) return false;
-      if (u.fee > maxFee) return false;
-      if (
-        accreditations.length &&
-        !accreditations.some((a) => u.accreditations.includes(a))
-      )
-        return false;
-      if (features.length && !features.some((f) => u.features.includes(f)))
-        return false;
-      return true;
-    });
-  }, [search, location, degrees, specializations, modes, maxFee, accreditations, features]);
+  const filterState: FilterState = useMemo(
+    () => ({ search, location, degrees, specializations, modes, maxFee, accreditations, features }),
+    [search, location, degrees, specializations, modes, maxFee, accreditations, features],
+  );
+
+  const filtered = useMemo(
+    () => UNIVERSITIES.filter((u) => matchesFilters(u, filterState)),
+    [filterState],
+  );
+
+  // How many results each option would give, given every *other* active filter
+  const facets = useMemo(() => {
+    const count = (skip: FacetKey, test: (u: UniversityListing) => boolean) =>
+      UNIVERSITIES.filter((u) => matchesFilters(u, filterState, skip) && test(u)).length;
+    return {
+      degree: Object.fromEntries(DEGREES.map((d) => [d, count("degree", (u) => u.degree === d)])),
+      specialization: Object.fromEntries(
+        SPECIALIZATIONS.map((x) => [x.id, count("specialization", (u) => u.specialization === x.id)]),
+      ),
+      mode: Object.fromEntries(MODES.map((m) => [m, count("mode", (u) => u.mode === m)])),
+      accreditation: Object.fromEntries(
+        ACCREDITATIONS.map((a) => [a.id, count("accreditation", (u) => u.accreditations.includes(a.id))]),
+      ),
+      feature: Object.fromEntries(
+        FEATURES.map((x) => [x.id, count("feature", (u) => u.features.includes(x.id))]),
+      ),
+    } as Record<FacetKey, Record<string, number>>;
+  }, [filterState]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -580,60 +714,113 @@ export default function AIDegreeMatcherPage() {
     setFeatures([]);
   };
 
+  const activeFilterCount =
+    degrees.length +
+    specializations.length +
+    modes.length +
+    accreditations.length +
+    features.length +
+    (maxFee < MAX_FEE ? 1 : 0);
+
+  const handleClearAll = () => {
+    handleResetFilters();
+    setLocation("Any Location");
+  };
+
+  // Removable chips summarising every active filter, shown above the results
+  const activeChips: { key: string; label: string; onRemove: () => void }[] = [
+    ...(location !== "Any Location"
+      ? [{ key: "loc", label: location, onRemove: () => setLocation("Any Location") }]
+      : []),
+    ...degrees.map((d) => ({ key: `deg-${d}`, label: d, onRemove: () => setDegrees((p) => p.filter((x) => x !== d)) })),
+    ...specializations.map((sp) => ({
+      key: `spec-${sp}`,
+      label: SPECIALIZATIONS.find((x) => x.id === sp)?.label ?? sp,
+      onRemove: () => setSpecializations((p) => p.filter((x) => x !== sp)),
+    })),
+    ...modes.map((m) => ({ key: `mode-${m}`, label: m, onRemove: () => setModes((p) => p.filter((x) => x !== m)) })),
+    ...(maxFee < MAX_FEE
+      ? [{ key: "fee", label: `Up to ${formatFeeShort(maxFee)}/yr`, onRemove: () => setMaxFee(MAX_FEE) }]
+      : []),
+    ...accreditations.map((a) => ({
+      key: `acc-${a}`,
+      label: ACCREDITATION_CHIP_LABEL[a],
+      onRemove: () => setAccreditations((p) => p.filter((x) => x !== a)),
+    })),
+    ...features.map((f) => ({
+      key: `feat-${f}`,
+      label: FEATURE_CHIP_LABEL[f],
+      onRemove: () => setFeatures((p) => p.filter((x) => x !== f)),
+    })),
+  ];
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFiltersOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [filtersOpen]);
+
   const toggleCompare = (id: string) => {
     setCompareIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev,
     );
   };
 
-  const filterPanel = (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-      <div className="mb-1 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900">
-          <SlidersHorizontal className="h-4 w-4 text-gray-400" />
-          Filters
-        </h2>
-        <button
-          type="button"
-          onClick={handleResetFilters}
-          className="text-xs font-semibold text-red-600 hover:underline"
-        >
-          Reset All
-        </button>
-      </div>
+  const feePct = ((maxFee - MIN_FEE) / (MAX_FEE - MIN_FEE)) * 100;
 
-      <FilterSection title="Degree Program">
+  const filterBody = (
+    <>
+      <FilterSection title="Degree Program" selected={degrees.length}>
         <div className="flex flex-wrap gap-1.5">
           {DEGREES.map((d) => (
-            <Pill key={d} active={degrees.includes(d)} onClick={() => setDegrees((p) => toggleInArray(p, d))}>
-              {d}
-            </Pill>
+            <ChoiceChip
+              key={d}
+              label={d}
+              count={facets.degree[d]}
+              active={degrees.includes(d)}
+              onClick={() => setDegrees((p) => toggleInArray(p, d))}
+            />
           ))}
         </div>
       </FilterSection>
 
-      <FilterSection title="Specialization">
-        {SPECIALIZATIONS.map((s) => (
-          <Checkbox
-            key={s.id}
-            checked={specializations.includes(s.id)}
-            onChange={() => setSpecializations((p) => toggleInArray(p, s.id))}
-            label={s.label}
-          />
-        ))}
+      <FilterSection title="Specialization" selected={specializations.length}>
+        <div className="-mx-2">
+          {SPECIALIZATIONS.map((sp) => (
+            <OptionRow
+              key={sp.id}
+              label={sp.label}
+              count={facets.specialization[sp.id]}
+              checked={specializations.includes(sp.id)}
+              onChange={() => setSpecializations((p) => toggleInArray(p, sp.id))}
+            />
+          ))}
+        </div>
       </FilterSection>
 
-      <FilterSection title="Study Mode">
-        <div className="flex flex-wrap gap-1.5">
+      <FilterSection title="Study Mode" selected={modes.length}>
+        <div className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (
-            <Pill key={m} active={modes.includes(m)} onClick={() => setModes((p) => toggleInArray(p, m))}>
-              {m}
-            </Pill>
+            <ModeTile
+              key={m}
+              mode={m}
+              count={facets.mode[m]}
+              active={modes.includes(m)}
+              onClick={() => setModes((p) => toggleInArray(p, m))}
+            />
           ))}
         </div>
       </FilterSection>
 
-      <FilterSection title="Maximum Annual Fee">
+      <FilterSection title="Annual Fee" selected={maxFee < MAX_FEE ? 1 : 0}>
+        <div className="flex items-baseline justify-between">
+          <span className="text-xs text-gray-500">Maximum budget</span>
+          <span className="text-sm font-bold tabular-nums text-gray-900">
+            ₹{maxFee.toLocaleString("en-IN")}
+            <span className="text-xs font-medium text-gray-400">/yr</span>
+          </span>
+        </div>
         <input
           type="range"
           min={MIN_FEE}
@@ -641,49 +828,81 @@ export default function AIDegreeMatcherPage() {
           step={5000}
           value={maxFee}
           onChange={(e) => setMaxFee(Number(e.target.value))}
-          className="w-full accent-red-600"
+          aria-label="Maximum annual fee"
+          style={{ background: `linear-gradient(to right, #dc2626 ${feePct}%, #e5e7eb ${feePct}%)` }}
+          className="mt-3.5 h-1.5 w-full cursor-pointer appearance-none rounded-full border-0 p-0 outline-none focus:border-0 focus:shadow-none focus:outline-none [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-red-600 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-red-600 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-transform hover:[&::-webkit-slider-thumb]:scale-110 focus-visible:[&::-webkit-slider-thumb]:ring-4 focus-visible:[&::-webkit-slider-thumb]:ring-red-100"
         />
-        <div className="mt-1.5 flex items-center justify-between text-xs text-gray-500">
-          <span>₹{MIN_FEE.toLocaleString("en-IN")}</span>
-          <span className="font-semibold text-red-600">
-            Up to ₹{maxFee.toLocaleString("en-IN")}/yr
-          </span>
+        <div className="mt-2 flex justify-between text-[11px] text-gray-400">
+          <span>{formatFeeShort(MIN_FEE)}</span>
+          <span>{formatFeeShort(MAX_FEE)}</span>
+        </div>
+        <div className="mt-3 grid grid-cols-4 gap-1.5">
+          {FEE_PRESETS.map((preset) => {
+            const active = maxFee === preset.value;
+            return (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => setMaxFee(preset.value)}
+                className={`whitespace-nowrap rounded-full px-1 py-1 text-[11px] font-semibold transition active:scale-95 ${
+                  active ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {preset.label}
+              </button>
+            );
+          })}
         </div>
       </FilterSection>
 
-      <FilterSection title="Accreditations">
-        {ACCREDITATIONS.map((a) => (
-          <Checkbox
-            key={a.id}
-            checked={accreditations.includes(a.id)}
-            onChange={() => setAccreditations((p) => toggleInArray(p, a.id))}
-            label={a.label}
-          />
-        ))}
+      <FilterSection title="Accreditations" selected={accreditations.length} defaultOpen={false}>
+        <div className="-mx-2">
+          {ACCREDITATIONS.map((a) => (
+            <OptionRow
+              key={a.id}
+              label={a.label}
+              count={facets.accreditation[a.id]}
+              checked={accreditations.includes(a.id)}
+              onChange={() => setAccreditations((p) => toggleInArray(p, a.id))}
+            />
+          ))}
+        </div>
       </FilterSection>
 
-      <FilterSection title="Features">
-        {FEATURES.map((f) => (
-          <Checkbox
-            key={f.id}
-            checked={features.includes(f.id)}
-            onChange={() => setFeatures((p) => toggleInArray(p, f.id))}
-            label={f.label}
-          />
-        ))}
+      <FilterSection title="Features" selected={features.length} defaultOpen={false}>
+        <div className="-mx-2">
+          {FEATURES.map((f) => (
+            <OptionRow
+              key={f.id}
+              label={f.label}
+              count={facets.feature[f.id]}
+              checked={features.includes(f.id)}
+              onChange={() => setFeatures((p) => toggleInArray(p, f.id))}
+            />
+          ))}
+        </div>
       </FilterSection>
+    </>
+  );
 
-      <button
-        type="button"
-        onClick={() => {
-          setPage(1);
-          setFiltersOpen(false);
-        }}
-        className="mt-4 w-full rounded-xl bg-red-600 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
-      >
-        Apply Filters
-      </button>
-    </div>
+  const filterHeading = (
+    <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900">
+      <SlidersHorizontal className="h-4 w-4 text-gray-400" />
+      Filters
+      <AnimatePresence initial={false}>
+        {activeFilterCount > 0 && (
+          <motion.span
+            key="count"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white"
+          >
+            {activeFilterCount}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </h2>
   );
 
   return (
@@ -783,30 +1002,39 @@ export default function AIDegreeMatcherPage() {
           </motion.div>
 
           <div className="flex flex-1 flex-col gap-5 lg:flex-row lg:items-start">
-            {/* Filters — desktop; stays pinned in view while the results column scrolls */}
-            <div className="hidden flex-shrink-0 lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-7rem)] lg:w-72 lg:overflow-y-auto">
-              {filterPanel}
-            </div>
+            {/* Filters — desktop; header stays fixed while the options scroll inside the pinned panel */}
+            <aside className="hidden flex-shrink-0 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:sticky lg:top-0 lg:flex lg:max-h-[calc(100vh-7rem)] lg:w-72">
+              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+                {filterHeading}
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  disabled={activeFilterCount === 0}
+                  className="text-xs font-semibold text-red-600 transition hover:underline disabled:cursor-default disabled:text-gray-300 disabled:no-underline"
+                >
+                  Clear all
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-5 [scrollbar-width:thin]">{filterBody}</div>
+            </aside>
 
-            {/* Filters — mobile toggle */}
+            {/* Filters — mobile trigger (opens a bottom sheet) */}
             <button
               type="button"
-              onClick={() => setFiltersOpen((v) => !v)}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm lg:hidden"
+              onClick={() => setFiltersOpen(true)}
+              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition active:scale-[0.99] lg:hidden"
             >
               <span className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
                 Filters
+                {activeFilterCount > 0 && (
+                  <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
               </span>
-              <span className="text-xs text-gray-400">{filtersOpen ? "Hide" : "Show"}</span>
+              <ChevronRight className="h-4 w-4 text-gray-400" />
             </button>
-            <AnimatePresence initial={false}>
-              {filtersOpen && (
-                <motion.div key="mobile-filters" {...collapse} className="overflow-hidden lg:hidden">
-                  {filterPanel}
-                </motion.div>
-              )}
-            </AnimatePresence>
 
             {/* Results */}
             <div className="min-w-0 flex-1 space-y-4">
@@ -841,6 +1069,41 @@ export default function AIDegreeMatcherPage() {
                 </div>
               </div>
 
+              <AnimatePresence initial={false}>
+                {activeChips.length > 0 && (
+                  <motion.div key="active-chips" {...collapse} className="overflow-hidden">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <AnimatePresence initial={false} mode="popLayout">
+                        {activeChips.map((chip) => (
+                          <motion.button
+                            layout
+                            key={chip.key}
+                            type="button"
+                            onClick={chip.onRemove}
+                            aria-label={`Remove filter: ${chip.label}`}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.15 }}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 py-1 pl-3 pr-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
+                          >
+                            {chip.label}
+                            <X className="h-3 w-3" strokeWidth={2.5} />
+                          </motion.button>
+                        ))}
+                      </AnimatePresence>
+                      <button
+                        type="button"
+                        onClick={handleClearAll}
+                        className="px-1 text-xs font-semibold text-gray-500 transition hover:text-gray-900 hover:underline"
+                      >
+                        Clear all
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <AnimatePresence mode="wait" custom={direction}>
               {pageItems.length === 0 ? (
                 <motion.div
@@ -856,7 +1119,10 @@ export default function AIDegreeMatcherPage() {
                   </p>
                   <button
                     type="button"
-                    onClick={handleResetFilters}
+                    onClick={() => {
+                      handleClearAll();
+                      setSearch("");
+                    }}
                     className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 active:scale-[0.98]"
                   >
                     Reset All Filters
@@ -1023,6 +1289,60 @@ export default function AIDegreeMatcherPage() {
           </div>
         </main>
       </div>
+
+      {/* Mobile filter sheet */}
+      <AnimatePresence>
+        {filtersOpen && (
+          <motion.div
+            key="filter-sheet"
+            {...backdropMotion}
+            onClick={() => setFiltersOpen(false)}
+            className="fixed inset-0 z-[70] bg-slate-900/50 backdrop-blur-sm lg:hidden"
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Filters"
+              initial={{ y: "100%" }}
+              animate={{ y: 0, transition: { type: "spring", stiffness: 380, damping: 38 } }}
+              exit={{ y: "100%", transition: { duration: 0.2, ease: "easeIn" } }}
+              onClick={(e) => e.stopPropagation()}
+              className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl bg-white shadow-2xl"
+            >
+              <div className="mx-auto mt-2.5 h-1 w-10 flex-shrink-0 rounded-full bg-gray-200" />
+              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
+                {filterHeading}
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  aria-label="Close filters"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-5">{filterBody}</div>
+              <div className="flex gap-3 border-t border-gray-100 px-5 py-4">
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  disabled={activeFilterCount === 0}
+                  className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-300"
+                >
+                  Clear all
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="flex-1 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+                >
+                  Show {sorted.length} {sorted.length === 1 ? "result" : "results"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Sticky compare bar */}
       <AnimatePresence>

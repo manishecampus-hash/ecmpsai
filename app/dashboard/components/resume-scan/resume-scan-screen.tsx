@@ -1,30 +1,46 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, MotionConfig, animate, motion } from "framer-motion";
 import {
   X,
   FileText,
   Sparkles,
   Check,
-  Target,
   ArrowRight,
-  Trophy,
   GraduationCap,
   IndianRupee,
+  Lock,
+  Loader2,
+  Briefcase,
+  Award,
+  BookOpen,
+  Wrench,
 } from "lucide-react";
+import { EASE_OUT } from "../motion";
 
 const SCAN_STEPS = [
-  "Reading document structure",
-  "Extracting skills & experience",
-  "Matching to top online programs",
-  "Calculating scholarship eligibility",
+  { title: "Reading document structure", detail: "Parsing layout, sections and formatting" },
+  { title: "Extracting skills & experience", detail: "Identifying roles, tools and achievements" },
+  { title: "Matching to top online programs", detail: "Comparing against accredited online programs" },
+  { title: "Calculating scholarship eligibility", detail: "Checking merit & need-based waivers" },
 ];
 
+// Resume sections "detected" on the preview as the scan progresses (one per step)
+const DETECTED_SECTIONS = [
+  { icon: BookOpen, label: "Education" },
+  { icon: Briefcase, label: "Experience" },
+  { icon: Wrench, label: "Skills" },
+  { icon: Award, label: "Certifications" },
+];
+
+const MATCH_SCORE = 96;
+
 const SCAN_RESULTS = [
-  { icon: Target, label: "Profile Match", value: "96%" },
-  { icon: GraduationCap, label: "Programs Matched", value: "14" },
-  { icon: IndianRupee, label: "Scholarship Unlocked", value: "₹25,000" },
+  { icon: GraduationCap, label: "Programs matched", value: "14", tone: "bg-blue-50 text-blue-600" },
+  { icon: IndianRupee, label: "Scholarship unlocked", value: "₹25,000", tone: "bg-emerald-50 text-emerald-600" },
+  { icon: Sparkles, label: "AI Readiness score", value: "94/100", tone: "bg-amber-50 text-amber-600" },
 ];
 
 const STEP_INTERVAL_MS = 900;
@@ -41,15 +57,173 @@ function formatFileSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function fileExtension(name?: string) {
+  return name?.split(".").pop()?.toUpperCase() || "PDF";
+}
+
+/* ---------- Scanning: mock resume page with a sweeping scan beam ---------- */
+function ResumePreview({ doneCount }: { doneCount: number }) {
+  // Skeleton rows grouped into the four sections; a section lights up once its step completes
+  const sections = [
+    [92, 78, 64],
+    [88, 95, 70, 82],
+    [60, 74, 52],
+    [80, 66],
+  ];
+
+  return (
+    <div className="mx-auto w-full max-w-[200px] sm:max-w-[260px]">
+      <div className="relative">
+      {/* Back sheet for depth */}
+      <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-2 rounded-2xl bg-white/60 shadow-sm" />
+
+      <div className="relative overflow-hidden rounded-2xl border border-white bg-white p-4 shadow-xl shadow-red-900/10 sm:p-5">
+        {/* Header: avatar + name lines */}
+        <div className="flex items-center gap-3">
+          <span className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-red-100 to-rose-200" />
+          <div className="flex-1 space-y-1.5">
+            <span className="block h-2.5 w-3/4 rounded-full bg-slate-800/80" />
+            <span className="block h-2 w-1/2 rounded-full bg-slate-200" />
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-3.5">
+          {sections.map((rows, si) => {
+            const detected = si < doneCount;
+            return (
+              <div
+                key={si}
+                className={`relative rounded-lg p-1.5 transition-colors duration-500 ${
+                  detected ? "bg-red-50/70" : ""
+                }`}
+              >
+                <span
+                  className={`mb-1.5 block h-2 w-16 rounded-full transition-colors duration-500 ${
+                    detected ? "bg-red-400" : "bg-slate-300"
+                  }`}
+                />
+                <div className="space-y-1">
+                  {rows.map((w, ri) => (
+                    <span
+                      key={ri}
+                      style={{ width: `${w}%` }}
+                      className={`block h-1.5 rounded-full transition-colors duration-500 ${
+                        detected ? "bg-red-200" : "bg-slate-100"
+                      }`}
+                    />
+                  ))}
+                </div>
+                {detected && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600"
+                  >
+                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3.5} />
+                  </motion.span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Scan beam */}
+        <motion.div
+          aria-hidden
+          animate={{ top: ["-15%", "100%"] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
+          className="pointer-events-none absolute inset-x-0 h-16"
+        >
+          <div className="h-full bg-gradient-to-b from-transparent via-red-500/15 to-transparent" />
+          <div className="absolute inset-x-0 top-1/2 h-px bg-red-500/70 shadow-[0_0_12px_2px_rgba(239,68,68,0.45)]" />
+        </motion.div>
+      </div>
+      </div>
+
+      {/* Detected section chips */}
+      <div className="mt-6 hidden min-h-[64px] flex-wrap justify-center gap-2 sm:flex">
+        <AnimatePresence>
+          {DETECTED_SECTIONS.slice(0, doneCount).map(({ icon: Icon, label }) => (
+            <motion.span
+              key={label}
+              initial={{ opacity: 0, y: 8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.3, ease: EASE_OUT }}
+              className="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-white px-2.5 py-1 text-[11px] font-semibold text-red-600 shadow-sm"
+            >
+              <Icon className="h-3 w-3" />
+              {label}
+            </motion.span>
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Complete: animated match-score ring ---------- */
+function ScoreRing({ score }: { score: number }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const controls = animate(0, score, {
+      duration: 1.2,
+      delay: 0.2,
+      ease: EASE_OUT,
+      onUpdate: (v) => setShown(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [score]);
+
+  const r = 52;
+  return (
+    <div className="relative h-36 w-36">
+      <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+        <circle cx="60" cy="60" r={r} fill="none" strokeWidth="10" className="stroke-red-100" />
+        <motion.circle
+          cx="60"
+          cy="60"
+          r={r}
+          fill="none"
+          strokeWidth="10"
+          strokeLinecap="round"
+          stroke="url(#score-gradient)"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: score / 100 }}
+          transition={{ duration: 1.2, delay: 0.2, ease: EASE_OUT }}
+        />
+        <defs>
+          <linearGradient id="score-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#f43f5e" />
+            <stop offset="100%" stopColor="#dc2626" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-3xl font-black tabular-nums text-slate-900">{shown}%</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+          Match
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProps) {
+  const router = useRouter();
   const isOpen = !!file;
   const [phase, setPhase] = useState<"scanning" | "complete">("scanning");
   const [doneSteps, setDoneSteps] = useState<boolean[]>(SCAN_STEPS.map(() => false));
+  const [progress, setProgress] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const progressAnim = useRef<ReturnType<typeof animate> | null>(null);
+
+  const totalDuration = (STEP_START_DELAY_MS + SCAN_STEPS.length * STEP_INTERVAL_MS + 500) / 1000;
 
   const clearTimers = () => {
     timers.current.forEach((t) => clearTimeout(t));
     timers.current = [];
+    progressAnim.current?.stop();
   };
 
   useEffect(() => {
@@ -57,6 +231,13 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
 
     setPhase("scanning");
     setDoneSteps(SCAN_STEPS.map(() => false));
+    setProgress(0);
+
+    progressAnim.current = animate(0, 100, {
+      duration: totalDuration,
+      ease: "linear",
+      onUpdate: (v) => setProgress(Math.round(v)),
+    });
 
     SCAN_STEPS.forEach((_, i) => {
       const t = setTimeout(
@@ -72,250 +253,307 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
       timers.current.push(t);
     });
 
-    const finishDelay = STEP_START_DELAY_MS + SCAN_STEPS.length * STEP_INTERVAL_MS + 500;
-    timers.current.push(setTimeout(() => setPhase("complete"), finishDelay));
+    timers.current.push(setTimeout(() => setPhase("complete"), totalDuration * 1000));
 
     return clearTimers;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, file]);
 
+  // Escape closes; the dashboard behind shouldn't scroll while the overlay is up
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [isOpen, onClose]);
 
   const handleSkip = () => {
     clearTimers();
     setDoneSteps(SCAN_STEPS.map(() => true));
+    setProgress(100);
     setPhase("complete");
   };
 
-  const totalDuration = (STEP_START_DELAY_MS + SCAN_STEPS.length * STEP_INTERVAL_MS + 500) / 1000;
+  const doneCount = doneSteps.filter(Boolean).length;
+  const activeIndex = doneSteps.findIndex((d) => !d);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[85] overflow-y-auto bg-gradient-to-br from-red-50 via-white to-rose-50"
-          role="dialog"
-          aria-modal="true"
-          aria-label="AI resume analysis"
-        >
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="fixed right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-gray-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-gray-900 sm:right-6 sm:top-6"
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[85] overflow-y-auto bg-slate-900/30 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="AI resume analysis"
           >
-            <X className="h-4 w-4" />
-          </button>
+            <div className="flex min-h-full items-center justify-center p-3 sm:p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 320, damping: 30 }}
+                className="relative w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/20"
+              >
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-400 shadow-sm ring-1 ring-slate-200 transition hover:bg-white hover:text-slate-900"
+                >
+                  <X className="h-4 w-4" />
+                </button>
 
-          <div className="flex min-h-full items-center justify-center p-5 py-16 sm:p-8">
-            <div className="w-full max-w-md text-center">
-              <AnimatePresence mode="wait">
-                {phase === "scanning" ? (
-                  <motion.div
-                    key="scanning"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <span className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600">
-                      <Sparkles className="h-3.5 w-3.5" />
-                      AI RESUME ANALYSIS
-                    </span>
-
-                    {/* Scanning visual */}
-                    <div className="relative mx-auto mt-8 h-40 w-40">
-                      <motion.span
-                        animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.15, 0.5] }}
-                        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute inset-0 rounded-full bg-red-200"
-                      />
-                      <span className="absolute inset-3 rounded-full border-2 border-dashed border-red-300" />
-
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-3 rounded-full"
-                        style={{
-                          background:
-                            "conic-gradient(from 0deg, rgba(220,38,38,0) 0deg, rgba(220,38,38,0.55) 55deg, rgba(220,38,38,0) 110deg)",
-                        }}
-                      />
-
-                      <div className="absolute inset-8 flex items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg">
-                        <FileText className="h-10 w-10 text-red-300" strokeWidth={1.5} />
-                        <motion.div
-                          animate={{ y: ["-120%", "120%"] }}
-                          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                          className="absolute inset-x-0 h-8 bg-gradient-to-b from-transparent via-red-400/40 to-transparent"
-                        />
+                <AnimatePresence mode="wait" initial={false}>
+                  {phase === "scanning" ? (
+                    <motion.div
+                      key="scanning"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                      className="grid md:grid-cols-[0.95fr_1.05fr]"
+                    >
+                      {/* Left: live document preview */}
+                      <div className="relative overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-6 pb-7 pt-12 md:px-10 md:py-12">
+                        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-red-200/40 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-rose-200/50 blur-3xl" />
+                        <div className="relative">
+                          <ResumePreview doneCount={doneCount} />
+                        </div>
                       </div>
 
-                      {[0, 1, 2].map((i) => (
-                        <motion.span
-                          key={i}
-                          animate={{
-                            opacity: [0, 1, 0],
-                            scale: [0.6, 1, 0.6],
-                            x: [0, (i - 1) * 26, 0],
-                            y: [0, -46 - i * 6, 0],
-                          }}
-                          transition={{
-                            duration: 2.4,
-                            repeat: Infinity,
-                            delay: i * 0.5,
-                            ease: "easeInOut",
-                          }}
-                          className="absolute left-1/2 top-1/2 text-red-400"
-                        >
+                      {/* Right: status + step timeline */}
+                      <div className="flex flex-col p-6 sm:p-8 md:p-10">
+                        <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600">
                           <Sparkles className="h-3.5 w-3.5" />
-                        </motion.span>
-                      ))}
-                    </div>
-
-                    <h1 className="mt-6 text-xl font-bold leading-snug text-gray-900 sm:text-2xl">
-                      AI is reviewing your resume...
-                    </h1>
-                    <p className="mx-auto mt-1.5 max-w-[340px] text-sm leading-relaxed text-gray-500">
-                      Our AI is scanning your skills and experience to match you
-                      with the right programs and scholarships.
-                    </p>
-
-                    {file && (
-                      <div className="mx-auto mt-4 flex max-w-[300px] items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-left shadow-sm">
-                        <FileText className="h-4 w-4 flex-shrink-0 text-red-500" />
-                        <span className="min-w-0 flex-1 truncate text-xs font-medium text-gray-700">
-                          {file.name}
+                          AI Resume Analysis
                         </span>
-                        <span className="flex-shrink-0 text-[11px] text-gray-400">
-                          {formatFileSize(file.size)}
-                        </span>
-                      </div>
-                    )}
 
-                    {/* Progress bar */}
-                    <div className="mx-auto mt-5 h-1.5 w-full max-w-[320px] overflow-hidden rounded-full bg-red-100">
-                      <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: totalDuration, ease: "linear" }}
-                        className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-600"
-                      />
-                    </div>
+                        <h1 className="mt-4 text-2xl font-black tracking-tight text-slate-900 sm:text-[28px] sm:leading-tight">
+                          Analyzing your resume
+                        </h1>
+                        <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                          We&apos;re mapping your skills and experience to the programs and
+                          scholarships you qualify for.
+                        </p>
 
-                    {/* Step checklist */}
-                    <div className="mx-auto mt-6 flex w-full max-w-[320px] flex-col gap-2.5 text-left">
-                      {SCAN_STEPS.map((step, i) => {
-                        const done = doneSteps[i];
-                        return (
-                          <div key={step} className="flex items-center gap-2.5">
-                            <span
-                              className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
-                                done ? "bg-green-100 text-green-600" : "bg-red-50 text-red-500"
-                              }`}
-                            >
-                              {done ? (
-                                <Check className="h-3.5 w-3.5" />
-                              ) : (
-                                <motion.span
-                                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.6, 1] }}
-                                  transition={{ duration: 1, repeat: Infinity }}
-                                  className="flex"
-                                >
-                                  <Target className="h-3.5 w-3.5" />
-                                </motion.span>
-                              )}
+                        {file && (
+                          <div className="mt-5 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+                            <span className="flex h-10 w-10 flex-shrink-0 flex-col items-center justify-center rounded-xl bg-red-600 text-white shadow-sm">
+                              <FileText className="h-4 w-4" />
+                              <span className="text-[8px] font-bold leading-none">
+                                {fileExtension(file.name)}
+                              </span>
                             </span>
-                            <span
-                              className={`text-sm ${done ? "text-gray-700" : "text-gray-500"}`}
-                            >
-                              {step}
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-semibold text-slate-900">
+                                {file.name}
+                              </p>
+                              <p className="text-xs text-slate-400">
+                                {formatFileSize(file.size)} · Uploaded just now
+                              </p>
+                            </div>
+                            <span className="flex-shrink-0 text-sm font-bold tabular-nums text-red-600">
+                              {progress}%
                             </span>
                           </div>
-                        );
-                      })}
-                    </div>
+                        )}
 
-                    <button
-                      type="button"
-                      onClick={handleSkip}
-                      className="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 hover:underline"
-                    >
-                      Skip animation
-                      <ArrowRight className="h-3 w-3" />
-                    </button>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="complete"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <motion.div
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ delay: 0.1, type: "spring", stiffness: 400, damping: 16 }}
-                      className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-50 ring-8 ring-green-50/60"
-                    >
-                      <Trophy className="h-9 w-9 text-green-600" />
-                    </motion.div>
+                        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-600 transition-[width] duration-100 ease-linear"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
 
-                    <h1 className="mt-5 text-xl font-bold leading-snug text-gray-900 sm:text-2xl">
-                      Your AI Match Report is Ready!
-                    </h1>
-                    <p className="mx-auto mt-1.5 max-w-[340px] text-sm leading-relaxed text-gray-500">
-                      {file?.name ? `We've analyzed ${file.name} and found strong matches for your profile.` : "We've analyzed your resume and found strong matches for your profile."}
-                    </p>
+                        {/* Step timeline */}
+                        <ol className="mt-6 space-y-0">
+                          {SCAN_STEPS.map((step, i) => {
+                            const done = doneSteps[i];
+                            const active = i === activeIndex;
+                            const isLast = i === SCAN_STEPS.length - 1;
+                            return (
+                              <li key={step.title} className="relative flex gap-3.5 pb-5 last:pb-0">
+                                {!isLast && (
+                                  <span className="absolute left-[13px] top-7 h-[calc(100%-24px)] w-0.5 overflow-hidden rounded-full bg-slate-100">
+                                    <motion.span
+                                      initial={false}
+                                      animate={{ height: done ? "100%" : "0%" }}
+                                      transition={{ duration: 0.4, ease: EASE_OUT }}
+                                      className="block w-full bg-emerald-400"
+                                    />
+                                  </span>
+                                )}
+                                <span
+                                  className={`relative z-[1] flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${
+                                    done
+                                      ? "bg-emerald-500 text-white"
+                                      : active
+                                        ? "bg-red-50 text-red-600 ring-2 ring-red-200"
+                                        : "bg-slate-100 text-slate-400"
+                                  }`}
+                                >
+                                  {done ? (
+                                    <motion.span
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                                      className="flex"
+                                    >
+                                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                                    </motion.span>
+                                  ) : active ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <span className="text-[11px] font-bold">{i + 1}</span>
+                                  )}
+                                </span>
+                                <div className="min-w-0 pt-0.5">
+                                  <p
+                                    className={`text-sm font-semibold transition-colors ${
+                                      done || active ? "text-slate-900" : "text-slate-400"
+                                    }`}
+                                  >
+                                    {step.title}
+                                  </p>
+                                  <p
+                                    className={`mt-0.5 text-xs transition-colors ${
+                                      active ? "text-red-500" : done ? "text-slate-500" : "text-slate-300"
+                                    }`}
+                                  >
+                                    {done ? "Completed" : step.detail}
+                                  </p>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ol>
 
-                    <div className="mx-auto mt-6 grid max-w-[380px] grid-cols-3 gap-3">
-                      {SCAN_RESULTS.map((r, i) => {
-                        const Icon = r.icon;
-                        return (
-                          <motion.div
-                            key={r.label}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15 + i * 0.1 }}
-                            className="flex flex-col items-center gap-1.5 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm"
+                        <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-5 md:mt-8">
+                          <p className="flex items-center gap-1.5 text-xs text-slate-400">
+                            <Lock className="h-3.5 w-3.5" />
+                            Encrypted & never shared
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleSkip}
+                            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                           >
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-600">
-                              <Icon className="h-4 w-4" />
-                            </span>
-                            <span className="text-base font-bold text-gray-900">{r.value}</span>
-                            <span className="text-center text-[11px] leading-tight text-gray-500">
-                              {r.label}
-                            </span>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="mx-auto mt-7 flex h-12 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30 sm:h-14"
+                            Skip
+                            <ArrowRight className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="complete"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="grid md:grid-cols-[0.95fr_1.05fr]"
                     >
-                      Continue to Dashboard
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      {/* Left: score */}
+                      <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-6 pb-8 pt-14 text-center md:px-10 md:py-12">
+                        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-red-200/40 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-rose-200/50 blur-3xl" />
+                        <div className="relative flex flex-col items-center">
+                          <div className="rounded-full bg-white p-3 shadow-xl shadow-red-900/10">
+                            <ScoreRing score={MATCH_SCORE} />
+                          </div>
+                          <p className="mt-5 text-sm font-bold text-slate-900">Excellent profile match</p>
+                          <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-slate-500">
+                            Your skills and goals align closely with the programs you&apos;re targeting.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right: summary + actions */}
+                      <div className="flex flex-col p-6 sm:p-8 md:p-10">
+                        <motion.span
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-600"
+                        >
+                          <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                          Analysis complete
+                        </motion.span>
+
+                        <h1 className="mt-4 text-2xl font-black tracking-tight text-slate-900 sm:text-[28px] sm:leading-tight">
+                          Your AI Match Report is ready
+                        </h1>
+                        <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                          {file?.name ? (
+                            <>
+                              We analyzed <span className="font-semibold text-slate-700">{file.name}</span> and
+                              found strong matches for your profile.
+                            </>
+                          ) : (
+                            "We analyzed your resume and found strong matches for your profile."
+                          )}
+                        </p>
+
+                        <div className="mt-6 space-y-2.5">
+                          {SCAN_RESULTS.map((r, i) => {
+                            const Icon = r.icon;
+                            return (
+                              <motion.div
+                                key={r.label}
+                                initial={{ opacity: 0, x: 12 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.25 + i * 0.08, duration: 0.35, ease: EASE_OUT }}
+                                className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm"
+                              >
+                                <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${r.tone}`}>
+                                  <Icon className="h-[18px] w-[18px]" />
+                                </span>
+                                <span className="flex-1 text-sm text-slate-500">{r.label}</span>
+                                <span className="text-base font-bold text-slate-900">{r.value}</span>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              onClose();
+                              router.push("/dashboard/matcher");
+                            }}
+                            className="flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-red-600 px-5 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
+                          >
+                            View My Matches
+                            <ArrowRight className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex h-12 items-center justify-center whitespace-nowrap rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+                          >
+                            Back to Dashboard
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </MotionConfig>
   );
 }

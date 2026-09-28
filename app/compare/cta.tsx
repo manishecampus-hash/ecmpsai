@@ -1,8 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
+import ComparePicker from "./compare-picker";
 
 export default function CTA() {
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 mt-6 md:mt-10 mb-10 md:mb-14">
       <div className="mx-auto max-w-6xl rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/50 overflow-hidden relative">
@@ -38,6 +43,7 @@ export default function CTA() {
             <div className="pt-2">
               <button
                 type="button"
+                onClick={() => setPickerOpen(true)}
                 className="inline-flex items-center gap-2 rounded-2xl bg-red-600 hover:bg-red-700 px-6 py-3.5 text-white font-bold text-sm transition-all duration-300 shadow-md hover:shadow-red-600/25 group"
               >
                 <span>Start Comparing Now</span>
@@ -47,6 +53,8 @@ export default function CTA() {
           </div>
         </div>
       </div>
+
+      <ComparePicker open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </section>
   );
 }

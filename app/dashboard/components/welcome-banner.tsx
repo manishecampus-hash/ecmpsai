@@ -25,14 +25,14 @@ export default function WelcomeBanner({
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
          
-          <div className="flex flex-wrap items-center gap-2">
+          {/* <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-red-600 shadow-sm">
                Scholar Level 1
             </span>
             <span className="inline-flex items-center rounded-full bg-white px-3 py-1.5 text-xs font-medium text-gray-500 shadow-sm">
               Target: Tech Product &amp; Management 2026
             </span>
-          </div>
+          </div> */}
 
 
           <h1 className="mt-3 text-2xl font-bold leading-snug text-black sm:text-3xl">

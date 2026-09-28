@@ -19,268 +19,11 @@ import {
 } from "lucide-react";
 import { BrochureForm } from "./../form/brochure-form";
 import { ApplicationForm } from "../form/common-form";
+import HighlightedText from "@/components/universities/HighlightedText";
 
-// Real data with actual content
-const programsData = [
-  
-{
-    id: 1,
-    title: "MBA - Master of Business Administration",
-   image: "/onlinecourses/mba.svg",
-    ribbon: "DEGREE",
-    learners: "3.8K+ Students",
-    duration: "2 Years",
-    tab: "degree",
-    slug: "/program/mba-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
-    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Applications closes on 31 Oct",
-  },
-  
-  /* 
-  // Temporarily commented out - Engineering programs (may be used later)
-  {
-    id: 2,
-    title: "B.Tech - CS Engineering",
-    image: "/onlinecourses/bcse.svg",
-    ribbon: "DEGREE",
-    learners: "5.2K+ Students",
-    duration: "3 Years",
-    tab: "engineering",
-    slug: "/program/btech-cse",
-    isFree: false,
-    mode: "online",
-    description:
-      "Build strong foundations in programming, algorithms, data structures, and software development with an industry-focused curriculum.",
-    highlights: [
-      "Industry-aligned curriculum",
-      "Live coding labs",
-      "Placement-focused projects",
-    ],
-    deadline: "Application closes on 31 Oct",
-  },
-  {
-    id: 3,
-    title: "B.Tech - Mechanical Engineering",
-   image: "/onlinecourses/btm.svg",
-    ribbon: "DEGREE",
-    learners: "7.2K+ Students",
-    duration: "3 Years",
-    tab: "engineering",
-    slug: "/program/btech-me",
-    isFree: false,
-    mode: "online",
-    description:
-      "Master manufacturing, thermodynamics, machine design, and automation with a curriculum built for modern industries.",
-    highlights: [
-      "Advanced manufacturing concepts",
-      "CAD & design training",
-      " Industry-ready technical skills",
-    ],
-    deadline: "Application closes on 31 Oct",
-  },
-  {
-    id: 4,
-    title: "B.Tech - Civil Engineering", 
-    image: "/onlinecourses/bce.svg",
-    ribbon: "DEGREE",
-    learners: "6.9K+ Students",
-    duration: "3 Years",
-    tab: "engineering",
-    slug: "/program/btech-ci",
-    isFree: false,
-    mode: "online",
-    description:
-      "Develop expertise in construction, structural design, surveying, and infrastructure planning through practical engineering concepts.",
-    highlights: [
-      " Structural design expertise",
-      "Construction management skills",
-      " Industry-oriented site practices",
-    ],
-    deadline: "Application closes on 31 Oct",
-  },
-  {
-    id: 5,
-    title: "B.Tech - Electrical Engineering",
-    image: "/onlinecourses/5.svg",
-    ribbon: "DEGREE",
-    learners: "6.1K+ Students",
-    duration: "3 Years",
-    tab: "engineering",
-    slug: "/program/btech-ee",
-    isFree: false,
-    mode: "online",
-    description:
-      "Gain knowledge in power systems, electrical machines, circuits, and energy technologies through hands-on learning.",
-    highlights: [
-      "Power systems fundamentals",
-      "Practical circuit design",
-      "Smart energy technologies",
-    ],
-    deadline: "Application closes on 31 Oct",
-  },
-  {
-    id: 6,
-    title: "B.Tech - ECE ", 
-    image: "/onlinecourses/6.svg",
-    ribbon: "DEGREE",
-    learners: "3.4K+ Students",
-    duration: "3 Years",
-    tab: "engineering",
-    slug: "/program/btech-ece",
-    isFree: false,
-    mode: "online",
-    description:
-      "Learn communication systems, embedded technology, electronics design, and signal processing with industry-relevant skills.",
-    highlights: [
-      "Embedded systems training",
-      "Communication technology focus",
-      " Industry-driven lab exposure",
-    ],
-    deadline: "Application closes on 31 Oct",
-  },
-  */
-  {
-    id: 7,
-    title: "BBA - Bachelor of Business Administration",
-    image: "/onlinecourses/7.svg",
-    ribbon: "DEGREE",
-    learners: "3.8K+ Students",
-    duration: "3 Years",
-    tab: "degree",
-    slug: "/program/bba-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
-    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Application closes on 31 Oct",
-  },
 
-  {
-    id: 8,
-    title: "BCA - Bachelor of Computer Application",
- image: "/onlinecourses/8.svg",
-    ribbon: "DEGREE",
-    learners: "3.8K+ Students",
-    duration: "3 Years",
-    tab: "degree",
-    slug: "/program/bca-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
-    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Application closes on 31 Oct",
-  },
-   {
-    id: 9,
-    title: "BA - Bachelor of Arts",
-   image: "/onlinecourses/9.svg",
-    ribbon: "DEGREE",
-    learners: "3.7K+ Students",
-    duration: "3 Years",
-    tab: "degree",
-    slug: "/program/ba-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
-    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Application closes on 31 Oct",
-  },
-   {
-    id: 10,
-    title: "BCOM - Bachelor of Commerce",
-   image: "/onlinecourses/10.svg",
-    ribbon: "DEGREE",
-    learners: "5.1K+ Students",
-    duration: "3 Years",
-    tab: "degree",
-    slug: "/program/bcom-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "A comprehensive management program covering strategy, finance, marketing and leadership fundamentals.",
-    highlights: ["Case-study driven", "Global faculty", "Campus placements"],
-    deadline: "Application closes on 31 Oct",
-  },
 
-  
 
-  {
-    id: 11,
-    title: "Chief Technology Officer & AI Leadership Programme",
-   image: "/onlinecourses/11.svg",
-    ribbon: "CERTIFICATE",
-    learners: "20.2K+ Students",
-    duration: "6 months",
-    tab: "aiml",
-    slug: "/program/bcom-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "The only program that transforms engineering leaders into AI-first CTOs with structured depth in deep tech, AI, business strategy, and boardroom leadership.",
-    highlights: ["Tech & AI Leadership: IIIT-Bangalore", "Business, Strategy & P&L Leadership: IIM Udaipur", "Immersive AI & Strategy workshop at IIIT-B"],
-    deadline: "Application closes on 31 Aug",
-  },
-
-  {
-    id: 12,
-    title: "Ex. Diploma in Machine Learning & AI with MLOps, Gen AI & Agentic AI",
-     image: "/onlinecourses/12.svg",
-    ribbon: "CERTIFICATE",
-    learners: "10.7K+ Students",
-    duration: "12 months",
-    tab: "aiml",
-    slug: "/program/bcom-general",
-    isFree: false,
-    mode: "online",
-    description:
-      "Enroll into India's pioneering Online Machine Learning Program; Learn machine learning the way product companies build, deploy, and scale AI systems",
-    highlights: ["450+ Hours of Curriculum", "30+ Hands-on Projects", "80+ Industry Tools"],
-    deadline: "Application closes on 15 Sep",
-  },
-
-  {
-    id: 13,
-    title: "DBA in Emerging Technologies with a concentration in Generative and Agentic AI ",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=200&fit=crop",
-    ribbon: "DOCTORATE",
-    learners: "14.4K+ Students",
-    duration: "27 months",
-    tab: "genai",
-    slug: "/program/dba-generative-ai",
-    isFree: false,
-    mode: "online",
-    description:
-      "The DBA in Emerging Technologies with a concentration in Generative and Agentic AI from GGU teaches AI, emerging tech, leadership, and decision-making skills to solve real-world business challenges and drive innovation.",
-    highlights: ["500 hours of live learning", "Learn with Students from 15+ Countries", "Lead in the space of emerging technologies"],
-    deadline: "Application closes on 15 Sep",
-  },
-  
-];
-
-const courseTabs = [
-  { id: "all", label: "All Courses" },
-  // { id: "engineering", label: "Engineering" },
-  { id: "degree", label: "Degree" },
-  { id: "aiml", label: "AI & ML" },
-  { id: "genai", label: "Generative AI" },
-  { id: "certifications", label: "Certifications" },
-];
-
-const modeTabs = [
-  { id: "all", label: "All" },
-  { id: "online", label: "Online" },
-  { id: "Blended", label: "Blended" },
-  
-
-];
 
 function useScrollState(
   ref: React.RefObject<HTMLDivElement | null>,
@@ -377,26 +120,157 @@ const tabArrowStyle = (visible: boolean): React.CSSProperties => ({
   flexShrink: 0,
 });
 
-export default function ProgramsSection() {
+interface ProgramCategory {
+  id: string;
+  name: string;
+  slug?: string;
+  sortOrder?: number;
+  isUncategorized?: boolean;
+}
+
+interface ProgramItem {
+  id: string | number;
+  title?: string;
+  name?: string;
+  image?: string;
+  thumbnail?: string;
+  ribbon?: string;
+  learners?: string;
+  numberOfStudents?: string;
+  duration?: string;
+  tab?: string;
+  categoryId?: string | null;
+  slug?: string;
+  isFree?: boolean;
+  mode?: string;
+  brochureUrl?: string;
+  shortDescription?: string;
+  description?: string;
+  details?: string;
+  highlights?: string[];
+  deadline?: string;
+}
+
+interface ProgramDataProps {
+  title?: string;
+  categories?: ProgramCategory[];
+  programs?: ProgramItem[];
+}
+
+export interface ProgramsSectionProps {
+  programData?: ProgramDataProps;
+}
+
+const getModeBadgeProps = (rawMode?: string) => {
+  const mode = (rawMode || "Online").trim();
+  const normalized = mode.toLowerCase();
+
+  if (normalized === "online") {
+    return {
+      label: "🟢 Online",
+      bg: "#dcfce7",
+      color: "#16a34a",
+      border: "1px solid #bbf7d0",
+    };
+  }
+  if (normalized === "offline") {
+    return {
+      label: "🟡 Offline",
+      bg: "#fef3c7",
+      color: "#b45309",
+      border: "1px solid #fde68a",
+    };
+  }
+  if (normalized === "hybrid") {
+    return {
+      label: "🟣 Hybrid",
+      bg: "#e0e7ff",
+      color: "#3730a3",
+      border: "1px solid #c7d2fe",
+    };
+  }
+
+  const displayLabel = mode.charAt(0).toUpperCase() + mode.slice(1);
+  return {
+    label: `📍 ${displayLabel}`,
+    bg: "#e0f2fe",
+    color: "#0284c7",
+    border: "1px solid #bae6fd",
+  };
+};
+
+export default function ProgramsSection({ programData }: ProgramsSectionProps = {}) {
   const [activeTab, setActiveTab] = useState("all");
   const [activeMode, setActiveMode] = useState("all");
-  const [activeCardId, setActiveCardId] = useState<number | null>(null);
-const [showBrochureForm, setShowBrochureForm] = useState(false);
-const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [activeCardId, setActiveCardId] = useState<string | number | null>(null);
+  const [showBrochureForm, setShowBrochureForm] = useState(false);
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
 
-const carouselRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const carouselWrapRef = useRef<HTMLDivElement>(null);
-  const lastTapRef = useRef<{ id: number | null; time: number }>({
+  const lastTapRef = useRef<{ id: string | number | null; time: number }>({
     id: null,
     time: 0,
   });
 
+  const courseTabs = useMemo(() => {
+    if (
+      programData?.categories &&
+      Array.isArray(programData.categories) &&
+      programData.categories.length > 0
+    ) {
+      return [
+        { id: "all", label: "All Courses" },
+        ...programData.categories.map((c) => ({
+          id: c.id,
+          label: c.name,
+          isUncategorized: c.isUncategorized,
+        })),
+      ];
+    }
+    return [{ id: "all", label: "All Courses" }];
+  }, [programData]);
+
+  const allPrograms = useMemo(() => {
+    if (
+      programData?.programs &&
+      Array.isArray(programData.programs) &&
+      programData.programs.length > 0
+    ) {
+      return programData.programs.map((p, idx) => ({
+        id: p.id || `prog-${idx}`,
+        title: p.title || p.name || "",
+        image: p.thumbnail || p.image || "",
+        ribbon: p.ribbon || "DEGREE",
+        learners: p.numberOfStudents
+          ? `${p.numberOfStudents} Students`
+          : p.learners || "",
+        duration: p.duration ? p.duration.trim() : "",
+        categoryId: p.categoryId || null,
+        tab: p.tab || (p.categoryId ? p.categoryId : "uncategorized"),
+        slug: p.slug
+          ? `/${p.slug.replace(/^\/+/, "").replace(/^programs?\//, "")}`
+          : "#",
+        isFree: p.isFree ?? false,
+        mode: p.mode || "online",
+        brochureUrl: p.brochureUrl || "",
+        shortDescription: p.shortDescription || p.description || "",
+        description: p.description || p.shortDescription || "",
+        details: p.details || "",
+        highlights:
+          p.highlights && p.highlights.length > 0
+            ? p.highlights
+            : [],
+        deadline: p.deadline || "",
+      }));
+    }
+    return [];
+  }, [programData]);
+
   // Touch/mobile: single tap on the image opens the overlay,
-  // double tap (within 350ms) on it closes it again. This replaces
-  // CSS :hover on touch devices, which gets "stuck" after a tap and
-  // was causing the overlay to randomly flicker open/closed.
-  const handleImageTap = (id: number) => {
+  // double tap (within 350ms) on it closes it again.
+  const handleImageTap = (id: string | number) => {
     const now = Date.now();
     const last = lastTapRef.current;
     if (last.id === id && now - last.time < 350) {
@@ -408,14 +282,52 @@ const carouselRef = useRef<HTMLDivElement>(null);
     setActiveCardId((prev) => (prev === id ? prev : id));
   };
 
+  const dynamicModeTabs = useMemo(() => {
+    const standardModes = ["Online", "Offline", "Hybrid"];
+    const foundModes = new Set<string>();
+
+    allPrograms.forEach((p) => {
+      if (p.mode && typeof p.mode === "string" && p.mode.trim()) {
+        const raw = p.mode.trim();
+        const formatted = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+        foundModes.add(formatted);
+      }
+    });
+
+    const orderedList = ["Online", "Offline", "Hybrid"];
+    foundModes.forEach((m) => {
+      if (!orderedList.includes(m)) {
+        orderedList.push(m);
+      }
+    });
+
+    return [
+      { id: "all", label: "All" },
+      ...orderedList.map((m) => ({
+        id: m.toLowerCase(),
+        label: m,
+      })),
+    ];
+  }, [allPrograms]);
+
   const filteredPrograms = useMemo(
     () =>
-      programsData.filter((p) => {
-        const tabMatch = activeTab === "all" || p.tab === activeTab;
-        const modeMatch = activeMode === "all" || p.mode === activeMode;
+      allPrograms.filter((p) => {
+        let tabMatch = true;
+        if (activeTab !== "all") {
+          if (activeTab === "uncategorized") {
+            tabMatch =
+              !p.categoryId || p.categoryId === "uncategorized" || p.tab === "uncategorized";
+          } else {
+            tabMatch = p.categoryId === activeTab || p.tab === activeTab;
+          }
+        }
+        const progMode = (p.mode || "").trim().toLowerCase();
+        const modeMatch =
+          activeMode === "all" || progMode === activeMode.toLowerCase();
         return tabMatch && modeMatch;
       }),
-    [activeTab, activeMode],
+    [allPrograms, activeTab, activeMode],
   );
 
   const handleTabChange = (tabId: string) => {
@@ -560,7 +472,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
           overflow: hidden;
         }
         .__overlayText {
-          color: #fdd0d7;
+          color: #ffffff !important;
           font-size: 11px;
           line-height: 1.5;
           margin: 0 0 10px;
@@ -568,9 +480,34 @@ const carouselRef = useRef<HTMLDivElement>(null);
           transform: translateY(6px);
           transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 4;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+        .__overlayText,
+        .__overlayText *,
+        .__overlayText p,
+        .__overlayText span,
+        .__overlayText div,
+        .__overlayText li,
+        .__overlayText ul,
+        .__overlayText ol,
+        .__overlayText strong,
+        .__overlayText em,
+        .__overlayText h1,
+        .__overlayText h2,
+        .__overlayText h3,
+        .__overlayText h4,
+        .__overlayText h5,
+        .__overlayText h6,
+        .__overlayText a,
+        .__overlayText b,
+        .__overlayText i,
+        .__overlayText u,
+        .__overlayText font,
+        .__overlayText td,
+        .__overlayText th {
+          color: #ffffff !important;
         }
         .__overlayInfoRow {
           display: flex;
@@ -710,7 +647,13 @@ const carouselRef = useRef<HTMLDivElement>(null);
           </span>
 
           <h2 className="mt-3 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            Find The Right <span className="text-red-500">Program</span>
+            {programData?.title ? (
+              <HighlightedText text={programData.title} className="text-red-500" defaultColor="#ef4444" />
+            ) : (
+              <>
+                Find The Right <span className="text-red-500">Program</span>
+              </>
+            )}
           </h2>
         </div>
 
@@ -840,7 +783,7 @@ const carouselRef = useRef<HTMLDivElement>(null);
                 gap: "6px",
               }}
             >
-              {modeTabs.map((mode) => {
+              {dynamicModeTabs.map((mode) => {
                 const isActive = activeMode === mode.id;
                 return (
                   <button
@@ -953,11 +896,38 @@ const carouselRef = useRef<HTMLDivElement>(null);
                     className="__imgWrap"
                     onClick={() => handleImageTap(program.id)}
                   >
-                    <img
-                      src={program.image}
-                      alt={program.title}
-                      loading="lazy"
-                    />
+                    {program.image ? (
+                      <img
+                        src={program.image}
+                        alt={program.title}
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="__imgFallback"
+                      style={{
+                        display: program.image ? "none" : "flex",
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "#cbd5e1",
+                        color: "#0f172a",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        fontWeight: 700,
+                        fontSize: "13px",
+                        lineHeight: "1.4",
+                        userSelect: "none",
+                      }}
+                    >
+                      <span className="line-clamp-3">{program.title}</span>
+                    </div>
                     {/* <div
                       style={{
                         position: "absolute",
@@ -976,29 +946,28 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       {program.ribbon}
                     </div> */}
                     {/* Mode Badge */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "12px",
-                        right: "10px",
-                        background:
-                          program.mode === "online" ? "#dcfce7" : "#fef3c7",
-                        padding: "3px 8px",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                        color:
-                          program.mode === "online" ? "#16a34a" : "#b45309",
-                        borderRadius: "20px",
-                        border:
-                          program.mode === "online"
-                            ? "1px solid #bbf7d0"
-                            : "1px solid #fde68a",
-                        textTransform: "capitalize",
-                        zIndex: 2,
-                      }}
-                    >
-                      {program.mode === "online" ? "🟢 Online" : "🟡 Offline"}
-                    </div>
+                    {(() => {
+                      const badge = getModeBadgeProps(program.mode);
+                      return (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "12px",
+                            right: "10px",
+                            background: badge.bg,
+                            padding: "3px 8px",
+                            fontSize: "10px",
+                            fontWeight: 700,
+                            color: badge.color,
+                            borderRadius: "20px",
+                            border: badge.border,
+                            zIndex: 2,
+                          }}
+                        >
+                          {badge.label}
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Body */}
@@ -1027,40 +996,47 @@ const carouselRef = useRef<HTMLDivElement>(null);
                     </p>
 
                     {/* Learners & Duration - Side by Side (AMNE SAMNE) */}
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "20px",
-                        marginBottom: "14px",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
+                    {(program.learners || program.duration) && (
                       <div
                         style={{
                           display: "flex",
+                          gap: "20px",
+                          marginBottom: "14px",
+                          justifyContent: "space-between",
                           alignItems: "center",
-                          gap: "6px",
-                          fontSize: "12px",
-                          color: "#475569",
                         }}
                       >
-                        <Users size={13} color="#64748b" strokeWidth={1.8} />
-                        <span>{program.learners}</span>
+                        {program.learners ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              fontSize: "12px",
+                              color: "#475569",
+                            }}
+                          >
+                            <Users size={13} color="#64748b" strokeWidth={1.8} />
+                            <span>{program.learners}</span>
+                          </div>
+                        ) : null}
+                        {program.duration ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              fontSize: "12px",
+                              color: "#475569",
+                              marginLeft: program.learners ? "0" : "auto",
+                            }}
+                          >
+                            <Clock size={13} color="#64748b" strokeWidth={1.8} />
+                            <span>{program.duration}</span>
+                          </div>
+                        ) : null}
                       </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          fontSize: "12px",
-                          color: "#475569",
-                        }}
-                      >
-                        <Clock size={13} color="#64748b" strokeWidth={1.8} />
-                        <span>{program.duration}</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* CTA Buttons */}
@@ -1072,27 +1048,27 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       borderTop: "1px solid #f1f5f9",
                     }}
                   >
-         <button
-  type="button"
-  onClick={() => setShowApplicationForm(true)}
-  style={{
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "6px",
-    border: "1.5px solid #cbd5e1",
-    background: "#fff",
-    padding: "8px 10px",
-    fontSize: "12px",
-    fontWeight: 700,
-    color: "#0f172a",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-  }}
->
-  View Program
-</button>
+                    <a
+                      href={program.slug}
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "6px",
+                        border: "1.5px solid #cbd5e1",
+                        background: "#fff",
+                        padding: "8px 10px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        color: "#0f172a",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        textDecoration: "none",
+                      }}
+                    >
+                      View Program
+                    </a>
                     {program.isFree ? (
   <a
     href={program.slug}
@@ -1103,7 +1079,12 @@ const carouselRef = useRef<HTMLDivElement>(null);
 ) : (
   <button
     type="button"
-    onClick={() => setShowBrochureForm(true)}
+    onClick={() => {
+      if (program.brochureUrl) {
+        window.open(program.brochureUrl, "_blank");
+      }
+      setShowBrochureForm(true);
+    }}
     className="flex-1 flex items-center justify-center rounded-[6px] bg-[#ff3b4f] border-[1.5px] border-[#ff3b4f] px-[10px] py-2 text-xs font-bold text-white whitespace-nowrap transition-colors hover:bg-[#e02035] hover:border-[#e02035] cursor-pointer"
   >
     Get Brochure
@@ -1121,42 +1102,78 @@ const carouselRef = useRef<HTMLDivElement>(null);
                       activeCardId === program.id ? "__cardOverlayActive" : ""
                     }`}
                   >
-                    <span className="__overlayDeadline">
-                      <Clock size={10} color="#ffd166" />
-                      {program.deadline}
-                    </span>
+                    {program.deadline ? (
+                      <span className="__overlayDeadline">
+                        <Clock size={10} color="#ffd166" />
+                        {program.deadline}
+                      </span>
+                    ) : null}
+
+                    {/* Title */}
                     <p className="__overlayTitle">{program.title}</p>
-                    <p className="__overlayText">{program.description}</p>
 
-                    <div className="__overlayInfoRow">
-                      <div className="__overlayInfoItem">
-                        <div className="__overlayIconCircle">
-                          <Users size={12} color="#ffc4ce" />
-                        </div>
-                        <div>
-                          <p className="__overlayLabel">Students</p>
-                          <p className="__overlayValue">{program.learners}</p>
-                        </div>
-                      </div>
-                      <div className="__overlayInfoItem">
-                        <div className="__overlayIconCircle">
-                          <Clock size={12} color="#ffc4ce" />
-                        </div>
-                        <div>
-                          <p className="__overlayLabel">Duration</p>
-                          <p className="__overlayValue">{program.duration}</p>
-                        </div>
-                      </div>
-                    </div>
+                    {/* 1. Short Description */}
+                    {(program.shortDescription || program.description) ? (
+                      <p className="__overlayText" style={{ fontSize: "11px", color: "#fdd0d7", marginBottom: "8px", lineHeight: "1.4" }}>
+                        {program.shortDescription || program.description}
+                      </p>
+                    ) : null}
 
-                    <ul className="__overlayList">
-                      {program.highlights.slice(0, 3).map((h, i) => (
-                        <li key={i}>
-                          <CheckCircle2 size={11} color="#4ade80" />
-                          {h}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* 2. Duration & Number of Students */}
+                    {(program.learners || program.duration) && (
+                      <div className="__overlayInfoRow">
+                        {program.learners ? (
+                          <div className="__overlayInfoItem">
+                            <div className="__overlayIconCircle">
+                              <Users size={12} color="#ffc4ce" />
+                            </div>
+                            <div>
+                              <p className="__overlayLabel">Students</p>
+                              <p className="__overlayValue">{program.learners}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                        {program.duration ? (
+                          <div className="__overlayInfoItem">
+                            <div className="__overlayIconCircle">
+                              <Clock size={12} color="#ffc4ce" />
+                            </div>
+                            <div>
+                              <p className="__overlayLabel">Duration</p>
+                              <p className="__overlayValue">{program.duration}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+
+                    {/* Highlights */}
+                    {program.highlights && program.highlights.length > 0 && (
+                      <ul className="__overlayList">
+                        {program.highlights.slice(0, 3).map((h, i) => (
+                          <li key={i}>
+                            <CheckCircle2 size={11} color="#4ade80" />
+                            {h}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* 3. Detailed Overview / Content (Legacy Fallback) */}
+                    {program.details && program.details !== (program.shortDescription || program.description) ? (
+                      <div className="__overlayText mt-1 text-[11px] text-white" style={{ color: "#ffffff" }}>
+                        {typeof program.details === "string" &&
+                        program.details.includes("<") ? (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: program.details.replace(/color\s*:\s*[^;"]+;?/gi, "color: #ffffff;"),
+                            }}
+                          />
+                        ) : (
+                          <p>{program.details}</p>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               ))

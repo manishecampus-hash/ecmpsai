@@ -204,14 +204,24 @@ export default function CourseHeroSection({
               {image ? (
                 <img
                   src={image}
-                  alt="Program Hero"
+                  alt={heading || "Program Hero"}
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    if (e.currentTarget.nextElementSibling) {
+                      (e.currentTarget.nextElementSibling as HTMLElement).style.display = "flex";
+                    }
+                  }}
                 />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400 text-sm font-semibold">
-                  Image coming soon
-                </div>
-              )}
+              ) : null}
+              <div
+                style={{ display: image ? "none" : "flex" }}
+                className="h-full w-full flex-col items-center justify-center bg-slate-300 p-6 text-center text-slate-900"
+              >
+                <span className="text-base sm:text-lg font-bold line-clamp-3 leading-snug">
+                  {heading}
+                </span>
+              </div>
 
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-950/10 to-transparent pointer-events-none" />
 

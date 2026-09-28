@@ -10,13 +10,16 @@ import { MediaSection } from "@/components/home/media";
 import { CarouselBanner } from "@/components/home/carousel-banner";
 import type { GraduateTestimonialT } from "@/data/graduates";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const FRONTEND_API_URL =
   process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
 async function fetchHomepageData() {
   try {
     const res = await fetch(`${FRONTEND_API_URL}/homepage`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
     if (!res.ok) {
       console.warn(`Homepage API returned status ${res.status}`);
@@ -97,6 +100,8 @@ export default async function HomePage() {
   const mediaArticles = data?.media;
   const mappedGraduates = mapSuccessStories(data?.successStories);
   const faqs = data?.faqs;
+  const jobRoles = data?.jobRoles;
+  const jobRoleTitle = data?.jobRoleSettings?.title;
 
   return (
     <main className="home-sections">
@@ -105,8 +110,8 @@ export default async function HomePage() {
       </div>
       <HeroSearch />
       <PopularCoursesSection courses={trendingCourses} />
-      <CareerExplorer />
-      <ProgramsSection />
+      <CareerExplorer jobRoles={jobRoles} title={jobRoleTitle} />
+      <ProgramsSection programData={data?.program} />
       <MediaSection articles={mediaArticles} />
       <GraduatesMarquee graduates={mappedGraduates} />
       <FAQ items={faqs} />

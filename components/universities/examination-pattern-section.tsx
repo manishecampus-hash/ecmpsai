@@ -1,11 +1,24 @@
+"use client";
+
+import React from "react";
 import {
   Scale,
   FileText,
   ClipboardList,
   Award,
   ShieldCheck,
-  type LucideIcon,
   ClipboardCheck,
+  PieChart,
+  BarChart2,
+  HelpCircle,
+  CheckCheck,
+  Video,
+  Camera,
+  BookOpen,
+  FileQuestion,
+  TrendingUp,
+  CheckCircle2,
+  Lock,
 } from "lucide-react";
 import * as Icons from "lucide-react";
 import HighlightedText from "./HighlightedText";
@@ -15,41 +28,71 @@ interface ExaminationPatternSectionProps {
 }
 
 interface PatternItem {
-  icon: any;
+  icon?: any;
+  iconName?: string;
   title: string;
   description: string;
 }
 
+const ICON_MAP: Record<string, any> = {
+  scale: Scale,
+  filetext: FileText,
+  clipboardlist: ClipboardList,
+  award: Award,
+  shieldcheck: ShieldCheck,
+  piechart: PieChart,
+  barchart: BarChart2,
+  barchart2: BarChart2,
+  helpcircle: HelpCircle,
+  checkcheck: CheckCheck,
+  video: Video,
+  camera: Camera,
+  bookopen: BookOpen,
+  filequestion: FileQuestion,
+  trendingup: TrendingUp,
+  checkcircle2: CheckCircle2,
+  lock: Lock,
+};
+
+const BADGE_STYLES = [
+  { bg: "bg-red-50", text: "text-red-500" },
+  { bg: "bg-amber-50", text: "text-amber-500" },
+  { bg: "bg-indigo-50", text: "text-indigo-500" },
+  { bg: "bg-purple-50", text: "text-purple-500" },
+  { bg: "bg-emerald-50", text: "text-emerald-500" },
+  { bg: "bg-rose-50", text: "text-rose-500" },
+];
+
 const PATTERN_ITEMS: PatternItem[] = [
   {
-    icon: Scale,
     title: "Weightage Distribution",
     description:
-      "Internal assessments carry 30% of the weightage, while external end-term examinations carry 70% of the weightage, ensuring a balanced evaluation approach.",
+      "Both internal assessments and end-term examinations carry defined weightage, ensuring continuous effort and holistic subject mastery.",
   },
   {
-    icon: FileText,
-    title: "Internal Assessment Components",
+    title: "Assessment Structure",
     description:
-      "Students must submit assignments by due dates to complete internal assessment requirements, with assignment submission available online through the Learning Portal.",
+      "The continuous evaluation framework tracks consistent learning progress, problem-solving, and subject conceptualization throughout terms.",
   },
   {
-    icon: ClipboardList,
-    title: "External Examination Format",
+    title: "Internal Components",
     description:
-      "External exams are divided into different sections including subjective questions, case studies, and multiple-choice questions, providing a comprehensive evaluation across different question types and skill levels.",
+      "Assignments, case-study presentations, periodic quizzes, interactive lab simulations, and objective tests form the continuous score.",
   },
   {
-    icon: Award,
+    title: "End-Term Exam Format",
+    description:
+      "Conducted 100% online, combining Multiple-Choice Questions (MCQs), descriptive conceptual sections, and application-oriented challenges.",
+  },
+  {
     title: "Qualifying Criteria",
     description:
-      "Students must score minimum required percentages in both internal and external assessments to qualify for the degree, with passing requirements varying by program level.",
+      "Candidates must secure the minimum passing grades separately in both internal and terminal proctored assessments to successfully certify.",
   },
   {
-    icon: ShieldCheck,
-    title: "Proctored Online System",
+    title: "Secure Online Proctoring",
     description:
-      "Examinations are conducted through secure online systems with AI-powered monitoring and remote invigilation using webcam surveillance to maintain academic integrity and prevent malpractices.",
+      "Protected by AI surveillance, biometric identity verification, dual webcam monitoring, and automated red-flag detections for utmost integrity.",
   },
 ];
 
@@ -57,89 +100,94 @@ export default function ExaminationPatternSection({
   university,
 }: ExaminationPatternSectionProps) {
   const examData = university?.details?.examination || {};
-  const items =
-    examData.items && examData.items.length > 0
-      ? examData.items.map((item: any, idx: number) => {
-          let resolvedIcon: any = item.iconName || item.icon || "";
-          const isImageUrl =
-            typeof resolvedIcon === "string" &&
-            (resolvedIcon.startsWith("/") ||
-              resolvedIcon.startsWith("http") ||
-              resolvedIcon.startsWith("data:"));
+  const rawItems = examData.items && examData.items.length > 0 ? examData.items : PATTERN_ITEMS;
 
-          if (!isImageUrl && resolvedIcon) {
-            resolvedIcon = (Icons as any)[resolvedIcon] || FileText;
-          } else if (!resolvedIcon) {
-            const defaultIcons = [
-              Scale,
-              FileText,
-              ClipboardList,
-              Award,
-              ShieldCheck,
-            ];
-            resolvedIcon = defaultIcons[idx % defaultIcons.length];
-          }
+  const renderIcon = (item: any, textColorClass: string) => {
+    const rawIcon = item.iconName || item.icon;
+    if (!rawIcon) return null;
 
-          return {
-            icon: resolvedIcon,
-            title: item.title,
-            description: item.description,
-          };
-        })
-      : PATTERN_ITEMS;
+    if (typeof rawIcon === "string") {
+      const trimmed = rawIcon.trim();
+      if (!trimmed) return null;
+
+      if (trimmed.startsWith("/") || trimmed.startsWith("http") || trimmed.startsWith("data:")) {
+        return <img src={trimmed} alt="" className="h-4.5 w-4.5 object-contain" />;
+      }
+
+      const normalized = trimmed.replace(/[-_\s]/g, "").toLowerCase();
+      const MatchedIcon = ICON_MAP[normalized] || (Icons as any)[trimmed];
+      if (MatchedIcon) {
+        return <MatchedIcon className={`h-4.5 w-4.5 ${textColorClass} stroke-[2]`} />;
+      }
+      return null;
+    }
+
+    if (typeof rawIcon === "function") {
+      const CustomIcon = rawIcon;
+      return <CustomIcon className={`h-4.5 w-4.5 ${textColorClass} stroke-[2]`} />;
+    }
+
+    return null;
+  };
+
+  const gridColsClass =
+    rawItems.length === 1
+      ? "grid-cols-1 max-w-2xl mx-auto"
+      : rawItems.length === 2
+        ? "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
+        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
     <section
       id="examination"
-      className="bg-white px-4 -mt-6 pt-0 pb-14 sm:px-6 sm:-mt-4 lg:px-8 lg:-mt-2 lg:pb-20"
+      className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8 pt-0 pb-6 sm:pb-10 font-sans"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-[Inter]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center mb-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <ClipboardCheck className="h-3.5 w-3.5 text-red-500" />
-            {examData.badge || "Examination"}
+      <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 lg:p-8 shadow-xs">
+        {/* Header Block */}
+        <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/80 px-3.5 py-1 text-[11px] font-bold tracking-wider text-slate-800 uppercase">
+            <ClipboardCheck className="h-3.5 w-3.5 text-[#ea384c]" />
+            {examData.badge || "EXAMINATION"}
           </span>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
+          <h2 className="mt-2.5 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
             {examData.heading ? (
-              <HighlightedText text={examData.heading} />
+              <HighlightedText text={examData.heading} defaultColor="#ea384c" />
             ) : (
               <>
-                Online Examination <span className="text-red-500">Pattern</span>
+                Online Examination <span className="text-[#ea384c]">Pattern</span>
               </>
             )}
           </h2>
         </div>
 
-        {/* List */}
-        <div className="mt-8 divide-y divide-slate-100 border-t border-slate-100 text-left">
-          {items.map((item: any) => {
-            const Icon = item.icon;
-            const isImage = typeof Icon === "string";
+        {/* 3-Column Card Grid with reduced vertical spacing */}
+        <div className={`grid ${gridColsClass} gap-4 sm:gap-4.5`}>
+          {rawItems.map((item: any, idx: number) => {
+            const badgeStyle = BADGE_STYLES[idx % BADGE_STYLES.length];
+            const iconElement = renderIcon(item, badgeStyle.text);
+
             return (
               <div
-                key={item.title}
-                className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:gap-6"
+                key={item.title || idx}
+                className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-5 flex flex-col hover:border-slate-300 hover:shadow-xs transition-all duration-200 text-left"
               >
-                {/* Icon + title */}
-                <div className="flex shrink-0 items-center gap-4 sm:w-64">
-                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-red-50">
-                    {isImage ? (
-                      <img src={Icon} alt="" className="h-6 w-6 object-contain" />
-                    ) : (
-                      Icon && <Icon className="h-6 w-6 text-red-600" strokeWidth={1.75} />
-                    )}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-900 sm:text-lg">
-                    {item.title}
-                  </h3>
-                </div>
+                {/* Icon Badge (only when explicitly provided) */}
+                {iconElement && (
+                  <div
+                    className={`h-8 w-8 rounded-xl flex items-center justify-center mb-2.5 ${badgeStyle.bg}`}
+                  >
+                    {iconElement}
+                  </div>
+                )}
 
-                {/* Divider (desktop only) */}
-                <div className="hidden h-14 w-px shrink-0 bg-slate-200 sm:block" />
+                {/* Title */}
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5 leading-snug tracking-tight">
+                  {item.title}
+                </h3>
 
                 {/* Description */}
-                <p className="text-sm leading-7 text-slate-500 sm:text-base">
+                <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal whitespace-pre-line">
                   {item.description}
                 </p>
               </div>
@@ -150,4 +198,3 @@ export default function ExaminationPatternSection({
     </section>
   );
 }
-

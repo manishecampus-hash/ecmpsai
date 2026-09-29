@@ -1,1209 +1,7 @@
-// "use client";
-
-// import React, { useEffect, useRef, useState } from "react";
-// import { Download } from "lucide-react";
-// import Image from "next/image";
-// import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-// import {
-//   ApplicationForm,
-//   type LeadData,
-// } from "../discovery/degree-finder/application-form";
-// import {
-//   Sparkles,
-//   Users,
-//   Globe,
-//   BookOpen,
-//   Building2,
-//   CheckCircle2,
-// } from "lucide-react";
-
-// interface HeroSectionProps {
-//   university?: {
-//     name?: string;
-//     fullName?: string;
-//     image?: string;
-//   };
-//   stats?: {
-//     learners?: string;
-//     countries?: string;
-//     programs?: string;
-//     campuses?: string;
-//   };
-// }
-
-// // Parses a string like "50,000+" into { prefix: "", number: 50000, suffix: "+" }
-// function parseStatValue(value: string) {
-//   const match = value.match(/^([^\d]*)([\d,]+)(.*)$/);
-//   if (!match) {
-//     return { prefix: "", number: 0, suffix: value, hasNumber: false };
-//   }
-//   const [, prefix, numStr, suffix] = match;
-//   const number = parseInt(numStr.replace(/,/g, ""), 10);
-//   return { prefix, number, suffix, hasNumber: true };
-// }
-
-// function formatWithCommas(num: number) {
-//   return num.toLocaleString("en-US");
-// }
-
-// // Animates a count from 0 up to the target number once triggered
-// function useCountUp(target: number, shouldStart: boolean, duration = 1500) {
-//   const [value, setValue] = useState(0);
-//   const frameRef = useRef<number | null>(null);
-
-//   useEffect(() => {
-//     if (!shouldStart) return;
-
-//     const startTime = performance.now();
-
-//     const tick = (now: number) => {
-//       const elapsed = now - startTime;
-//       const progress = Math.min(elapsed / duration, 1);
-//       const eased = 1 - Math.pow(1 - progress, 3);
-//       setValue(Math.round(eased * target));
-
-//       if (progress < 1) {
-//         frameRef.current = requestAnimationFrame(tick);
-//       }
-//     };
-
-//     frameRef.current = requestAnimationFrame(tick);
-
-//     return () => {
-//       if (frameRef.current) cancelAnimationFrame(frameRef.current);
-//     };
-//   }, [shouldStart, target, duration]);
-
-//   return value;
-// }
-
-// function AnimatedStatValue({
-//   value,
-//   isVisible,
-// }: {
-//   value: string;
-//   isVisible: boolean;
-// }) {
-//   const { prefix, number, suffix, hasNumber } = parseStatValue(value);
-//   const animatedNumber = useCountUp(number, isVisible);
-
-//   if (!hasNumber) return <>{value}</>;
-
-//   return (
-//     <>
-//       {prefix}
-//       {formatWithCommas(animatedNumber)}
-//       {suffix}
-//     </>
-//   );
-// }
-
-// // Reveals `text` one character at a time, without ever shrinking the
-// // element's footprint (the un-typed remainder is rendered invisibly so
-// // nothing below the block shifts while typing is in progress).
-// function useTypewriter(
-//   text: string,
-//   {
-//     speed = 16,
-//     startDelay = 400,
-//   }: { speed?: number; startDelay?: number } = {},
-// ) {
-//   const [displayedText, setDisplayedText] = useState("");
-//   const [isDone, setIsDone] = useState(false);
-
-//   useEffect(() => {
-//     setDisplayedText("");
-//     setIsDone(false);
-
-//     let i = 0;
-//     let intervalId: ReturnType<typeof setInterval> | undefined;
-
-//     const startTimeout = setTimeout(() => {
-//       intervalId = setInterval(() => {
-//         i += 1;
-//         setDisplayedText(text.slice(0, i));
-
-//         if (i >= text.length) {
-//           if (intervalId) clearInterval(intervalId);
-//           setIsDone(true);
-//         }
-//       }, speed);
-//     }, startDelay);
-
-//     return () => {
-//       clearTimeout(startTimeout);
-//       if (intervalId) clearInterval(intervalId);
-//     };
-//   }, [text, speed, startDelay]);
-
-//   return { displayedText, isDone };
-// }
-
-// function SuccessState({
-//   name,
-//   onClose,
-// }: {
-//   name: string;
-//   onClose: () => void;
-// }) {
-//   return (
-//     <div className="flex flex-col items-center text-center py-6 px-2">
-//       <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
-//       <h3 className="text-xl font-bold text-gray-900">
-//         Thanks, {name.split(" ")[0]}!
-//       </h3>
-//       <p className="text-sm text-gray-500 mt-1.5 max-w-xs">
-//         Your application has been received. Our admissions team will reach out
-//         to you shortly.
-//       </p>
-//       <button
-//         onClick={onClose}
-//         className="mt-5 h-10 px-6 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm"
-//       >
-//         Close
-//       </button>
-//     </div>
-//   );
-// }
-
-// export default function UniversityHeroWithStats({
-//   university,
-//   stats,
-// }: HeroSectionProps) {
-//   const uniName = university?.name || "Amity";
-//   const uniFullName = university?.fullName || uniName;
-
-//   const hasOnlineWord = uniName.toLowerCase().includes("online");
-//   const displayHeading = hasOnlineWord ? uniName : `${uniName} Online`;
-
-//   const aiOverviewCopy = `${uniFullName} Online offers flexible, industry-focused online degree programs from ${uniFullName}, empowering learners to access quality education, develop practical skills, and achieve career growth through an advanced digital learning experience.`;
-
-//   const { displayedText: aiOverviewText, isDone: aiOverviewDone } =
-//     useTypewriter(aiOverviewCopy, { speed: 16, startDelay: 400 });
-
-//   // Dialog state
-//   const [open, setOpen] = useState(false);
-//   const [submittedLead, setSubmittedLead] = useState<LeadData | null>(null);
-
-//   const handleFormSubmit = (data: LeadData) => {
-//     setSubmittedLead(data);
-//   };
-
-//   const handleOpenChange = (next: boolean) => {
-//     setOpen(next);
-//     if (!next) {
-//       setTimeout(() => setSubmittedLead(null), 200);
-//     }
-//   };
-
-//   const youtubeVideoId = "po5P0XIUT2k";
-
-//   const statsData = [
-//     {
-//       icon: Users,
-//       value: stats?.learners || "50,000+",
-//       label: "Learners",
-//     },
-//     {
-//       icon: Globe,
-//       value: stats?.countries || "150+",
-//       label: "Countries Reached",
-//     },
-//     {
-//       icon: BookOpen,
-//       value: stats?.programs || "150+",
-//       label: "Programs",
-//     },
-//     {
-//       icon: Building2,
-//       value: stats?.campuses || "10+",
-//       label: "Global Campuses",
-//     },
-//   ];
-
-//   // Trigger count-up animation once the stats section scrolls into view
-//   const statsSectionRef = useRef<HTMLElement | null>(null);
-//   const [statsVisible, setStatsVisible] = useState(false);
-
-//   useEffect(() => {
-//     const node = statsSectionRef.current;
-//     if (!node) return;
-
-//     const observer = new IntersectionObserver(
-//       ([entry]) => {
-//         if (entry.isIntersecting) {
-//           setStatsVisible(true);
-//           observer.disconnect();
-//         }
-//       },
-//       { threshold: 0.3 },
-//     );
-
-//     observer.observe(node);
-//     return () => observer.disconnect();
-//   }, []);
-
-//   return (
-//     <>
-//       {/* Hero Section */}
-//       <section className="bg-white px-4 -mt-2 pt-4 pb-14 sm:px-6 sm:mt-0 lg:px-8 lg:mt-2 lg:pb-20">
-//         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
-//           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
-//             <defs>
-//               <pattern
-//                 id="hero-grid"
-//                 width="40"
-//                 height="40"
-//                 patternUnits="userSpaceOnUse"
-//               >
-//                 <path
-//                   d="M0 40L40 40M40 0L40 40"
-//                   stroke="currentColor"
-//                   strokeWidth="1"
-//                 />
-//               </pattern>
-//             </defs>
-//             <rect width="100%" height="100%" fill="url(#hero-grid)" />
-//           </svg>
-//         </div>
-
-//         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
-//           <div className="grid items-center gap-8 md:grid-cols-2">
-//             <div className="space-y-6">
-//               <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-4xl lg:text-4xl">
-//                 {displayHeading.split(" ").slice(0, -1).join(" ")}{" "}
-//                 <span className="text-red-500">
-//                   {displayHeading.split(" ").slice(-1)}
-//                 </span>
-//               </h1>
-
-//               {/* AI Overview with typewriter effect */}
-//               <div className="max-w-xl">
-//                 <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
-//                   <Sparkles className="h-3.5 w-3.5" />
-//                   <div className="text-[#1e293b] text-[14px] font-medium">
-//                     AI Overview
-//                   </div>
-//                 </div>
-
-//                 <p className="text-base text-gray-600 leading-relaxed">
-//                   <span>{aiOverviewText}</span>
-//                   <span
-//                     className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
-//                       aiOverviewDone ? "animate-pulse" : ""
-//                     }`}
-//                     aria-hidden="true"
-//                   />
-//                   {/* Reserves the final space up front so nothing below shifts while typing */}
-//                   <span className="invisible">
-//                     {aiOverviewCopy.slice(aiOverviewText.length)}
-//                   </span>
-//                 </p>
-//               </div>
-
-//               {/* Accreditations Badge - Image */}
-//               <div className="pt-2">
-//                 <Image
-//                   src="/newuniversities/merge-approvals-nirf.png"
-//                   alt="NAAC A+, UGC-DEB Approved, NIRF 27th Ranking"
-//                   width={400}
-//                   height={80}
-//                   className="h-auto w-auto object-contain"
-//                   priority
-//                 />
-//               </div>
-
-//               <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
-//                 <Dialog open={open} onOpenChange={handleOpenChange}>
-//                   <DialogTrigger asChild>
-//                     <button
-//                       type="button"
-//                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
-//                     >
-//                       Apply to University
-//                     </button>
-//                   </DialogTrigger>
-
-//                   <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-//                     {submittedLead ? (
-//                       <SuccessState
-//                         name={submittedLead.name}
-//                         onClose={() => handleOpenChange(false)}
-//                       />
-//                     ) : (
-//                       <ApplicationForm onSubmit={handleFormSubmit} />
-//                     )}
-//                   </DialogContent>
-//                 </Dialog>
-
-//                 <a
-//                   href="https://ecampusapp.com/amity-university-online/#elementor-action%3Aaction%3Dpopup%3Aopen%26settings%3DeyJpZCI6IjEzMjMxIiwidG9nZ2xlIjpmYWxzZX0%3D"
-//                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
-//                 >
-//                   <Download className="h-4 w-4" />
-//                   Download Brochure
-//                 </a>
-//               </div>
-//             </div>
-
-//             <div className="relative px-0 sm:px-4">
-//               <div className="">
-//                 <div className="w-full h-[260px] sm:h-[320px] md:h-[380px]">
-//                   <iframe
-//                     src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-//                     title={`${uniFullName} Video`}
-//                     className="h-full w-full"
-//                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-//                     allowFullScreen
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Stats Section */}
-//     </>
-//   );
-// }
-
-// "use client";
-
-// import React, { useEffect, useRef, useState } from "react";
-// import { Download } from "lucide-react";
-// import Image from "next/image";
-// import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-// import HighlightedText from "./HighlightedText";
-// import {
-//   ApplicationForm,
-//   type LeadData,
-// } from "../discovery/degree-finder/application-form";
-// import { BrochureForm } from "../discovery/degree-finder/brochure-form";
-// import {
-//   Sparkles,
-//   Users,
-//   Globe,
-//   BookOpen,
-//   Building2,
-//   CheckCircle2,
-// } from "lucide-react";
-
-// interface HeroSectionProps {
-//   university?: {
-//     name?: string;
-//     fullName?: string;
-//     image?: string;
-//     details?: any;
-//   };
-//   stats?: {
-//     learners?: string;
-//     countries?: string;
-//     programs?: string;
-//     campuses?: string;
-//   };
-// }
-
-// // Parses a string like "50,000+" into { prefix: "", number: 50000, suffix: "+" }
-// function parseStatValue(value: string) {
-//   const match = value.match(/^([^\d]*)([\d,]+)(.*)$/);
-//   if (!match) {
-//     return { prefix: "", number: 0, suffix: value, hasNumber: false };
-//   }
-//   const [, prefix, numStr, suffix] = match;
-//   const number = parseInt(numStr.replace(/,/g, ""), 10);
-//   return { prefix, number, suffix, hasNumber: true };
-// }
-
-// function formatWithCommas(num: number) {
-//   return num.toLocaleString("en-US");
-// }
-
-// // Animates a count from 0 up to the target number once triggered
-// function useCountUp(target: number, shouldStart: boolean, duration = 1500) {
-//   const [value, setValue] = useState(0);
-//   const frameRef = useRef<number | null>(null);
-
-//   useEffect(() => {
-//     if (!shouldStart) return;
-
-//     const startTime = performance.now();
-
-//     const tick = (now: number) => {
-//       const elapsed = now - startTime;
-//       const progress = Math.min(elapsed / duration, 1);
-//       const eased = 1 - Math.pow(1 - progress, 3);
-//       setValue(Math.round(eased * target));
-
-//       if (progress < 1) {
-//         frameRef.current = requestAnimationFrame(tick);
-//       }
-//     };
-
-//     frameRef.current = requestAnimationFrame(tick);
-
-//     return () => {
-//       if (frameRef.current) cancelAnimationFrame(frameRef.current);
-//     };
-//   }, [shouldStart, target, duration]);
-
-//   return value;
-// }
-
-// function AnimatedStatValue({
-//   value,
-//   isVisible,
-// }: {
-//   value: string;
-//   isVisible: boolean;
-// }) {
-//   const { prefix, number, suffix, hasNumber } = parseStatValue(value);
-//   const animatedNumber = useCountUp(number, isVisible);
-
-//   if (!hasNumber) return <>{value}</>;
-
-//   return (
-//     <>
-//       {prefix}
-//       {formatWithCommas(animatedNumber)}
-//       {suffix}
-//     </>
-//   );
-// }
-
-// // Reveals `text` one character at a time, without ever shrinking the
-// // element's footprint (the un-typed remainder is rendered invisibly so
-// // nothing below the block shifts while typing is in progress).
-// function useTypewriter(
-//   text: string,
-//   {
-//     speed = 16,
-//     startDelay = 400,
-//   }: { speed?: number; startDelay?: number } = {},
-// ) {
-//   const [displayedText, setDisplayedText] = useState("");
-//   const [isDone, setIsDone] = useState(false);
-
-//   useEffect(() => {
-//     setDisplayedText("");
-//     setIsDone(false);
-
-//     let i = 0;
-//     let intervalId: ReturnType<typeof setInterval> | undefined;
-
-//     const startTimeout = setTimeout(() => {
-//       intervalId = setInterval(() => {
-//         i += 1;
-//         setDisplayedText(text.slice(0, i));
-
-//         if (i >= text.length) {
-//           if (intervalId) clearInterval(intervalId);
-//           setIsDone(true);
-//         }
-//       }, speed);
-//     }, startDelay);
-
-//     return () => {
-//       clearTimeout(startTimeout);
-//       if (intervalId) clearInterval(intervalId);
-//     };
-//   }, [text, speed, startDelay]);
-
-//   return { displayedText, isDone };
-// }
-
-// function SuccessState({
-//   name,
-//   onClose,
-// }: {
-//   name: string;
-//   onClose: () => void;
-// }) {
-//   return (
-//     <div className="flex flex-col items-center text-center py-6 px-2">
-//       <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
-//       <h3 className="text-xl font-bold text-gray-900">
-//         Thanks, {name.split(" ")[0]}!
-//       </h3>
-//       <p className="text-sm text-gray-500 mt-1.5 max-w-xs">
-//         Your application has been received. Our admissions team will reach out
-//         to you shortly.
-//       </p>
-//       <button
-//         onClick={onClose}
-//         className="mt-5 h-10 px-6 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm"
-//       >
-//         Close
-//       </button>
-//     </div>
-//   );
-// }
-
-// function getYoutubeId(url: string) {
-//   if (!url) return null;
-//   const trimmed = url.trim();
-//   if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
-//     return trimmed;
-//   }
-//   const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
-//   const match = trimmed.match(regExp);
-//   if (match && match[1]) {
-//     return match[1];
-//   }
-//   const fallback = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-//   const fallbackMatch = trimmed.match(fallback);
-//   return (fallbackMatch && fallbackMatch[2].length === 11) ? fallbackMatch[2] : null;
-// }
-
-// export default function UniversityHeroWithStats({
-//   university,
-//   stats,
-// }: HeroSectionProps) {
-//   const uniName = university?.name || "Amity";
-//   const uniFullName = university?.fullName || uniName;
-
-//   const banner = university?.details?.banner || {};
-//   const bannerHeading = banner.heading || "";
-//   const bannerSubheading = banner.subheading || "";
-//   const bannerImage = banner.image || "";
-//   const bannerVideo = banner.video || "";
-//   const bannerYoutubeUrl = banner.youtubeUrl || "";
-//   const youtubeVideoId = getYoutubeId(bannerYoutubeUrl);
-//   const bannerMediaType = banner.mediaType || (bannerImage ? "image" : (bannerVideo ? "video" : (youtubeVideoId ? "youtube" : null)));
-
-//   if (!bannerHeading && !bannerImage && !bannerVideo && !youtubeVideoId) {
-//     return null;
-//   }
-
-//   const aiOverviewCopy = bannerSubheading || "";
-
-//   const { displayedText: aiOverviewText, isDone: aiOverviewDone } =
-//     useTypewriter(aiOverviewCopy, { speed: 16, startDelay: 400 });
-
-//   // Dialog state — separate tracking for Apply vs Brochure
-//   const [open, setOpen] = useState(false);
-//   const [dialogMode, setDialogMode] = useState<"apply" | "brochure" | null>(
-//     null,
-//   );
-//   const [submittedLead, setSubmittedLead] = useState<LeadData | null>(null);
-
-//   const handleFormSubmit = (data: LeadData) => {
-//     setSubmittedLead(data);
-//   };
-
-//   const handleOpenChange = (next: boolean) => {
-//     setOpen(next);
-//     if (!next) {
-//       setTimeout(() => {
-//         setSubmittedLead(null);
-//         setDialogMode(null);
-//       }, 200);
-//     }
-//   };
-
-//   const handleApplyClick = () => {
-//     setDialogMode("apply");
-//     setOpen(true);
-//   };
-
-//   const handleBrochureClick = () => {
-//     setDialogMode("brochure");
-//     setOpen(true);
-//   };
-
-//   const statsData = [
-//     {
-//       icon: Users,
-//       value: stats?.learners || "50,000+",
-//       label: "Learners",
-//     },
-//     {
-//       icon: Globe,
-//       value: stats?.countries || "150+",
-//       label: "Countries Reached",
-//     },
-//     {
-//       icon: BookOpen,
-//       value: stats?.programs || "150+",
-//       label: "Programs",
-//     },
-//     {
-//       icon: Building2,
-//       value: stats?.campuses || "10+",
-//       label: "Global Campuses",
-//     },
-//   ];
-
-//   // Trigger count-up animation once the stats section scrolls into view
-//   const statsSectionRef = useRef<HTMLElement | null>(null);
-//   const [statsVisible, setStatsVisible] = useState(false);
-
-//   useEffect(() => {
-//     const node = statsSectionRef.current;
-//     if (!node) return;
-
-//     const observer = new IntersectionObserver(
-//       ([entry]) => {
-//         if (entry.isIntersecting) {
-//           setStatsVisible(true);
-//           observer.disconnect();
-//         }
-//       },
-//       { threshold: 0.3 },
-//     );
-
-//     observer.observe(node);
-//     return () => observer.disconnect();
-//   }, []);
-
-//   return (
-//     <>
-//       {/* Hero Section */}
-//       <section className="bg-white px-4 mt-4 pt-4 pb-14 sm:px-6 sm:mt-0 lg:px-8 lg:mt-2 lg:pb-20">
-//         <div className="absolute inset-0 opacity-[0.03] [mask-image:linear-gradient(to_bottom,white,transparent)]">
-//           <svg className="h-full w-full" fill="none" viewBox="0 0 400 400">
-//             <defs>
-//               <pattern
-//                 id="hero-grid"
-//                 width="40"
-//                 height="40"
-//                 patternUnits="userSpaceOnUse"
-//               >
-//                 <path
-//                   d="M0 40L40 40M40 0L40 40"
-//                   stroke="currentColor"
-//                   strokeWidth="1"
-//                 />
-//               </pattern>
-//             </defs>
-//             <rect width="100%" height="100%" fill="url(#hero-grid)" />
-//           </svg>
-//         </div>
-
-//         <div className="relative mx-auto max-w-7xl px-4 py-0 sm:px-6 sm:py-0 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
-//           <div className="grid items-center gap-8 md:grid-cols-2">
-//             <div className="space-y-6">
-//               {bannerHeading && (
-//                 <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl md:text-4xl lg:text-4xl">
-//                   {bannerHeading.includes("*") ? (
-//                     <HighlightedText text={bannerHeading} />
-//                   ) : (
-//                     <>
-//                       {bannerHeading.split(" ").slice(0, -1).join(" ")}{" "}
-//                       <span className="text-red-500">
-//                         {bannerHeading.split(" ").slice(-1)}
-//                       </span>
-//                     </>
-//                   )}
-//                 </h1>
-//               )}
-
-//               {/* AI Overview with typewriter effect */}
-//               {aiOverviewCopy && (
-//                 <div className="max-w-xl">
-//                   <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide text-amber-600">
-//                     <Sparkles className="h-3.5 w-3.5" />
-//                     <div className="text-[#1e293b] text-[14px] font-medium">
-//                       AI Overview
-//                     </div>
-//                   </div>
-
-//                   <p className="text-base text-gray-600 leading-relaxed">
-//                     <span>{aiOverviewText}</span>
-//                     <span
-//                       className={`ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] bg-red-500 sm:h-[18px] ${
-//                         aiOverviewDone ? "animate-pulse" : ""
-//                       }`}
-//                       aria-hidden="true"
-//                     />
-//                     {/* Reserves the final space up front so nothing below shifts while typing */}
-//                     <span className="invisible">
-//                       {aiOverviewCopy.slice(aiOverviewText.length)}
-//                     </span>
-//                   </p>
-//                 </div>
-//               )}
-
-//               {/* Accreditations Badge */}
-//               {banner.accreditationLogos && banner.accreditationLogos.filter(Boolean).length > 0 && (
-//                 <div className="pt-2">
-//                   <div className="flex gap-4 items-center flex-wrap">
-//                     {banner.accreditationLogos.filter(Boolean).map((logoUrl: string, idx: number) => (
-//                       <img
-//                         key={idx}
-//                         src={logoUrl}
-//                         alt={`Accreditation Logo ${idx + 1}`}
-//                         className="h-12 w-auto object-contain"
-//                       />
-//                     ))}
-//                   </div>
-//                 </div>
-//               )}
-
-//               {((banner.ctas?.[0]?.buttonText) || (banner.ctas?.[1]?.buttonText)) && (
-//                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-4">
-//                   {/* Apply to University - Shows ApplicationForm */}
-//                   {banner.ctas?.[0]?.buttonText && (
-//                     <Dialog
-//                       open={open && dialogMode === "apply"}
-//                       onOpenChange={handleOpenChange}
-//                     >
-//                       <DialogTrigger asChild>
-//                         <button
-//                           type="button"
-//                           onClick={handleApplyClick}
-//                           className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 py-3 text-center text-sm font-bold text-white shadow-lg shadow-red-200 transition-transform hover:scale-[1.02] hover:bg-red-600 active:scale-[0.98] sm:w-auto"
-//                         >
-//                           {banner.ctas[0].buttonText}
-//                         </button>
-//                       </DialogTrigger>
-
-//                       <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-//                         {submittedLead ? (
-//                           <SuccessState
-//                             name={submittedLead.name}
-//                             onClose={() => handleOpenChange(false)}
-//                           />
-//                         ) : (
-//                           <ApplicationForm
-//                             onSubmit={handleFormSubmit}
-//                           />
-//                         )}
-//                       </DialogContent>
-//                     </Dialog>
-//                   )}
-
-//                   {/* Download Brochure - Shows BrochureForm */}
-//                   {banner.ctas?.[1]?.buttonText && (
-//                     <Dialog
-//                       open={open && dialogMode === "brochure"}
-//                       onOpenChange={handleOpenChange}
-//                     >
-//                       <DialogTrigger asChild>
-//                         <button
-//                           type="button"
-//                           onClick={handleBrochureClick}
-//                           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 text-center text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
-//                         >
-//                           <Download className="h-4 w-4" />
-//                           {banner.ctas[1].buttonText}
-//                         </button>
-//                       </DialogTrigger>
-
-//                       <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-//                         {submittedLead ? (
-//                           <SuccessState
-//                             name={submittedLead.name}
-//                             onClose={() => handleOpenChange(false)}
-//                           />
-//                         ) : (
-//                           <BrochureForm onSubmit={handleFormSubmit} />
-//                         )}
-//                       </DialogContent>
-//                     </Dialog>
-//                   )}
-//                 </div>
-//               )}
-//             </div>
-
-//             <div className="relative px-0 sm:px-4">
-//               <div className="">
-//                 {(bannerImage || bannerVideo || youtubeVideoId) && (
-//                   <div className="w-full h-[260px] sm:h-[320px] md:h-[380px] overflow-hidden rounded-xl bg-slate-100">
-//                     {bannerMediaType === "image" && bannerImage && (
-//                       <img
-//                         src={bannerImage}
-//                         alt={`${uniFullName} Banner`}
-//                         className="h-full w-full object-cover"
-//                       />
-//                     )}
-//                     {bannerMediaType === "video" && bannerVideo && (
-//                       <video
-//                         src={bannerVideo}
-//                         controls
-//                         className="h-full w-full object-cover"
-//                       />
-//                     )}
-//                     {bannerMediaType === "youtube" && youtubeVideoId && (
-//                       <iframe
-//                         src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-//                         title={`${uniFullName} Video`}
-//                         className="h-full w-full"
-//                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-//                         referrerPolicy="strict-origin-when-cross-origin"
-//                         allowFullScreen
-//                       />
-//                     )}
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Stats Section */}
-//     </>
-//   );
-// }
-
-// chnages
-
-// "use client";
-
-// import React from "react";
-// import {
-//   Star,
-//   BookOpen,
-//   Clock,
-//   Globe,
-//   Users,
-//   Shield,
-//   Download,
-//   MapPin,
-//   Send,
-// } from "lucide-react";
-
-// type Badge = { alt: string; src?: string; label?: string };
-
-// type Props = {
-//   heroImage?: string;
-//   logoSrc?: string;
-//   title?: string;
-//   badges?: Badge[];
-//   rating?: number;
-//   reviews?: number;
-//   trustedText?: string;
-//   onApplyHref?: string;
-//   onTalkHref?: string;
-//   university?: any;
-// };
-
-// const iconMap: Record<string, React.ComponentType<any>> = {
-//   BookOpen,
-//   Clock,
-//   Globe,
-//   Users,
-//   Shield,
-//   Download,
-// };
-
-// const renderPointerIcon = (iconStr: string, alt: string) => {
-//   if (!iconStr) {
-//     return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
-//   }
-
-//   const LucideIcon =
-//     iconMap[iconStr] ||
-//     iconMap[iconStr.charAt(0).toUpperCase() + iconStr.slice(1)] ||
-//     iconMap[iconStr.toLowerCase()];
-
-//   if (LucideIcon) {
-//     return <LucideIcon className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
-//   }
-
-//   if (
-//     iconStr.startsWith("http") ||
-//     iconStr.startsWith("/") ||
-//     iconStr.includes(".")
-//   ) {
-//     return (
-//       <img
-//         src={iconStr}
-//         alt={alt}
-//         className="h-5 w-5 object-contain sm:h-6 sm:w-6"
-//       />
-//     );
-//   }
-
-//   return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
-// };
-
-// export default function UniversityHeroWithStats({
-//   heroImage = "/newuniversities/amitybanner.webp",
-//   logoSrc = "/ggubanner/amityu.png",
-//   title = "Golden Gate University",
-//   badges = [
-//     { alt: "Seal", src: "/ggubanner/aiu-logo.jpg", label: "" },
-//     { alt: "WES", src: "/ggubanner/wes-logo.jpg", label: "" },
-//     { alt: "AACSB", src: "/ggubanner/3rd.webp", label: "" },
-//     { alt: "More", src: undefined, label: "More" },
-//   ],
-//   rating = 4.8,
-//   reviews = 44,
-//   trustedText = "Trusted by 10,000+ learners",
-//   university,
-// }: Props) {
-//   const banner = university?.details?.banner || {};
-//   const bannerHeading = banner.heading || university?.name || title;
-//   const bannerSubheading =
-//     banner.subheading || "A Heritage of Excellence. A Future of Impact.";
-//   const bannerLocation = university?.location || "USA";
-//   const bannerLogo = banner.icon || university?.logoUrl || logoSrc;
-//   const bannerBg = banner.image || heroImage || "/ggubanner/ggubnr.webp";
-
-//   const bannerRating =
-//     banner.rating !== undefined ? Number(banner.rating) : rating;
-//   const bannerReviews =
-//     banner.reviewsCount !== undefined ? Number(banner.reviewsCount) : reviews;
-//   const bannerTrustedText = banner.trustedText || trustedText;
-
-//   const dbLogos = banner.accreditationLogos || [];
-//   const dynamicBadges =
-//     dbLogos.length > 0
-//       ? [
-//           ...dbLogos
-//             .filter((logo: string) => logo && logo.trim() !== "")
-//             .map((logo: string, idx: number) => ({
-//               alt: `Accreditation Logo ${idx + 1}`,
-//               src: logo,
-//               label: "",
-//             })),
-//           { alt: "More", src: undefined, label: "More" },
-//         ]
-//       : badges;
-
-//   const pointers = banner.pointers || {};
-//   const pointersTitle = pointers.title || `${university?.name || title}`;
-//   const pointersItems =
-//     pointers.items && pointers.items.length > 0
-//       ? pointers.items
-//       : [
-//           {
-//             mainText: "100+",
-//             heading: "Programs",
-//             subheading: "Diverse specializations",
-//             icon: "BookOpen",
-//           },
-//           {
-//             mainText: "75+",
-//             heading: "Years of Legacy",
-//             subheading: "Experience & excellence",
-//             icon: "Clock",
-//           },
-//           {
-//             mainText: "Global",
-//             heading: "Community",
-//             subheading: "Diverse student body",
-//             icon: "Globe",
-//           },
-//           {
-//             mainText: "Career",
-//             heading: "Focused",
-//             subheading: "Job-ready learning",
-//             icon: "Users",
-//           },
-//         ];
-
-//   return (
-//     <header className="relative bg-white">
-//       <div className="relative  overflow-hidden sm:h-72 max-height:40vh">
-//         <img
-//           src={bannerBg}
-//           alt="Campus banner"
-//           className="absolute inset-0 h-full w-full object-cover"
-//         />
-
-//         <div className="absolute inset-0 bg-gradient-to-b from-black/45 to-black/20" />
-
-//         <div className="absolute inset-0 flex items-center px-4 py-6 sm:px-8 lg:px-32 lg:py-12">
-//           <div className="flex w-full items-end gap-4">
-//             <img
-//               src={bannerLogo}
-//               alt={`${bannerHeading} Logo`}
-//               className="h-16 w-16 object-contain sm:h-20 sm:w-20"
-//             />
-//             <div className="min-w-0 flex-1 text-white"></div>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="mx-auto max-w-7xl px-3 sm:px-4">
-//         <div className="relative -mt-10 mb-16 sm:-mt-12 sm:mb-24 lg:-mt-16 lg:mb-32">
-//           <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100 sm:p-6">
-//             <div className="grid gap-5 border-b border-slate-200 pb-5 lg:grid-cols-[1fr_auto] lg:items-center">
-//               <div className="min-w-0">
-//                 <div className="flex flex-wrap items-center gap-3">
-//                   {dynamicBadges.map((b, i) => (
-//                     <div key={i} className="flex items-center gap-2">
-//                       {b.src ? (
-//                         <img
-//                           src={b.src}
-//                           alt={b.alt}
-//                           className="h-10 w-10 rounded-full border border-slate-100 bg-white object-contain"
-//                         />
-//                       ) : (
-//                         <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-700">
-//                           {b.label?.[0] ?? "i"}
-//                         </div>
-//                       )}
-
-//                       {b.label && (
-//                         <span className="text-xs font-medium text-slate-700">
-//                           {b.label}
-//                         </span>
-//                       )}
-//                     </div>
-//                   ))}
-//                 </div>
-
-//                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-//                   <div className="flex items-center gap-1">
-//                     {[...Array(5)].map((_, i) => (
-//                       <Star
-//                         key={i}
-//                         className={`h-4 w-4 ${
-//                           i < Math.floor(bannerRating)
-//                             ? "fill-amber-400 text-amber-400"
-//                             : "text-slate-300"
-//                         }`}
-//                       />
-//                     ))}
-
-//                     <span className="ml-1 text-sm font-semibold text-slate-800 sm:text-base">
-//                       {bannerRating}
-//                     </span>
-
-//                     <span className="text-xs text-slate-600 sm:text-sm">
-//                       ({bannerReviews})
-//                     </span>
-//                   </div>
-
-//                   <div className="flex min-w-0 items-center gap-2 text-xs text-slate-700 sm:text-sm">
-//                     <Shield className="h-4 w-4 shrink-0 text-sky-600" />
-//                     <span className="truncate">{bannerTrustedText}</span>
-//                   </div>
-//                 </div>
-//               </div>
-
-//               <div className="grid grid-cols-2 gap-3 lg:flex lg:justify-end">
-//                 <button className="inline-flex h-10 min-w-0 w-50 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm">
-//                   <Send className="h-4 w-4 shrink-0" fill="currentColor" />
-//                   <span className="truncate">
-//                     {" "}
-//                     {banner.ctas?.[0]?.buttonText || "Apply to University"}
-//                   </span>
-//                 </button>
-
-//                 <button
-//                   onClick={() => {
-//                     document.getElementById("courses")?.scrollIntoView({
-//                       behavior: "smooth",
-//                       block: "start",
-//                     });
-//                   }}
-//                   className="inline-flex h-10 w-50 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
-//                 >
-//                   <Download className="h-4 w-4 shrink-0" />
-
-//                   <span className="truncate">
-//                     {banner.ctas?.[1]?.buttonText || "Explore Courses"}
-//                   </span>
-//                 </button>
-//               </div>
-//               <div className="flex items-end gap-3">
-//                 <button
-//                   onClick={() => {
-//                     document.getElementById("courses")?.scrollIntoView({
-//                       behavior: "smooth",
-//                       block: "start",
-//                     });
-//                   }}
-//                   className="inline-flex h-10 w-50 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
-//                 >
-//                   <Download className="h-4 w-4 shrink-0" />
-
-//                   <span className="truncate">
-//                     {banner.ctas?.[1]?.buttonText || "Connect to Whatsapp"}
-//                   </span>
-//                 </button>
-//               </div>
-//             </div>
-
-//             <div className="pt-5 sm:pt-6">
-//               <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px] lg:gap-8">
-//                 <div className="min-w-0">
-//                   <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
-//                     {pointersTitle}
-//                   </h1>
-//                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-//                     {pointersItems.map((item: any, idx: number) => (
-//                       <div key={idx} className="flex min-w-0 items-start gap-3">
-//                         {/* Icon */}
-//                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 sm:h-12 sm:w-12">
-//                           {renderPointerIcon(item.icon, item.heading)}
-//                         </div>
-
-//                         {/* Text */}
-//                         <div className="min-w-0">
-//                           <div className="text-base font-bold text-slate-900 sm:text-lg">
-//                             {item.mainText}
-//                           </div>
-
-//                           <div className="text-xs text-slate-600 sm:text-sm">
-//                             {item.heading}
-//                           </div>
-
-//                           <div className="mt-0.5 line-clamp-2 text-xs text-slate-500 sm:mt-1">
-//                             {item.subheading}
-//                           </div>
-//                         </div>
-//                       </div>
-//                     ))}
-//                   </div>{" "}
-//                 </div>
-
-//                 <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
-//                   <div className="mb-2 flex items-center justify-between gap-2">
-//                     <h4 className="text-sm font-bold text-slate-900 sm:text-base">
-//                       Compare Universities with AI
-//                     </h4>
-//                   </div>
-
-//                   <p className="mb-3 text-xs text-slate-600 sm:text-sm">
-//                     Compare with other top universities.
-//                   </p>
-
-//                   <div className="flex items-center gap-3">
-//                     <div className="flex -space-x-3">
-//                       <img
-//                         src="/ggubanner/ssbm.png"
-//                         alt="University 1"
-//                         className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-//                       />
-
-//                       <img
-//                         src="/ggubanner/rushford.png"
-//                         alt="University 2"
-//                         className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-//                       />
-
-//                       <img
-//                         src="/ggubanner/ei.png"
-//                         alt="University 3"
-//                         className="h-12 w-12 rounded-full border-2 border-white bg-white shadow"
-//                       />
-
-//                       <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white shadow">
-//                         +3
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }
-
-// 21 aug
-
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { ApplicationForm } from "@/components/form/common-form";
 import {
   Star,
@@ -1217,6 +15,14 @@ import {
   Send,
   Search,
   Volume2,
+  Sparkles,
+  Award,
+  Building2,
+  CheckCircle2,
+  Share2,
+  ExternalLink,
+  X,
+  Compass,
 } from "lucide-react";
 
 type Badge = { alt: string; src?: string; label?: string };
@@ -1234,6 +40,7 @@ type Props = {
   university?: any;
 };
 
+// Map string icon names to Lucide icons
 const iconMap: Record<string, React.ComponentType<any>> = {
   BookOpen,
   Clock,
@@ -1241,9 +48,40 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Users,
   Shield,
   Download,
+  Building2,
+  Award,
+  Sparkles,
 };
 
-// Simple inline WhatsApp glyph (lucide-react has no brand icons)
+// Friendly pastel colors for the 4 stat cards
+const statThemeClasses = [
+  {
+    bg: "bg-amber-50/80",
+    border: "border-amber-250/70",
+    iconBg: "bg-amber-100 text-amber-700",
+    numColor: "text-amber-950",
+  },
+  {
+    bg: "bg-sky-50/80",
+    border: "border-sky-250/70",
+    iconBg: "bg-sky-100 text-sky-700",
+    numColor: "text-sky-950",
+  },
+  {
+    bg: "bg-emerald-50/80",
+    border: "border-emerald-250/70",
+    iconBg: "bg-emerald-100 text-emerald-700",
+    numColor: "text-emerald-950",
+  },
+  {
+    bg: "bg-purple-50/80",
+    border: "border-purple-250/70",
+    iconBg: "bg-purple-100 text-purple-700",
+    numColor: "text-purple-950",
+  },
+];
+
+// Clean inline WhatsApp brand glyph
 const WhatsAppIcon = ({ className = "" }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
@@ -1258,7 +96,7 @@ const WhatsAppIcon = ({ className = "" }: { className?: string }) => (
 
 const renderPointerIcon = (iconStr: string, alt: string) => {
   if (!iconStr) {
-    return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
+    return <BookOpen className="h-5 w-5" />;
   }
 
   const LucideIcon =
@@ -1267,7 +105,7 @@ const renderPointerIcon = (iconStr: string, alt: string) => {
     iconMap[iconStr.toLowerCase()];
 
   if (LucideIcon) {
-    return <LucideIcon className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
+    return <LucideIcon className="h-5 w-5" />;
   }
 
   if (
@@ -1279,12 +117,12 @@ const renderPointerIcon = (iconStr: string, alt: string) => {
       <img
         src={iconStr}
         alt={alt}
-        className="h-5 w-5 object-contain sm:h-6 sm:w-6"
+        className="h-5 w-5 object-contain"
       />
     );
   }
 
-  return <BookOpen className="h-5 w-5 text-[#f83d46] sm:h-6 sm:w-6" />;
+  return <BookOpen className="h-5 w-5" />;
 };
 
 export default function UniversityHeroWithStats({
@@ -1303,11 +141,11 @@ export default function UniversityHeroWithStats({
   university,
 }: Props) {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+
+  // Extract database fields with clean fallbacks
   const banner = university?.details?.banner || {};
   const bannerHeading = banner.heading || university?.name || title;
-  const bannerSubheading =
-    banner.subheading || "A Heritage of Excellence. A Future of Impact.";
-  const bannerLocation = university?.location || "USA";
+  const bannerLocation = university?.location || "India";
   const bannerLogo = banner.icon || university?.logoUrl || logoSrc;
   const bannerBg = banner.image || heroImage || "/ggubanner/ggubnr.webp";
 
@@ -1318,298 +156,390 @@ export default function UniversityHeroWithStats({
   const bannerTrustedText = banner.trustedText || trustedText;
   const bannerTrustedIcon = banner.trustedIcon || "";
 
+  // Comparison section
   const compareData = banner.compareSection;
-  const compareHeading = compareData?.heading || "";
-  const compareSubheading = compareData?.subheading || "";
-  const compareLogos = (compareData?.logos || []).filter((logo: string) => logo && logo.trim() !== "");
-  const showCompareSection = !!(compareHeading && compareLogos.length > 0);
+  const compareHeading = compareData?.heading || "Compare Universities with AI";
+  const compareSubheading =
+    compareData?.subheading || "Evaluate programs side-by-side with peer institutions.";
+  const compareLogos = (compareData?.logos || []).filter(
+    (logo: string) => logo && logo.trim() !== ""
+  );
+  const showCompareSection = compareLogos.length > 0;
 
+  // Accreditations & Badges
   const dbLogos = banner.accreditationLogos || [];
   const dynamicBadges =
     dbLogos.length > 0
-      ? [
-        ...dbLogos
+      ? dbLogos
           .filter((logo: string) => logo && logo.trim() !== "")
           .map((logo: string, idx: number) => ({
             alt: `Accreditation Logo ${idx + 1}`,
             src: logo,
             label: "",
-          })),
-        { alt: "More", src: undefined, label: "More" },
-      ]
-      : badges;
+          }))
+      : badges.filter((b) => b.src);
 
+  // Key Highlight Pointers
   const pointers = banner.pointers || {};
   const pointersTitle = pointers.title || `${university?.name || title}`;
   const pointersItems =
     pointers.items && pointers.items.length > 0
       ? pointers.items
       : [
-        {
-          mainText: "100+",
-          heading: "Programs",
-          subheading: "Diverse specializations",
-          icon: "BookOpen",
-        },
-        {
-          mainText: "75+",
-          heading: "Years of Legacy",
-          subheading: "Experience & excellence",
-          icon: "Clock",
-        },
-        {
-          mainText: "Global",
-          heading: "Community",
-          subheading: "Diverse student body",
-          icon: "Globe",
-        },
-        {
-          mainText: "Career",
-          heading: "Focused",
-          subheading: "Job-ready learning",
-          icon: "Users",
-        },
-      ];
+          {
+            mainText: "100+",
+            heading: "Programs",
+            subheading: "Diverse specializations",
+            icon: "BookOpen",
+          },
+          {
+            mainText: "75+",
+            heading: "Years of Legacy",
+            subheading: "Experience & excellence",
+            icon: "Clock",
+          },
+          {
+            mainText: "Global",
+            heading: "Community",
+            subheading: "Diverse student body",
+            icon: "Globe",
+          },
+          {
+            mainText: "Career",
+            heading: "Focused",
+            subheading: "Job-ready learning",
+            icon: "Users",
+          },
+        ];
+
+  // CTA button labels
+  const primaryCtaText = banner.ctas?.[0]?.buttonText || "Apply to University";
+  const secondaryCtaText = banner.ctas?.[1]?.buttonText || "Explore Courses";
+
+  const scrollToCourses = () => {
+    const el =
+      document.getElementById("courses") ||
+      document.getElementById("programs") ||
+      document.getElementById("university-section");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
-    <header className="relative bg-white">
-      <div className="relative h-48 overflow-hidden sm:h-72">
+    <header className="relative w-full bg-slate-50/60 pb-12 sm:pb-16 lg:pb-20">
+      {/* ── 1. Hero Cover Banner ── */}
+      <div className="relative h-60 sm:h-72 lg:h-84 w-full overflow-hidden bg-slate-900">
         <img
           src={bannerBg}
-          alt="Campus banner"
-          className="absolute inset-0 h-full w-full object-cover"
+          alt={`${bannerHeading} Campus Cover`}
+          className="h-full w-full object-cover object-center opacity-85 transition-transform duration-700 hover:scale-102"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 to-black/20" />
+        {/* Subtle, soft cinematic dark gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/30 to-black/25" />
+
+        {/* Top-right subtle location tag on cover */}
+        <div className="absolute right-4 top-4 sm:right-8 sm:top-6 z-10 flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/70 backdrop-blur-md px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm border border-white/15">
+            <MapPin className="h-3.5 w-3.5 text-red-400" />
+            {bannerLocation}
+          </span>
+        </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-3 sm:px-4">
-        <div className="relative -mt-10 mb-16 sm:-mt-12 sm:mb-24 lg:-mt-16 lg:mb-32">
-          <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100 sm:p-6">
-            {/* Logo with rating and trusted text on same row */}
-            <div className="mb-2 flex flex-col gap-4 sm:items-start sm:justify-between sm:gap-4 lg:flex-row">
-              <div className="flex flex-wrap items-start gap-3">
-
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-2 shadow-md ring-1 ring-slate-100 sm:h-20 sm:w-20">
+      {/* ── 2. Floating Crisp & Friendly Identity Card ── */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative -mt-16 sm:-mt-20 lg:-mt-24 z-20">
+          <div className="rounded-3xl bg-white p-5 sm:p-7 lg:p-9 shadow-[0_12px_36px_rgba(15,23,42,0.08)] border border-slate-200/90 transition-all">
+            
+            {/* Top Row: Logo, Title, Badges & Primary Actions */}
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 pb-6 border-b border-slate-100">
+              {/* Left Column: Logo + Main Headings */}
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 min-w-0 flex-1">
+                {/* University Logo Container */}
+                <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-2xl bg-white p-3 shadow-md border border-slate-200/80">
                   <img
                     src={bannerLogo}
                     alt={`${bannerHeading} Logo`}
                     className="h-full w-full object-contain"
                   />
                 </div>
-                {/* <div className="h-20 w-[3px] shrink-0 rounded-full bg-[#000]" /> */}
 
-                <div className="min-w-0">
+                {/* Title & Trust Metadata */}
+                <div className="min-w-0 flex-1 space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    {dynamicBadges.map((b, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        {b.src ? (
-                          <img
-                            src={b.src}
-                            alt={b.alt}
-                            className="h-10 w-10 rounded-full border border-slate-100 bg-white object-contain"
-                          />
-                        ) : b.label === "More" || b.label === "MORE" ? (
-                          <div className="flex h-10 items-center justify-center rounded-full border border-dashed border-slate-200 bg-slate-50/60 px-3 text-[11px] font-medium tracking-wide text-slate-400">
-                            More
-                          </div>
-                        ) : (
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-700">
-                            {b.label?.[0] ?? "i"}
-                          </div>
-                        )}
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-600 border border-red-200/70 uppercase tracking-wide">
+                      <Shield className="h-3 w-3 text-red-500" />
+                      UGC-DEB Approved
+                    </span>
 
-                        {b.label && b.label !== "More" && b.label !== "MORE" && (
-                          <span className="text-xs font-medium text-slate-700">
-                            {b.label}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                    {university?.wesApproval && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
+                        <Globe className="h-3 w-3 text-blue-500" />
+                        WES Recognized
+                      </span>
+                    )}
+
+                    {university?.nirfRanking && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/80">
+                        <Award className="h-3 w-3 text-amber-600" />
+                        NIRF Ranked
+                      </span>
+                    )}
                   </div>
 
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    {bannerHeading}
+                  </h1>
+
+                  {/* Rating & Social Proof */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm pt-0.5">
+                    {/* Stars */}
                     <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${i < Math.floor(bannerRating)
-                            ? "fill-amber-400 text-amber-400"
-                            : "text-slate-300"
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.floor(bannerRating)
+                                ? "fill-amber-400 text-amber-400"
+                                : "fill-slate-150 text-slate-200"
                             }`}
-                        />
-                      ))}
-
-                      <span className="ml-1 text-sm font-semibold text-slate-800 sm:text-base">
-                        {bannerRating}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-extrabold text-slate-900 ml-1 text-sm">
+                        {bannerRating.toFixed(1)}
                       </span>
-
-                      <span className="text-xs text-slate-600 sm:text-sm">
-                        ({bannerReviews})
+                      <span className="text-slate-500 font-medium text-xs">
+                        ({bannerReviews} verified reviews)
                       </span>
                     </div>
 
-                    <div className="flex min-w-0 items-center gap-2 text-xs text-slate-700 sm:text-sm">
+                    <span className="h-3.5 w-px bg-slate-200 hidden sm:inline-block" />
+
+                    {/* Trusted Badge */}
+                    <div className="flex items-center gap-1.5 text-slate-600 font-medium">
                       {bannerTrustedIcon ? (
                         <img
                           src={bannerTrustedIcon}
-                          alt="Trusted Icon"
+                          alt="Trust"
                           className="h-4 w-4 shrink-0 object-contain"
                         />
                       ) : (
-                        <Shield className="h-4 w-4 shrink-0 text-sky-600" />
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                       )}
-                      <span className="truncate">{bannerTrustedText}</span>
+                      <span>{bannerTrustedText}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                {/* Top Buttons */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowApplicationForm(true)}
-                    className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] bg-[#f83d46] px-3 text-xs font-bold text-white shadow-[0_10px_18px_rgba(248,61,70,0.28)] transition hover:bg-[#ef343d] active:scale-[0.99] sm:px-5 sm:text-sm cursor-pointer"
-                  >
-                    <Send className="h-4 w-4 shrink-0" fill="currentColor" />
-                    <span className="truncate">
-                      {banner.ctas?.[0]?.buttonText || "Apply to University"}
-                    </span>
-                  </button>
+              {/* Right Column: Clean, Friendly Action Buttons */}
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 w-full sm:w-auto lg:w-72">
+                {/* Primary Action: Apply to University */}
+                <button
+                  type="button"
+                  onClick={() => setShowApplicationForm(true)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 hover:bg-red-600 active:scale-[0.98] py-3.5 px-6 text-sm font-bold text-white shadow-md shadow-red-500/25 transition-all cursor-pointer"
+                >
+                  <Send className="h-4 w-4" fill="currentColor" />
+                  <span>{primaryCtaText}</span>
+                </button>
 
-                  <button
-                    onClick={() => {
-                      document.getElementById("courses")?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }}
-                    className="inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-[10px] border border-[#dfe5ee] bg-white px-3 text-xs font-bold text-slate-800 transition hover:bg-slate-50 active:scale-[0.99] sm:px-5 sm:text-sm"
-                  >
-                    <Search className="h-4 w-4 shrink-0" />
-                    <span className="truncate">
-                      {banner.ctas?.[1]?.buttonText || "Explore Courses"}
-                    </span>
-                  </button>
-                </div>
+                {/* Secondary Action: Explore Courses */}
+                <button
+                  type="button"
+                  onClick={scrollToCourses}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-250 bg-white hover:bg-slate-50 active:scale-[0.98] py-3 px-5 text-sm font-bold text-slate-800 transition-colors shadow-2xs"
+                >
+                  <Search className="h-4 w-4 text-slate-500" />
+                  <span>{secondaryCtaText}</span>
+                </button>
 
-                {/* Bottom Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Friendly Direct Quick Contact Chips */}
+                <div className="grid grid-cols-2 gap-2 pt-1">
                   <a
                     href="https://wa.me/919355907564"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-10 w-full items-center justify-start gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm cursor-pointer no-underline"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/70 py-2 px-3 text-xs font-bold text-emerald-700 transition-colors no-underline"
+                    title="Direct WhatsApp Chat"
                   >
-                    <WhatsAppIcon className="h-4 w-4 shrink-0 text-green-500" />
-                    <span className="whitespace-nowrap">Chat with University</span>
+                    <WhatsAppIcon className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <span>WhatsApp</span>
                   </a>
 
                   <button
-                    onClick={() => {
-                      document.getElementById("courses")?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }}
-                    className="relative -left-8 inline-flex h-10 w-full items-center justify-end gap-1 px-3 text-xs font-bold text-black transition hover:opacity-80 sm:px-5 sm:text-sm"
+                    type="button"
+                    onClick={scrollToCourses}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-200/70 py-2 px-3 text-xs font-bold text-indigo-700 transition-colors cursor-pointer"
+                    title="Speak with AI Counselling Guide"
                   >
-                    <Volume2 className="h-4 w-4 shrink-0" />
-                    <span className="whitespace-nowrap">Speak to AI</span>
+                    <Sparkles className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
+                    <span>Ask AI</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 sm:pt-3">
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px] lg:gap-8">
-                <div className="min-w-0">
-                  <h1 className="mb-4 text-xl font-bold text-slate-900 sm:mb-6 sm:text-2xl">
-                    {pointersTitle}
-                  </h1>
-                  <div className="grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {pointersItems.map((item: any, idx: number) => (
-                      <div key={idx} className="flex w-full min-w-0 items-start gap-3">
-                        {/* Icon */}
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 sm:h-12 sm:w-12">
-                          {renderPointerIcon(item.icon, item.heading)}
-                        </div>
+            {/* Accreditations Row */}
+            {dynamicBadges.length > 0 && (
+              <div className="py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 shrink-0">
+                  Recognitions &amp; Accreditations
+                </div>
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  {dynamicBadges.map((badge, idx) => (
+                    <div
+                      key={idx}
+                      className="flex h-11 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/80 p-2 shadow-2xs transition-all hover:bg-white hover:border-slate-300"
+                      title={badge.alt}
+                    >
+                      {badge.src ? (
+                        <img
+                          src={badge.src}
+                          alt={badge.alt}
+                          className="h-7 w-auto object-contain"
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-slate-600 px-1">
+                          {badge.label || "Approved"}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                        {/* Text */}
-                        <div className="min-w-0 flex-1">
-                          <div className="text-base font-bold text-slate-900 sm:text-lg">
+            {/* Bottom Row: 4 Crisp Stat Highlights & AI Compare Feature */}
+            <div className="pt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-center">
+                {/* 4 Crisp Key Metric Cards */}
+                <div>
+                  <div className="mb-3.5 flex items-center justify-between">
+                    <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+                      {pointersTitle} Highlights
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-3.5">
+                    {pointersItems.map((item: any, idx: number) => {
+                      const theme = statThemeClasses[idx % statThemeClasses.length];
+                      return (
+                        <div
+                          key={idx}
+                          className={`rounded-2xl border ${theme.border} ${theme.bg} p-3.5 sm:p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm`}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div
+                              className={`flex h-8 w-8 items-center justify-center rounded-xl ${theme.iconBg} shadow-2xs shrink-0`}
+                            >
+                              {renderPointerIcon(item.icon, item.heading)}
+                            </div>
+                            <span className="text-xs font-semibold text-slate-600 line-clamp-1">
+                              {item.heading}
+                            </span>
+                          </div>
+
+                          <div
+                            className={`text-xl sm:text-2xl font-black ${theme.numColor} tracking-tight`}
+                          >
                             {item.mainText}
                           </div>
 
-                          <div className="text-xs text-slate-600 sm:text-sm">
-                            {item.heading}
-                          </div>
-
-
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 lg:h-fit">
-
-                  {showCompareSection && (
-                    <div className="">
-                      <div className="mb-2 flex items-center justify-between gap-2">
-                        <h4 className="text-sm font-bold text-slate-900 sm:text-base">
-                          {compareHeading}
-                        </h4>
-                      </div>
-
-
-                      {compareSubheading && (
-                        <p className="mb-3 text-xs text-slate-600 sm:text-sm">
-                          {compareSubheading}
-                        </p>
-                      )}
-
-                      <div className="flex items-center gap-3">
-                        <div className="flex -space-x-3">
-                          {compareLogos.slice(0, 3).map((logo, idx) => (
-                            <img
-                              key={idx}
-                              src={logo}
-                              alt={`University ${idx + 1}`}
-                              className="h-12 w-12 rounded-full border-2 border-white bg-white shadow object-contain"
-                            />
-                          ))}
-                          {compareLogos.length > 3 && (
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white shadow">
-                              +{compareLogos.length - 3}
+                          {item.subheading && (
+                            <div className="mt-1 text-[11px] font-medium text-slate-500 line-clamp-1">
+                              {item.subheading}
                             </div>
                           )}
                         </div>
-                      </div>
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {/* AI Compare Card */}
+                {showCompareSection && (
+                  <div className="rounded-2xl border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 via-sky-50/50 to-white p-4 sm:p-5 shadow-2xs">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-indigo-700">
+                        <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+                        <span>AI University Comparison</span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">
+                        Instant
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-slate-900 leading-snug">
+                      {compareHeading}
+                    </h3>
+
+                    {compareSubheading && (
+                      <p className="mt-1 text-xs text-slate-600 line-clamp-2">
+                        {compareSubheading}
+                      </p>
+                    )}
+
+                    <div className="mt-3.5 flex items-center justify-between pt-2 border-t border-indigo-100/70">
+                      {/* Peer university avatars */}
+                      <div className="flex items-center -space-x-2.5 overflow-hidden">
+                        {compareLogos.slice(0, 4).map((logo, idx) => (
+                          <div
+                            key={idx}
+                            className="relative h-9 w-9 rounded-full border-2 border-white bg-white p-1 shadow-sm shrink-0"
+                          >
+                            <img
+                              src={logo}
+                              alt={`Peer institution ${idx + 1}`}
+                              className="h-full w-full object-contain"
+                            />
+                          </div>
+                        ))}
+                        {compareLogos.length > 4 && (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-indigo-600 text-[11px] font-bold text-white shadow-sm">
+                            +{compareLogos.length - 4}
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={scrollToCourses}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 hover:text-indigo-800 transition-colors"
+                      >
+                        <span>Compare Now</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ── 3. Application Form Modal ── */}
       {showApplicationForm && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-fade-in"
           onClick={() => setShowApplicationForm(false)}
         >
           <div
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-slate-200"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setShowApplicationForm(false)}
-              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-xl text-gray-600 shadow cursor-pointer"
+              className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+              aria-label="Close form"
             >
-              ×
+              <X className="h-4 w-4" />
             </button>
 
             <ApplicationForm

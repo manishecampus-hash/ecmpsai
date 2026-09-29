@@ -1,9 +1,5 @@
-import {
-  GraduationCap,
-  CheckCircle2,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
+import React from "react";
+import { Percent } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
 interface EligibilityFeesSectionProps {
@@ -11,126 +7,177 @@ interface EligibilityFeesSectionProps {
 }
 
 interface EligibilityGroup {
-  icon: LucideIcon;
   title: string;
   points: string[];
 }
 
-const ELIGIBILITY_GROUPS: EligibilityGroup[] = [
+const DEFAULT_ELIGIBILITY_GROUPS: EligibilityGroup[] = [
   {
-    icon: GraduationCap,
-    title: "For Online Undergraduate Programs",
+    title: "For Online Undergraduate Programs (BBA, BCA, B.Com)",
     points: [
-      "10+2 or equivalent qualification from a recognized board",
-      "No age limit for admission",
-      "Open to freshers as well as working professionals",
+      "Candidates must have passed 10+2 or an equivalent qualification from a recognized educational board.",
+      "Students awaiting final results may apply provisionally, subject to timely document verification.",
     ],
   },
   {
-    icon: GraduationCap,
-    title: "For Online Postgraduate Programs",
+    title: "For Online Postgraduate Programs (MBA, MCA, M.Com)",
     points: [
-      "Bachelor's degree from a recognized university",
-      "No entrance examination required",
-      "Suitable for working professionals, entrepreneurs, and career aspirants",
+      "Applicants must hold a Bachelor’s degree of minimum three (3) years duration from a recognized university.",
+      "A minimum of 50% aggregate marks is required (relaxation applicable for reserved categories per statutory norms).",
+      "Final-year graduating students are eligible to apply on a provisional basis.",
     ],
   },
 ];
 
-interface FeeRow {
-  label: string;
-  range: string;
+const DEFAULT_FEE_ROWS = [
+  {
+    label: "Undergraduate Range",
+    range: "₹10,383 – ₹15,133",
+  },
+  {
+    label: "Postgraduate Range",
+    range: "₹14,716 – ₹16,550",
+  },
+];
+
+function formatFeeLabel(label: string = "", idx: number): string {
+  const lower = label.toLowerCase();
+  if (lower.includes("undergraduate") || lower.includes("ug")) {
+    return "UNDERGRADUATE RANGE";
+  }
+  if (lower.includes("postgraduate") || lower.includes("pg")) {
+    return "POSTGRADUATE RANGE";
+  }
+  if (label.trim()) {
+    return label.toUpperCase();
+  }
+  return idx === 0 ? "UNDERGRADUATE RANGE" : "POSTGRADUATE RANGE";
 }
 
-const FEE_ROWS: FeeRow[] = [
-  {
-    label: "Online UG Programs",
-    range: "₹16,500 – ₹30,000",
-  },
-  {
-    label: "Online PG Programs",
-    range: "₹33,000 – ₹50,000",
-  },
-];
+function parseFeeRange(rawRange?: string) {
+  if (!rawRange || !rawRange.trim()) {
+    return {
+      formattedRange: "₹10,383 – ₹15,133",
+      subtext: "Per semester installment",
+    };
+  }
+
+  let cleaned = rawRange.trim();
+  let isTotal = false;
+
+  if (
+    cleaned.toLowerCase().includes("/total") ||
+    cleaned.toLowerCase().includes("total")
+  ) {
+    isTotal = true;
+    cleaned = cleaned.replace(/\/total/gi, "").replace(/total/gi, "").trim();
+  }
+
+  // Split on hyphen or en-dash
+  const parts = cleaned.split(/[-–]/).map((s) => s.trim());
+  let formattedRange = cleaned;
+
+  if (parts.length === 2) {
+    const p0 = parts[0].startsWith("₹") ? parts[0] : `₹${parts[0]}`;
+    const p1 = parts[1].startsWith("₹") ? parts[1] : `₹${parts[1]}`;
+    formattedRange = `${p0} – ${p1}`;
+  } else if (!formattedRange.startsWith("₹")) {
+    formattedRange = `₹${formattedRange}`;
+  }
+
+  return {
+    formattedRange,
+    subtext: isTotal ? "Total course fee (approx)" : "Per semester installment",
+  };
+}
 
 export default function EligibilityFeesSection({
   university,
 }: EligibilityFeesSectionProps) {
-  const universityName = university?.name ?? "the university";
+  const universityName = university?.name ?? "University";
   const eligibilityData = university?.details?.eligibility || {};
 
   const groups =
     eligibilityData.criteriaGroups && eligibilityData.criteriaGroups.length > 0
       ? eligibilityData.criteriaGroups
-      : (eligibilityData.groups && eligibilityData.groups.length > 0
-          ? eligibilityData.groups
-          : ELIGIBILITY_GROUPS);
-
-  const feeRows =
-    (eligibilityData.feesRange || eligibilityData.feeRows) &&
-    (eligibilityData.feesRange || eligibilityData.feeRows).length > 0
-      ? (eligibilityData.feesRange || eligibilityData.feeRows).map((row: any) => ({
-          label: row.label,
-          range: row.range,
-        }))
-      : FEE_ROWS;
+      : eligibilityData.groups && eligibilityData.groups.length > 0
+      ? eligibilityData.groups
+      : DEFAULT_ELIGIBILITY_GROUPS;
 
   const feeDesc = eligibilityData.feesDescription || eligibilityData.feeDesc;
   const feesHeading = eligibilityData.feesHeading || eligibilityData.feeHeading;
-  const feesSubTitle = eligibilityData.feesSubTitle || eligibilityData.feeRangeHeading || `${universityName.charAt(0).toUpperCase() + universityName.slice(1)} Online Fee Range`;
-  const feesInstallments = eligibilityData.feesInstallments || eligibilityData.feeInstallments;
+  const feesInstallments =
+    eligibilityData.feesInstallments || eligibilityData.feeInstallments;
 
   let bullets = eligibilityData.feesBullets;
   if (!bullets || bullets.length === 0) {
-    bullets = [
-      ...feeRows.map((row: any) => ({
-        isFeeRange: true,
-        label: row.label,
-        range: row.range,
-      })),
-      {
-        isFeeRange: false,
-        text: eligibilityData.feesFooter || eligibilityData.feeFooter || "Program fees at Amity Online University vary depending on the chosen course and specialization. The fee structure is competitive and may be revised as per university guidelines.",
-      }
-    ];
+    bullets = DEFAULT_FEE_ROWS.map((row) => ({
+      isFeeRange: true,
+      label: row.label,
+      range: row.range,
+    }));
   }
 
-  return (
-    <section id="fee" className="bg-white px-6 py-4 sm:px-8 lg:px-12 lg:py-8 font-[Inter]">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-          {/* Eligibility Criteria */}
-          <div className="rounded-3xl border border-gray-300 bg-white p-10">
-            <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-                {eligibilityData.criteriaHeading ? (
-                  <HighlightedText text={eligibilityData.criteriaHeading} />
-                ) : (
-                  <>
-                    Eligibility <span className="text-red-600">Criteria</span>
-                  </>
-                )}
-              </h2>
-              <div className="mt-5 h-1 w-20 bg-red-600" />
-            </div>
+  const feeRanges = bullets.filter((b: any) => b.isFeeRange);
+  const displayRanges = feeRanges.length > 0 ? feeRanges : DEFAULT_FEE_ROWS;
 
-            <div className="space-y-8">
+  const criteriaHeading =
+    eligibilityData.criteriaHeading ||
+    eligibilityData.heading ||
+    eligibilityData.title ||
+    "Eligibility *Criteria*";
+
+  const feesTitle =
+    feesHeading ||
+    eligibilityData.feesHeading ||
+    eligibilityData.feeHeading ||
+    "Fees *Structure* & Semester Rates";
+
+  const description =
+    feeDesc ||
+    `${universityName} Online adheres to a transparent, standardized fee framework sanctioned by university statutory bodies, without hidden examination or processing charges.`;
+
+  const cleanInstallmentText = feesInstallments
+    ? feesInstallments.replace(/\*+/g, "").trim()
+    : "";
+  const installmentDetail =
+    cleanInstallmentText &&
+    !cleanInstallmentText.toLowerCase().startsWith("easy installment") &&
+    cleanInstallmentText.length > 25
+      ? cleanInstallmentText
+      : "Zero-cost EMI options available on credit/debit cards and leading educational NBFCs with zero foreclosure fees.";
+
+  return (
+    <section id="fee" className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8 pt-0 pb-8 sm:pt-1 sm:pb-12 font-sans">
+      <div className="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-2 items-stretch">
+        {/* Left Card: Eligibility Criteria */}
+        <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-xs hover:shadow-sm transition-shadow duration-200 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 sm:mb-6">
+              <HighlightedText text={criteriaHeading} defaultColor="#ea384c" />
+            </h2>
+
+            <div className="space-y-3.5 sm:space-y-4">
               {groups.map((group: any, gIdx: number) => (
-                <div key={gIdx}>
-                  <h3 className="mb-4 text-base font-bold text-black">
-                    {group.title}
-                  </h3>
-                  <ul className="space-y-3.5">
+                <div
+                  key={gIdx}
+                  className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-5 transition-colors duration-200 hover:border-slate-300/80"
+                >
+                  <div className="flex items-center gap-2.5 mb-2.5">
+                    <span className="h-2 w-2 rounded-full bg-[#ea384c] shrink-0" />
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                      {group.title}
+                    </h3>
+                  </div>
+
+                  <ul className="space-y-2 pl-4">
                     {group.points?.map((point: string, pIdx: number) => (
-                      <li key={pIdx} className="flex items-start gap-3">
-                        <CheckCircle2
-                          className="mt-0.5 h-5 w-5 shrink-0 text-red-600 flex-shrink-0"
-                          strokeWidth={2}
-                          fill="currentColor"
-                        />
-                        <span className="text-base text-black leading-normal">
-                          {point}
-                        </span>
+                      <li
+                        key={pIdx}
+                        className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-normal"
+                      >
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                        <span>{point}</span>
                       </li>
                     ))}
                   </ul>
@@ -138,83 +185,60 @@ export default function EligibilityFeesSection({
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Fees Structure */}
-          <div className="rounded-3xl border border-gray-300 bg-white p-10">
-            <div className="mb-8">
-              <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
-                {feesHeading ? (
-                  <HighlightedText text={feesHeading} />
-                ) : (
-                  <>
-                    Fees <span className="text-red-600">Structure</span>
-                  </>
-                )}
-              </h2>
-              <div className="mt-5 h-1 w-20 bg-red-600" />
+        {/* Right Card: Fees Structure & Semester Rates */}
+        <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-xs hover:shadow-sm transition-shadow duration-200 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <HighlightedText text={feesTitle} defaultColor="#ea384c" />
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mt-2 mb-5 sm:mb-6">
+              {description}
+            </p>
+
+            {/* Metric Range Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6">
+              {displayRanges.slice(0, 2).map((rangeItem: any, idx: number) => {
+                const isFirst = idx === 0;
+                const formattedLabel = formatFeeLabel(rangeItem.label, idx);
+                const { formattedRange, subtext } = parseFeeRange(rangeItem.range);
+
+                return (
+                  <div
+                    key={idx}
+                    className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-4.5 flex flex-col justify-between transition-colors duration-200 hover:border-slate-300/80"
+                  >
+                    <div>
+                      <span className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                        {formattedLabel}
+                      </span>
+                      <div
+                        className={`text-base sm:text-lg lg:text-base xl:text-lg font-semibold tracking-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis tabular-nums ${
+                          isFirst ? "text-[#ea384c]" : "text-slate-800"
+                        }`}
+                        title={formattedRange}
+                      >
+                        {formattedRange}
+                      </div>
+                    </div>
+                    <span className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                      {subtext}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            <div className="space-y-7">
-              <p className="text-base leading-7 text-black">
-                {feeDesc || (
-                  <>
-                    {universityName.charAt(0).toUpperCase() +
-                      universityName.slice(1)}{" "}
-                    offers an affordable and flexible fee structure, making
-                    quality higher education accessible to a wide range of
-                    learners.
-                  </>
-                )}
-              </p>
-
-              <div>
-                <h3 className="mb-5 text-base font-bold text-black">
-                  {feesSubTitle}
-                </h3>
-                <ul className="space-y-3.5">
-                  {bullets.map((bullet: any, idx: number) => {
-                    if (bullet.isFeeRange) {
-                      return (
-                        <li key={idx} className="flex items-center gap-3">
-                          <CheckCircle2
-                            className="h-5 w-5 text-red-600 flex-shrink-0"
-                            strokeWidth={2}
-                            fill="currentColor"
-                          />
-                          <span className="text-base text-black">{bullet.label}</span>
-                          <span className="ml-auto text-base text-black font-semibold">
-                            {bullet.range}
-                          </span>
-                        </li>
-                      );
-                    } else {
-                      return (
-                        <li key={idx} className="flex items-start gap-3">
-                          <CheckCircle2
-                            className="mt-0.5 h-5 w-5 shrink-0 text-red-600 flex-shrink-0"
-                            strokeWidth={2}
-                            fill="currentColor"
-                          />
-                          <p className="text-base leading-7 text-black">
-                            {bullet.text}
-                          </p>
-                        </li>
-                      );
-                    }
-                  })}
-                </ul>
-                {bullets.some((b: any) => b.isFeeRange) && (
-                  <p className="mt-2 text-sm text-gray-600">per semester*</p>
-                )}
-              </div>
-
-              <div>
-                <p className="text-base text-blue-600 italic text-center">
-                  {feesInstallments ||
-                    "Easy installment options available.*"}
-                </p>
-              </div>
-            </div>
+          {/* Easy Installment Options Banner */}
+          <div className="rounded-xl sm:rounded-2xl bg-red-50/70 border border-red-100/90 p-3.5 sm:p-4 flex items-start gap-2.5 sm:gap-3 mt-auto">
+            <Percent className="h-4 w-4 text-[#ea384c] shrink-0 mt-0.5" strokeWidth={2.5} />
+            <p className="text-xs sm:text-[13px] text-red-600 leading-relaxed font-normal">
+              <strong className="font-bold text-red-700">Easy Installment Options: </strong>
+              <span>{installmentDetail}</span>
+            </p>
           </div>
         </div>
       </div>

@@ -4,13 +4,43 @@ export const softwareDeveloper = {
   category: "Technology",
 
   hero: {
-    badge: "High Demand Career",
-    heading: "Become a Full Stack Software ",
+    badge: "High-Growth Career Track",
+    heading: "Become a Full Stack",
+    headingHighlight: "Software Developer",
     description:
-      "Build modern web applications using React, Next.js, Node.js, and cloud technologies. Prepare for high-paying software engineering roles in startups and MNCs.",
+      "Master modern web architectures, cloud systems, and generative AI tooling with global university credentials and 1:1 industry mentorship.",
     image: "/career/software-hero.png",
     salary: "₹6-18 LPA",
     duration: "6-12 Months Learning Path",
+    features: [
+      {
+        icon: "stack",
+        title: "Modern Stack",
+        description: "React, Next.js, Node, Docker & Cloud Microservices.",
+      },
+      {
+        icon: "apps",
+        title: "Real Production Apps",
+        description: "Build 12+ real deployable systems and enterprise applications.",
+      },
+      {
+        icon: "mentor",
+        title: "1:1 Mentorship",
+        description: "Direct coaching by experienced industry mentors.",
+      },
+    ],
+    ratingText: "4.8/5 Rated by 50,000+ Engineers",
+    placementText: "100% Placement Support",
+    report: {
+      candidateCtc: "₹18.4 LPA",
+      placementWindow: "64 Days",
+      careerGoals: [
+        "Switch to Full Stack Developer (0-2 Yrs)",
+        "Upskill as a Backend Engineer",
+        "Break into Software Development (Fresher)",
+        "Senior / Lead Engineer Transition",
+      ],
+    },
   },
 
   overview: {

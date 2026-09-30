@@ -2590,14 +2590,21 @@
 
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   X,
   ArrowLeft,
   ChevronDown,
   ArrowRight,
+  Check,
+  BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { courseOptions } from "@/data/course-options";
+import { indianStates } from "@/data/indian-states";
+import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -2618,25 +2625,61 @@ const countryCodes = [
   { code: "+81", flag: "🇯🇵", name: "JP" },
 ];
 
-type Step = "phone" | "otp";
+type Step = "phone" | "otp" | "details";
 type SignupMode = "mobile" | "email";
 
 export function SignupModal({
   isOpen,
   onClose,
 }: SignupModalProps) {
+  const router = useRouter();
+
   const [step, setStep] = useState<Step>("phone");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [assuredOptIn, setAssuredOptIn] = useState(false);
   const [mode, setMode] = useState<SignupMode>("mobile");
+
+  // ── Details step (shown once OTP is verified) ──
+  const [course, setCourse] = useState("");
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const [state, setState] = useState("");
+  const [stateOpen, setStateOpen] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [showReferral, setShowReferral] = useState(false);
+  const [whatsappOptIn, setWhatsappOptIn] = useState(true);
+  const [showAdvisor, setShowAdvisor] = useState(false);
+  const coursesRef = useRef<HTMLDivElement>(null);
+  const stateRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!coursesOpen && !stateOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        coursesRef.current &&
+        !coursesRef.current.contains(event.target as Node)
+      ) {
+        setCoursesOpen(false);
+      }
+      if (
+        stateRef.current &&
+        !stateRef.current.contains(event.target as Node)
+      ) {
+        setStateOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, [coursesOpen, stateOpen]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -2666,8 +2709,8 @@ export function SignupModal({
     e.preventDefault();
     setError("");
 
-    if (!/^\d{7,15}$/.test(phone)) {
-      setError("Please enter a valid phone number.");
+    if (!/^\d{10}$/.test(phone)) {
+      setError("Please enter a valid 10-digit phone number.");
       return;
     }
 
@@ -2726,13 +2769,8 @@ export function SignupModal({
         throw new Error(data.message || "Verification failed");
       }
 
-      localStorage.setItem(
-        "ecampus_student",
-        JSON.stringify({ phone: fullPhone }),
-      );
-
-      window.dispatchEvent(new Event("ecampus-auth-change"));
-      onClose();
+      // OTP verified — move to the details step to finish onboarding.
+      setStep("details");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -2767,43 +2805,18 @@ export function SignupModal({
     }
   };
 
-  const handleEmailContinue = async (e: FormEvent) => {
+  const handleEmailStepContinue = (e: FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
-    try {
-      const apiUrl =
-        process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
-        "http://localhost:5000";
-
-      const res = await fetch(`${apiUrl}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || "Signup failed");
-      }
-
-      localStorage.setItem(
-        "ecampus_student",
-        JSON.stringify({ name, email }),
-      );
-
-      window.dispatchEvent(new Event("ecampus-auth-change"));
-      onClose();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
     }
+
+    // Email is captured here — hand off to the same details step the
+    // phone flow uses, where we'll collect the phone number instead.
+    setStep("details");
   };
 
   const handleBack = () => {
@@ -2811,6 +2824,79 @@ export function SignupModal({
     setStep("phone");
     setError("");
   };
+
+  const selectCourse = (value: string) => {
+    setCourse(value);
+    setCoursesOpen(false);
+  };
+
+  const selectState = (value: string) => {
+    setState(value);
+    setStateOpen(false);
+  };
+
+  const handleDetailsSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (mode === "mobile") {
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+    } else if (!/^\d{10}$/.test(phone)) {
+      setError("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    const student = {
+      name: name.trim(),
+      email: email.trim(),
+      phone: fullPhone,
+      coursesInterested: course ? [course] : [],
+      state: state || undefined,
+      referralCode: referralCode.trim() || undefined,
+      whatsappOptIn,
+      joinedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("ecampus_student", JSON.stringify(student));
+    window.dispatchEvent(new Event("ecampus-auth-change"));
+
+    // Signup is complete — hand off to the AI advisor questionnaire
+    // before landing the student on their dashboard.
+    setShowAdvisor(true);
+  };
+
+  const finishOnboarding = (answers?: AdvisorAnswers) => {
+    if (answers) {
+      const raw = localStorage.getItem("ecampus_student");
+      const student = raw ? JSON.parse(raw) : {};
+      localStorage.setItem(
+        "ecampus_student",
+        JSON.stringify({ ...student, advisorProfile: answers }),
+      );
+      window.dispatchEvent(new Event("ecampus-auth-change"));
+    }
+
+    setShowAdvisor(false);
+    onClose();
+    router.push("/dashboard");
+  };
+
+  if (showAdvisor) {
+    return (
+      <AIAdvisorModal
+        onClose={() => finishOnboarding()}
+        onComplete={(answers) => finishOnboarding(answers)}
+      />
+    );
+  }
 
   return (
     <>
@@ -2822,19 +2908,16 @@ export function SignupModal({
 
       {/* Modal wrapper */}
       <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain">
-        <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
-          {/* Fixed / stable modal size */}
+        <div
+          className={`flex min-h-full items-center justify-center p-3 sm:p-4 ${
+            step === "details" ? "pt-24 sm:pt-28" : ""
+          }`}
+        >
+          {/* Fixed / stable modal size — identical for every step */}
           <div
-            className="
-              relative
-              w-full
-              max-w-[380px]
-              min-h-[430px]
-              overflow-hidden
-              rounded-2xl
-              bg-white
-              shadow-2xl
-            "
+            className={`relative w-full min-h-[430px] overflow-hidden rounded-2xl bg-white shadow-2xl ${
+              step === "details" ? "max-w-[440px]" : "max-w-[380px]"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
@@ -2879,8 +2962,25 @@ export function SignupModal({
               </button>
             )}
 
-            <div className="flex min-h-[430px] flex-col bg-white px-5 py-6 sm:px-7 sm:py-7">
-              <div className="mx-auto flex w-full max-w-[330px] flex-1 flex-col">
+            {/* Flip transition between steps */}
+            <div style={{ perspective: 1200 }}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, rotateY: -90 }}
+                  animate={{ opacity: 1, rotateY: 0 }}
+                  exit={{ opacity: 0, rotateY: 90 }}
+                  transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ transformStyle: "preserve-3d", backfaceVisibility: "hidden" }}
+                  className={`flex min-h-[430px] flex-col bg-white px-6 sm:px-8 ${
+                    step === "details" ? "py-6 sm:py-7" : "py-6 sm:py-8"
+                  }`}
+                >
+              <div
+                className={`mx-auto flex w-full flex-1 flex-col ${
+                  step === "details" ? "max-w-[380px]" : "max-w-[330px]"
+                }`}
+              >
                 {/* Logo */}
                 <div className="flex justify-center">
                   <img
@@ -2892,20 +2992,45 @@ export function SignupModal({
 
                 {/* Heading */}
                 <div className="mt-4">
-                  <h2 className="text-center text-xl font-bold leading-tight text-gray-900 sm:text-2xl">
-                    {step === "otp"
-                      ? "Enter OTP"
-                      : mode === "email"
-                        ? "Create Account"
-                        : "Welcome to eCampus!"}
+                  <h2 className="text-center text-xl font-bold leading-tight tracking-tight text-gray-900">
+                    {step === "details"
+                      ? "Enter your details to get started"
+                      : step === "otp"
+                        ? "Enter OTP"
+                        : mode === "email"
+                          ? "Create Account"
+                          : "Welcome to eCampus!"}
                   </h2>
 
                   <p className="mx-auto mt-1.5 max-w-[300px] text-center text-sm leading-5 text-gray-600">
-                    {step === "otp"
-                      ? `OTP sent to ${fullPhone}`
-                      : mode === "email"
-                        ? "Complete your details to continue."
-                        : "Create your account to explore top online programs"}
+                    {step === "details" ? (
+                      mode === "mobile" ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          {"You're verified"}
+                          <motion.span
+                            initial={{ scale: 0, rotate: -25, opacity: 0 }}
+                            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 450, damping: 14, delay: 0.15 }}
+                            className="inline-flex drop-shadow-sm"
+                          >
+                            <BadgeCheck
+                              className="h-[19px] w-[19px]"
+                              fill="#22c55e"
+                              stroke="#ffffff"
+                              strokeWidth={2.5}
+                            />
+                          </motion.span>
+                        </span>
+                      ) : (
+                        "Just a few more details to finish signing up."
+                      )
+                    ) : step === "otp" ? (
+                      `OTP sent to ${fullPhone}`
+                    ) : mode === "email" ? (
+                      "Complete your details to continue."
+                    ) : (
+                      "Create your account to explore top online programs"
+                    )}
                   </p>
                 </div>
 
@@ -2919,16 +3044,16 @@ export function SignupModal({
                 {/* Mode tabs */}
                 {step === "phone" && (
                   <div className="mt-5">
-                    <div className="flex w-full gap-1.5 rounded-xl bg-red-50 p-1">
+                    <div className="flex w-full gap-1 rounded-lg bg-red-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleModeChange("mobile")}
                         className={`
-                          flex h-10 flex-1 items-center justify-center
-                          rounded-lg
+                          flex h-9 flex-1 items-center justify-center
+                          rounded-md
                           px-2
                           text-[13px]
-                          font-semibold
+                          font-medium
                           transition-all
                           sm:text-sm
                           ${
@@ -2945,11 +3070,11 @@ export function SignupModal({
                         type="button"
                         onClick={() => handleModeChange("email")}
                         className={`
-                          flex h-10 flex-1 items-center justify-center
-                          rounded-lg
+                          flex h-9 flex-1 items-center justify-center
+                          rounded-md
                           px-2
                           text-[13px]
-                          font-semibold
+                          font-medium
                           transition-all
                           sm:text-sm
                           ${
@@ -2976,14 +3101,13 @@ export function SignupModal({
                       >
                         <div
                           className="
-                            flex h-[50px]
+                            flex h-12
                             overflow-hidden
-                            rounded-xl
+                            rounded-lg
                             border border-gray-300
                             bg-white
-                            shadow-sm
                             transition-all
-                            focus-within:border-red-400
+                            focus-within:border-red-500
                             focus-within:ring-2
                             focus-within:ring-red-100
                           "
@@ -3041,10 +3165,10 @@ export function SignupModal({
                             value={phone}
                             onChange={(e) =>
                               setPhone(
-                                e.target.value.replace(/\D/g, ""),
+                                e.target.value.replace(/\D/g, "").slice(0, 10),
                               )
                             }
-                            maxLength={15}
+                            maxLength={10}
                             required
                             className="
                               min-w-0
@@ -3065,17 +3189,16 @@ export function SignupModal({
                         <Button
                           type="submit"
                           disabled={
-                            loading || phone.length < 7
+                            loading || phone.length < 10
                           }
                           className="
-                            h-11
-                            w-full
-                            rounded-full
+                            flex h-11 w-full items-center justify-center
+                            rounded-lg
                             bg-red-600
                             text-sm
                             font-semibold
                             text-white
-                            transition
+                            transition-colors
                             hover:bg-red-700
                             disabled:bg-gray-300
                             disabled:text-gray-500
@@ -3093,7 +3216,7 @@ export function SignupModal({
                     {/* Email form */}
                     {mode === "email" && (
                       <form
-                        onSubmit={handleEmailContinue}
+                        onSubmit={handleEmailStepContinue}
                         className="flex flex-col gap-3"
                       >
                         <input
@@ -3107,9 +3230,9 @@ export function SignupModal({
                           }
                           required
                           className="
-                            h-[50px]
+                            h-12
                             w-full
-                            rounded-xl
+                            rounded-lg
                             border
                             border-gray-300
                             bg-white
@@ -3120,7 +3243,7 @@ export function SignupModal({
                             transition-all
                             placeholder:text-sm
                             placeholder:text-gray-400
-                            focus:border-red-400
+                            focus:border-red-500
                             focus:ring-2
                             focus:ring-red-100
                           "
@@ -3128,22 +3251,22 @@ export function SignupModal({
 
                         <Button
                           type="submit"
-                          disabled={loading || !email}
+                          disabled={!email}
                           className="
-                            h-11
-                            w-full
-                            rounded-full
+                            flex h-11 w-full items-center justify-center
+                            rounded-lg
                             bg-red-600
                             text-sm
                             font-semibold
                             text-white
-                            transition
+                            transition-colors
                             hover:bg-red-700
                             disabled:bg-gray-300
                             disabled:text-gray-500
                           "
                         >
-                          {loading ? "Sending..." : "Continue"}
+                          <span>Continue</span>
+                          <ArrowRight className="ml-1.5 h-4 w-4" />
                         </Button>
                       </form>
                     )}
@@ -3175,7 +3298,7 @@ export function SignupModal({
                       className="
                         h-[54px]
                         w-full
-                        rounded-xl
+                        rounded-lg
                         border
                         border-gray-300
                         px-4
@@ -3186,7 +3309,7 @@ export function SignupModal({
                         outline-none
                         transition-all
                         placeholder:text-gray-300
-                        focus:border-red-400
+                        focus:border-red-500
                         focus:ring-2
                         focus:ring-red-100
                       "
@@ -3204,7 +3327,7 @@ export function SignupModal({
                         w-full
                         text-center
                         text-xs
-                        font-semibold
+                        font-medium
                         text-gray-600
                         transition
                         hover:text-red-600
@@ -3225,12 +3348,12 @@ export function SignupModal({
                         mt-3
                         h-11
                         w-full
-                        rounded-full
+                        rounded-lg
                         bg-red-600
                         text-sm
                         font-semibold
                         text-white
-                        transition
+                        transition-colors
                         hover:bg-red-700
                         disabled:bg-gray-300
                         disabled:text-gray-500
@@ -3241,26 +3364,255 @@ export function SignupModal({
                   </form>
                 )}
 
+                {/* Details (post-OTP onboarding) */}
+                {step === "details" && (
+                  <form
+                    onSubmit={handleDetailsSubmit}
+                    className="mt-4 flex flex-col gap-3"
+                  >
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          autoComplete="name"
+                          placeholder="What do we call you ?"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                          autoFocus
+                          className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                        />
+                      </div>
+
+                      {mode === "mobile" ? (
+                        <div>
+                          <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            inputMode="email"
+                            autoComplete="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                            Phone Number
+                          </label>
+                          <div className="flex h-11 overflow-hidden rounded-lg border border-gray-300 bg-white transition-all focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100">
+                            <div className="relative flex shrink-0 items-center gap-1 border-r border-gray-300 bg-gray-50 px-2.5">
+                              <span className="text-sm font-semibold text-gray-900">
+                                {countryCode}
+                              </span>
+                              <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+                              <select
+                                value={countryCode}
+                                onChange={(e) => setCountryCode(e.target.value)}
+                                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                              >
+                                {countryCodes.map((c) => (
+                                  <option key={c.code} value={c.code}>
+                                    {c.flag} {c.code} ({c.name})
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <input
+                              type="tel"
+                              inputMode="numeric"
+                              autoComplete="tel"
+                              placeholder="Phone number"
+                              value={phone}
+                              onChange={(e) =>
+                                setPhone(e.target.value.replace(/\D/g, ""))
+                              }
+                              required
+                              className="min-w-0 flex-1 bg-white px-3 text-sm text-gray-900 outline-none placeholder:text-sm placeholder:text-gray-400"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div ref={coursesRef} className="relative">
+                        <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                          Course Interested
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => setCoursesOpen((v) => !v)}
+                          className="flex h-11 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3.5 text-left text-sm outline-none transition-all focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                        >
+                          <span
+                            className={
+                              course ? "truncate text-gray-900" : "text-gray-400"
+                            }
+                          >
+                            {course || "Select course"}
+                          </span>
+                          <ChevronDown
+                            className={`h-4 w-4 flex-shrink-0 text-gray-400 transition-transform ${
+                              coursesOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+
+                        {coursesOpen && (
+                          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-10 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-lg">
+                            {courseOptions.map((opt) => {
+                              const selected = course === opt;
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => selectCourse(opt)}
+                                  className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm text-gray-700 transition hover:bg-red-50"
+                                >
+                                  <span
+                                    className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border ${
+                                      selected
+                                        ? "border-red-600 bg-red-600 text-white"
+                                        : "border-gray-300"
+                                    }`}
+                                  >
+                                    {selected && <Check className="h-3 w-3" />}
+                                  </span>
+                                  {opt}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      <div ref={stateRef} className="relative">
+                        <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                          State
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => setStateOpen((v) => !v)}
+                          className="flex h-11 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3.5 text-left text-sm outline-none transition-all focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                        >
+                          <span
+                            className={
+                              state ? "truncate text-gray-900" : "text-gray-400"
+                            }
+                          >
+                            {state || "Select state"}
+                          </span>
+                          <ChevronDown
+                            className={`h-4 w-4 flex-shrink-0 text-gray-400 transition-transform ${
+                              stateOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+
+                        {stateOpen && (
+                          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-10 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-lg">
+                            {indianStates.map((opt) => {
+                              const selected = state === opt;
+                              return (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => selectState(opt)}
+                                  className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm text-gray-700 transition hover:bg-red-50"
+                                >
+                                  <span
+                                    className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border ${
+                                      selected
+                                        ? "border-red-600 bg-red-600 text-white"
+                                        : "border-gray-300"
+                                    }`}
+                                  >
+                                    {selected && <Check className="h-3 w-3" />}
+                                  </span>
+                                  {opt}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {!showReferral ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowReferral(true)}
+                        className="text-left text-sm font-medium text-red-600 hover:text-red-700 hover:underline"
+                      >
+                        Have a Referral Code?
+                      </button>
+                    ) : (
+                      <div>
+                        <label className="mb-1.5 block text-[13px] font-medium text-gray-500">
+                          Referral Code
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter referral code"
+                          value={referralCode}
+                          onChange={(e) => setReferralCode(e.target.value)}
+                          className="h-11 w-full rounded-lg border border-gray-300 bg-white px-3.5 text-sm text-gray-900 outline-none transition-all placeholder:text-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                        />
+                      </div>
+                    )}
+
+                    <label className="flex cursor-pointer items-center gap-2.5 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={whatsappOptIn}
+                        onChange={(e) => setWhatsappOptIn(e.target.checked)}
+                        className="h-4 w-4 flex-shrink-0 cursor-pointer rounded border-gray-300 accent-red-600"
+                      />
+                      Send me updates on Whatsapp
+                    </label>
+
+                    <Button
+                      type="submit"
+                      className="mt-1 h-12 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                    >
+                      Get Started
+                    </Button>
+                  </form>
+                )}
+
                 {/* Terms */}
-                <div className="mt-auto pt-6">
+                <div className={`mt-auto ${step === "details" ? "pt-4" : "pt-6"}`}>
                   <p className="mx-auto max-w-[310px] text-center text-[11px] leading-[17px] text-gray-600 sm:text-xs">
                     By continuing, you agree to our{" "}
                     <a
                       href="/terms"
-                      className="font-semibold text-red-600 hover:text-red-700 hover:underline"
+                      className="font-medium text-red-600 hover:text-red-700 hover:underline"
                     >
                       Terms
                     </a>{" "}
                     &{" "}
                     <a
                       href="/privacy"
-                      className="font-semibold text-red-600 hover:text-red-700 hover:underline"
+                      className="font-medium text-red-600 hover:text-red-700 hover:underline"
                     >
                       Privacy Policy
                     </a>
                   </p>
                 </div>
               </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>

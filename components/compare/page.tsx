@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft, ArrowRight, Scale, MapPin } from "lucide-rea
 import { UNIVERSITY_COMPARISONS } from "@/data/comparisons";
 import Link from "next/link";
 import Image from "next/image";
+import { compareSearchHref } from "@/app/compare/compare-picker";
 
 export default function UniversitySlider() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -162,7 +163,7 @@ export default function UniversitySlider() {
                 </div>
 
                 <Link
-                  href={`/compare/${pair.id}`}
+                  href={compareSearchHref(pair.a.university.trim(), pair.b.university.trim())}
                   className="w-full mt-auto py-2.5 px-4 border border-red-500 text-red-600 bg-white hover:bg-red-600 hover:text-white rounded-2xl font-bold text-xs text-center transition-all duration-300 flex items-center justify-center gap-2 shadow-2xs group-hover:shadow-red-500/20"
                 >
                   <span>

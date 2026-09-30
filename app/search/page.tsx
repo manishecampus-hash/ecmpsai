@@ -29,21 +29,27 @@ import {
 
 // ── Design tokens ─────────────────────────────────────────────
 const T = {
-  bg: "#f8fafd",
+  bg: "#fffafa",
+  // Soft red-to-white wash used behind the whole page
+  bgGradient:
+    "radial-gradient(1100px 420px at 50% -120px, rgba(254,202,202,0.55), rgba(255,255,255,0) 70%), linear-gradient(180deg, #fff5f5 0%, #ffffff 38%, #fffafa 100%)",
   surface: "#ffffff",
-  border: "rgba(0,0,0,0.09)",
-  borderHov: "rgba(26,115,232,0.35)",
-  textPrim: "#202124",
-  textSec: "#5f6368",
-  textHint: "#9aa0a6",
-  blue: "#1a73e8",
-  blueLight: "#e8f0fe",
-  purple: "#9b72cb",
-  green: "#34a853",
-  red: "#d93025",
-  redLight: "#fce8e6",
-  btnGray: "#3c4043",
-  btnGrayBg: "#f1f3f4",
+  border: "rgba(15,23,42,0.08)",
+  borderHov: "rgba(220,38,38,0.35)",
+  textPrim: "#0f172a",
+  textSec: "#475569",
+  textHint: "#94a3b8",
+  accent: "#dc2626", // eCampus brand red
+  accentDark: "#b91c1c",
+  accentLight: "#fef2f2",
+  accentGradient: "linear-gradient(135deg, #ef4444 0%, #dc2626 55%, #b91c1c 100%)",
+  green: "#16a34a",
+  greenLight: "#f0fdf4",
+  red: "#dc2626",
+  redLight: "#fef2f2",
+  btnGray: "#334155",
+  btnGrayBg: "#f8fafc",
+  cardShadow: "0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -12px rgba(220,38,38,0.12)",
 };
 
 const CHIP_ICONS = [
@@ -63,7 +69,7 @@ function SourceLogo({ domain }: { domain: string }) {
         width: 28,
         height: 28,
         borderRadius: 6,
-        background: "#3c4043",
+        background: T.accentGradient,
         flexShrink: 0,
         display: "flex",
         alignItems: "center",
@@ -105,7 +111,7 @@ function Skeleton() {
             width: `${w}%`,
             borderRadius: 8,
             background:
-              "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)",
+              "linear-gradient(90deg,#fdf2f2 25%,#fde2e2 50%,#fdf2f2 75%)",
             backgroundSize: "200% 100%",
             animation: `shimmer 1.4s ease-in-out ${i * 0.1}s infinite`,
           }}
@@ -117,7 +123,7 @@ function Skeleton() {
 }
 
 function FormattedAnswer({ text }: { text: string }) {
-  const clean = text.replace(/FOLLOWUPS:.*$/s, "").trim();
+  const clean = text.replace(/\**\s*FOLLOWUPS:[\s\S]*$/, "").trim();
   return (
     <div style={{ lineHeight: 1.85, fontSize: 15, color: T.textPrim }}>
       <ReactMarkdown
@@ -230,7 +236,7 @@ function FormattedAnswer({ text }: { text: string }) {
             </div>
           ),
           thead: ({ children }) => (
-            <thead style={{ background: T.blueLight }}>{children}</thead>
+            <thead style={{ background: T.accentLight }}>{children}</thead>
           ),
           th: ({ children }) => (
             <th
@@ -238,7 +244,7 @@ function FormattedAnswer({ text }: { text: string }) {
                 padding: "10px 14px",
                 textAlign: "left",
                 fontWeight: 600,
-                color: T.blue,
+                color: T.accent,
                 borderBottom: `2px solid ${T.borderHov}`,
                 whiteSpace: "nowrap",
                 fontSize: 12,
@@ -254,7 +260,7 @@ function FormattedAnswer({ text }: { text: string }) {
             <tr
               style={{ transition: "background 0.15s" }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#f8fafd")
+                (e.currentTarget.style.background = "#fff7f7")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
@@ -288,7 +294,7 @@ function FormattedAnswer({ text }: { text: string }) {
           blockquote: ({ children }) => (
             <blockquote
               style={{
-                borderLeft: `3px solid ${T.blue}`,
+                borderLeft: `3px solid ${T.accent}`,
                 margin: "0.8rem 0",
                 paddingLeft: 14,
                 color: T.textSec,
@@ -301,8 +307,8 @@ function FormattedAnswer({ text }: { text: string }) {
           code: ({ children }) => (
             <code
               style={{
-                background: T.blueLight,
-                color: T.blue,
+                background: T.accentLight,
+                color: T.accent,
                 borderRadius: 4,
                 padding: "1px 6px",
                 fontSize: 13,
@@ -334,7 +340,7 @@ function SourceCard({ source }: { source: any }) {
         textDecoration: "none",
         border: `1px solid ${hov ? T.borderHov : T.border}`,
         background: T.surface,
-        boxShadow: hov ? "0 2px 10px rgba(26,115,232,0.08)" : "none",
+        boxShadow: hov ? "0 4px 14px rgba(220,38,38,0.10)" : "none",
         transition: "border-color 0.15s, box-shadow 0.15s",
       }}
       onMouseEnter={() => setHov(true)}
@@ -361,7 +367,7 @@ function SourceCard({ source }: { source: any }) {
           <p
             style={{
               fontSize: 11,
-              color: T.blue,
+              color: T.accent,
               margin: "2px 0 0",
               display: "flex",
               alignItems: "center",
@@ -478,15 +484,15 @@ function Chip({
         gap: 6,
         padding: "8px 14px",
         borderRadius: 999,
-        border: `1px solid ${hov ? T.blue : T.border}`,
-        background: hov ? "#f0f4ff" : T.surface,
+        border: `1px solid ${hov ? T.borderHov : T.border}`,
+        background: hov ? T.accentLight : T.surface,
         fontSize: 13,
-        color: T.textPrim,
+        color: hov ? T.accentDark : T.textPrim,
         cursor: "pointer",
         transition: "all 0.15s",
       }}
     >
-      <Icon size={13} style={{ color: T.green }} />
+      <Icon size={13} style={{ color: T.accent }} />
       {label}
     </button>
   );
@@ -642,7 +648,7 @@ function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
               gap: 5,
               padding: "6px 12px",
               borderRadius: 8,
-              background: copied ? T.green : T.blue,
+              background: copied ? T.green : T.accent,
               color: "#fff",
               border: "none",
               fontSize: 12,
@@ -681,6 +687,30 @@ function SearchPage() {
   const [isMobile, setIsMobile] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
+  const [followUp, setFollowUp] = useState("");
+  const [fuFocused, setFuFocused] = useState(false);
+
+  // Below 768px the site's BottomNav (73.5px, hides while scrolling down) sits at the
+  // bottom of the screen — mirror its visibility so the composer always sits just above it.
+  const [hasBottomNav, setHasBottomNav] = useState(false);
+  const [bottomNavShown, setBottomNavShown] = useState(true);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onResize = () => setHasBottomNav(window.innerWidth < 768);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setBottomNavShown(!(y > lastY && y > 100));
+      lastY = y;
+    };
+    onResize();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+  const composerOffset = hasBottomNav && bottomNavShown ? 74 : 0;
 
   // ── Detect mobile ──
   useEffect(() => {
@@ -741,12 +771,20 @@ function SearchPage() {
         }
       }
 
-      const followMatch = full.match(/FOLLOWUPS:\s*(.+)$/m);
+      // The model sometimes bolds the marker ("**FOLLOWUPS:**") and puts the questions
+      // on the next line(s), so read everything after it and strip markdown leftovers.
+      const followMatch = full.match(/FOLLOWUPS:([\s\S]*)$/);
       if (followMatch) {
         const parsed = followMatch[1]
-          .split("|")
-          .map((s) => s.trim())
-          .filter(Boolean)
+          .split(/\||\n/)
+          .map((s) =>
+            s
+              .replace(/[*_`#>]/g, "")
+              .replace(/^\s*(?:[-•]|\d+[.)])\s*/, "")
+              .replace(/^["'“”]+|["'“”]+$/g, "")
+              .trim(),
+          )
+          .filter((s) => s.length > 3 && /[a-z]/i.test(s))
           .slice(0, 5);
         setChips(parsed);
       }
@@ -775,7 +813,7 @@ function SearchPage() {
 
   const handleCopy = () => {
     const clean = answer
-      .replace(/FOLLOWUPS:.*$/s, "")
+      .replace(/\**\s*FOLLOWUPS:[\s\S]*$/, "")
       .replace(/\*\*/g, "")
       .replace(/##\s*/g, "")
       .trim();
@@ -828,6 +866,8 @@ function SearchPage() {
   const SidebarContent = (
     <div
       style={{
+        position: isMobile ? "static" : "sticky",
+        top: 88,
         opacity: showSrc ? 1 : 0,
         transform: showSrc ? "translateY(0)" : "translateY(14px)",
         transition: "opacity 0.4s ease, transform 0.4s ease",
@@ -838,8 +878,9 @@ function SearchPage() {
         style={{
           background: T.surface,
           border: `1px solid ${T.border}`,
-          borderRadius: 16,
-          padding: 16,
+          borderRadius: 18,
+          padding: 18,
+          boxShadow: T.cardShadow,
         }}
       >
         <div
@@ -911,7 +952,7 @@ function SearchPage() {
               width: "100%",
               border: `1px solid ${T.border}`,
               background: T.surface,
-              color: T.blue,
+              color: T.accent,
               borderRadius: 999,
               padding: "8px 12px",
               fontSize: 13,
@@ -929,10 +970,10 @@ function SearchPage() {
         <div
           style={{
             marginTop: 12,
-            background: "linear-gradient(135deg,#e8f0fe,#f0e6ff)",
-            border: "1px solid rgba(66,133,244,0.18)",
-            borderRadius: 16,
-            padding: 16,
+            background: "linear-gradient(135deg,#fff1f2 0%,#fee2e2 100%)",
+            border: "1px solid rgba(220,38,38,0.16)",
+            borderRadius: 18,
+            padding: 18,
           }}
         >
           <div
@@ -943,8 +984,8 @@ function SearchPage() {
               marginBottom: 8,
             }}
           >
-            <User size={14} color={T.blue} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: T.blue }}>
+            <User size={14} color={T.accent} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: T.accent }}>
               Save this answer
             </span>
           </div>
@@ -964,12 +1005,13 @@ function SearchPage() {
               width: "100%",
               padding: "9px",
               borderRadius: 999,
-              background: "#3c4043",
+              background: T.accentGradient,
               color: "#fff",
               border: "none",
               fontSize: 13,
-              fontWeight: 500,
+              fontWeight: 600,
               cursor: "pointer",
+              boxShadow: "0 6px 16px -6px rgba(220,38,38,0.55)",
             }}
           >
             Signup
@@ -980,7 +1022,7 @@ function SearchPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: T.bg, color: T.textPrim }}>
+    <div style={{ minHeight: "100vh", background: T.bgGradient, backgroundColor: T.bg, color: T.textPrim }}>
       {showShare && (
         <ShareModal url={shareUrl} onClose={() => setShowShare(false)} />
       )}
@@ -1001,7 +1043,7 @@ function SearchPage() {
               transition: "border-color 0.2s",
               minWidth: 0, // critical: prevents overflow in flex
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = T.blue)}
+            onFocus={(e) => (e.currentTarget.style.borderColor = T.accent)}
             onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
           >
             <Search size={14} style={{ color: T.textHint, flexShrink: 0 }} />
@@ -1061,7 +1103,7 @@ function SearchPage() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: isMobile ? "16px 12px 80px" : "36px 24px 100px",
+          padding: isMobile ? "16px 12px 230px" : "32px 24px 170px",
           display: isMobile ? "flex" : "grid",
           flexDirection: isMobile ? "column" : undefined,
           gridTemplateColumns: isMobile ? undefined : "1fr 308px",
@@ -1071,14 +1113,53 @@ function SearchPage() {
       >
         {/* ════ LEFT / Main column ════ */}
         <div style={{ minWidth: 0, width: "100%" }}>
+          {/* ── The question being answered ── */}
+          {urlQuery && (
+            <div style={{ marginBottom: isMobile ? 14 : 18 }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: T.accent,
+                  background: T.accentLight,
+                  border: "1px solid rgba(220,38,38,0.14)",
+                  padding: "4px 10px",
+                  borderRadius: 999,
+                }}
+              >
+                <Sparkles size={12} />
+                eCampus AI Search
+              </span>
+              <h1
+                style={{
+                  margin: "10px 0 0",
+                  fontSize: isMobile ? 21 : 28,
+                  lineHeight: 1.25,
+                  fontWeight: 800,
+                  letterSpacing: "-0.02em",
+                  color: T.textPrim,
+                  wordBreak: "break-word",
+                }}
+              >
+                {urlQuery}
+              </h1>
+            </div>
+          )}
+
           {/* ── AI Answer card ── */}
           <div
             style={{
               background: T.surface,
               border: `1px solid ${T.border}`,
-              borderRadius: 18,
+              borderRadius: 20,
               padding: isMobile ? "16px 14px" : "22px 26px",
               marginBottom: 16,
+              boxShadow: T.cardShadow,
             }}
           >
             {/* Card header */}
@@ -1096,18 +1177,15 @@ function SearchPage() {
                   width: 30,
                   height: 30,
                   borderRadius: "50%",
-                  background: "#3c4043",
+                  background: T.accentGradient,
+                  boxShadow: "0 4px 12px -4px rgba(220,38,38,0.6)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                 }}
               >
-                <img
-                  src="aiimage/newai.png"
-                  alt="AI Logo"
-                  className="h-4 w-4 object-contain"
-                />
+                <Sparkles size={15} color="#fff" aria-label="eCampus AI" />
               </div>
               <span
                 style={{ fontWeight: 600, fontSize: 14, color: T.textPrim }}
@@ -1118,8 +1196,8 @@ function SearchPage() {
                 <span
                   style={{
                     fontSize: 11,
-                    color: T.blue,
-                    background: T.blueLight,
+                    color: T.accent,
+                    background: T.accentLight,
                     padding: "2px 10px",
                     borderRadius: 999,
                   }}
@@ -1131,8 +1209,8 @@ function SearchPage() {
                 <span
                   style={{
                     fontSize: 11,
-                    color: "#34a853",
-                    background: "#e6f4ea",
+                    color: T.green,
+                    background: T.greenLight,
                     padding: "2px 10px",
                     borderRadius: 999,
                   }}
@@ -1155,7 +1233,7 @@ function SearchPage() {
                         display: "inline-block",
                         width: 2,
                         height: "1em",
-                        background: T.blue,
+                        background: T.accent,
                         verticalAlign: "middle",
                         marginLeft: 2,
                         animation: "blink 0.7s steps(1) infinite",
@@ -1177,7 +1255,7 @@ function SearchPage() {
                     style={{
                       width: 18,
                       height: 18,
-                      border: `2px solid ${T.blue}`,
+                      border: `2px solid ${T.accent}`,
                       borderTopColor: "transparent",
                       borderRadius: "50%",
                       animation: "spin 0.7s linear infinite",
@@ -1206,8 +1284,8 @@ function SearchPage() {
                   icon={ThumbsUp}
                   label={isMobile ? "" : "Helpful"}
                   active={liked === true}
-                  activeColor={T.blue}
-                  activeBg={T.blueLight}
+                  activeColor={T.green}
+                  activeBg={T.greenLight}
                   onClick={() => setLiked(true)}
                 />
                 <IconBtn
@@ -1271,70 +1349,134 @@ function SearchPage() {
           {/* ── FAQ panel: mobile only (inline) ── */}
           {isMobile && SidebarContent}
 
-          {/* ── Follow-up input ── */}
-          {isDone && (
+        </div>
+
+        {/* ════ RIGHT: Desktop sidebar only ════ */}
+        {!isMobile && SidebarContent}
+      </main>
+
+      {/* ══ Fixed composer (always reachable, like ChatGPT) ══ */}
+      <div
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: composerOffset,
+          transition: "bottom 0.3s ease",
+          zIndex: 40,
+          pointerEvents: "none",
+          background:
+            "linear-gradient(180deg, rgba(255,250,250,0) 0%, rgba(255,250,250,0.92) 38%, #fffafa 70%)",
+          paddingTop: 28,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: isMobile ? "0 12px 12px" : "0 24px 18px",
+            display: isMobile ? "block" : "grid",
+            gridTemplateColumns: isMobile ? undefined : "1fr 308px",
+            gap: 32,
+          }}
+        >
+          <div style={{ pointerEvents: "auto" }}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                const t = (
-                  e.currentTarget.elements.namedItem("fu") as HTMLInputElement
-                ).value.trim();
+                const t = followUp.trim();
                 if (t) {
                   router.push(`/search?q=${encodeURIComponent(t)}`);
-                  (
-                    e.currentTarget.elements.namedItem("fu") as HTMLInputElement
-                  ).value = "";
+                  setFollowUp("");
                 }
               }}
               style={{
                 background: T.surface,
-                border: `1.5px solid ${T.border}`,
-                borderRadius: 14,
-                padding: "12px 14px",
+                border: `1.5px solid ${fuFocused ? "rgba(220,38,38,0.45)" : "rgba(220,38,38,0.18)"}`,
+                borderRadius: 22,
+                padding: isMobile ? "8px 8px 8px 14px" : "10px 10px 10px 18px",
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                marginTop: isMobile ? 16 : 0,
+                boxShadow: fuFocused
+                  ? "0 0 0 4px rgba(254,226,226,0.9), 0 18px 40px -18px rgba(220,38,38,0.45)"
+                  : "0 14px 36px -18px rgba(220,38,38,0.35), 0 2px 6px rgba(15,23,42,0.04)",
+                transition: "border-color 0.2s, box-shadow 0.2s",
               }}
             >
-              <Sparkles size={15} style={{ color: T.purple, flexShrink: 0 }} />
-              <input
-                name="fu"
-                placeholder="Ask a follow-up question…"
-                style={{
-                  flex: 1,
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  fontSize: isMobile ? 13 : 14,
-                  color: T.textPrim,
-                  minWidth: 0,
-                }}
-              />
-              <button
-                type="submit"
+              <span
                 style={{
                   width: 30,
                   height: 30,
-                  borderRadius: "50%",
-                  background: T.blueLight,
-                  border: "none",
-                  cursor: "pointer",
+                  borderRadius: 10,
+                  background: T.accentLight,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                 }}
               >
-                <ArrowUp size={13} color={T.blue} />
+                <Sparkles size={15} style={{ color: T.accent }} />
+              </span>
+              <input
+                name="fu"
+                value={followUp}
+                onChange={(e) => setFollowUp(e.target.value)}
+                onFocus={() => setFuFocused(true)}
+                onBlur={() => setFuFocused(false)}
+                placeholder={
+                  isMobile ? "Ask eCampus AI anything…" : "Ask a follow-up about universities, fees, courses or careers…"
+                }
+                aria-label="Ask eCampus AI"
+                autoComplete="off"
+                style={{
+                  flex: 1,
+                  border: "none",
+                  outline: "none",
+                  background: "transparent",
+                  boxShadow: "none",
+                  borderRadius: 0,
+                  padding: "8px 0",
+                  fontSize: isMobile ? 14 : 15,
+                  color: T.textPrim,
+                  minWidth: 0,
+                }}
+              />
+              <button
+                type="submit"
+                disabled={!followUp.trim()}
+                aria-label="Send"
+                style={{
+                  width: isMobile ? 38 : 42,
+                  height: isMobile ? 38 : 42,
+                  borderRadius: 14,
+                  background: followUp.trim() ? T.accentGradient : "#f1f5f9",
+                  border: "none",
+                  cursor: followUp.trim() ? "pointer" : "not-allowed",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  boxShadow: followUp.trim() ? "0 8px 18px -8px rgba(220,38,38,0.7)" : "none",
+                  transition: "background 0.2s, box-shadow 0.2s, transform 0.1s",
+                }}
+              >
+                <ArrowUp size={17} color={followUp.trim() ? "#fff" : T.textHint} strokeWidth={2.5} />
               </button>
             </form>
-          )}
+            <p
+              style={{
+                margin: "8px 0 0",
+                textAlign: "center",
+                fontSize: 11,
+                color: T.textHint,
+              }}
+            >
+              eCampus AI can make mistakes. Verify fees and approvals on the official university website.
+            </p>
+          </div>
         </div>
-
-        {/* ════ RIGHT: Desktop sidebar only ════ */}
-        {!isMobile && SidebarContent}
-      </main>
+      </div>
 
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -1351,7 +1493,7 @@ export default function SearchResultsPage() {
         <div
           style={{
             minHeight: "100vh",
-            background: "#f8fafd",
+            background: "#fffafa",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

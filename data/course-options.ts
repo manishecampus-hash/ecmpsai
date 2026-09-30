@@ -1,0 +1,17 @@
+export const courseOptions = [
+  "MBA",
+  "MCA",
+  "BBA",
+  "BCA",
+  "B.Tech",
+  "M.Tech",
+  "B.Com",
+  "M.Com",
+  "BA",
+  "MA",
+  "B.Sc",
+  "M.Sc",
+  "PhD",
+  "Diploma",
+  "Certificate Course",
+];

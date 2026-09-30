@@ -2,18 +2,21 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { SignupModal } from "@/components/layout/signup-modal";
 import {
   ArrowRight,
   Check,
-  ChevronLeft,
-  ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Clock,
   GraduationCap,
+  Sparkles,
 } from "lucide-react";
 import { universities } from "@/data/universities";
+import { formatINR } from "@/lib/course-helpers";
 
-const CARDS_PER_PAGE = 3;
+const INITIAL_VISIBLE_COUNT = 4;
 
 interface CourseUniversitySectionProps {
   universities?: any[];
@@ -24,6 +27,7 @@ function cleanCourseName(name?: string): string {
   if (!name) return "";
   return name
     .replace(/\s*(?:Course)?\s*[–—-].*$/i, "")
+    .replace(/\/(?:Bachelors|Masters|Doctorate)\s+Program/i, "")
     .replace(/\s+Course$/i, "")
     .trim();
 }
@@ -32,7 +36,8 @@ export default function CourseUniversitySection({
   universities: propUniversities,
   courseName,
 }: CourseUniversitySectionProps) {
-  const [page, setPage] = useState(0);
+  const router = useRouter();
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const [selected, setSelected] = useState<string[]>([]);
   const [showSignupModal, setShowSignupModal] = useState(false);
 
@@ -40,20 +45,30 @@ export default function CourseUniversitySection({
 
   const mappedUniversities = useMemo(() => {
     if (propUniversities && propUniversities.length > 0) {
-      return propUniversities.map((uni) => ({
-        slug: uni.slug ? uni.slug.replace(/^\/university\//, "").replace(/^\//, "") : "",
-        name: uni.name,
-        image: uni.logoUrl || "",
-        badge: uni.nirfRanking ? `NIRF: ${uni.nirfRanking}` : "UGC-DEB",
-        badgeColor: "#ee2c3c",
-        tag: uni.wesApproval ? "WES Approved" : "100% Online Program",
-        tagBg: "#eff6ff",
-        tagColor: "#2563eb",
-        category: uni.category || "Degree",
-        duration: uni.duration || "24 Months",
-        courseName: uni.courseName || defaultCourseTitle,
-        courseSlug: uni.courseSlug || (uni.slug ? `/universities/${uni.slug.replace(/^\/university\//, "").replace(/^\//, "")}` : ""),
-      }));
+      return propUniversities.map((uni) => {
+        const startFee = uni.startingFee ?? uni.feeRange?.start ?? null;
+        let feeText = "";
+        if (startFee && typeof startFee === "number" && startFee > 0) {
+          feeText = `Starts at ${formatINR(startFee)}`;
+        } else if (typeof startFee === "string" && startFee.trim()) {
+          feeText = `Starts at ${startFee}`;
+        } else {
+          feeText = "Affordable EMI";
+        }
+
+        return {
+          slug: uni.slug ? uni.slug.replace(/^\/university\//, "").replace(/^\//, "") : "",
+          name: uni.name,
+          image: uni.logoUrl || "",
+          badge: uni.nirfRanking ? `NIRF: ${uni.nirfRanking}` : "UGC-DEB",
+          badgeColor: "#ee2c3c",
+          startingFeeText: feeText,
+          category: uni.category || "Degree",
+          duration: uni.duration || "24 Months",
+          courseName: uni.courseName || defaultCourseTitle,
+          courseSlug: uni.courseSlug || (uni.slug ? `/universities/${uni.slug.replace(/^\/university\//, "").replace(/^\//, "")}` : ""),
+        };
+      });
     }
     return universities.map((u) => ({
       ...u,
@@ -61,32 +76,25 @@ export default function CourseUniversitySection({
       duration: `${u.courses || 24} Months`,
       courseName: defaultCourseTitle,
       courseSlug: u.slug ? `/universities/${u.slug}` : "",
+      badge: "UGC-DEB",
       badgeColor: "#ee2c3c",
-      tag: "100% Online Program",
-      tagBg: "#eff6ff",
-      tagColor: "#2563eb",
+      startingFeeText: "Affordable EMI",
     }));
   }, [propUniversities, defaultCourseTitle]);
 
-  const universityPages = useMemo(() => {
-    const pages = [];
+  const visibleUniversities = useMemo(() => {
+    return mappedUniversities.slice(0, visibleCount);
+  }, [mappedUniversities, visibleCount]);
 
-    for (let i = 0; i < mappedUniversities.length; i += CARDS_PER_PAGE) {
-      pages.push(mappedUniversities.slice(i, i + CARDS_PER_PAGE));
-    }
+  const hasMore = visibleCount < mappedUniversities.length;
+  const canCollapse = visibleCount > INITIAL_VISIBLE_COUNT;
 
-    return pages;
-  }, [mappedUniversities]);
-
-  const currentUniversities = universityPages[page] || [];
-  const totalPages = universityPages.length;
-
-  const goPrev = () => {
-    setPage((current) => (current === 0 ? totalPages - 1 : current - 1));
+  const handleSeeMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 4, mappedUniversities.length));
   };
 
-  const goNext = () => {
-    setPage((current) => (current === totalPages - 1 ? 0 : current + 1));
+  const handleShowLess = () => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT);
   };
 
   const toggleSelect = (key: string) => {
@@ -98,7 +106,31 @@ export default function CourseUniversitySection({
   };
 
   const handleCompareNow = () => {
-    console.log("Comparing:", selected);
+    if (selected.length < 2) return;
+
+    // Preserve the user's selection order
+    const selectedUnis = selected
+      .map((selKey) =>
+        mappedUniversities.find((u) => (u.slug || u.name) === selKey)
+      )
+      .filter(Boolean) as typeof mappedUniversities;
+
+    const uniNames = selectedUnis.map((u) => u.name).filter(Boolean);
+    if (uniNames.length < 2) return;
+
+    // Identify target course being compared
+    const targetCourse =
+      cleanCourseName(courseName) ||
+      selectedUnis[0]?.courseName ||
+      defaultCourseTitle ||
+      "";
+
+    // Build the query: "Compare Uni A vs Uni B for Course"
+    const compareQuery = targetCourse
+      ? `Compare ${uniNames.join(" vs ")} for ${targetCourse}`
+      : `Compare ${uniNames.join(" vs ")}`;
+
+    router.push(`/search?q=${encodeURIComponent(compareQuery)}`);
   };
 
   return (
@@ -107,71 +139,78 @@ export default function CourseUniversitySection({
       className="relative w-full bg-slate-50/30 px-4 py-16 sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
+        <div className="mx-auto mb-10 max-w-3xl text-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
             AI Compare for <span className="text-[#ee2c3c]">Top Universities</span>
           </h2>
-          <p className="mt-3 text-sm text-slate-550 max-w-lg mx-auto">
-            Select and compare top-tier accredited institutions side-by-side to find the perfect program for your career goals.
-          </p>
+
+          {/* Highlighted Dynamic Universities Count Badge */}
+          {mappedUniversities.length > 0 && (
+            <div className="mt-4 flex items-center justify-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white px-5 py-2 shadow-2xs font-quicksand transition-all duration-200 hover:border-slate-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-xs sm:text-sm font-semibold tracking-tight text-slate-700">
+                  <span className="font-extrabold text-[#ee2c3c] text-sm sm:text-base mr-1">
+                    {mappedUniversities.length}
+                  </span>
+                  <span className="font-bold text-slate-900">
+                    {mappedUniversities.length === 1 ? "university" : "universities"}
+                  </span>{" "}
+                  <span className="text-slate-500 font-medium">
+                    found offering this course
+                  </span>
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="relative">
-          <button
-            type="button"
-            onClick={goPrev}
-            className="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-650 shadow-[0_6px_16px_rgba(15,23,42,0.08)] transition-all duration-200 hover:text-[#ee2c3c] hover:scale-105 hover:border-slate-200 active:scale-95 lg:flex"
-            aria-label="Previous universities"
-          >
-            <ChevronLeft className="h-5 w-5" strokeWidth={2.4} />
-          </button>
+        {/* 4 Cards in a Row Grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {visibleUniversities.map((university) => {
+            const key = university.slug || university.name;
+            const isSelected = selected.includes(key);
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {currentUniversities.map((university) => {
-              const key = university.slug || university.name;
-              const isSelected = selected.includes(key);
-
-              return (
-                <article
-                  key={key}
-                  className={`relative flex flex-col rounded-2xl border bg-white p-6 transition-all duration-300 hover:-translate-y-1 ${
-                    isSelected
-                      ? "border-[#ee2c3c] bg-rose-50/10 shadow-[0_12px_28px_rgba(238,44,60,0.08)] ring-1 ring-[#ee2c3c]/10"
-                      : "border-slate-100 shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_16px_36px_rgba(15,23,42,0.08)]"
-                  }`}
-                >
+            return (
+              <article
+                key={key}
+                className={`group relative flex flex-col justify-between rounded-2xl border bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 ${
+                  isSelected
+                    ? "border-[#ee2c3c] bg-rose-50/10 shadow-[0_8px_24px_rgba(238,44,60,0.08)] ring-1 ring-[#ee2c3c]/15"
+                    : "border-slate-150 shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:border-slate-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.06)]"
+                }`}
+              >
+                <div>
                   {/* Top row: logo + badge & checkbox stack */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex h-16 items-center">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex h-11 items-center">
                       <Image
                         src={university.image}
                         alt={university.name}
-                        width={220}
-                        height={60}
-                        className="max-h-14 w-auto object-contain"
+                        width={160}
+                        height={44}
+                        className="max-h-9 w-auto max-w-[125px] object-contain"
                       />
                     </div>
 
-                    <div className="flex flex-col items-end gap-2.5 shrink-0">
-                      {university.badge ? (
+                    <div className="flex items-center gap-2 shrink-0">
+                      {university.badge && (
                         <span
-                          className="rounded-full px-2.5 py-0.5 text-[9px] font-bold text-white tracking-wider uppercase shadow-sm shrink-0"
+                          className="rounded-full px-2 py-0.5 text-[8.5px] font-bold text-white tracking-wider uppercase shadow-xs shrink-0"
                           style={{
                             backgroundColor: university.badgeColor || "#ee2c3c",
                           }}
                         >
                           {university.badge}
                         </span>
-                      ) : (
-                        <span className="h-4 shrink-0" />
                       )}
 
                       {/* Checkbox */}
                       <label
-                        className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border transition-all duration-200 shadow-sm ${
+                        className={`flex h-4.5 w-4.5 cursor-pointer items-center justify-center rounded-md border transition-all duration-200 shadow-xs ${
                           isSelected
                             ? "bg-[#ee2c3c] border-[#ee2c3c] text-white scale-105"
-                            : "bg-white border-slate-200 text-transparent hover:border-[#ee2c3c]"
+                            : "bg-white border-slate-250 text-transparent hover:border-[#ee2c3c]"
                         }`}
                       >
                         <input
@@ -181,98 +220,94 @@ export default function CourseUniversitySection({
                           className="sr-only"
                           aria-label={`Select ${university.name} to compare`}
                         />
-                        <Check className={`h-3.5 w-3.5 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`} strokeWidth={3} />
+                        <Check className={`h-3 w-3 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`} strokeWidth={3} />
                       </label>
                     </div>
                   </div>
 
                   {/* University name */}
-                  <p className="mt-5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">
                     {university.name}
                   </p>
 
                   {/* Heading */}
-                  <h3 className="mt-1 text-base font-bold leading-snug text-slate-900 line-clamp-2 h-11 flex items-start">
+                  <h3 className="mt-1 text-sm font-bold leading-snug text-slate-900 line-clamp-2 h-10 flex items-start">
                     {university.courseName || defaultCourseTitle} from {university.name}
                   </h3>
 
-                  {/* Tag pill */}
-                  {university.tag && (
-                    <div className="mt-3">
-                      <span
-                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide border"
-                        style={{
-                          backgroundColor: university.tagBg || "#f0f6ff",
-                          color: university.tagColor || "#1e40af",
-                          borderColor: (university.tagColor ? `${university.tagColor}15` : "#dbeafe"),
-                        }}
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
-                        {university.tag}
+                  {/* Starting Fees Pill (in place of WES Approved) */}
+                  {university.startingFeeText && (
+                    <div className="mt-2.5">
+                      <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50/90 px-2.5 py-0.5 text-[10.5px] font-bold tracking-tight text-emerald-700 border border-emerald-200/70">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span className="truncate">{university.startingFeeText}</span>
                       </span>
                     </div>
                   )}
+                </div>
 
-                  {/* Meta info */}
-                  <div className="mt-6 flex flex-col gap-2.5 border-t border-slate-100 pt-4">
-                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-500">
-                        <GraduationCap className="h-4 w-4" />
-                      </div>
-                      <span>{university.category || "Degree"}</span>
+                <div>
+                  {/* Meta info: Category & Duration in a single compact row */}
+                  <div className="mt-3.5 flex items-center justify-between border-t border-slate-100 pt-2.5 text-[11px] font-medium text-slate-500">
+                    <div className="flex items-center gap-1.5 truncate max-w-[55%]">
+                      <GraduationCap className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                      <span className="truncate">{university.category || "Degree"}</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-500">
-                        <Clock className="h-4 w-4" />
-                      </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Clock className="h-3.5 w-3.5 text-slate-400" />
                       <span>{university.duration || "24 Months"}</span>
                     </div>
                   </div>
 
-                  {/* Buttons */}
-                  <div className="mt-6">
+                  {/* CTA button */}
+                  <div className="mt-3">
                     <button
                       type="button"
-                      onClick={() => setShowSignupModal(true)}
-                      className="w-full inline-flex items-center justify-center rounded-xl bg-[#ee2c3c] py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-[#d02534] hover:shadow-md hover:shadow-red-500/10 active:scale-98"
+                      onClick={() => toggleSelect(key)}
+                      className={`w-full inline-flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-bold transition-all duration-200 active:scale-98 shadow-2xs ${
+                        isSelected
+                          ? "border-[#ea384c] bg-[#ea384c] text-white shadow-sm shadow-red-500/20"
+                          : "border-[#ea384c] bg-white text-[#ea384c] hover:bg-[#ea384c] hover:text-white"
+                      }`}
                     >
-                      Check Eligibility
+                      {isSelected ? (
+                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                      ) : (
+                        <Sparkles className="h-3.5 w-3.5" />
+                      )}
+                      <span>AI Compare</span>
                     </button>
                   </div>
-                </article>
-              );
-            })}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* See More / Show Less Button */}
+        {(hasMore || canCollapse) && (
+          <div className="mt-9 flex justify-center">
+            {hasMore ? (
+              <button
+                type="button"
+                onClick={handleSeeMore}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-xs font-bold text-slate-700 shadow-xs transition-all duration-200 hover:border-[#ee2c3c] hover:text-[#ee2c3c] hover:shadow-sm active:scale-98"
+              >
+                <span>See More Universities ({mappedUniversities.length - visibleCount} more)</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleShowLess}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-xs font-bold text-slate-700 shadow-xs transition-all duration-200 hover:border-[#ee2c3c] hover:text-[#ee2c3c] hover:shadow-sm active:scale-98"
+              >
+                <span>Show Less</span>
+                <ChevronUp className="h-4 w-4" />
+              </button>
+            )}
           </div>
-
-          <button
-            type="button"
-            onClick={goNext}
-            className="absolute right-0 top-1/2 z-10 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-650 shadow-[0_6px_16px_rgba(15,23,42,0.08)] transition-all duration-200 hover:text-[#ee2c3c] hover:scale-105 hover:border-slate-200 active:scale-95 lg:flex"
-            aria-label="Next universities"
-          >
-            <ChevronRight className="h-5 w-5" strokeWidth={2.4} />
-          </button>
-        </div>
-
-        <div className="mt-8 flex items-center justify-center gap-3 lg:hidden">
-          <button
-            type="button"
-            onClick={goPrev}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-150 bg-white text-slate-650 shadow-sm transition-all duration-200 hover:text-[#ee2c3c] active:scale-95"
-            aria-label="Previous universities"
-          >
-            <ChevronLeft className="h-5 w-5" strokeWidth={2.4} />
-          </button>
-
-          <button
-            type="button"
-            onClick={goNext}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-150 bg-white text-slate-650 shadow-sm transition-all duration-200 hover:text-[#ee2c3c] active:scale-95"
-            aria-label="Next universities"
-          >
-            <ChevronRight className="h-5 w-5" strokeWidth={2.4} />
-          </button>
-        </div>
+        )}
 
         {/* Compare Now button */}
         {selected.length >= 2 && (

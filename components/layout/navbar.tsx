@@ -922,15 +922,8 @@ function MobileDrawer({
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Link href="" onClick={onClose}>
-                <Button
-                  variant="outline"
-                  className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
-                >
-                  Sign Up
-                </Button>
-              </Link>
-              {/* <Button
+              <Button
+                variant="outline"
                 className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
                 onClick={() => {
                   onSignup();
@@ -938,7 +931,7 @@ function MobileDrawer({
                 }}
               >
                 Sign Up
-              </Button> */}
+              </Button>
             </div>
           )}
         </div>
@@ -1312,13 +1305,13 @@ export function Navbar() {
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2"> 
-                  {/* <Button  
+                  <Button  
                     size="sm"
                     onClick={() => setShowSignupModal(true)}
-                    className="bg-white text-gray-800 border border-gray-300 rounded-full hover:bg-gray-100 hover:text-gray-900"
+                    className="bg-[#ee2c3c] text-white rounded-full hover:bg-[#d02534] transition-colors px-4 py-1.5 text-xs font-semibold shadow-xs"
                   >
-                    Apply Now
-                  </Button> */}
+                    Sign Up
+                  </Button>
                 </div>
               )}
 

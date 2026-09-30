@@ -39,6 +39,8 @@ interface University {
   establishmentYear?: number;
   emiFacility?: boolean;
   studentsVisited?: string;
+  startingFee?: number;
+  feeRange?: { start?: number; end?: number };
 }
 
 interface CourseData {

@@ -26,6 +26,8 @@ import {
   Check,
   ArrowLeft,
 } from "lucide-react";
+import { SignupModal } from "@/components/layout/signup-modal";
+import { Footer } from "@/components/layout/footer";
 
 // ── Design tokens ─────────────────────────────────────────────
 const T = {
@@ -685,6 +687,7 @@ function SearchPage() {
   const [showShare, setShowShare] = useState(false);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
   const [followUp, setFollowUp] = useState("");
@@ -718,6 +721,12 @@ function SearchPage() {
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    const handleOpenSignup = () => setShowSignupModal(true);
+    window.addEventListener("open-signup", handleOpenSignup);
+    return () => window.removeEventListener("open-signup", handleOpenSignup);
   }, []);
 
   useEffect(() => {
@@ -1001,6 +1010,8 @@ function SearchPage() {
             personalised guidance.
           </p>
           <button
+            type="button"
+            onClick={() => setShowSignupModal(true)}
             style={{
               width: "100%",
               padding: "9px",
@@ -1355,6 +1366,11 @@ function SearchPage() {
         {!isMobile && SidebarContent}
       </main>
 
+      {/* ════ FOOTER ════ */}
+      <div className="relative z-10 pb-28 sm:pb-32">
+        <Footer />
+      </div>
+
       {/* ══ Fixed composer (always reachable, like ChatGPT) ══ */}
       <div
         style={{
@@ -1482,6 +1498,13 @@ function SearchPage() {
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes spin   { to{transform:rotate(360deg)} }
       `}</style>
+
+      {/* Signup Modal */}
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => setShowSignupModal(false)}
+      />
     </div>
   );
 }

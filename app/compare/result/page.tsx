@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import CTA from "../cta";
+import { Footer } from "@/components/layout/footer";
 
 const COURSE_LABELS: Record<string, string> = {
   mba: "MBA",
@@ -359,14 +360,15 @@ export default function CompareResultPage() {
   const LABEL_W = 230;
 
   return (
-    <main
-      style={{
-        fontFamily: "'Segoe UI',sans-serif",
-        background: "#f8f8f8",
-        minHeight: "100vh",
-        paddingBottom: 80,
-      }}
-    >
+    <>
+      <main
+        style={{
+          fontFamily: "'Segoe UI',sans-serif",
+          background: "#f8f8f8",
+          minHeight: "100vh",
+          paddingBottom: 80,
+        }}
+      >
       {/* Breadcrumb */}
       <nav
         style={{
@@ -743,10 +745,13 @@ export default function CompareResultPage() {
             }}
           >
             ← Compare Again
-            <CTA />
           </Link>
         </div>
       </section>
+
+      <CTA />
     </main>
+    <Footer />
+  </>
   );
 }

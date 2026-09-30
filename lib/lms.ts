@@ -3,6 +3,7 @@ import { universities as staticUniversities } from "@/data/universities";
 export interface DynamicUniversity {
   id: string;
   name: string;
+  shortcode?: string;
   logoUrl: string;
   location: string;
   slug?: string;
@@ -88,6 +89,7 @@ export function formatLmsUniversities(fetchedList: any[]): DynamicUniversity[] {
     return {
       id: u.id || u._id || u.slug || u.name,
       name: u.name, // DYNAMIC
+      shortcode: u.shortcode || (matchedLocal as any)?.shortcode || "",
       logoUrl: u.logoUrl || u.image || matchedLocal?.image || "/placeholder-uni.png", // DYNAMIC
       location: u.location || matchedLocal?.location || "India", // DYNAMIC
       slug: u.slug || matchedLocal?.slug || "",

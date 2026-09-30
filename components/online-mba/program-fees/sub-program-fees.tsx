@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Check, BadgeCheck } from "lucide-react";
+import { SignupModal } from "@/components/layout/signup-modal";
 
 export function RenderHeading({
   text,
@@ -53,6 +54,8 @@ interface SubProgramFeesProps {
 }
 
 export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
   // Use ONLY configured heading and values, NO fallback dummy data
   const heading = (data?.heading || title || "").trim();
   const startingPrice = (data?.startingPrice || "").trim();
@@ -146,7 +149,11 @@ export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
                   </p>
                 ) : null}
 
-                <button className="mt-4 w-full rounded-full bg-red-500 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-500/30 transition-colors hover:bg-red-600">
+                <button
+                  type="button"
+                  onClick={() => setShowSignupModal(true)}
+                  className="mt-4 w-full rounded-full bg-red-500 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-500/30 transition-colors hover:bg-red-600 cursor-pointer"
+                >
                   Apply Now
                 </button>
 
@@ -189,6 +196,12 @@ export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
           ) : null}
         </div>
       ) : null}
+
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => setShowSignupModal(false)}
+      />
     </section>
   );
 }

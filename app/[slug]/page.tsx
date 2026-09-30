@@ -148,7 +148,7 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
       </section>
 
       <section id="university-section">
-        <CourseUniversitySection universities={universities} />
+        <CourseUniversitySection universities={universities} courseName={course.name} />
       </section>
 
       <section id="about">

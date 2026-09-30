@@ -222,11 +222,18 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
     ) {
       return [
         { id: "all", label: "All Courses" },
-        ...programData.categories.map((c) => ({
-          id: c.id,
-          label: c.name,
-          isUncategorized: c.isUncategorized,
-        })),
+        ...programData.categories
+          .filter(
+            (c) =>
+              !c.isUncategorized &&
+              c.id !== "uncategorized" &&
+              c.name?.trim().toLowerCase() !== "uncategorized"
+          )
+          .map((c) => ({
+            id: c.id,
+            label: c.name,
+            isUncategorized: c.isUncategorized,
+          })),
       ];
     }
     return [{ id: "all", label: "All Courses" }];

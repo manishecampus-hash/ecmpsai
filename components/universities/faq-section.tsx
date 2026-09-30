@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { HelpCircle, ChevronUp, MessageSquare, CircleHelp } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronDown, MessageSquare, CircleHelp } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
 interface FAQItem {
@@ -55,6 +55,18 @@ export default function FAQSection({ university }: FAQSectionProps) {
     return null;
   }
 
+  const [openIndexes, setOpenIndexes] = useState<number[]>(
+    rawFaqs.length > 0 ? [0] : []
+  );
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndexes((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index],
+    );
+  };
+
   return (
     /* ============================================================
         FAQ SECTION
@@ -62,7 +74,7 @@ export default function FAQSection({ university }: FAQSectionProps) {
        ============================================================ */
     <section
       id="faq"
-      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 text-left"
+      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 text-left font-sans"
     >
       {/* FAQ Grid Wrapper layout split */}
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
@@ -97,32 +109,50 @@ export default function FAQSection({ university }: FAQSectionProps) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Always-Expanded FAQ Matrix (Span 8) */}
-        <div className="space-y-4 lg:col-span-8">
-          {rawFaqs.map((faq: FAQItem, index: number) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-2xl border border-red-200 bg-red-50/10 shadow-sm"
-            >
-              {/* Header */}
-              <div className="flex w-full items-start justify-between p-5 text-left">
-                <div className="flex gap-3.5 pr-4">
-                  <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
-                  <span className="text-base font-bold text-gray-900 sm:text-lg">
-                    {faq.question}
-                  </span>
-                </div>
-                <div className="mt-1 shrink-0 rounded-lg bg-slate-50 p-1 text-slate-500 border border-slate-100">
-                  <ChevronUp className="h-4 w-4" />
-                </div>
-              </div>
+        {/* RIGHT COLUMN: FAQ Accordion matching Home Page */}
+        <div className="w-full !mb-0 space-y-3 lg:col-span-8 lg:space-y-3">
+          {rawFaqs.map((faq: FAQItem, index: number) => {
+            const isOpen = openIndexes.includes(index);
 
-              {/* Always visible content body */}
-              <div className="border-t border-slate-100/80 p-5 pt-0 text-sm text-gray-600 leading-relaxed sm:text-base">
-                {faq.answer}
+            return (
+              <div
+                key={faq.question || index}
+                className="rounded-xl border border-slate-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.06)] transition-all duration-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.1)] sm:rounded-2xl"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleFAQ(index)}
+                  className="flex w-full items-start justify-between gap-3 p-4 text-left active:bg-slate-50 sm:p-5"
+                >
+                  <h3 className="flex-1 text-base font-semibold leading-snug tracking-[-0.3px] text-slate-950 sm:text-lg">
+                    {/^\d+\.\s*/.test(faq.question) ? faq.question : `${index + 1}. ${faq.question}`}
+                  </h3>
+
+                  <div
+                    className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 sm:h-9 sm:w-9 ${
+                      isOpen ? "rotate-180 bg-red-50" : ""
+                    }`}
+                  >
+                    <ChevronDown className="h-4 w-4 text-red-500 sm:h-5 sm:w-5" />
+                  </div>
+                </button>
+
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-4 pb-4 text-sm leading-6 text-slate-600 sm:px-5 sm:pb-5 sm:text-base">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

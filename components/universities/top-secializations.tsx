@@ -18,6 +18,7 @@ import { EXPLORE_LINKS } from "@/data/explore-course";
 import { DEFAULT_SPECIALIZATIONS_DATA, SpecializationRow } from "@/data/specializations";
 import { CARD_IMAGES } from "@/data/constant";
 import { formatINR } from "@/lib/course-helpers";
+import { SignupModal } from "@/components/layout/signup-modal";
 
 /* TopSpecializations is intentionally compact: all large arrays & helpers
    are imported from data/ and lib/. Only rendering and fetch logic live here. */
@@ -32,6 +33,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeCategory, setActiveCategory] = useState<string>("top");
+  const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const itemsPerPage = 8;
 
   const cardsScrollRef = useRef<HTMLDivElement>(null);
@@ -473,10 +475,11 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
 
                               <button
                                 type="button"
-                                className="__explore-btn w-full flex items-center justify-center gap-1.5 text-xs py-1.5 mt-auto"
+                                onClick={() => setShowSignupModal(true)}
+                                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] py-2.5 px-3 text-xs font-bold text-white shadow-sm shadow-red-500/15 transition-all duration-200 cursor-pointer hover:shadow-md hover:shadow-red-500/25 active:scale-[0.98] mt-auto group"
                               >
-                                Explore More
-                                <ArrowRight className="h-3.5 w-3.5" />
+                                <span>Explore More</span>
+                                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                               </button>
                             </div>
                           </div>
@@ -494,6 +497,12 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
           </div>
         </>
       )}
+
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => setShowSignupModal(false)}
+      />
     </section>
   );
 }

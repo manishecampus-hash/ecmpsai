@@ -12,8 +12,6 @@ import {
   Globe,
   Search,
   X,
-  BookOpen,
-  Users,
   ShieldCheck,
   AlertCircle,
   RefreshCw,
@@ -176,7 +174,7 @@ export default function LmsAccessPage({
       <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-red-100/30 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 top-40 h-72 w-72 rounded-full bg-rose-100/20 blur-3xl" />
 
-      <div className="relative mx-auto w-full max-w-6xl">
+      <div className="relative mx-auto w-full max-w-7xl">
         {/* Header Section */}
         <div className="text-center mb-8 sm:mb-10">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/80 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600 shadow-2xs">
@@ -196,22 +194,28 @@ export default function LmsAccessPage({
 
         {/* Loading State: Card Skeletons */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            {[1, 2, 3, 4].map((i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-sm"
+                className="animate-pulse rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm flex flex-col justify-between"
               >
-                <div className="flex items-start justify-between gap-4 mb-5">
-                  <div className="h-14 w-32 sm:w-36 rounded-xl bg-slate-100" />
-                  <div className="h-6 w-24 rounded-full bg-slate-100" />
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="h-14 w-32 rounded-xl bg-slate-100" />
+                    <div className="flex flex-col items-end gap-1.5">
+                      <div className="h-5 w-20 rounded-full bg-slate-100" />
+                      <div className="h-4 w-16 rounded-md bg-slate-100" />
+                    </div>
+                  </div>
+                  <div className="h-5 w-3/4 rounded-lg bg-slate-100 mb-3" />
+                  <div className="flex flex-wrap gap-1.5 mb-3.5">
+                    <div className="h-6 w-20 rounded-lg bg-slate-100" />
+                    <div className="h-6 w-20 rounded-lg bg-slate-100" />
+                    <div className="h-6 w-20 rounded-lg bg-slate-100" />
+                  </div>
                 </div>
-                <div className="h-7 w-3/4 rounded-lg bg-slate-100 mb-4" />
-                <div className="flex gap-2 mb-6">
-                  <div className="h-6 w-24 rounded-lg bg-slate-100" />
-                  <div className="h-6 w-20 rounded-lg bg-slate-100" />
-                </div>
-                <div className="pt-4 border-t border-slate-100">
+                <div className="pt-3.5 border-t border-slate-100">
                   <div className="h-10 w-full rounded-xl bg-slate-100" />
                 </div>
               </div>
@@ -400,7 +404,7 @@ export default function LmsAccessPage({
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {filteredUniversities.map((university) => {
                   const LocationIcon = iconMap[university.locationIcon] ?? MapPin;
                   const lmsUrl = buildLmsUrl(university.lmsSlug, university.lmsUrl);
@@ -409,12 +413,15 @@ export default function LmsAccessPage({
                   return (
                     <div
                       key={university.id}
-                      className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 hover:border-red-400/80 hover:shadow-[0_12px_28px_rgba(0,0,0,0.07)] hover:-translate-y-1 transition-all duration-300"
+                      className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm hover:border-red-400/80 hover:shadow-[0_16px_36px_rgba(238,44,60,0.08)] hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                     >
-                      <div>
-                        {/* Top Header: Logo Box + Location Pill */}
-                        <div className="flex items-start justify-between gap-4 mb-4">
-                          <div className="flex h-14 w-32 sm:w-36 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/80 p-2 transition-all duration-300 group-hover:bg-white group-hover:border-slate-200 overflow-hidden">
+                      {/* Top accent line on hover */}
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                      <div className="flex flex-col flex-grow">
+                        {/* Top Header: Logo + Verified Badge & Location */}
+                        <div className="flex items-start justify-between gap-3 mb-3.5">
+                          <div className="flex h-14 w-32 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50/80 p-2 transition-all duration-300 group-hover:bg-white group-hover:border-slate-200 group-hover:shadow-xs overflow-hidden">
                             <Image
                               src={university.logoUrl}
                               alt={university.name}
@@ -425,50 +432,61 @@ export default function LmsAccessPage({
                             />
                           </div>
 
-                          <div className="inline-flex items-center gap-1 rounded-full bg-rose-50/80 border border-rose-200/60 px-2.5 py-1 text-[10px] font-semibold text-rose-700">
-                            <LocationIcon className="h-3 w-3 text-slate-400 shrink-0" />
-                            <span className="truncate max-w-[120px]">{university.location}</span>
+                          <div className="flex flex-col items-end gap-1.5 shrink-0 min-w-0">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              Official LMS
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 truncate max-w-[125px]">
+                              <LocationIcon className="h-3 w-3 text-slate-400 shrink-0" />
+                              <span className="truncate">{university.location}</span>
+                            </span>
                           </div>
                         </div>
 
                         {/* University Title */}
-                        <h3 className="text-sm sm:text-base font-bold leading-snug text-slate-900 group-hover:text-red-600 transition-colors mb-3 line-clamp-2 min-h-[44px]">
+                        <h3 className="text-[15px] font-bold leading-snug text-slate-900 group-hover:text-red-600 transition-colors mb-2.5 line-clamp-2 min-h-[44px]">
                           {university.name}
                         </h3>
 
-                        {/* Meta Chips */}
-                        <div className="flex flex-wrap items-center gap-2 mb-5">
-                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50/80 border border-indigo-100/60 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
-                            <Award className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
+                        {/* Badges / Metrics Row */}
+                        <div className="flex flex-wrap items-center gap-1.5 mb-3.5">
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 border border-amber-200/60 px-2.5 py-1 text-[11px] font-bold text-amber-800">
+                            <Award className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                             <span>{university.nirfBadge}</span>
                           </div>
 
-                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100/80 border border-slate-200/60 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100/90 border border-slate-200/60 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
                             <Calendar className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                             <span>{university.estdBadge}</span>
+                          </div>
+
+                          <div className="inline-flex items-center gap-1.5 rounded-lg bg-red-50/80 border border-red-100 px-2.5 py-1 text-[11px] font-semibold text-red-700">
+                            <ShieldCheck className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                            <span>UGC Entitled</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Card Footer: Access LMS Button */}
-                      <div className="pt-4 border-t border-slate-100">
+                      <div className="pt-3.5 border-t border-slate-100 mt-auto">
                         {isExternal ? (
                           <a
                             href={lmsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-red-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] hover:bg-[#d02534] px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-red-500/15 hover:shadow-md hover:shadow-red-500/25 transition-all duration-300 active:scale-[0.98] group/btn"
                           >
                             <span>Access LMS Portal</span>
-                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
                           </a>
                         ) : (
                           <Link
                             href={lmsUrl}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-red-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] hover:bg-[#d02534] px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-red-500/15 hover:shadow-md hover:shadow-red-500/25 transition-all duration-300 active:scale-[0.98] group/btn"
                           >
                             <span>Access LMS Portal</span>
-                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                            <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
                           </Link>
                         )}
                       </div>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { SignupModal } from "@/components/layout/signup-modal";
 import {
   ArrowRight,
   Check,
@@ -15,14 +15,33 @@ import { universities } from "@/data/universities";
 
 const CARDS_PER_PAGE = 3;
 
-export default function CourseUniversitySection({ universities: propUniversities }: { universities?: any[] }) {
+interface CourseUniversitySectionProps {
+  universities?: any[];
+  courseName?: string;
+}
+
+function cleanCourseName(name?: string): string {
+  if (!name) return "";
+  return name
+    .replace(/\s*(?:Course)?\s*[–—-].*$/i, "")
+    .replace(/\s+Course$/i, "")
+    .trim();
+}
+
+export default function CourseUniversitySection({
+  universities: propUniversities,
+  courseName,
+}: CourseUniversitySectionProps) {
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const defaultCourseTitle = cleanCourseName(courseName) || "Program";
 
   const mappedUniversities = useMemo(() => {
     if (propUniversities && propUniversities.length > 0) {
       return propUniversities.map((uni) => ({
-        slug: uni.slug.replace(/^\/university\//, "").replace(/^\//, ""),
+        slug: uni.slug ? uni.slug.replace(/^\/university\//, "").replace(/^\//, "") : "",
         name: uni.name,
         image: uni.logoUrl || "",
         badge: uni.nirfRanking ? `NIRF: ${uni.nirfRanking}` : "UGC-DEB",
@@ -30,12 +49,24 @@ export default function CourseUniversitySection({ universities: propUniversities
         tag: uni.wesApproval ? "WES Approved" : "100% Online Program",
         tagBg: "#eff6ff",
         tagColor: "#2563eb",
-        eligibility: "Bachelor's Degree",
-        duration: "24 Months",
+        category: uni.category || "Degree",
+        duration: uni.duration || "24 Months",
+        courseName: uni.courseName || defaultCourseTitle,
+        courseSlug: uni.courseSlug || (uni.slug ? `/universities/${uni.slug.replace(/^\/university\//, "").replace(/^\//, "")}` : ""),
       }));
     }
-    return universities;
-  }, [propUniversities]);
+    return universities.map((u) => ({
+      ...u,
+      category: "Degree",
+      duration: `${u.courses || 24} Months`,
+      courseName: defaultCourseTitle,
+      courseSlug: u.slug ? `/universities/${u.slug}` : "",
+      badgeColor: "#ee2c3c",
+      tag: "100% Online Program",
+      tagBg: "#eff6ff",
+      tagColor: "#2563eb",
+    }));
+  }, [propUniversities, defaultCourseTitle]);
 
   const universityPages = useMemo(() => {
     const pages = [];
@@ -162,7 +193,7 @@ export default function CourseUniversitySection({ universities: propUniversities
 
                   {/* Heading */}
                   <h3 className="mt-1 text-base font-bold leading-snug text-slate-900 line-clamp-2 h-11 flex items-start">
-                    Program from {university.name}
+                    {university.courseName || defaultCourseTitle} from {university.name}
                   </h3>
 
                   {/* Tag pill */}
@@ -188,29 +219,24 @@ export default function CourseUniversitySection({ universities: propUniversities
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-500">
                         <GraduationCap className="h-4 w-4" />
                       </div>
-                      <span>{university.eligibility || "Bachelor's Degree"}</span>
+                      <span>{university.category || "Degree"}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
                       <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-500">
                         <Clock className="h-4 w-4" />
                       </div>
-                      <span>{university.duration || `${university.courses} Months`}</span>
+                      <span>{university.duration || "24 Months"}</span>
                     </div>
                   </div>
 
                   {/* Buttons */}
-                  <div className="mt-6 flex gap-3">
-                    <Link
-                      href={`/universities/${university.slug}`}
-                      className="flex-1 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-98"
-                    >
-                      View Program
-                    </Link>
+                  <div className="mt-6">
                     <button
                       type="button"
-                      className="flex-1 inline-flex items-center justify-center rounded-xl bg-[#ee2c3c] py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-[#d02534] hover:shadow-md hover:shadow-red-500/10 active:scale-98"
+                      onClick={() => setShowSignupModal(true)}
+                      className="w-full inline-flex items-center justify-center rounded-xl bg-[#ee2c3c] py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-[#d02534] hover:shadow-md hover:shadow-red-500/10 active:scale-98"
                     >
-                      Syllabus
+                      Check Eligibility
                     </button>
                   </div>
                 </article>
@@ -261,6 +287,13 @@ export default function CourseUniversitySection({ universities: propUniversities
             </button>
           </div>
         )}
+
+        {/* Signup Modal */}
+        <SignupModal
+          isOpen={showSignupModal}
+          onClose={() => setShowSignupModal(false)}
+          onSwitchToLogin={() => setShowSignupModal(false)}
+        />
       </div>
     </section>
   );

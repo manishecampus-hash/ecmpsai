@@ -2835,7 +2835,7 @@ export function SignupModal({
     setStateOpen(false);
   };
 
-  const handleDetailsSubmit = (e: FormEvent) => {
+  const handleDetailsSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -2854,16 +2854,32 @@ export function SignupModal({
       return;
     }
 
+    setLoading(true);
+
     const student = {
       name: name.trim(),
       email: email.trim(),
       phone: fullPhone,
       coursesInterested: course ? [course] : [],
+      course: course || undefined,
       state: state || undefined,
       referralCode: referralCode.trim() || undefined,
       whatsappOptIn,
       joinedAt: new Date().toISOString(),
     };
+
+    try {
+      // Save details to database collection 'web_users'
+      await fetch("/api/auth/register-details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(student),
+      });
+    } catch (saveErr) {
+      console.error("Failed saving to web_users database:", saveErr);
+    } finally {
+      setLoading(false);
+    }
 
     localStorage.setItem("ecampus_student", JSON.stringify(student));
     window.dispatchEvent(new Event("ecampus-auth-change"));
@@ -2873,15 +2889,23 @@ export function SignupModal({
     setShowAdvisor(true);
   };
 
-  const finishOnboarding = (answers?: AdvisorAnswers) => {
+  const finishOnboarding = async (answers?: AdvisorAnswers) => {
     if (answers) {
       const raw = localStorage.getItem("ecampus_student");
       const student = raw ? JSON.parse(raw) : {};
-      localStorage.setItem(
-        "ecampus_student",
-        JSON.stringify({ ...student, advisorProfile: answers }),
-      );
+      const updated = { ...student, advisorProfile: answers };
+      localStorage.setItem("ecampus_student", JSON.stringify(updated));
       window.dispatchEvent(new Event("ecampus-auth-change"));
+
+      try {
+        await fetch("/api/auth/register-details", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        });
+      } catch (err) {
+        console.error("Failed updating advisor answers in web_users:", err);
+      }
     }
 
     setShowAdvisor(false);
@@ -3584,9 +3608,10 @@ export function SignupModal({
 
                     <Button
                       type="submit"
-                      className="mt-1 h-12 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                      disabled={loading}
+                      className="mt-1 h-12 w-full rounded-lg bg-red-600 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-70"
                     >
-                      Get Started
+                      {loading ? "Saving..." : "Get Started"}
                     </Button>
                   </form>
                 )}

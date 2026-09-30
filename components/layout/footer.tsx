@@ -113,7 +113,7 @@ export function Footer() {
                 src="/image/logo.png"
                 alt="eCampus Logo"
                 fill
-                priority
+                sizes="160px"
                 unoptimized
                 className="object-contain object-left"
               />

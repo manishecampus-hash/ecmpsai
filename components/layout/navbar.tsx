@@ -1172,6 +1172,7 @@ export function Navbar() {
                     src="/image/logo.png"
                     alt="Logo"
                     fill
+                    sizes="128px"
                     className="object-contain  transition-transform duration-300 group-hover:scale-105"
                     priority
                   />

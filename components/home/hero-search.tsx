@@ -31,18 +31,10 @@ const placeholders = [
 
 export default function HeroSearch() {
   const [query, setQuery] = useState("");
-  const [student, setStudent] = useState<any>(null);
   const [focused, setFocused] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
   const router = useRouter();
-
-  useEffect(() => {
-    setMounted(true);
-    const s = localStorage.getItem("ecampus_student");
-    if (s) setStudent(JSON.parse(s));
-  }, []);
 
   useEffect(() => {
     if (query) return;
@@ -61,8 +53,6 @@ export default function HeroSearch() {
     e.preventDefault();
     search(query);
   };
-
-  if (!mounted) return <section className="min-h-screen bg-white" />;
 
   return (
 <section className="relative w-full flex flex-col items-center justify-start lg:pt-0 xl:pt-2 bg-white px-4 overflow-hidden">

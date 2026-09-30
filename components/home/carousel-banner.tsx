@@ -920,22 +920,26 @@ export function CarouselBanner({ banners }: { banners?: any[] }) {
               const slideAlt = s.altText || s.title || `Desktop Banner ${s.id}`;
               const imageContent = (
                 <>
-                  <div className="img-mobile">
+                  <div className="img-mobile relative w-full h-full">
                     <Image
                       src={s.mobile}
                       alt={s.altText || s.title || `Mobile Banner ${s.id}`}
                       fill
                       priority={i === 0}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      sizes="100vw"
                       className="banner-img"
                       draggable={false}
                     />
                   </div>
-                  <div className="img-desktop">
+                  <div className="img-desktop relative w-full h-full">
                     <Image
                       src={s.desktop}
                       alt={slideAlt}
                       fill
                       priority={i === 0}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      sizes="100vw"
                       className="banner-img"
                       draggable={false}
                     />

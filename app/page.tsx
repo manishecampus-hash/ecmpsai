@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import HeroSearch from "@/components/home/hero-search";
 import { PopularCoursesSection } from "@/components/home/goal-cards";
 import CareerExplorer from "@/components/home/career-explorer";
@@ -10,16 +11,15 @@ import { MediaSection } from "@/components/home/media";
 import { CarouselBanner } from "@/components/home/carousel-banner";
 import type { GraduateTestimonialT } from "@/data/graduates";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 const FRONTEND_API_URL =
   process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
-async function fetchHomepageData() {
+const fetchHomepageData = cache(async () => {
   try {
     const res = await fetch(`${FRONTEND_API_URL}/homepage`, {
-      cache: "no-store",
+      next: { revalidate: 60 },
     });
     if (!res.ok) {
       console.warn(`Homepage API returned status ${res.status}`);
@@ -30,7 +30,7 @@ async function fetchHomepageData() {
     console.error("Failed to fetch homepage dynamic content from API:", err);
     return null;
   }
-}
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await fetchHomepageData();

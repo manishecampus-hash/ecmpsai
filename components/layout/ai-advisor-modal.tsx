@@ -434,10 +434,16 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
                     </div>
 
                     <div className="mt-4 flex flex-shrink-0 items-center sm:mt-5">
+                      {/* No Back on the first question — hidden (not removed) so the card height stays steady between steps */}
                       <button
                         type="button"
                         onClick={handleBack}
-                        className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-gray-500 transition hover:text-gray-800"
+                        disabled={step === 1}
+                        aria-hidden={step === 1}
+                        tabIndex={step === 1 ? -1 : undefined}
+                        className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-gray-500 transition hover:text-gray-800 ${
+                          step === 1 ? "invisible" : ""
+                        }`}
                       >
                         <ArrowLeft className="h-4 w-4" />
                         Back

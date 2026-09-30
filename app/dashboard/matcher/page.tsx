@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
+import AppliedBadge from "../components/applied-badge";
 import {
   AnimatePresence,
   MotionConfig,
@@ -28,6 +29,10 @@ import {
   Monitor,
   Shuffle,
   Building2,
+  GraduationCap,
+  Layers,
+  IndianRupee,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -54,6 +59,8 @@ interface UniversityListing {
   matchScore: number;
   rating: number;
   reviews: number;
+  // Students who have applied — shown as social proof on the card
+  applied: number;
   fee: number;
   scholarshipNote?: string;
   durationNote: string;
@@ -75,6 +82,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 98,
     rating: 4.8,
     reviews: 1200,
+    applied: 1240,
     fee: 65000,
     scholarshipNote: "Scholarships up to ₹10,000",
     durationNote: "100% Online · 2 Years Duration",
@@ -94,6 +102,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 94,
     rating: 4.9,
     reviews: 2400,
+    applied: 2380,
     fee: 110000,
     scholarshipNote: "Eligible for 4 merit waivers",
     durationNote: "Live Weekend Batches",
@@ -113,6 +122,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 91,
     rating: 4.7,
     reviews: 1100,
+    applied: 1860,
     fee: 55000,
     scholarshipNote: "₹7,500 Early Bird Grant",
     durationNote: "Self-Paced with Masterclasses",
@@ -132,6 +142,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 89,
     rating: 4.6,
     reviews: 987,
+    applied: 970,
     fee: 75000,
     scholarshipNote: "₹12,000 Verified Scholarship",
     durationNote: "Live Mentorship Included",
@@ -151,6 +162,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 87,
     rating: 4.4,
     reviews: 643,
+    applied: 640,
     fee: 42000,
     scholarshipNote: "Zero Cost EMI available",
     durationNote: "Live Interactive Sessions",
@@ -170,6 +182,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 85,
     rating: 4.5,
     reviews: 754,
+    applied: 1120,
     fee: 48000,
     scholarshipNote: "Merit scholarship up to 20%",
     durationNote: "100% Online · 3 Years Duration",
@@ -189,6 +202,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 83,
     rating: 4.5,
     reviews: 512,
+    applied: 530,
     fee: 95000,
     durationNote: "Industry-Aligned Labs",
     accreditations: ["NAAC", "AICTE", "WES"],
@@ -207,6 +221,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 90,
     rating: 4.6,
     reviews: 833,
+    applied: 890,
     fee: 58000,
     scholarshipNote: "Zero Cost EMI · Scholarship eligible",
     durationNote: "100% Online · 2 Years Duration",
@@ -226,6 +241,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 80,
     rating: 4.3,
     reviews: 421,
+    applied: 410,
     fee: 120000,
     durationNote: "On-Campus · 2 Years Duration",
     accreditations: ["NAAC", "AICTE"],
@@ -244,6 +260,7 @@ const UNIVERSITIES: UniversityListing[] = [
     matchScore: 78,
     rating: 4.2,
     reviews: 298,
+    applied: 320,
     fee: 52000,
     scholarshipNote: "Zero Cost EMI available",
     durationNote: "100% Online · 2 Years Duration",
@@ -287,27 +304,25 @@ const MIN_FEE = 20000;
 const MAX_FEE = 150000;
 const PAGE_SIZE = 6;
 
-// Page-to-page transition: the whole result list slides in the direction of travel
+// Page-to-page transition: a short cross-fade, then the new cards rise in one after another
 const pageVariants: Variants = {
-  enter: (dir: number) => ({ opacity: 0, x: dir * 24 }),
+  enter: { opacity: 0 },
   center: {
     opacity: 1,
-    x: 0,
-    transition: { duration: 0.3, ease: EASE_OUT, staggerChildren: 0.05 },
+    transition: { duration: 0.2, ease: "linear", staggerChildren: 0.045 },
   },
-  exit: (dir: number) => ({
-    opacity: 0,
-    x: dir * -24,
-    transition: { duration: 0.18, ease: "easeIn" },
-  }),
+  exit: { opacity: 0, transition: { duration: 0.12, ease: "easeOut" } },
 };
 
-// Individual result cards: staggered fade-up on entry, quick fade on removal
+// Individual result cards: gentle fade-up on entry, quick fade on removal
 const cardVariants: Variants = {
-  enter: { opacity: 0, y: 14 },
-  center: { opacity: 1, y: 0, transition: { duration: 0.35, ease: EASE_OUT } },
-  exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
+  enter: { opacity: 0, y: 10 },
+  center: { opacity: 1, y: 0, transition: { duration: 0.32, ease: EASE_OUT } },
+  exit: { opacity: 0, transition: { duration: 0.12, ease: "easeOut" } },
 };
+
+// Cards/chips gliding into their new place after filtering or sorting
+const LAYOUT_SPRING = { type: "spring", stiffness: 380, damping: 38, mass: 0.8 } as const;
 
 const MODE_ICONS: Record<Mode, LucideIcon> = {
   Online: Monitor,
@@ -563,11 +578,13 @@ function Dropdown({
 
 function FilterSection({
   title,
+  icon: Icon,
   selected = 0,
   defaultOpen = true,
   children,
 }: {
   title: string;
+  icon: LucideIcon;
   selected?: number;
   defaultOpen?: boolean;
   children: React.ReactNode;
@@ -579,8 +596,17 @@ function FilterSection({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 py-3.5 text-left"
+        className="group flex w-full items-center gap-2.5 py-3.5 text-left"
       >
+        <span
+          className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
+            selected > 0
+              ? "bg-red-600 text-white shadow-sm shadow-red-200"
+              : "bg-gray-50 text-gray-400 group-hover:bg-red-50 group-hover:text-red-500"
+          }`}
+        >
+          <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+        </span>
         <span className="flex-1 text-[13px] font-semibold text-gray-900">{title}</span>
         {selected > 0 && (
           <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
@@ -687,14 +713,35 @@ export default function AIDegreeMatcherPage() {
     currentPage * PAGE_SIZE,
   );
 
-  // Direction of the last page change (1 = forward, -1 = back) drives the slide direction
-  const prevPageRef = useRef(currentPage);
-  const direction = currentPage >= prevPageRef.current ? 1 : -1;
-  useEffect(() => {
-    prevPageRef.current = currentPage;
-  }, [currentPage]);
-
   const resultsTopRef = useRef<HTMLDivElement>(null);
+
+  // Desktop filter panel: size it to the space actually visible below its top edge,
+  // so every option is reachable by scrolling the panel itself — whether the page is
+  // at the top (panel starts lower) or scrolled (panel pinned under the top bar).
+  const mainRef = useRef<HTMLElement>(null);
+  const filterPanelRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const main = mainRef.current;
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const panel = filterPanelRef.current;
+        if (!panel || !main) return;
+        const top = panel.getBoundingClientRect().top;
+        const bottomGap = 24;
+        panel.style.maxHeight = `${Math.max(320, window.innerHeight - top - bottomGap)}px`;
+      });
+    };
+    measure();
+    main?.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelAnimationFrame(frame);
+      main?.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
   const goToPage = (n: number) => {
     if (n === currentPage) return;
     setPage(n);
@@ -771,7 +818,7 @@ export default function AIDegreeMatcherPage() {
 
   const filterBody = (
     <>
-      <FilterSection title="Degree Program" selected={degrees.length}>
+      <FilterSection title="Degree Program" icon={GraduationCap} selected={degrees.length}>
         <div className="flex flex-wrap gap-1.5">
           {DEGREES.map((d) => (
             <ChoiceChip
@@ -785,7 +832,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Specialization" selected={specializations.length}>
+      <FilterSection title="Specialization" icon={Layers} selected={specializations.length}>
         <div className="-mx-2">
           {SPECIALIZATIONS.map((sp) => (
             <OptionRow
@@ -799,7 +846,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Study Mode" selected={modes.length}>
+      <FilterSection title="Study Mode" icon={Monitor} selected={modes.length}>
         <div className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (
             <ModeTile
@@ -813,7 +860,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Annual Fee" selected={maxFee < MAX_FEE ? 1 : 0}>
+      <FilterSection title="Annual Fee" icon={IndianRupee} selected={maxFee < MAX_FEE ? 1 : 0}>
         <div className="flex items-baseline justify-between">
           <span className="text-xs text-gray-500">Maximum budget</span>
           <span className="text-sm font-bold tabular-nums text-gray-900">
@@ -855,7 +902,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Accreditations" selected={accreditations.length} defaultOpen={false}>
+      <FilterSection title="Accreditations" icon={ShieldCheck} selected={accreditations.length} defaultOpen={false}>
         <div className="-mx-2">
           {ACCREDITATIONS.map((a) => (
             <OptionRow
@@ -869,7 +916,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Features" selected={features.length} defaultOpen={false}>
+      <FilterSection title="Features" icon={Sparkles} selected={features.length} defaultOpen={false}>
         <div className="-mx-2">
           {FEATURES.map((f) => (
             <OptionRow
@@ -913,7 +960,7 @@ export default function AIDegreeMatcherPage() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
-        <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
+        <main ref={mainRef} className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
           <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
@@ -1003,19 +1050,29 @@ export default function AIDegreeMatcherPage() {
 
           <div className="flex flex-1 flex-col gap-5 lg:flex-row lg:items-start">
             {/* Filters — desktop; header stays fixed while the options scroll inside the pinned panel */}
-            <aside className="hidden flex-shrink-0 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:sticky lg:top-0 lg:flex lg:max-h-[calc(100vh-7rem)] lg:w-72">
-              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-                {filterHeading}
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  disabled={activeFilterCount === 0}
-                  className="text-xs font-semibold text-red-600 transition hover:underline disabled:cursor-default disabled:text-gray-300 disabled:no-underline"
-                >
-                  Clear all
-                </button>
+            <aside
+              ref={filterPanelRef}
+              className="hidden flex-shrink-0 flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:sticky lg:top-0 lg:flex lg:w-72"
+            >
+              <div className="border-b border-gray-100 bg-gradient-to-br from-red-50/80 via-white to-white px-5 py-4">
+                <div className="flex items-center justify-between">
+                  {filterHeading}
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    disabled={activeFilterCount === 0}
+                    className="text-xs font-semibold text-red-600 transition hover:underline disabled:cursor-default disabled:text-gray-300 disabled:no-underline"
+                  >
+                    Clear all
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  <span className="font-semibold text-gray-900">{sorted.length}</span> of {UNIVERSITIES.length}{" "}
+                  programs match your filters
+                </p>
               </div>
-              <div className="flex-1 overflow-y-auto px-5 [scrollbar-width:thin]">{filterBody}</div>
+              {/* Scrolls on its own; overscroll-contain stops it dragging the results list along */}
+              <div className="flex-1 overflow-y-auto overscroll-contain px-5 [scrollbar-width:thin]">{filterBody}</div>
             </aside>
 
             {/* Filters — mobile trigger (opens a bottom sheet) */}
@@ -1040,6 +1097,15 @@ export default function AIDegreeMatcherPage() {
             <div className="min-w-0 flex-1 space-y-4">
               <div ref={resultsTopRef} className="relative z-10 flex scroll-mt-4 flex-wrap items-center justify-between gap-2">
                 <p className="text-sm text-gray-500">
+                  {sorted.length > 0 && (
+                    <>
+                      Showing{" "}
+                      <span className="font-semibold text-gray-900">
+                        {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, sorted.length)}
+                      </span>{" "}
+                      of{" "}
+                    </>
+                  )}
                   <motion.span
                     key={sorted.length}
                     initial={{ opacity: 0, y: -6 }}
@@ -1084,7 +1150,7 @@ export default function AIDegreeMatcherPage() {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            transition={{ duration: 0.15 }}
+                            transition={{ duration: 0.15, layout: LAYOUT_SPRING }}
                             className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 py-1 pl-3 pr-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
                           >
                             {chip.label}
@@ -1104,7 +1170,7 @@ export default function AIDegreeMatcherPage() {
                 )}
               </AnimatePresence>
 
-              <AnimatePresence mode="wait" custom={direction}>
+              <AnimatePresence mode="wait">
               {pageItems.length === 0 ? (
                 <motion.div
                   key="empty"
@@ -1131,7 +1197,6 @@ export default function AIDegreeMatcherPage() {
               ) : (
                 <motion.div
                   key={`page-${currentPage}`}
-                  custom={direction}
                   variants={pageVariants}
                   initial="enter"
                   animate="center"
@@ -1143,9 +1208,15 @@ export default function AIDegreeMatcherPage() {
                     const compared = compareIds.includes(u.id);
                     return (
                       // Motion lives on a wrapper so framer's transforms don't override the card's CSS hover lift
-                      <motion.div key={u.id} layout="position" variants={cardVariants} exit="exit">
+                      <motion.div
+                        key={u.id}
+                        layout="position"
+                        variants={cardVariants}
+                        exit="exit"
+                        transition={{ layout: LAYOUT_SPRING }}
+                      >
                       <div
-                        className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 sm:flex-row sm:items-center"
+                        className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 sm:flex-row sm:items-center"
                       >
                         <div className="relative h-36 w-full flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-40">
                           <UniImage src={u.image} alt={u.name} className="object-cover" />
@@ -1203,7 +1274,8 @@ export default function AIDegreeMatcherPage() {
                           <p className="mt-0.5 text-xs text-gray-400">{u.durationNote}</p>
                         </div>
 
-                        <div className="flex flex-shrink-0 gap-2.5 sm:w-40 sm:flex-col">
+                        <div className="flex flex-shrink-0 flex-col gap-3 sm:w-40">
+                        <div className="flex gap-2.5 sm:flex-col">
                           <button
                             type="button"
                             onClick={() => toggleCompare(u.id)}
@@ -1232,6 +1304,8 @@ export default function AIDegreeMatcherPage() {
                             1-Click Apply
                           </button>
                         </div>
+                        <AppliedBadge count={u.applied} seed={u.id} />
+                        </div>
                       </div>
                       </motion.div>
                     );
@@ -1243,7 +1317,7 @@ export default function AIDegreeMatcherPage() {
 
               {/* Pagination */}
               {sorted.length > 0 && (
-                <motion.div layout="position" className="flex items-center justify-center gap-1.5 pt-2">
+                <motion.div layout="position" transition={{ layout: LAYOUT_SPRING }} className="flex items-center justify-center gap-1.5 pt-2">
                   <button
                     type="button"
                     disabled={currentPage === 1}

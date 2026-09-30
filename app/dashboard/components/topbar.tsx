@@ -84,12 +84,14 @@ const notifications = [
 export default function Topbar({
   student,
   onOpenMobileMenu,
-  wonReward,
+  wonReward: wonRewardProp,
 }: {
   student: StudentProfile;
   onOpenMobileMenu: () => void;
   wonReward?: SpinWheelReward | null;
 }) {
+  // Pages that don't track the spin themselves still show the saved reward
+  const wonReward = wonRewardProp ?? student.spinReward ?? null;
   const displayName = student.name?.trim() || "Rahul Kumar";
   const initial = displayName.charAt(0).toUpperCase();
 

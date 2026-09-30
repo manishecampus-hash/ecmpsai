@@ -22,8 +22,29 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem("ecampus_student");
-    if (saved) setStudent(JSON.parse(saved));
+    if (!saved) return;
+    const parsed: StudentProfile = JSON.parse(saved);
+    setStudent(parsed);
+
+    if (parsed.spinReward) {
+      setWonReward(parsed.spinReward);
+      return;
+    }
+    // Every signed-up student gets exactly one spin — greet them with it as soon as
+    // they land on the dashboard (e.g. straight after finishing onboarding).
+    const t = setTimeout(() => setSpinWheelOpen(true), 600);
+    return () => clearTimeout(t);
   }, []);
+
+  // Save the win immediately so the single spin can't be repeated (even on refresh)
+  const handleRewardWon = (reward: SpinWheelReward) => {
+    setWonReward(reward);
+    const raw = localStorage.getItem("ecampus_student");
+    const current: StudentProfile = raw ? JSON.parse(raw) : {};
+    const next = { ...current, spinReward: reward };
+    localStorage.setItem("ecampus_student", JSON.stringify(next));
+    setStudent(next);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
@@ -47,12 +68,13 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      <GiftFab onClick={() => setSpinWheelOpen(true)} />
+      {/* The gift launcher is only offered until the student has used their spin */}
+      {!wonReward && <GiftFab onClick={() => setSpinWheelOpen(true)} />}
 
       <SpinWheelModal
         isOpen={spinWheelOpen}
         onClose={() => setSpinWheelOpen(false)}
-        onRewardWon={setWonReward}
+        onRewardWon={handleRewardWon}
       />
 
       <ResumeScanScreen file={resumeFile} onClose={() => setResumeFile(null)} />

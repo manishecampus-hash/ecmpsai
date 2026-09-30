@@ -261,14 +261,14 @@ export default function ProfilePage() {
               className="grid grid-cols-2 gap-3 sm:grid-cols-4"
             >
               {[
-                { icon: Landmark, iconClass: "bg-red-50 text-red-500", label: "AI Matches", value: "14" },
-                { icon: Wallet, iconClass: "bg-emerald-50 text-emerald-500", label: "Scholarship", value: "₹10,000" },
-                { icon: CheckCircle2, iconClass: "bg-blue-50 text-blue-500", label: "App Readiness", value: "88%" },
-                { icon: Sparkles, iconClass: "bg-amber-50 text-amber-600", label: "AI Readiness", value: "94/100" },
+                { icon: Landmark, iconClass: "bg-red-50 text-red-500", hover: "hover:border-red-300 hover:shadow-red-100/60", label: "AI Matches", value: "14" },
+                { icon: Wallet, iconClass: "bg-emerald-50 text-emerald-500", hover: "hover:border-emerald-300 hover:shadow-emerald-100/60", label: "Scholarship", value: "₹10,000" },
+                { icon: CheckCircle2, iconClass: "bg-blue-50 text-blue-500", hover: "hover:border-blue-300 hover:shadow-blue-100/60", label: "App Readiness", value: "88%" },
+                { icon: Sparkles, iconClass: "bg-amber-50 text-amber-600", hover: "hover:border-amber-300 hover:shadow-amber-100/60", label: "AI Readiness", value: "94/100" },
               ].map((s) => (
                 // Motion on a wrapper so the card's CSS hover lift isn't overridden
                 <motion.div key={s.label} variants={staggerItem}>
-                <div className="h-full rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-4">
+                <div className={`h-full rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-4 ${s.hover}`}>
                   <span
                     className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.iconClass}`}
                   >

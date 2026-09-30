@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Copy, Check, PartyPopper, Gift } from "lucide-react";
+import { Copy, Check, PartyPopper, Gift } from "lucide-react";
 import { SPIN_WHEEL_REWARDS, type SpinWheelReward } from "./data";
 import { SpinWheelSvg, getTargetRotation } from "./wheel";
 
@@ -49,17 +49,6 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
     if (dialogRef.current) dialogRef.current.scrollTop = 0;
     dialogRef.current?.focus();
   }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !claiming) onClose();
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose, claiming]);
 
   const handleSpin = () => {
     if (phase !== "idle") return;
@@ -145,9 +134,6 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
                 : { duration: 0.2 }
             }
             className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0a1428]/70 p-3 backdrop-blur-sm"
-            onClick={() => {
-              if (!claiming) onClose();
-            }}
           >
             <motion.div
               ref={dialogRef}
@@ -181,21 +167,7 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
               }`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Sticky wrapper keeps the close button reachable even if the
-                  dialog has to scroll internally on a short viewport. */}
-              <div className="sticky top-0 z-20 h-0 w-full">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!claiming) onClose();
-                  }}
-                  aria-label="Close spin wheel"
-                  className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-gray-500 backdrop-blur-sm transition-colors hover:bg-gray-100 hover:text-gray-900"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
+              {/* No close control on purpose: the spin is mandatory, and "Claim Reward" is the only exit. */}
               {phase !== "result" ? (
                 <>
                   <span className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600">

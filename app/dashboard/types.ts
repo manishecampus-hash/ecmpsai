@@ -1,3 +1,5 @@
+import type { SpinWheelReward } from "./components/spin-wheel/data";
+
 export type StudentProfile = {
   name?: string;
   email?: string;
@@ -13,4 +15,6 @@ export type StudentProfile = {
     format?: string;
     budget?: string;
   };
+  // Set once the student has used their single Spin & Win spin
+  spinReward?: SpinWheelReward;
 };

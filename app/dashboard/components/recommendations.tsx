@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Star, Scale, Zap } from "lucide-react";
 import UniImage from "@/components/ui/uniImage";
+import AppliedBadge from "./applied-badge";
 
 const recommendations = [
   {
@@ -12,6 +13,8 @@ const recommendations = [
     university: "CHANDIGARH UNIVERSITY ONLINE",
     rating: "4.8",
     reviews: "1.2k reviews",
+    applied: 1240,
+    seed: "chandigarh",
     title: "MCA with AI & Machine Learning Specialization",
     tags: ["NAAC A+", "UGC Entitled", "Zero Cost EMI", "Top Recruiter Network"],
     fee: "₹65,000",
@@ -23,6 +26,8 @@ const recommendations = [
     university: "NMIMS CDOE",
     rating: "4.9",
     reviews: "2.4k reviews",
+    applied: 2380,
+    seed: "nmims",
     title: "Executive MBA in Business & AI Analytics",
     tags: ["Top Ranked B-School", "Industry Mentorship", "Placement Support"],
     fee: "₹1,10,000",
@@ -46,7 +51,7 @@ export default function Recommendations() {
           href="/dashboard/matcher"
           className="whitespace-nowrap text-sm font-semibold text-red-600 hover:text-red-700"
         >
-          View All 14 Matches →
+          View Matches →
         </Link>
       </div>
 
@@ -99,7 +104,8 @@ export default function Recommendations() {
               </p>
             </div>
 
-            <div className="flex flex-shrink-0 gap-2.5 sm:w-40 sm:flex-col">
+            <div className="flex flex-shrink-0 flex-col gap-3 sm:w-40">
+            <div className="flex gap-2.5 sm:flex-col">
               <button
                 type="button"
                 className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 sm:flex-none sm:w-full"
@@ -114,6 +120,8 @@ export default function Recommendations() {
                 <Zap className="h-3.5 w-3.5 fill-white" />
                 1-Click Apply
               </button>
+            </div>
+            <AppliedBadge count={rec.applied} seed={rec.seed} />
             </div>
           </div>
         ))}

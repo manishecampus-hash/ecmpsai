@@ -8,6 +8,7 @@ const stats = [
     title: "AI Matched Courses",
     icon: Landmark,
     iconBg: "bg-red-50 text-red-500",
+    hover: "hover:border-red-300 hover:shadow-red-100/60",
     value: "14 Best Fits",
     valueClass: "text-gray-900",
     note: "3 Top-tier with 96% fit rate",
@@ -18,6 +19,7 @@ const stats = [
     title: "Predicted Scholarship",
     icon: Wallet,
     iconBg: "bg-emerald-50 text-emerald-500",
+    hover: "hover:border-emerald-300 hover:shadow-emerald-100/60",
     value: "₹10,000",
     valueClass: "text-emerald-600",
     note: "Eligible for 4 merit waivers",
@@ -28,6 +30,7 @@ const stats = [
     title: "Application Readiness",
     icon: CheckCircle2,
     iconBg: "bg-blue-50 text-blue-500",
+    hover: "hover:border-blue-300 hover:shadow-blue-100/60",
     value: "88% Score",
     valueClass: "text-gray-900",
     note: "OCR Verified Documents",
@@ -43,7 +46,7 @@ export default function StatsCards() {
         return (
           <div
             key={s.title}
-            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+            className={`rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${s.hover}`}
           >
             <div className="flex items-start justify-between">
               <span className="text-[11px] font-semibold tracking-wide text-gray-400">

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Sparkles, UploadCloud, FileEdit } from "lucide-react";
 import type { StudentProfile } from "../types";
+import ProfileProgress, { getProfileCompletion } from "./profile-progress";
 
 export default function WelcomeBanner({
   student,
@@ -13,6 +14,7 @@ export default function WelcomeBanner({
 }) {
   const firstName = (student.name?.trim().split(" ")[0]) || "Rahul";
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const missingCount = getProfileCompletion(student).missing.length;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,23 +42,13 @@ export default function WelcomeBanner({
 </h1>
 
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
-            Complete 2 missing data points to unlock ₹25,000 in direct
-            university scholarships. 
+            {missingCount > 0
+              ? `Complete ${missingCount} missing data point${missingCount === 1 ? "" : "s"} to unlock ₹25,000 in direct university scholarships.`
+              : "Your profile is complete — you're all set to unlock ₹25,000 in direct university scholarships."}
           </p>
 
           <div className="mt-4 max-w-xl">
-            <div className="mb-1.5 flex items-center justify-between text-xs">
-              <span className="font-medium text-gray-500">
-                Profile Progress
-              </span>
-              <span className="font-semibold text-red-600">72% Completed</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-white">
-              <div
-                className="h-full rounded-full bg-red-500"
-                style={{ width: "72%" }}
-              />
-            </div>
+            <ProfileProgress student={student} label="Profile Progress" />
           </div>
         </div>
 

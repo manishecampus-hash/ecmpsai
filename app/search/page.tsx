@@ -1114,7 +1114,7 @@ function SearchPage() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: isMobile ? "16px 12px 230px" : "32px 24px 170px",
+          padding: isMobile ? "16px 12px 8px" : "32px 24px 16px",
           display: isMobile ? "flex" : "grid",
           flexDirection: isMobile ? "column" : undefined,
           gridTemplateColumns: isMobile ? undefined : "1fr 308px",
@@ -1123,7 +1123,15 @@ function SearchPage() {
         }}
       >
         {/* ════ LEFT / Main column ════ */}
-        <div style={{ minWidth: 0, width: "100%" }}>
+        <div
+          style={{
+            minWidth: 0,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: isMobile ? "calc(100vh - 120px)" : "calc(100vh - 130px)",
+          }}
+        >
           {/* ── The question being answered ── */}
           {urlQuery && (
             <div style={{ marginBottom: isMobile ? 14 : 18 }}>
@@ -1360,43 +1368,20 @@ function SearchPage() {
           {/* ── FAQ panel: mobile only (inline) ── */}
           {isMobile && SidebarContent}
 
-        </div>
-
-        {/* ════ RIGHT: Desktop sidebar only ════ */}
-        {!isMobile && SidebarContent}
-      </main>
-
-      {/* ════ FOOTER ════ */}
-      <div className="relative z-10 pb-28 sm:pb-32">
-        <Footer />
-      </div>
-
-      {/* ══ Fixed composer (always reachable, like ChatGPT) ══ */}
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: composerOffset,
-          transition: "bottom 0.3s ease",
-          zIndex: 40,
-          pointerEvents: "none",
-          background:
-            "linear-gradient(180deg, rgba(255,250,250,0) 0%, rgba(255,250,250,0.92) 38%, #fffafa 70%)",
-          paddingTop: 28,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: isMobile ? "0 12px 12px" : "0 24px 18px",
-            display: isMobile ? "block" : "grid",
-            gridTemplateColumns: isMobile ? undefined : "1fr 308px",
-            gap: 32,
-          }}
-        >
-          <div style={{ pointerEvents: "auto" }}>
+          {/* ══ Composer: sticky (not fixed) so it scrolls away above the footer ══ */}
+          <div
+            style={{
+              position: "sticky",
+              bottom: composerOffset,
+              transition: "bottom 0.3s ease",
+              zIndex: 20,
+              marginTop: "auto",
+              paddingTop: 28,
+              paddingBottom: isMobile ? 14 : 22,
+              background:
+                "linear-gradient(180deg, rgba(255,250,250,0) 0%, rgba(255,250,250,0.94) 34%, #fffafa 62%)",
+            }}
+          >
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -1492,6 +1477,14 @@ function SearchPage() {
             </p>
           </div>
         </div>
+
+        {/* ════ RIGHT: Desktop sidebar only ════ */}
+        {!isMobile && SidebarContent}
+      </main>
+
+      {/* ════ FOOTER ════ */}
+      <div className="relative z-10">
+        <Footer />
       </div>
 
       <style>{`

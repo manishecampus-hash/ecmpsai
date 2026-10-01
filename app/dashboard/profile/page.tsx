@@ -5,6 +5,7 @@ import Link from "next/link";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import type { StudentProfile } from "../types";
+import ProfileProgress from "../components/profile-progress";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
   EASE_OUT,
@@ -83,15 +84,6 @@ export default function ProfilePage() {
   const displayName = student.name?.trim() || "Rahul Kumar";
   const initial = displayName.charAt(0).toUpperCase();
 
-  const profileFieldsFilled = [
-    student.name,
-    student.email,
-    student.phone,
-    student.state,
-    student.coursesInterested?.length ? "yes" : "",
-    student.advisorProfile?.goal,
-  ].filter(Boolean).length;
-  const profileCompletion = Math.round((profileFieldsFilled / 6) * 100);
 
   const handleSaveProfile = () => {
     const next: StudentProfile = {
@@ -236,22 +228,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-5 max-w-xl">
-                <div className="mb-1.5 flex items-center justify-between text-xs">
-                  <span className="font-medium text-gray-500">
-                    Profile Completion
-                  </span>
-                  <span className="font-semibold text-red-600">
-                    {profileCompletion}% Completed
-                  </span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${profileCompletion}%` }}
-                    transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.3 }}
-                    className="h-full rounded-full bg-red-500"
-                  />
-                </div>
+                <ProfileProgress student={student} label="Profile Completion" delay={0.3} />
               </div>
             </motion.div>
 

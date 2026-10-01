@@ -36,6 +36,15 @@ export default function DashboardPage() {
     return () => clearTimeout(t);
   }, []);
 
+  // Keep the banner's profile progress in sync if the profile is edited in another tab
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "ecampus_student" && e.newValue) setStudent(JSON.parse(e.newValue));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   // Save the win immediately so the single spin can't be repeated (even on refresh)
   const handleRewardWon = (reward: SpinWheelReward) => {
     setWonReward(reward);

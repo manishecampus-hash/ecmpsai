@@ -122,6 +122,29 @@ export default function Topbar({
     return () => window.removeEventListener("reward-pill-landed", handleLanded);
   }, []);
 
+  // Menus open on hover (or click) and stay open until the user clicks outside,
+  // presses Escape or picks an item — moving the mouse away no longer closes them.
+  const openProfileMenu = () => {
+    setProfileMenuOpen(true);
+    setNotificationsOpen(false);
+  };
+  const openNotifications = () => {
+    setNotificationsOpen(true);
+    setProfileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (!profileMenuOpen && !notificationsOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setProfileMenuOpen(false);
+        setNotificationsOpen(false);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [profileMenuOpen, notificationsOpen]);
+
   useEffect(() => {
     if (!profileMenuOpen) return;
 
@@ -212,12 +235,11 @@ export default function Topbar({
           <div
             ref={notificationsRef}
             className="relative"
-            onMouseEnter={() => setNotificationsOpen(true)}
-            onMouseLeave={() => setNotificationsOpen(false)}
+            onMouseEnter={openNotifications}
           >
             <button
               type="button"
-              onClick={() => setNotificationsOpen((v) => !v)}
+              onClick={openNotifications}
               aria-label="Notifications"
               className="relative flex h-9 w-9 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100"
             >
@@ -287,12 +309,11 @@ export default function Topbar({
           <div
             ref={profileMenuRef}
             className="relative"
-            onMouseEnter={() => setProfileMenuOpen(true)}
-            onMouseLeave={() => setProfileMenuOpen(false)}
+            onMouseEnter={openProfileMenu}
           >
             <button
               type="button"
-              onClick={() => setProfileMenuOpen((v) => !v)}
+              onClick={openProfileMenu}
               className="flex items-center gap-2 rounded-full py-1 pl-1 pr-1.5 transition-colors hover:bg-gray-50 sm:pr-2.5"
             >
               <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-semibold text-white">

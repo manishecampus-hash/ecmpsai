@@ -1098,9 +1098,17 @@ export function Navbar() {
       }
     };
 
+    // Stays open after hover; closes on outside click or Escape
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setProfileMenuOpen(false);
+    };
+
     document.addEventListener("mousedown", handleClickOutsideProfile);
-    return () =>
+    document.addEventListener("keydown", handleEscape);
+    return () => {
       document.removeEventListener("mousedown", handleClickOutsideProfile);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [profileMenuOpen]);
 
   const handleLogout = () => {
@@ -1264,11 +1272,10 @@ export function Navbar() {
                   ref={profileMenuRef}
                   className="relative hidden sm:block"
                   onMouseEnter={() => setProfileMenuOpen(true)}
-                  onMouseLeave={() => setProfileMenuOpen(false)}
                 >
                   <button
                     type="button"
-                    onClick={() => setProfileMenuOpen((v) => !v)}
+                    onClick={() => setProfileMenuOpen(true)}
                     className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 transition-colors hover:bg-gray-100"
                   >
                     <UserCircle className="w-4 h-4 text-indigo-600" />

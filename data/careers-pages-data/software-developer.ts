@@ -9,7 +9,21 @@ export const softwareDeveloper = {
     headingHighlight: "Software Developer",
     description:
       "Master modern web architectures, cloud systems, and generative AI tooling with global university credentials and 1:1 industry mentorship.",
-    image: "/career/software-hero.png",
+    image: "/career/sw-hero-image.png",
+    imageAlt: "Software developer working on a full stack project at a dual-monitor desk",
+    cohortLabel: "Admissions Open",
+    coreStack: [
+      "TypeScript",
+      "React 19",
+      "Next.js 15",
+      "Node.js / Go",
+      "PostgreSQL",
+      "AWS Cloud",
+      "System Design",
+      "Docker",
+    ],
+    emiText: "Flexible EMI from ₹4,500/mo · 0% Interest",
+    ctcGrowth: "+32% hike",
     salary: "₹6-18 LPA",
     duration: "6-12 Months Learning Path",
     features: [

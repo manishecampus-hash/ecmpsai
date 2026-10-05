@@ -2,7 +2,7 @@ import React from 'react';
 
 export const LogoCarousel = () => {
   return (
-    <div className="mx-auto mt-8 max-w-5xl">
+    <div className="mx-auto mt-8 max-w-7xl px-4">
       <p className="mb-6 text-sm font-extrabold text-gray-500">
         Our alumni work at top companies
       </p>
@@ -16,25 +16,35 @@ export const LogoCarousel = () => {
           overflow: hidden;
           width: 100%;
           background: white;
+          /* soft fade on both edges so logos glide in and out */
+          -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
         }
         .__carousel-container {
           display: flex;
-          animation: scroll-left 20s linear infinite;
-          width: 200%;
+          /* two identical strips; moving by -50% loops seamlessly.
+             32s keeps the same on-screen speed as before now that the logos are larger */
+          animation: scroll-left 32s linear infinite;
+          width: max-content;
         }
         .__carousel-wrapper:hover .__carousel-container {
           animation-play-state: paused;
         }
         .__logo-strip {
-          width: 50%;
-          height: auto;
+          flex-shrink: 0;
           display: flex;
           align-items: center;
         }
         .__logo-strip img {
-          width: 100%;
-          height: auto;
+          height: 60px;
+          width: auto;
+          max-width: none;
           object-fit: contain;
+        }
+        @media (min-width: 768px) {
+          .__logo-strip img {
+            height: 88px;
+          }
         }
       `}</style>
 
@@ -44,10 +54,10 @@ export const LogoCarousel = () => {
           <div className="__logo-strip">
             <img src="/career/logo-strip.png" alt="Company logos" />
           </div>
-          
+
           {/* Duplicate for seamless loop */}
-          <div className="__logo-strip">
-            <img src="/career/logo-strip.png" alt="Company logos" />
+          <div className="__logo-strip" aria-hidden>
+            <img src="/career/logo-strip.png" alt="" />
           </div>
         </div>
       </div>

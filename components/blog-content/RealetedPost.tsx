@@ -75,14 +75,14 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
               href={`/blog/${cleanSlug}`}
               className="group flex-shrink-0 w-[290px] sm:w-[340px] md:w-[360px] snap-start block overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-slate-300"
             >
-              {/* Card Thumbnail */}
-              <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+              {/* Card Thumbnail - Harmonized 16:9 Aspect Ratio */}
+              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100">
                 <Image
                   src={post.imageSrc}
                   alt={post.title}
                   fill
                   sizes="(max-width: 640px) 290px, 360px"
-                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
+                  className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
                     post.mobileImageSrc ? "hidden sm:block" : ""
                   }`}
                 />
@@ -92,7 +92,7 @@ export function RelatedPosts({ posts, currentPostId }: RelatedPostsProps) {
                     alt={post.title}
                     fill
                     sizes="290px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105 block sm:hidden"
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105 block sm:hidden"
                   />
                 )}
               </div>

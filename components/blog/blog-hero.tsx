@@ -83,10 +83,10 @@ export default function BlogHero({
               return (
                 <div key={sliderBlog.id} className="w-full shrink-0">
                   <div className="grid items-center gap-4 sm:gap-8 grid-cols-1 lg:grid-cols-[1.1fr_1fr]">
-                    {/* Featured Image */}
+                    {/* Featured Image - Harmonized 16:9 Aspect Ratio */}
                     <Link
                       href={`/blog/${cleanSlug}`}
-                      className="relative overflow-hidden rounded-2xl w-full bg-slate-100 h-[210px] sm:h-[270px] lg:h-[320px] shadow-xs border border-slate-200/70"
+                      className="relative overflow-hidden rounded-2xl w-full bg-slate-100 aspect-[16/9] shadow-xs border border-slate-200/70 block group"
                       onClick={(e) => {
                         if (Math.abs(dragOffset) > 5) e.preventDefault();
                       }}
@@ -96,7 +96,8 @@ export default function BlogHero({
                         alt={sliderBlog.title}
                         fill
                         priority
-                        className={`object-cover pointer-events-none transition-transform duration-500 hover:scale-105 ${
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                        className={`object-cover object-center pointer-events-none transition-transform duration-500 group-hover:scale-105 ${
                           sliderBlog.mobileImageSrc ? "hidden sm:block" : ""
                         }`}
                       />
@@ -106,7 +107,8 @@ export default function BlogHero({
                           alt={sliderBlog.title}
                           fill
                           priority
-                          className="object-cover pointer-events-none block sm:hidden"
+                          sizes="100vw"
+                          className="object-cover object-center pointer-events-none block sm:hidden"
                         />
                       )}
                     </Link>

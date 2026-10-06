@@ -4,6 +4,7 @@ import { Inter, Quicksand, Nunito } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AppShell } from "@/components/layout/app-shell";
 import { AnalyticsInjector } from "@/components/analytics/AnalyticsInjector";
+import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
 
 import Script from "next/script";
 
@@ -87,6 +88,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           <AppShell>{children}</AppShell>
+          <FloatingWhatsApp phoneNumber="919873794789" />
         </ThemeProvider>
       </body>
     </html>

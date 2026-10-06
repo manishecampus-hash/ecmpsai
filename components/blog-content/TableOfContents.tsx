@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, ListOrdered } from "lucide-react";
 
 type Heading = { id: string; text?: string; label?: string; level: number };
@@ -16,35 +16,111 @@ export function TableOfContents({
 }) {
   const [active, setActive] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(!collapsible);
+  const navRef = useRef<HTMLElement>(null);
+
+  const isElementVisible = (el: HTMLElement): boolean => {
+    return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+  };
+
+  const getTargetElement = (id: string): HTMLElement | null => {
+    if (typeof document === "undefined") return null;
+
+    // 1. Search inside the same blog container / wrapper as this TableOfContents instance
+    // This correctly separates mobile headings from hidden desktop headings (or vice versa)
+    const parentContainer =
+      navRef.current?.closest(".blog-container") ||
+      navRef.current?.closest("article") ||
+      navRef.current?.parentElement;
+
+    if (parentContainer) {
+      try {
+        const localEl = parentContainer.querySelector<HTMLElement>(
+          `#${CSS.escape(id)}`
+        );
+        if (localEl && isElementVisible(localEl)) {
+          return localEl;
+        }
+      } catch {
+        const fallbackLocal = parentContainer.querySelector<HTMLElement>(
+          `[id="${id}"]`
+        );
+        if (fallbackLocal && isElementVisible(fallbackLocal)) {
+          return fallbackLocal;
+        }
+      }
+    }
+
+    // 2. Search document-wide for all matching IDs, and pick the one that is currently visible
+    try {
+      const allEls = Array.from(
+        document.querySelectorAll<HTMLElement>(`#${CSS.escape(id)}`)
+      );
+      const visible = allEls.find(isElementVisible);
+      if (visible) return visible;
+      if (allEls.length > 0) return allEls[0];
+    } catch {
+      const allElsFallback = Array.from(
+        document.querySelectorAll<HTMLElement>(`[id="${id}"]`)
+      );
+      const visibleFallback = allElsFallback.find(isElementVisible);
+      if (visibleFallback) return visibleFallback;
+      if (allElsFallback.length > 0) return allElsFallback[0];
+    }
+
+    // 3. Fallback to standard getElementById
+    return document.getElementById(id);
+  };
 
   useEffect(() => {
     if (!headings || headings.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { rootMargin: "0px 0px -70% 0px" },
-    );
+    let observer: IntersectionObserver | null = null;
 
-    headings.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+    const observeElements = () => {
+      if (observer) observer.disconnect();
 
-    return () => observer.disconnect();
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) setActive(entry.target.id);
+          });
+        },
+        { rootMargin: "0px 0px -70% 0px" },
+      );
+
+      headings.forEach(({ id }) => {
+        const el = getTargetElement(id);
+        if (el) observer?.observe(el);
+      });
+    };
+
+    observeElements();
+    window.addEventListener("resize", observeElements);
+
+    return () => {
+      window.removeEventListener("resize", observeElements);
+      observer?.disconnect();
+    };
   }, [headings]);
 
   if (!headings || headings.length === 0) return null;
 
   const handleHeadingClick = (id: string) => {
-    const el = document.getElementById(id);
+    const el = getTargetElement(id);
     if (el) {
-      const yOffset = -90;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      // 80px accounts for top fixed navbar (64px) + breathing space
+      const yOffset = -80;
+      const elementTop = el.getBoundingClientRect().top;
+      const y = elementTop + window.pageYOffset + yOffset;
+      window.scrollTo({
+        top: Math.max(0, y),
+        behavior: "smooth",
+      });
+
+      if (typeof window !== "undefined" && window.history?.pushState) {
+        window.history.pushState(null, "", `#${id}`);
+      }
+      setActive(id);
     }
   };
 
@@ -56,6 +132,7 @@ export function TableOfContents({
 
   return (
     <nav
+      ref={navRef}
       aria-label="Table of contents"
       className="w-full rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05),0_2px_6px_-1px_rgba(15,23,42,0.03)] font-sans transition-all duration-200 hover:border-slate-300"
     >

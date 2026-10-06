@@ -14,6 +14,7 @@ import { blogs } from "@/data/blog-data";
 import { TableOfContents } from "@/components/blog-content/TableOfContents";
 import { RelatedPosts } from "@/components/blog-content/RealetedPost";
 import { BlogContent } from "@/components/blog-content/blog-content";
+import { BlogAudioPlayer } from "@/components/blog-content/BlogAudioPlayer";
 import { sanitizeAutoLinks } from "@/lib/utils";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 import { Footer } from "@/components/layout/footer";
@@ -317,6 +318,16 @@ export default async function BlogDetailsPage({
               <ShareSaveButtons />
             </div>
 
+            {/* Audio Version of the Blog Post */}
+            <div className="mb-6">
+              <BlogAudioPlayer
+                title={blog.title}
+                content={blog.content}
+                description={blog.description}
+                readTime={blog.readTime}
+              />
+            </div>
+
             {/* 3. Blog Lead / Excerpt */}
             {blog.description && !isDbBlog && (
               <p className="blog-lead">{blog.description}</p>
@@ -384,6 +395,16 @@ export default async function BlogDetailsPage({
           {/* 3. Blog Title Header */}
           <div className="mobile-title-block">
             <h1 className="mobile-blog-title">{blog.title}</h1>
+          </div>
+
+          {/* Audio Version of the Blog Post (Mobile) */}
+          <div className="my-2">
+            <BlogAudioPlayer
+              title={blog.title}
+              content={blog.content}
+              description={blog.description}
+              readTime={blog.readTime}
+            />
           </div>
 
           {/* 4. Table of Contents (Collapsible on Mobile) */}

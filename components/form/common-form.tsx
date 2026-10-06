@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,45 @@ const indianStates = [
   "Other",
 ];
 
+// ── UTM Helpers ─────────────────────────────────────────────────────────────
+
+const getUtmParams = () => {
+  if (typeof window === "undefined") {
+    return {
+      utm_source: "",
+      utm_medium: "",
+      utm_campaign: "",
+    };
+  }
+
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const sourceFromUrl = params.get("utm_source");
+    const mediumFromUrl = params.get("utm_medium");
+    const campaignFromUrl =
+      params.get("utm_campaign") || params.get("campaign_name");
+
+    if (sourceFromUrl) sessionStorage.setItem("utm_source", sourceFromUrl);
+    if (mediumFromUrl) sessionStorage.setItem("utm_medium", mediumFromUrl);
+    if (campaignFromUrl) sessionStorage.setItem("utm_campaign", campaignFromUrl);
+
+    return {
+      utm_source:
+        sourceFromUrl || sessionStorage.getItem("utm_source") || "",
+      utm_medium:
+        mediumFromUrl || sessionStorage.getItem("utm_medium") || "",
+      utm_campaign:
+        campaignFromUrl || sessionStorage.getItem("utm_campaign") || "",
+    };
+  } catch {
+    return {
+      utm_source: "",
+      utm_medium: "",
+      utm_campaign: "",
+    };
+  }
+};
+
 // ── ApplicationForm ───────────────────────────────────────────────────────────
 
 export function ApplicationForm({
@@ -108,6 +147,10 @@ export function ApplicationForm({
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    getUtmParams();
+  }, []);
 
   const [selectedCountry, setSelectedCountry] = useState(
     countryList.find((c) => c.code === "in")!,
@@ -185,6 +228,8 @@ export function ApplicationForm({
     setIsSubmitting(true);
 
     try {
+      const { utm_source, utm_medium, utm_campaign } = getUtmParams();
+
       const res = await fetch("/api/application", {
         method: "POST",
         headers: {
@@ -196,6 +241,10 @@ export function ApplicationForm({
           phone: formData.mobile,
           course: formData.course,
           state: formData.state,
+          utm_source,
+          utm_medium,
+          utm_campaign,
+          campaign_name: utm_campaign,
         }),
       });
 
@@ -214,6 +263,9 @@ export function ApplicationForm({
       leadFormData.append("state", formData.state);
       leadFormData.append("no_of_users", "0");
       leadFormData.append("source", "ECAMPUS NEW WB");
+      leadFormData.append("campaign_name", utm_campaign);
+      leadFormData.append("medium", utm_medium);
+      leadFormData.append("utm_source", utm_source);
 
       const response = await fetch(
         "https://bls.ecampuscrm.com/api/form/leads",

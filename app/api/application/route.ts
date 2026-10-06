@@ -3,7 +3,18 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, phone, course, state } = body;
+    const {
+      name,
+      email,
+      phone,
+      course,
+      state,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      campaign_name,
+    } = body;
+    const campaign = utm_campaign || campaign_name;
 
     // Pulling from .env.local
     const token = process.env.ZEPTO_TOKEN;
@@ -42,6 +53,9 @@ export async function POST(req: Request) {
 <tr><td style="padding: 8px 0;"><b>Phone:</b></td><td>${phone || "N/A"}</td></tr>
 <tr><td style="padding: 8px 0;"><b>Course:</b></td><td>${course || "N/A"}</td></tr>
 <tr><td style="padding: 8px 0;"><b>State:</b></td><td>${state || "N/A"}</td></tr>
+${utm_source ? `<tr><td style="padding: 8px 0;"><b>UTM Source:</b></td><td>${utm_source}</td></tr>` : ""}
+${utm_medium ? `<tr><td style="padding: 8px 0;"><b>UTM Medium:</b></td><td>${utm_medium}</td></tr>` : ""}
+${campaign ? `<tr><td style="padding: 8px 0;"><b>Campaign:</b></td><td>${campaign}</td></tr>` : ""}
 </table>
 </div>
 `,

@@ -89,7 +89,7 @@ function mapDbBlogToBlog(dbBlog: any) {
   const readTimeVal = Math.max(1, Math.ceil(wordCount / 200));
   const readTime = `${readTimeVal} min read`;
 
-  const imageSrc = dbBlog.imageUrl || "";
+  const imageSrc = dbBlog.imageUrl || "/blogs/top-career.png";
   const authorName = dbBlog.publisher || "eCampus Editorial Team";
 
   return {
@@ -269,19 +269,20 @@ export default async function BlogDetailsPage({
               <h1 className="blog-header-title">{blog.title}</h1>
             </header>
 
-            {/* 2. Featured Image (Widescreen Compact Banner) */}
+            {/* 2. Featured Image (Full Uncropped Display in Standard 16:9 Framing) */}
             {blog.imageSrc ? (
               <figure className="blog-feature-image">
                 <Image
                   src={blog.imageSrc}
                   alt={blog.title}
-                  width={900}
-                  height={360}
-                  sizes="860px"
+                  width={1200}
+                  height={675}
+                  sizes="(max-width: 1024px) 100vw, 860px"
                   style={{
                     width: "100%",
-                    height: "340px",
-                    objectFit: "cover",
+                    height: "auto",
+                    maxHeight: "520px",
+                    objectFit: "contain",
                     display: "block",
                     borderRadius: "16px",
                   }}
@@ -359,14 +360,19 @@ export default async function BlogDetailsPage({
         </nav>
 
         <article className="mobile-blog-wrapper">
-          {/* 1. Featured Image Banner */}
+          {/* 1. Featured Image Banner (Full Uncropped Display) */}
           {blog.imageSrc ? (
             <figure className="mobile-featured-image">
-              <img
-                src={blog.imageSrc}
-                alt={blog.title}
-                className="mobile-img-element"
-              />
+              <picture className="block w-full">
+                {blog.mobileImageSrc && (
+                  <source media="(max-width: 640px)" srcSet={blog.mobileImageSrc} />
+                )}
+                <img
+                  src={blog.imageSrc}
+                  alt={blog.title}
+                  className="mobile-img-element"
+                />
+              </picture>
             </figure>
           ) : null}
 
@@ -537,20 +543,24 @@ export default async function BlogDetailsPage({
 
         .blog-feature-image {
           width: 100%;
-          max-height: 340px;
-          margin: 0 0 16px;
+          margin: 0 0 20px;
           overflow: hidden;
           border-radius: 16px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
           background: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .blog-feature-image img {
           width: 100%;
-          height: 340px;
-          object-fit: cover;
+          height: auto;
+          max-height: 520px;
+          object-fit: contain;
           display: block;
+          border-radius: 16px;
         }
 
         /* Desktop Minimalist Metadata Bar */
@@ -640,20 +650,24 @@ export default async function BlogDetailsPage({
 
         .mobile-featured-image {
           width: 100%;
-          margin: 0;
+          margin: 0 0 10px;
           overflow: hidden;
           border-radius: 14px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
           background: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .mobile-img-element {
           width: 100%;
           height: auto;
-          max-height: 400px;
+          max-height: 420px;
           object-fit: contain;
           display: block;
+          border-radius: 14px;
         }
 
         /* Ultra-Compact Single-Line Mobile Author & Share Bar */

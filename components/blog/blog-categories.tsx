@@ -136,16 +136,16 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
                     href={`/blog/${cleanSlug}`}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 cursor-pointer"
                   >
-                    {/* Card Thumbnail */}
-                    <div className="h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
-                      <picture>
+                    {/* Card Thumbnail - Harmonized 16:9 Aspect Ratio */}
+                    <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100">
+                      <picture className="block h-full w-full">
                         {blog.mobileImageSrc && (
                           <source media="(max-width: 640px)" srcSet={blog.mobileImageSrc} />
                         )}
                         <img
                           src={blog.imageSrc}
                           alt={blog.title}
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                         />
                       </picture>
                     </div>

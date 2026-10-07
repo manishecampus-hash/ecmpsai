@@ -13,7 +13,7 @@ const COMPLETION_FIELDS: { label: string; filled: (s: StudentProfile) => boolean
   { label: "phone number", filled: (s) => !!s.phone?.trim() },
   { label: "state / location", filled: (s) => !!s.state?.trim() },
   { label: "interested program", filled: (s) => !!s.coursesInterested?.length },
-  { label: "career goal", filled: (s) => !!s.advisorProfile?.goal },
+  { label: "career goal", filled: (s) => !!(s.advisorProfile?.coursePreference || s.advisorProfile?.goal) },
 ];
 
 export function getProfileCompletion(student: StudentProfile) {

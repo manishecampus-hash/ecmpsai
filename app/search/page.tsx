@@ -29,29 +29,27 @@ import {
 import { SignupModal } from "@/components/layout/signup-modal";
 import { Footer } from "@/components/layout/footer";
 
-// ── Design tokens ─────────────────────────────────────────────
+// ── Design tokens (minimal, ChatGPT-style neutral theme) ──────
 const T = {
-  bg: "#fffafa",
-  // Soft red-to-white wash used behind the whole page
-  bgGradient:
-    "radial-gradient(1100px 420px at 50% -120px, rgba(254,202,202,0.55), rgba(255,255,255,0) 70%), linear-gradient(180deg, #fff5f5 0%, #ffffff 38%, #fffafa 100%)",
+  bg: "#ffffff",
+  bgGradient: "#ffffff",
   surface: "#ffffff",
-  border: "rgba(15,23,42,0.08)",
-  borderHov: "rgba(220,38,38,0.35)",
-  textPrim: "#0f172a",
-  textSec: "#475569",
-  textHint: "#94a3b8",
-  accent: "#dc2626", // eCampus brand red
-  accentDark: "#b91c1c",
-  accentLight: "#fef2f2",
-  accentGradient: "linear-gradient(135deg, #ef4444 0%, #dc2626 55%, #b91c1c 100%)",
-  green: "#16a34a",
-  greenLight: "#f0fdf4",
-  red: "#dc2626",
-  redLight: "#fef2f2",
-  btnGray: "#334155",
-  btnGrayBg: "#f8fafc",
-  cardShadow: "0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -12px rgba(220,38,38,0.12)",
+  border: "rgba(0,0,0,0.08)",
+  borderHov: "rgba(0,0,0,0.18)",
+  textPrim: "#0d0d0d",
+  textSec: "#5d5d5d",
+  textHint: "#8f8f8f",
+  accent: "#0d0d0d",
+  accentDark: "#000000",
+  accentLight: "#f4f4f4",
+  accentGradient: "#0d0d0d",
+  green: "#10a37f",
+  greenLight: "#ecfdf5",
+  red: "#5d5d5d",
+  redLight: "#f4f4f4",
+  btnGray: "#5d5d5d",
+  btnGrayBg: "#f4f4f4",
+  cardShadow: "none",
 };
 
 const CHIP_ICONS = [
@@ -113,7 +111,7 @@ function Skeleton() {
             width: `${w}%`,
             borderRadius: 8,
             background:
-              "linear-gradient(90deg,#fdf2f2 25%,#fde2e2 50%,#fdf2f2 75%)",
+              "linear-gradient(90deg,#f4f4f4 25%,#ebebeb 50%,#f4f4f4 75%)",
             backgroundSize: "200% 100%",
             animation: `shimmer 1.4s ease-in-out ${i * 0.1}s infinite`,
           }}
@@ -262,7 +260,7 @@ function FormattedAnswer({ text }: { text: string }) {
             <tr
               style={{ transition: "background 0.15s" }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#fff7f7")
+                (e.currentTarget.style.background = "#f9f9f9")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
@@ -342,7 +340,7 @@ function SourceCard({ source }: { source: any }) {
         textDecoration: "none",
         border: `1px solid ${hov ? T.borderHov : T.border}`,
         background: T.surface,
-        boxShadow: hov ? "0 4px 14px rgba(220,38,38,0.10)" : "none",
+        boxShadow: "none",
         transition: "border-color 0.15s, box-shadow 0.15s",
       }}
       onMouseEnter={() => setHov(true)}
@@ -679,6 +677,9 @@ function SearchPage() {
   const [answer, setAnswer] = useState("");
   const [isStreaming, setStreaming] = useState(false);
   const [isDone, setDone] = useState(false);
+  // "Is this answer helpful?" prompt above the composer
+  const [feedbackDismissed, setFeedbackDismissed] = useState(false);
+  const [feedbackThanks, setFeedbackThanks] = useState(false);
   const [showSrc, setShowSrc] = useState(false);
   const [liked, setLiked] = useState<boolean | null>(null);
   const [chips, setChips] = useState<string[]>([]);
@@ -739,6 +740,21 @@ function SearchPage() {
   const handleBack = () => {
     if (window.history.length > 1) router.back();
     else router.push("/");
+  };
+
+  // Each new question gets a fresh feedback prompt
+  useEffect(() => {
+    setFeedbackDismissed(false);
+    setFeedbackThanks(false);
+  }, [urlQuery]);
+
+  const voteFeedback = (value: boolean) => {
+    setLiked(value);
+    setFeedbackThanks(true);
+    setTimeout(() => {
+      setFeedbackThanks(false);
+      setFeedbackDismissed(true);
+    }, 2000);
   };
 
   async function runQuery(q: string) {
@@ -979,8 +995,8 @@ function SearchPage() {
         <div
           style={{
             marginTop: 12,
-            background: "linear-gradient(135deg,#fff1f2 0%,#fee2e2 100%)",
-            border: "1px solid rgba(220,38,38,0.16)",
+            background: "#f9f9f9",
+            border: `1px solid ${T.border}`,
             borderRadius: 18,
             padding: 18,
           }}
@@ -1022,7 +1038,7 @@ function SearchPage() {
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
-              boxShadow: "0 6px 16px -6px rgba(220,38,38,0.55)",
+              boxShadow: "none",
             }}
           >
             Signup
@@ -1132,36 +1148,20 @@ function SearchPage() {
             minHeight: isMobile ? "calc(100vh - 120px)" : "calc(100vh - 130px)",
           }}
         >
-          {/* ── The question being answered ── */}
+          {/* ── The question being answered (shown like the user's message bubble) ── */}
           {urlQuery && (
-            <div style={{ marginBottom: isMobile ? 14 : 18 }}>
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  color: T.accent,
-                  background: T.accentLight,
-                  border: "1px solid rgba(220,38,38,0.14)",
-                  padding: "4px 10px",
-                  borderRadius: 999,
-                }}
-              >
-                <Sparkles size={12} />
-                eCampus AI Search
-              </span>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: isMobile ? 18 : 26 }}>
               <h1
                 style={{
-                  margin: "10px 0 0",
-                  fontSize: isMobile ? 21 : 28,
-                  lineHeight: 1.25,
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
+                  margin: 0,
+                  maxWidth: "85%",
+                  background: "#f4f4f4",
                   color: T.textPrim,
+                  borderRadius: 22,
+                  padding: isMobile ? "10px 16px" : "12px 20px",
+                  fontSize: isMobile ? 15 : 16,
+                  lineHeight: 1.5,
+                  fontWeight: 400,
                   wordBreak: "break-word",
                 }}
               >
@@ -1173,12 +1173,9 @@ function SearchPage() {
           {/* ── AI Answer card ── */}
           <div
             style={{
-              background: T.surface,
-              border: `1px solid ${T.border}`,
-              borderRadius: 20,
-              padding: isMobile ? "16px 14px" : "22px 26px",
+              background: "transparent",
+              padding: isMobile ? "0 2px" : "0 4px",
               marginBottom: 16,
-              boxShadow: T.cardShadow,
             }}
           >
             {/* Card header */}
@@ -1197,7 +1194,7 @@ function SearchPage() {
                   height: 30,
                   borderRadius: "50%",
                   background: T.accentGradient,
-                  boxShadow: "0 4px 12px -4px rgba(220,38,38,0.6)",
+                  boxShadow: "none",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -1378,10 +1375,86 @@ function SearchPage() {
               marginTop: "auto",
               paddingTop: 28,
               paddingBottom: isMobile ? 14 : 22,
-              background:
-                "linear-gradient(180deg, rgba(255,250,250,0) 0%, rgba(255,250,250,0.94) 34%, #fffafa 62%)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 40%)",
             }}
           >
+            {/* "Is this answer helpful?" prompt — appears above the composer once an answer is done */}
+            {isDone && !feedbackDismissed && (liked === null || feedbackThanks) && (
+              <div
+                role="status"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  margin: "0 auto 10px",
+                  maxWidth: 520,
+                  background: "#ffffff",
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 16,
+                  padding: "8px 8px 8px 16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                  animation: "feedbackIn 0.25s ease-out",
+                }}
+              >
+                <span style={{ fontSize: 14, color: T.textPrim }}>
+                  {feedbackThanks ? "Thanks for your feedback!" : "Is this answer helpful?"}
+                </span>
+                {!feedbackThanks && (
+                  <span style={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    {[
+                      { label: "Helpful", icon: ThumbsUp, value: true },
+                      { label: "Not helpful", icon: ThumbsDown, value: false },
+                    ].map(({ label, icon: Icon, value }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        aria-label={label}
+                        onClick={() => voteFeedback(value)}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 10,
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: T.textSec,
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#f4f4f4")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                      >
+                        <Icon size={16} />
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      aria-label="Dismiss"
+                      onClick={() => setFeedbackDismissed(true)}
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 10,
+                        border: "none",
+                        background: "transparent",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: T.textHint,
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f4f4f4")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <X size={15} />
+                    </button>
+                  </span>
+                )}
+              </div>
+            )}
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -1393,41 +1466,27 @@ function SearchPage() {
               }}
               style={{
                 background: T.surface,
-                border: `1.5px solid ${fuFocused ? "rgba(220,38,38,0.45)" : "rgba(220,38,38,0.18)"}`,
-                borderRadius: 22,
-                padding: isMobile ? "8px 8px 8px 14px" : "10px 10px 10px 18px",
+                border: `1px solid ${fuFocused ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.1)"}`,
+                borderRadius: 999,
+                padding: "6px 6px 6px 18px",
+                maxWidth: 680,
+                margin: "0 auto",
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 8,
                 boxShadow: fuFocused
-                  ? "0 0 0 4px rgba(254,226,226,0.9), 0 18px 40px -18px rgba(220,38,38,0.45)"
-                  : "0 14px 36px -18px rgba(220,38,38,0.35), 0 2px 6px rgba(15,23,42,0.04)",
+                  ? "0 4px 24px rgba(0,0,0,0.08)"
+                  : "0 2px 12px rgba(0,0,0,0.05)",
                 transition: "border-color 0.2s, box-shadow 0.2s",
               }}
             >
-              <span
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 10,
-                  background: T.accentLight,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <Sparkles size={15} style={{ color: T.accent }} />
-              </span>
               <input
                 name="fu"
                 value={followUp}
                 onChange={(e) => setFollowUp(e.target.value)}
                 onFocus={() => setFuFocused(true)}
                 onBlur={() => setFuFocused(false)}
-                placeholder={
-                  isMobile ? "Ask eCampus AI anything…" : "Ask a follow-up about universities, fees, courses or careers…"
-                }
+                placeholder="Ask anything"
                 aria-label="Ask eCampus AI"
                 autoComplete="off"
                 style={{
@@ -1437,8 +1496,8 @@ function SearchPage() {
                   background: "transparent",
                   boxShadow: "none",
                   borderRadius: 0,
-                  padding: "8px 0",
-                  fontSize: isMobile ? 14 : 15,
+                  padding: "6px 0",
+                  fontSize: 15,
                   color: T.textPrim,
                   minWidth: 0,
                 }}
@@ -1448,26 +1507,26 @@ function SearchPage() {
                 disabled={!followUp.trim()}
                 aria-label="Send"
                 style={{
-                  width: isMobile ? 38 : 42,
-                  height: isMobile ? 38 : 42,
-                  borderRadius: 14,
-                  background: followUp.trim() ? T.accentGradient : "#f1f5f9",
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  background: followUp.trim() ? "#0d0d0d" : "#e5e5e5",
                   border: "none",
                   cursor: followUp.trim() ? "pointer" : "not-allowed",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
-                  boxShadow: followUp.trim() ? "0 8px 18px -8px rgba(220,38,38,0.7)" : "none",
+                  boxShadow: "none",
                   transition: "background 0.2s, box-shadow 0.2s, transform 0.1s",
                 }}
               >
-                <ArrowUp size={17} color={followUp.trim() ? "#fff" : T.textHint} strokeWidth={2.5} />
+                <ArrowUp size={16} color="#ffffff" strokeWidth={2.5} />
               </button>
             </form>
             <p
               style={{
-                margin: "8px 0 0",
+                margin: "6px 0 0",
                 textAlign: "center",
                 fontSize: 11,
                 color: T.textHint,
@@ -1489,6 +1548,7 @@ function SearchPage() {
 
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes feedbackIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
         @keyframes spin   { to{transform:rotate(360deg)} }
       `}</style>
 
@@ -1509,7 +1569,7 @@ export default function SearchResultsPage() {
         <div
           style={{
             minHeight: "100vh",
-            background: "#fffafa",
+            background: "#ffffff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

@@ -21,7 +21,7 @@ import {
 const navItems = [
   { id: "overview", label: "Overview", icon: LayoutGrid, href: "/dashboard" },
   { id: "matcher", label: "AI Degree Matcher", icon: Compass, href: "/dashboard/matcher" },
-  { id: "counselor", label: "AI Counselor Sara", icon: MessageCircle, live: true },
+  { id: "counselor", label: "AI Counselor Sara", icon: MessageCircle, href: "/dashboard/counselor", live: true },
   { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
   { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];
@@ -71,6 +71,9 @@ function SidebarContent() {
               <Link key={item.id} href={item.href} className={className}>
                 <Icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
                 <span className="flex-1 truncate">{item.label}</span>
+                {item.live && (
+                  <span className="h-2 w-2 flex-shrink-0 rounded-full bg-green-500" />
+                )}
               </Link>
             );
           }

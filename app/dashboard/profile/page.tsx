@@ -6,6 +6,7 @@ import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import type { StudentProfile } from "../types";
 import ProfileProgress from "../components/profile-progress";
+import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
   EASE_OUT,
@@ -32,6 +33,8 @@ import {
   CheckCircle2,
   Sparkles,
   Settings,
+  GraduationCap,
+  Award,
 } from "lucide-react";
 
 function SectionCard({
@@ -56,6 +59,18 @@ function SectionCard({
     </motion.div>
   );
 }
+
+// Icon per answer row on the "Academic & Career Goals" card
+const ADVISOR_ROW_ICONS: Record<string, typeof Target> = {
+  qualification: GraduationCap,
+  course: Layers,
+  budget: IndianRupee,
+  salary: Wallet,
+  category: Award,
+  goal: Target,
+  focus: Compass,
+  format: Layers,
+};
 
 export default function ProfilePage() {
   const [student, setStudent] = useState<StudentProfile>({});
@@ -418,15 +433,10 @@ export default function ProfilePage() {
                 title="Academic & Career Goals"
                 description="Captured from your AI Advisor questionnaire — powers your course matches."
               >
-                {student.advisorProfile ? (
+                {describeAdvisorProfile(student.advisorProfile).length > 0 ? (
                   <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                    {[
-                      { icon: Target, label: "Primary Goal", value: student.advisorProfile.goal },
-                      { icon: Compass, label: "Focus Area", value: student.advisorProfile.focusArea },
-                      { icon: Layers, label: "Preferred Format", value: student.advisorProfile.format },
-                      { icon: IndianRupee, label: "Budget Range", value: student.advisorProfile.budget },
-                    ]
-                      .filter((row) => row.value)
+                    {describeAdvisorProfile(student.advisorProfile)
+                      .map((row) => ({ ...row, icon: ADVISOR_ROW_ICONS[row.key] ?? Target }))
                       .map((row) => (
                         <div
                           key={row.label}

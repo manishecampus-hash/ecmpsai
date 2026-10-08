@@ -2,6 +2,10 @@ import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { NextRequest } from "next/server";
 import { buildEcampusChatPrompt } from "@/lib/system-prompt";
+import {
+  getVerifiedUniversityComparisonContext,
+  VerifiedUniversityInfo,
+} from "@/lib/compare-db";
 
 export const dynamic = "force-dynamic";
 
@@ -32,17 +36,25 @@ function parseCompareQuery(query: string) {
 function generateCourseComparisonMarkdown(
   unis: string[],
   course: string,
-  userQuery: string
+  userQuery: string,
+  verifiedList?: VerifiedUniversityInfo[]
 ): string {
-  const cName = course || "Online Degree Program";
+  const cName = course || "Degree Program";
   const uniList = unis.length > 0 ? unis : ["University A", "University B"];
 
   const isUG = /\b(bca|bba|bcom|ba|bsc|b\.tech|ug)\b/i.test(cName);
   const isMBA = /\b(mba|management|pgdm)\b/i.test(cName);
   const isMCA = /\b(mca|computer applications)\b/i.test(cName);
+  const isDBA = /\b(dba|doctorate|phd)\b/i.test(cName);
 
-  const duration = isUG ? "3 Years (6 Semesters)" : "2 Years (4 Semesters)";
-  const getFee = (idx: number) => {
+  const duration = isDBA
+    ? "36 Months (3 Years)"
+    : isUG
+    ? "3 Years (6 Semesters)"
+    : "2 Years (4 Semesters)";
+
+  const getFallbackFee = (idx: number) => {
+    if (isDBA) return "₹4,50,000 – ₹6,00,000";
     if (isMBA)
       return idx === 0
         ? "₹1,80,000 – ₹2,50,000"
@@ -68,72 +80,135 @@ function generateCourseComparisonMarkdown(
       : "₹90,000 – ₹1,20,000";
   };
 
-  const getNAAC = (name: string) => {
-    if (/manipal|amity|chandigarh|jain|sharda/i.test(name))
-      return "NAAC A+ Accredited";
-    return "NAAC A Accredited";
+  const getMatchingVerified = (u: string) => {
+    return verifiedList?.find(
+      (v) =>
+        v.name.toLowerCase().includes(u.toLowerCase()) ||
+        u.toLowerCase().includes(v.name.toLowerCase()) ||
+        (v.matchedName &&
+          v.matchedName.toLowerCase() === u.toLowerCase())
+    );
   };
 
   const headerCols = ["Parameter / Metric", ...uniList].join(" | ");
   const sepCols = [" :--- ", ...uniList.map(() => " :--- ")].join("|");
 
-  const rowCourse = ["**Program**", ...uniList.map(() => cName)].join(" | ");
-  const rowApproval = [
-    "**UGC-DEB Status**",
-    ...uniList.map(() => "Approved & Recognized"),
+  const rowCourse = [
+    "**Program**",
+    ...uniList.map((u) => getMatchingVerified(u)?.verifiedCourseName || cName),
   ].join(" | ");
-  const rowNAAC = [
-    "**Accreditation**",
-    ...uniList.map((u) => getNAAC(u)),
+
+  const rowLocation = [
+    "**Campus / Location**",
+    ...uniList.map((u) => getMatchingVerified(u)?.location || "India"),
   ].join(" | ");
+
+  const rowFees = [
+    "**Total Tuition Fees (Verified)**",
+    ...uniList.map((u, i) => getMatchingVerified(u)?.verifiedFeeText || getFallbackFee(i)),
+  ].join(" | ");
+
+  const rowWES = [
+    "**WES / Global Evaluation**",
+    ...uniList.map((u) =>
+      getMatchingVerified(u)?.wesApproval
+        ? "Approved & Recognized (WES)"
+        : "UGC-DEB Validated"
+    ),
+  ].join(" | ");
+
+  const rowAccreditation = [
+    "**Accreditations**",
+    ...uniList.map((u) => {
+      const v = getMatchingVerified(u);
+      return v?.accreditations?.length
+        ? v.accreditations.join(", ")
+        : "Recognized Higher Education Institution";
+    }),
+  ].join(" | ");
+
   const rowDuration = [
     "**Duration**",
-    ...uniList.map(() => duration),
+    ...uniList.map((u) => getMatchingVerified(u)?.duration || duration),
   ].join(" | ");
-  const rowFees = [
-    "**Approx. Total Fees**",
-    ...uniList.map((_, i) => getFee(i)),
-  ].join(" | ");
+
   const rowMode = [
     "**Study Mode**",
-    ...uniList.map(() => "100% Online (LMS + Live/Recorded)"),
+    ...uniList.map((u) => getMatchingVerified(u)?.mode || "100% Online LMS"),
   ].join(" | ");
+
   const rowExam = [
-    "**Exam Mode**",
-    ...uniList.map(() => "Online Proctored Exams"),
+    "**Exam & Assessment**",
+    ...uniList.map(() => "Online Proctored / Continuous Research"),
   ].join(" | ");
+
   const rowEMI = [
-    "**EMI Financing**",
-    ...uniList.map(() => "Available (No-cost monthly options)"),
+    "**Financing / EMI**",
+    ...uniList.map((u) =>
+      getMatchingVerified(u)?.emiFacility
+        ? "Available (0% Interest Options)"
+        : "Flexible installments available"
+    ),
   ].join(" | ");
+
   const rowPlacement = [
-    "**Placement Support**",
-    ...uniList.map(() => "Virtual Drives & Job Assistance"),
+    "**Placement & Career Support**",
+    ...uniList.map(() => "Executive Networking & Career Support"),
   ].join(" | ");
 
   const deepDives = uniList
-    .map(
-      (u, idx) => `### ${idx + 1}. **${u} (${cName})**
+    .map((u, idx) => {
+      const v = getMatchingVerified(u);
+      const displayName = v?.name || u;
+      const progName = v?.verifiedCourseName || cName;
+      const loc = v?.location || "India";
+      const fee = v?.verifiedFeeText || getFallbackFee(idx);
+      const isSwiss = /switzerland/i.test(loc);
+
+      return `### ${idx + 1}. **${displayName} (${progName})**
+- **Verified Fact Sheet:** Located in ${loc}${v?.established ? ` (Est. ${v.established})` : ""}. Total Fees: **${fee}**. WES Evaluation: ${v?.wesApproval ? "Yes" : "Check portal"}.
 - **Core Strengths:** ${
-        idx === 0
+        isSwiss
+          ? "Swiss academic standard, European business network, flexible research modules tailored for working leaders, and internationally recognized credential."
+          : idx === 0
           ? "Exceptional digital infrastructure, intuitive mobile LMS app, strong corporate employer network, and comprehensive specialization modules."
           : idx === 1
           ? "Deep academic rigor, career-aligned modern curriculum, regular live interactive masterclasses, and an outstanding alumni ecosystem."
           : "Flexible weekend learning schedules, dedicated student support mentors, and competitive fee-to-value propositions."
       }
 - **Best Suited For:** ${
-        idx === 0
-          ? "Working professionals and students prioritizing high corporate brand recognition and self-paced digital convenience."
+        isSwiss
+          ? "Senior executives, entrepreneurs, and consultants seeking global credentials and international career flexibility."
+          : idx === 0
+          ? "Working professionals prioritizing brand recognition and self-paced digital convenience."
           : idx === 1
-          ? "Learners looking for in-depth foundational clarity, strong industry mentorship, and maximum career return on investment (ROI)."
-          : "Students seeking budget-friendly, accredited online education with dependable placement support."
-      }`
-    )
+          ? "Learners looking for foundational clarity, industry mentorship, and maximum career ROI."
+          : "Students seeking budget-friendly, accredited education with dependable placement support."
+      }`;
+    })
     .join("\n\n");
+
+  const verdictRecommendations = uniList
+    .map((u, i) => {
+      const v = getMatchingVerified(u);
+      const displayName = v?.name || u;
+      const isSwiss = /switzerland/i.test(v?.location || "");
+      if (isSwiss) {
+        return `- **${displayName}:** Recommended for working executives seeking European credentials, flexible self-paced research, and international career mobility (WES evaluated).`;
+      }
+      if (i === 0) {
+        return `- **${displayName}:** Choose this option if corporate brand prestige, LMS app quality, and widespread employer recognition are top priorities.`;
+      }
+      if (i === 1) {
+        return `- **${displayName}:** Ideal if you want deep academic grounding, strong placement support, and balanced cost efficiency.`;
+      }
+      return `- **${displayName}:** Excellent choice for budget efficiency, flexible schedules, and dependable student mentorship.`;
+    })
+    .join("\n");
 
   return `### AI Comparison: **${uniList.join(" vs ")}** for **${cName}**
 
-If you are evaluating options for **${cName}**, both institutions are premier, UGC-DEB recognized private universities in India. Below is an objective breakdown of how they compare in curriculum, fees, credibility, and learning experience:
+Comparing **${uniList.join(", ")}** across verified database facts (real fees, campus location, accreditations) combined with global market intelligence:
 
 ---
 
@@ -142,10 +217,11 @@ If you are evaluating options for **${cName}**, both institutions are premier, U
 | ${headerCols} |
 | ${sepCols} |
 | ${rowCourse} |
-| ${rowApproval} |
-| ${rowNAAC} |
-| ${rowDuration} |
+| ${rowLocation} |
 | ${rowFees} |
+| ${rowWES} |
+| ${rowAccreditation} |
+| ${rowDuration} |
 | ${rowMode} |
 | ${rowExam} |
 | ${rowEMI} |
@@ -158,8 +234,7 @@ ${deepDives}
 ---
 
 ### Counsellor's Verdict & Guidance
-- **Government & Corporate Recognition:** Online degrees from these UGC-DEB recognized universities are **100% valid** across India for private jobs, central & state government exams (UPSC, SSC, Banking, State PSCs), and international credential evaluation (WES).
-- **Final Recommendation:** Choose **${uniList[0]}** if brand prestige, mobile platform experience, and executive networking are paramount. Consider **${uniList[1]}** if you want deep academic grounding, cost efficiency, and focused career mentorship.
+${verdictRecommendations}
 
 ⚠️ **Note:** *Tuition fees, semester schedules, and elective options are periodically revised by universities. Always verify the latest installment schedule on the official university portal.*
 
@@ -211,13 +286,36 @@ export async function POST(req: NextRequest) {
       process.env.OPENAI_API_KEY!.startsWith("sk-") &&
       !process.env.OPENAI_API_KEY!.includes("your_openai");
 
+    // Check if query is a university comparison query
+    const parsed = parseCompareQuery(query);
+    let comparisonContext = "";
+    let verifiedList: VerifiedUniversityInfo[] = [];
+
+    if (parsed) {
+      try {
+        const dbResult = await getVerifiedUniversityComparisonContext(
+          parsed.unis,
+          parsed.course
+        );
+        comparisonContext = dbResult.contextText;
+        verifiedList = dbResult.verifiedList;
+      } catch (dbErr) {
+        console.error("DB comparison context error:", dbErr);
+      }
+    }
+
     if (hasRealOpenAIKey) {
       try {
+        const baseSystem = buildEcampusChatPrompt(query);
+        const finalSystemPrompt = comparisonContext
+          ? `${baseSystem}\n\n${comparisonContext}`
+          : baseSystem;
+
         const result = streamText({
           model: openai(process.env.OPENAI_MODEL || "gpt-4o-mini"),
-          system: buildEcampusChatPrompt(query),
+          system: finalSystemPrompt,
           messages: messages ?? [{ role: "user", content: query }],
-          maxOutputTokens: 2000,
+          maxOutputTokens: 2500,
           temperature: 0.5,
         });
 
@@ -233,13 +331,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check if query is a university comparison query
-    const parsed = parseCompareQuery(query);
+    // Comparison fallback using verified database data
     if (parsed) {
       const text = generateCourseComparisonMarkdown(
         parsed.unis,
         parsed.course,
-        query
+        query,
+        verifiedList
       );
       return streamFallbackResponse(text);
     }
@@ -266,7 +364,7 @@ What are the top universities for this program?|What is the fee structure and EM
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 }

@@ -199,15 +199,13 @@ export default function MbaAdmissionProcedure({ data, title }: MbaAdmissionProce
           href={roiUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 px-5 py-4 transition-colors hover:bg-red-50 mb-6"
+          className="group mb-6 flex items-center gap-3 rounded-2xl border border-red-100 bg-white px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
         >
-          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-500 text-white">
-            <Calculator className="h-4 w-4" strokeWidth={2} />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-white shadow-sm shadow-red-500/30">
+            <Calculator className="h-5 w-5" strokeWidth={2} />
           </span>
-          <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
-            {roiText}
-            <ArrowUpRight className="ml-1 inline h-4 w-4 text-red-500" />
-          </p>
+          <p className="flex-1 text-sm leading-relaxed text-slate-700 sm:text-base">{roiText}</p>
+          <ArrowUpRight className="h-5 w-5 shrink-0 text-[#ee2c3c] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       ) : null}
 
@@ -220,41 +218,50 @@ export default function MbaAdmissionProcedure({ data, title }: MbaAdmissionProce
 
       {/* Steps panel - render only if steps are configured */}
       {steps.length > 0 ? (
-        <div className="mt-6 rounded-3xl border border-slate-200 bg-white shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] overflow-hidden max-w-4xl">
-          {steps.map((step, i) => {
-            const stepNumber = String(i + 1).padStart(2, "0");
+        <div
+          className="relative mt-6 overflow-hidden rounded-3xl border border-red-100 bg-red-50/50 p-4 sm:p-6"
+          style={{
+            backgroundImage: "radial-gradient(rgba(238,44,60,0.12) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }}
+        >
+          <ol className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {steps.map((step, i) => {
+              const stepNumber = String(i + 1).padStart(2, "0");
 
-            return (
-              <div
-                key={step.id || i}
-                className={`group flex flex-col sm:flex-row gap-4 sm:gap-6 px-5 py-6 sm:px-8 transition-colors hover:bg-red-50/40 ${
-                  i !== steps.length - 1 ? "border-b border-slate-100" : ""
-                }`}
-              >
-                <div className="flex shrink-0 items-center gap-4 sm:flex-col sm:items-start sm:gap-2">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-105">
-                    <SafeIcon iconName={step.icon} index={i} className="h-5 w-5" strokeWidth={2} />
-                  </span>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-red-500">
+              return (
+                <li
+                  key={step.id || i}
+                  className="group flex flex-col rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_18px_40px_-20px_rgba(238,44,60,0.4)] sm:p-6"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    {/* Step number box */}
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-lg font-extrabold tabular-nums text-white shadow-md shadow-red-500/30 transition-transform duration-300 group-hover:scale-105">
+                      {stepNumber}
+                    </span>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+                      <SafeIcon iconName={step.icon} index={i} className="h-5 w-5" strokeWidth={2} />
+                    </span>
+                  </div>
+
+                  <span className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#ee2c3c]">
                     STEP {stepNumber}
                   </span>
-                </div>
 
-                <div className="flex-1 sm:border-l sm:border-slate-100 sm:pl-6">
                   {step.title ? (
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                    <h3 className="mt-1 text-base font-bold leading-snug text-slate-900 sm:text-lg">
                       {step.title}
                     </h3>
                   ) : null}
                   {step.description ? (
-                    <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-base">
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
                       {step.description}
                     </p>
                   ) : null}
-                </div>
-              </div>
-            );
-          })}
+                </li>
+              );
+            })}
+          </ol>
         </div>
       ) : null}
     </section>

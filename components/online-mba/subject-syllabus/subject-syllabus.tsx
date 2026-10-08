@@ -155,12 +155,13 @@ export default function SubjectSyllabus({ data, title }: SubjectSyllabusProps) {
 
       {/* Syllabus panel - render only if semesters exist */}
       {semesters.length > 0 ? (
-        <div className="mx-auto max-w-4xl rounded-xl border border-slate-200 overflow-hidden bg-slate-200 shadow-sm">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-slate-50/70 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_50px_-30px_rgba(15,23,42,0.25)]">
           {tableHeading ? (
-            <div className="bg-slate-900 px-6 py-4">
+            <div className="flex items-center justify-center gap-2.5 border-b border-slate-200 bg-white px-6 py-4">
+              <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-[#ee2c3c]" />
               <h3
-                className="text-center text-sm font-bold text-white sm:text-base tracking-wide"
-                style={{ color: "#ffffff" }}
+                className="text-center text-sm font-bold tracking-wide text-slate-900 sm:text-base"
+                style={{ color: "#0f172a" }}
               >
                 {stripAsterisks(tableHeading)}
               </h3>
@@ -168,61 +169,71 @@ export default function SubjectSyllabus({ data, title }: SubjectSyllabusProps) {
           ) : null}
 
           <div
-            className={`grid grid-cols-1 ${
+            className={`grid grid-cols-1 gap-4 p-4 sm:p-6 ${
               semesters.length > 1 ? "md:grid-cols-2" : ""
-            } gap-px bg-slate-200`}
+            }`}
           >
             {semesters.map((sem, idx) => (
               <div
                 key={idx}
-                className={`bg-white flex flex-col ${
+                className={`flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors duration-300 hover:border-red-200 ${
                   semesters.length > 1 && semesters.length % 2 === 1 && idx === semesters.length - 1
                     ? "md:col-span-2"
                     : ""
                 }`}
               >
                 {/* Semester Title */}
-                <div className="bg-slate-100 px-6 py-3 border-b border-slate-200">
-                  <h4 className="text-center text-sm font-bold text-slate-900 sm:text-base">
+                <div className="flex items-center gap-3 border-b border-slate-100 bg-slate-50/60 px-5 py-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-sm font-extrabold tabular-nums text-white shadow-md shadow-red-500/25">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <h4 className="text-base font-bold text-slate-900 sm:text-lg">
                     {sem.title}
                   </h4>
                 </div>
 
                 {/* Subjects & Optional Electives */}
-                <div className="p-6 flex-1 flex flex-col justify-between">
+                <div className="flex flex-1 flex-col justify-between p-5">
                   <div>
                     {sem.electives.length > 0 && sem.subjects.length > 0 ? (
-                      <p className="mb-3 text-sm font-bold text-slate-900">Core Subjects</p>
+                      <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Core Subjects</p>
                     ) : null}
 
                     {sem.subjects.length > 0 ? (
-                      <ul className="space-y-3.5">
-                        {sem.subjects.map((item, sIdx) => (
-                          <li key={sIdx} className="flex items-start gap-3">
-                            <CheckBubble />
-                            <span className="text-sm font-medium text-slate-700 sm:text-base">
-                              {item}
-                            </span>
-                          </li>
-                        ))}
+                      <ul className="space-y-2.5">
+                        {sem.subjects.map((item, sIdx) =>
+                          isGroupLabel(item) ? (
+                            <li key={sIdx} className="flex items-center gap-2 pt-2 first:pt-0">
+                              <span className="text-[13px] font-bold text-[#ee2c3c]">{item}</span>
+                              <span aria-hidden className="h-px flex-1 bg-red-100" />
+                            </li>
+                          ) : (
+                            <li key={sIdx} className="flex items-start gap-3">
+                              <CheckBubble />
+                              <span className="text-sm font-medium leading-snug text-slate-700 sm:text-[15px]">
+                                {item}
+                              </span>
+                            </li>
+                          )
+                        )}
                       </ul>
                     ) : null}
                   </div>
 
                   {/* Electives - Render ONLY when configured and non-empty */}
                   {sem.electives.length > 0 ? (
-                    <div className="mt-6 pt-5 border-t border-slate-200">
+                    <div className="mt-5 rounded-xl border border-dashed border-red-200 bg-red-50/40 p-4">
                       <p className="mb-1 text-sm font-bold text-slate-900">
                         Electives / Specialization Subjects:
                       </p>
                       <p className="mb-3 text-xs text-slate-500">
                         {sem.electives.length} {sem.electives.length === 1 ? "elective subject" : "elective subjects"} available:
                       </p>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2.5">
                         {sem.electives.map((el, eIdx) => (
                           <li key={eIdx} className="flex items-start gap-3">
                             <CheckBubble />
-                            <span className="text-sm font-medium text-slate-700 sm:text-base">
+                            <span className="text-sm font-medium leading-snug text-slate-700 sm:text-[15px]">
                               {el}
                             </span>
                           </li>
@@ -237,7 +248,7 @@ export default function SubjectSyllabus({ data, title }: SubjectSyllabusProps) {
 
           {/* Optional Bottom Bar - only if custom text configured */}
           {data?.bottomBarText ? (
-            <div className="border-t border-slate-200 bg-slate-100 px-6 py-4">
+            <div className="border-t border-slate-200 bg-white px-6 py-4">
               <h3 className="text-center text-sm font-bold text-slate-900 sm:text-base">
                 {data.bottomBarText}
               </h3>
@@ -249,14 +260,19 @@ export default function SubjectSyllabus({ data, title }: SubjectSyllabusProps) {
   );
 }
 
+// Lines such as "(Economics)" group the subjects that follow them
+function isGroupLabel(item: string) {
+  return /^\(.+\)$/.test(item.trim());
+}
+
 function CheckBubble() {
   return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

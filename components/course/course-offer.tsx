@@ -86,52 +86,44 @@ export default function CourseOffer({ data }: { data?: any }) {
         </div>
 
         {categories && Array.isArray(categories) && categories.length > 0 && (
-          <div className="mt-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white">
-            {cardTitle && (
-              <div className="bg-[#ee2c3c] px-6 py-4">
-                <h3 className="text-sm font-bold text-white text-center">
-                  {cardTitle}
-                </h3>
-              </div>
-            )}
+          <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
+            {cardTitle && <TableCaption>{cardTitle}</TableCaption>}
 
-            {categories.map((cat: any, i: number) => {
-              const catName = cat.name || cat.title || cat.heading;
-              const catItems: string[] = Array.isArray(cat.items)
-                ? cat.items
-                : Array.isArray(cat.points)
-                ? cat.points
-                : [];
+            <div className="divide-y divide-slate-100">
+              {categories.map((cat: any, i: number) => {
+                const catName = cat.name || cat.title || cat.heading;
+                const catItems: string[] = Array.isArray(cat.items)
+                  ? cat.items
+                  : Array.isArray(cat.points)
+                  ? cat.points
+                  : [];
 
-              return (
-                <div
-                  key={i}
-                  className={`grid md:grid-cols-[220px_1fr] gap-4 md:gap-0 px-6 py-5 ${
-                    i % 2 === 0 ? "bg-red-50/40" : "bg-white"
-                  } ${
-                    i !== categories.length - 1
-                      ? "border-b border-slate-100"
-                      : ""
-                  }`}
-                >
-                  <span className="text-sm font-bold text-slate-900 self-start">
-                    {catName}
-                  </span>
+                return (
+                  <div
+                    key={i}
+                    className="group grid gap-4 px-5 py-5 transition-colors hover:bg-red-50/40 sm:px-7 md:grid-cols-[240px_1fr] md:gap-0"
+                  >
+                    <div className="flex items-start gap-3 md:pr-6">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="pt-1 text-sm font-bold leading-snug text-slate-900 sm:text-base">
+                        {catName}
+                      </span>
+                    </div>
 
-                  <ul className="md:pl-6 md:border-l border-slate-100 space-y-3">
-                    {catItems.map((item: string, j: number) => (
-                      <li key={j} className="flex items-start gap-2.5">
-                        <CheckBubble />
-
-                        <span className="text-sm text-slate-600 leading-relaxed">
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+                    <ul className="grid gap-x-6 gap-y-2.5 sm:grid-cols-2 md:border-l md:border-slate-100 md:pl-7">
+                      {catItems.map((item: string, j: number) => (
+                        <li key={j} className="flex items-start gap-2.5">
+                          <CheckBubble />
+                          <span className="text-sm leading-relaxed text-slate-600">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -141,16 +133,25 @@ export default function CourseOffer({ data }: { data?: any }) {
 
 function CheckBubble() {
   return (
-    <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
     </span>
+  );
+}
+
+function TableCaption({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-7">
+      <span className="h-5 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
+      <h3 className="text-sm font-semibold leading-snug text-slate-800 sm:text-base">{children}</h3>
+    </div>
   );
 }

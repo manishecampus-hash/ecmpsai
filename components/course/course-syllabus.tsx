@@ -70,7 +70,7 @@ export default function CourseSyllabus({ data }: { data?: any }) {
         <div className="space-y-6">
           {/* Segment 1: Programme Structure Journey */}
           {showSegment1 && (
-            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/40 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-8">
               {(journeyBadge || journeyTitle || journeySubtitle) && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between border-b border-slate-100 pb-5">
                   <div>
@@ -95,27 +95,34 @@ export default function CourseSyllabus({ data }: { data?: any }) {
               )}
 
               {semesters.length > 0 && (
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {semesters.map((sem, idx) => (
                     <div
                       key={idx}
-                      className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5 flex flex-col justify-between transition-all duration-300 hover:border-red-200 hover:bg-white hover:shadow-md min-h-[190px]"
+                      className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_18px_40px_-20px_rgba(238,44,60,0.4)]"
                     >
-                      <div>
-                        <span className="text-3xl font-extrabold text-[#ee2c3c]/25 block mb-2 font-mono">
+                      {/* large faint number watermark */}
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute -bottom-6 -right-1 select-none text-8xl font-black leading-none text-slate-50 transition-colors duration-300 group-hover:text-red-50"
+                      >
+                        {sem.number}
+                      </span>
+
+                      <div className="relative flex items-center gap-3">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-sm font-extrabold tabular-nums text-white shadow-md shadow-red-500/25">
                           {sem.number}
                         </span>
-
-                        <h4 className="text-base font-bold text-slate-900 mb-2">
+                        <h4 className="text-base font-bold text-slate-900 sm:text-lg">
                           {sem.title}
                         </h4>
+                      </div>
 
-                        <p className="text-xs sm:text-sm leading-relaxed text-slate-500 font-normal">
+                      <div className="relative mt-4 border-t border-dashed border-slate-200 pt-4">
+                        <p className="text-sm font-normal leading-relaxed text-slate-600">
                           {sem.text}
                         </p>
                       </div>
-
-                      <div className="mt-4 h-[3px] w-6 rounded-full bg-[#ee2c3c] transition-all duration-300 group-hover:w-10" />
                     </div>
                   ))}
                 </div>
@@ -125,12 +132,12 @@ export default function CourseSyllabus({ data }: { data?: any }) {
 
           {/* Segment 2: Core Subjects Covered */}
           {showSegment2 && (
-            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
               {/* Card Header */}
               {(coreSubLabel || coreTitle || coreBadge) && (
-                <div className="border-b border-slate-100 bg-white px-6 py-5 sm:px-8 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8">
                   <div className="flex items-center gap-3.5">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-white shadow-xs">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-white shadow-md shadow-red-500/25">
                       <TargetIcon />
                     </span>
 
@@ -159,19 +166,24 @@ export default function CourseSyllabus({ data }: { data?: any }) {
               {/* Card Content */}
               <div className="p-6 sm:p-8">
                 {coreDescription && (
-                  <p className="text-xs sm:text-sm leading-relaxed text-slate-600 mb-6 max-w-4xl font-normal">
+                  <p className="mb-6 max-w-4xl text-sm font-normal leading-relaxed text-slate-600">
                     {coreDescription}
                   </p>
                 )}
 
                 {coreSubjects.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {coreSubjects.map((subject, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <span className="flex h-4 w-4 shrink-0 items-center justify-center text-xs font-bold text-red-400">
-                          ✓
+                      <div
+                        key={idx}
+                        className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-3 transition-colors hover:border-red-200 hover:bg-red-50/40"
+                      >
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
                         </span>
-                        <span className="text-xs sm:text-sm font-semibold text-slate-800">
+                        <span className="text-sm font-semibold leading-snug text-slate-800">
                           {subject}
                         </span>
                       </div>
@@ -184,8 +196,8 @@ export default function CourseSyllabus({ data }: { data?: any }) {
 
           {/* Optional Note */}
           {note && (
-            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-xs sm:text-sm text-slate-600 font-medium">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white mt-0.5">
+            <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-sm font-medium text-amber-900">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-bold text-white">
                 i
               </span>
               <div dangerouslySetInnerHTML={{ __html: note }} />

@@ -75,18 +75,24 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
           )}
         </div>
 
-        {/* Clean Comparison Matrix */}
+        {/* Comparison table */}
         {rows && Array.isArray(rows) && rows.length > 0 && (
-          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
+          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[180px_1fr_1fr] bg-slate-900 text-white font-semibold text-sm">
-              <div className="px-6 py-4 flex items-center text-slate-300">Factor</div>
-              <div className="px-6 py-4 flex items-center gap-2 bg-[#ee2c3c] text-white">
-                <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+            <div className="hidden grid-cols-[200px_1fr_1fr] border-b border-slate-200 bg-slate-50 md:grid">
+              <div className="flex items-center px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Factor
+              </div>
+              <div className="flex items-center gap-2 border-l border-red-100 bg-red-50/60 px-6 py-4 text-sm font-bold text-[#ee2c3c]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#ee2c3c] text-white">
+                  <CheckIcon />
+                </span>
                 Online Degree
               </div>
-              <div className="px-6 py-4 flex items-center gap-2 bg-slate-800 text-slate-200">
-                <span className="h-2 w-2 rounded-full bg-slate-400" />
+              <div className="flex items-center gap-2 border-l border-slate-200 px-6 py-4 text-sm font-bold text-slate-700">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-slate-500">
+                  <DotIcon />
+                </span>
                 Regular On-Campus Degree
               </div>
             </div>
@@ -101,42 +107,41 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
                 return (
                   <div
                     key={i}
-                    className={`grid md:grid-cols-[180px_1fr_1fr] gap-3 md:gap-0 p-5 md:p-0 ${i % 2 === 0 ? "bg-slate-50/50" : "bg-white"
-                      } hover:bg-slate-50 transition-colors`}
+                    className="group grid gap-3 p-5 transition-colors hover:bg-slate-50/80 md:grid-cols-[200px_1fr_1fr] md:gap-0 md:p-0"
                   >
                     {/* Factor Label */}
-                    <div className="md:px-6 md:py-4 flex items-center font-bold text-slate-900 text-sm md:text-base border-b md:border-b-0 border-slate-100 pb-2 md:pb-0">
-                      <span className="inline-block md:hidden mr-2 text-xs font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-700">
-                        #{i + 1}
+                    <div className="flex items-center gap-2.5 text-sm font-bold text-slate-900 md:px-6 md:py-5 md:text-base">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100 text-[11px] font-bold text-slate-500 md:hidden">
+                        {i + 1}
                       </span>
                       {factorName}
                     </div>
 
-                    {/* Online Degree Column */}
-                    <div className="md:px-6 md:py-4 md:border-l border-slate-100 flex items-start gap-2.5 bg-red-50/30 md:bg-transparent rounded-xl md:rounded-none p-3 md:p-0">
-                      <div className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">
-                        ✓
-                      </div>
+                    {/* Online Degree Column (highlighted) */}
+                    <div className="flex items-start gap-2.5 rounded-xl bg-red-50/50 p-3.5 md:rounded-none md:border-l md:border-red-100 md:bg-red-50/30 md:px-6 md:py-5 md:group-hover:bg-red-50/60">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#ee2c3c] text-white">
+                        <CheckIcon />
+                      </span>
                       <div>
-                        <span className="md:hidden block text-xs font-bold text-[#ee2c3c] uppercase mb-1">
+                        <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-[#ee2c3c] md:hidden">
                           Online Degree
                         </span>
-                        <p className="text-sm text-slate-700 leading-relaxed font-medium">
+                        <p className="text-sm font-medium leading-relaxed text-slate-700">
                           {onlineText}
                         </p>
                       </div>
                     </div>
 
                     {/* Regular Degree Column */}
-                    <div className="md:px-6 md:py-4 md:border-l border-slate-100 flex items-start gap-2.5 bg-slate-100/40 md:bg-transparent rounded-xl md:rounded-none p-3 md:p-0">
-                      <div className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
-                        •
-                      </div>
+                    <div className="flex items-start gap-2.5 rounded-xl bg-slate-50 p-3.5 md:rounded-none md:border-l md:border-slate-100 md:bg-transparent md:px-6 md:py-5">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-500">
+                        <DotIcon />
+                      </span>
                       <div>
-                        <span className="md:hidden block text-xs font-bold text-slate-500 uppercase mb-1">
+                        <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-500 md:hidden">
                           Regular Degree
                         </span>
-                        <p className="text-sm text-slate-600 leading-relaxed">
+                        <p className="text-sm leading-relaxed text-slate-600">
                           {regularText}
                         </p>
                       </div>
@@ -150,4 +155,16 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
       </div>
     </section>
   );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DotIcon() {
+  return <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />;
 }

@@ -35,34 +35,41 @@ export default function Professionals({ data }: { data?: any }) {
 
         {description ? (
           <div 
-            className="mx-auto max-w-5xl text-center text-slate-600 leading-relaxed text-base sm:text-lg mb-6 prose prose-slate"
+            className="prose prose-slate mx-auto mb-2 max-w-4xl text-center text-base leading-relaxed text-slate-600 sm:text-[17px]"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         ) : null}
 
         {list && Array.isArray(list) && list.length > 0 && (
-          <div className="mt-6 rounded-2xl border border-slate-200 shadow-sm bg-white p-6">
-            <ul className="space-y-4">
-              {list.map((item: any, i: number) => {
-                const itemTitle = typeof item === "string" ? "" : (item.title || item.heading || "");
-                const itemText = typeof item === "string" ? item : (item.text || item.description || item.detail || "");
+          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((item: any, i: number) => {
+              const itemTitle = typeof item === "string" ? "" : (item.title || item.heading || "");
+              const itemText = typeof item === "string" ? item : (item.text || item.description || item.detail || "");
 
-                return (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckBubble />
-                    <span className="text-sm md:text-[15px] text-slate-600 leading-relaxed">
-                      {itemTitle && (
-                        <strong className="font-bold text-slate-900 mr-1.5">
-                          {itemTitle}
-                        </strong>
-                      )}
-                      {itemText}
+              return (
+                <li
+                  key={i}
+                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_18px_40px_-20px_rgba(238,44,60,0.4)] sm:p-6"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-sm font-extrabold tabular-nums text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                    {itemTitle ? (
+                      <strong className="text-base font-bold leading-snug text-slate-900">
+                        {itemTitle}
+                      </strong>
+                    ) : (
+                      <CheckBubble />
+                    )}
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                    {itemText}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
     </section>
@@ -71,7 +78,7 @@ export default function Professionals({ data }: { data?: any }) {
 
 function CheckBubble() {
   return (
-    <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
         <path
           d="M20 6L9 17l-5-5"

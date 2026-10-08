@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, BadgeCheck } from "lucide-react";
+import { Check, BadgeCheck, Wallet } from "lucide-react";
 import { SignupModal } from "@/components/layout/signup-modal";
 
 export function RenderHeading({
@@ -178,15 +178,20 @@ export default function SubProgramFees({ data, title }: SubProgramFeesProps) {
 
           {paymentOptionsList.length > 0 ? (
             <>
-              <p className="mt-4 text-sm font-semibold text-slate-900 sm:text-base">
+              <p className="mt-6 text-sm font-bold text-slate-900 sm:text-base">
                 Payment Options:
               </p>
 
-              <ul className="mt-3 space-y-2.5">
+              <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {paymentOptionsList.map((option: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
-                    <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
+                  <li
+                    key={idx}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors hover:border-red-200"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+                      <Wallet className="h-4 w-4" strokeWidth={2} />
+                    </span>
+                    <span className="text-sm font-medium leading-snug text-slate-700 sm:text-[15px]">
                       {option}
                     </span>
                   </li>

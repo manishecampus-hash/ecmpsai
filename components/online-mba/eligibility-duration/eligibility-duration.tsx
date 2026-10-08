@@ -2,6 +2,7 @@
 
 import React from "react";
 import HighlightedText from "@/components/universities/HighlightedText";
+import { Check, Clock3 } from "lucide-react";
 
 const DEFAULT_ELIGIBILITY_POINTS: string[] = [
   "3 years of Graduation from any recognized university/college/institution",
@@ -38,7 +39,7 @@ export default function SubEligibilityDuration({ data, title }: SubEligibilityDu
   return (
     <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-black">
       {/* Eligibility */}
-      <div className="max-w-4xl">
+      <div>
         <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
           {heading.includes("*") ? (
             <HighlightedText text={heading} className="text-[#ee2c3c]" />
@@ -52,15 +53,20 @@ export default function SubEligibilityDuration({ data, title }: SubEligibilityDu
           )}
         </h2>
 
-        <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
+        <p className="mt-4 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
           {description}
         </p>
 
-        <ul className="mt-5 space-y-3">
+        <ul className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {pointsList.map((point: string, idx: number) => (
-            <li key={idx} className="flex items-start gap-3">
-              <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
-              <span className="text-sm leading-relaxed text-slate-600 sm:text-base">
+            <li
+              key={idx}
+              className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors hover:border-red-200"
+            >
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+              </span>
+              <span className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
                 {point}
               </span>
             </li>
@@ -69,20 +75,26 @@ export default function SubEligibilityDuration({ data, title }: SubEligibilityDu
       </div>
 
       {/* Duration */}
-      <div className="mt-10 max-w-4xl">
-        <h3 className="text-lg font-bold text-gray-900 sm:text-xl">
-          {durationTitle.includes("Online MBA") ? (
-            <>
-              {durationTitle.split("Online MBA")[0]}
-              <span className="text-red-500">Online MBA</span>
-              {durationTitle.split("Online MBA")[1]}
-            </>
-          ) : (
-            durationTitle
-          )}
-        </h3>
+      <div className="relative mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-28px_rgba(15,23,42,0.25)] sm:p-7">
+        <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-[#ee2c3c]" />
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+            <Clock3 className="h-5 w-5" strokeWidth={2} />
+          </span>
+          <h3 className="text-lg font-bold text-gray-900 sm:text-xl">
+            {durationTitle.includes("Online MBA") ? (
+              <>
+                {durationTitle.split("Online MBA")[0]}
+                <span className="text-red-500">Online MBA</span>
+                {durationTitle.split("Online MBA")[1]}
+              </>
+            ) : (
+              durationTitle
+            )}
+          </h3>
+        </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+        <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
           {durationDescription}
         </p>
       </div>

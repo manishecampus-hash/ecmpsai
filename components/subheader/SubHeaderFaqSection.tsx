@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { HelpCircle, ChevronUp, MessageSquare, CircleHelp } from "lucide-react";
+import { MessageSquare, CircleHelp } from "lucide-react";
 
 export interface FAQItem {
   id?: string;
@@ -24,56 +24,56 @@ export default function SubHeaderFaqSection({ faqs, title }: SubHeaderFaqSection
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
         {/* LEFT COLUMN */}
         <div className="lg:col-span-4 lg:sticky lg:top-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
-            <CircleHelp className="h-3.5 w-3.5 text-red-500" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#ee2c3c]">
+            <CircleHelp className="h-3.5 w-3.5" />
             Support Desk
           </span>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left lg:text-3xl">
+          <h2 className="mt-3 text-left text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl">
             {title ? (
               <>
-                {title} <span className="text-red-500">FAQs</span>
+                {title} <span className="text-[#ee2c3c]">FAQs</span>
               </>
             ) : (
               <>
-                Frequently Asked <span className="text-red-500">Questions</span>
+                Frequently Asked <span className="text-[#ee2c3c]">Questions</span>
               </>
             )}
           </h2>
 
-          <div className="mt-8 hidden rounded-2xl bg-slate-50 p-5 border border-slate-100 lg:block">
-            <div className="flex items-center gap-3 text-slate-700">
-              <MessageSquare className="h-5 w-5 text-red-500" />
+          <div className="mt-8 hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] lg:block">
+            <div className="flex items-center gap-3 text-slate-800">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+                <MessageSquare className="h-4 w-4" />
+              </span>
               <span className="text-sm font-bold">Still have doubts?</span>
             </div>
-            <p className="mt-2 text-xs text-gray-500 leading-relaxed">
+            <p className="mt-3 text-xs leading-relaxed text-slate-500">
               Connect with our professional academic program advisors directly for personalized roadmap assistance.
             </p>
           </div>
         </div>
 
         {/* RIGHT COLUMN */}
-        <div className="space-y-4 lg:col-span-8">
+        <div className="space-y-3 lg:col-span-8">
           {faqs.map((faq: FAQItem, index: number) => (
             <div
               key={faq.id || index}
-              className="overflow-hidden rounded-2xl border border-red-200 bg-red-50/10 shadow-sm"
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors duration-300 hover:border-red-200 sm:p-6"
             >
-              <div className="flex w-full items-start justify-between p-5 text-left">
-                <div className="flex gap-3.5 pr-4">
-                  <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
-                  <span className="text-base font-bold text-gray-900 sm:text-lg">
+              <div className="flex items-start gap-3.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-extrabold tabular-nums text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="pt-1 text-base font-bold leading-snug text-slate-900 sm:text-[17px]">
                     {faq.question}
-                  </span>
-                </div>
-                <div className="mt-1 shrink-0 rounded-lg bg-slate-50 p-1 text-slate-500 border border-slate-100">
-                  <ChevronUp className="h-4 w-4" />
+                  </h3>
+                  <div
+                    className="prose prose-slate mt-2.5 max-w-none text-sm leading-relaxed text-slate-600 sm:text-[15px]"
+                    dangerouslySetInnerHTML={{ __html: faq.answer }}
+                  />
                 </div>
               </div>
-
-              <div
-                className="border-t border-slate-100/80 p-5 pt-0 text-sm text-gray-600 leading-relaxed sm:text-base prose prose-slate max-w-none"
-                dangerouslySetInnerHTML={{ __html: faq.answer }}
-              />
             </div>
           ))}
         </div>

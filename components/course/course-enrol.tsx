@@ -33,10 +33,10 @@ export default function CourseEnrol({ data }: { data?: any }) {
 
   return (
     <section className="relative w-full overflow-hidden bg-white py-12 font-sans text-black sm:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 font-[Inter]">
+      <div className="mx-auto max-w-6xl px-4 font-[Inter] sm:px-6 lg:px-8">
         {/* Main Heading & Subheading */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl leading-snug">
+        <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
+          <h2 className="text-[23px] font-bold leading-snug tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             {heading.includes("*") ? (
               <HighlightedText text={heading} className="text-[#ee2c3c]" />
             ) : heading.includes("Online MBA") ? (
@@ -57,79 +57,97 @@ export default function CourseEnrol({ data }: { data?: any }) {
           )}
         </div>
 
-        {/* Desktop & Mobile Steps Flow */}
+        {/* Steps — horizontal timeline on desktop, vertical timeline on mobile */}
         {stepsList && stepsList.length > 0 && (
-          <div className="relative mx-auto max-w-6xl">
-            {/* Desktop Timeline Connection Header (Hidden on Mobile) */}
-            <div className="relative hidden lg:block mb-8">
-              {/* Connected Gray Line */}
-              <div className="absolute top-1/2 left-[8%] right-[8%] -translate-y-1/2 h-[2px] bg-slate-200 z-0" />
+          <div
+            className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl border border-red-100 bg-red-50/50 px-4 py-6 sm:px-6 sm:py-8"
+            style={{
+              backgroundImage: "radial-gradient(rgba(238,44,60,0.12) 1px, transparent 1px)",
+              backgroundSize: "18px 18px",
+            }}
+          >
+            <div className="relative">
+              {/* Desktop connector running through the step markers */}
+              <div
+                aria-hidden
+                className="absolute top-[23px] hidden border-t-2 border-dashed border-red-300 lg:block"
+                style={{
+                  left: `${50 / stepsList.length}%`,
+                  right: `${50 / stepsList.length}%`,
+                }}
+              />
 
-              {/* Connected Number Circles Grid */}
-              <div className="relative z-10 grid grid-cols-5 gap-6">
-                {stepsList.map((step: any, index: number) => (
-                  <div key={index} className="flex flex-col items-center justify-center relative">
-                    {/* Circle Badge */}
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#ee2c3c] text-base font-bold text-white shadow-md">
-                      {step.number}
-                    </div>
+              {/* One column per step on desktop, however many steps the data has */}
+              <style>{`
+                @media (min-width: 1024px) {
+                  .__enrol-steps { grid-template-columns: repeat(${stepsList.length}, minmax(0, 1fr)); }
+                }
+              `}</style>
 
-                    {/* Intermediate Dot between steps */}
-                    {index < stepsList.length - 1 && (
-                      <span className="absolute right-[-14px] top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full bg-[#ee2c3c] border-2 border-white shadow-xs z-10" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+              <ol className="__enrol-steps grid grid-cols-1 gap-5">
+                {stepsList.map((step: any, index: number) => {
+                  const Icon = step.icon;
+                  const isLast = index === stepsList.length - 1;
 
-            {/* Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-              {stepsList.map((step: any, index: number) => {
-                const Icon = step.icon;
+                  return (
+                    <li key={index} className="relative flex gap-4 lg:flex-col lg:items-center lg:gap-0">
+                      {/* Mobile vertical connector */}
+                      {!isLast && (
+                        <span
+                          aria-hidden
+                          className="absolute left-[23px] top-12 -bottom-5 border-l-2 border-dashed border-red-300 lg:hidden"
+                        />
+                      )}
 
-                return (
-                  <div
-                    key={index}
-                    className="relative flex flex-col items-center rounded-2xl border border-slate-200/90 bg-white p-5 text-center shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-md min-h-[290px]"
-                  >
-                    {/* Mobile Step Badge (Shown on Mobile) */}
-                    <div className="lg:hidden mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#ee2c3c] text-sm font-bold text-white">
-                      {step.number}
-                    </div>
+                      {/* Step number box */}
+                      <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-base font-extrabold tabular-nums text-white shadow-lg shadow-red-500/30 ring-4 ring-white">
+                        {step.number}
+                      </span>
 
-                    {/* Icon Container */}
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-[#ee2c3c]">
-                      <Icon className="h-7 w-7" strokeWidth={1.8} />
-                    </div>
+                      {/* Card */}
+                      <div className="group relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_18px_40px_-20px_rgba(238,44,60,0.45)] lg:mt-5 lg:w-full lg:items-center lg:pb-14 lg:text-center">
+                        {/* Big background number */}
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute right-3 top-2 select-none text-[72px] font-black leading-none tabular-nums text-red-100/70 transition-colors duration-300 group-hover:text-red-100 lg:-bottom-5 lg:-right-1 lg:top-auto lg:text-[88px]"
+                        >
+                          {step.number}
+                        </span>
 
-                    {/* Step Title */}
-                    <h3 className="mb-2 text-sm sm:text-base font-bold text-slate-900 leading-snug">
-                      {step.title}
-                    </h3>
+                        <div className="relative mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                          <Icon className="h-6 w-6" strokeWidth={1.8} />
+                        </div>
 
-                    {/* Red Divider Line */}
-                    <div className="mb-3 h-[2px] w-7 rounded-full bg-[#ee2c3c]" />
+                        <h3 className="relative mb-2 text-sm font-bold leading-snug text-slate-900 sm:text-base">
+                          {step.title}
+                        </h3>
 
-                    {/* Step Description */}
-                    <p className="text-xs sm:text-sm leading-relaxed text-slate-500 font-normal">
-                      {step.description}
-                    </p>
-                  </div>
-                );
-              })}
+                        <p className="relative text-xs font-normal leading-relaxed text-slate-600 sm:text-sm">
+                          {step.description}
+                        </p>
+
+                        {/* Hover accent line */}
+                        <span
+                          aria-hidden
+                          className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-[#ee2c3c] transition-transform duration-300 group-hover:scale-x-100"
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
             </div>
           </div>
         )}
 
         {/* Bottom Alert Note */}
         {note && (
-          <div className="mx-auto mt-8 flex max-w-4xl items-center gap-3 rounded-2xl border border-red-200/60 bg-[#fff5f5] px-5 py-3.5 text-slate-700">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#ee2c3c] text-white">
+          <div className="mx-auto mt-10 flex max-w-4xl items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-slate-700">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
               <CheckCircle2 className="h-4 w-4" strokeWidth={2.5} />
             </span>
             <div
-              className="text-xs sm:text-sm font-medium leading-relaxed"
+              className="text-sm font-medium leading-relaxed text-slate-700"
               dangerouslySetInnerHTML={{ __html: note }}
             />
           </div>

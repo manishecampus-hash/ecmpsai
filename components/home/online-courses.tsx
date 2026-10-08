@@ -214,6 +214,27 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
     time: 0,
   });
 
+  const validCategoryIds = useMemo(() => {
+    if (
+      !programData?.categories ||
+      !Array.isArray(programData.categories) ||
+      programData.categories.length === 0
+    ) {
+      return new Set<string>();
+    }
+    return new Set(
+      programData.categories
+        .filter(
+          (c) =>
+            Boolean(c.id || (c as any)._id) &&
+            !c.isUncategorized &&
+            String(c.id || (c as any)._id).trim().toLowerCase() !== "uncategorized" &&
+            c.name?.trim().toLowerCase() !== "uncategorized"
+        )
+        .map((c) => String(c.id || (c as any)._id).trim())
+    );
+  }, [programData]);
+
   const courseTabs = useMemo(() => {
     if (
       programData?.categories &&
@@ -225,12 +246,13 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
         ...programData.categories
           .filter(
             (c) =>
+              Boolean(c.id || (c as any)._id) &&
               !c.isUncategorized &&
-              c.id !== "uncategorized" &&
+              String(c.id || (c as any)._id).trim().toLowerCase() !== "uncategorized" &&
               c.name?.trim().toLowerCase() !== "uncategorized"
           )
           .map((c) => ({
-            id: c.id,
+            id: String(c.id || (c as any)._id).trim(),
             label: c.name,
             isUncategorized: c.isUncategorized,
           })),
@@ -275,6 +297,36 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
     return [];
   }, [programData]);
 
+  // Helper: check if a program is properly categorized and belongs to an existing category
+  const isProgramCategorized = useCallback(
+    (p: any) => {
+      const rawCatId = p.categoryId?._id || p.categoryId?.id || p.categoryId;
+      const catIdStr =
+        rawCatId !== null && rawCatId !== undefined ? String(rawCatId).trim() : "";
+
+      // 1. If missing, empty, or explicitly "uncategorized"
+      if (!catIdStr || catIdStr.toLowerCase() === "uncategorized") {
+        return false;
+      }
+
+      // 2. If tab or isUncategorized is explicitly "uncategorized"
+      if (
+        (p.tab && String(p.tab).trim().toLowerCase() === "uncategorized") ||
+        p.isUncategorized
+      ) {
+        return false;
+      }
+
+      // 3. If categories list is available, the category must exist among valid categories
+      if (validCategoryIds.size > 0 && !validCategoryIds.has(catIdStr)) {
+        return false;
+      }
+
+      return true;
+    },
+    [validCategoryIds]
+  );
+
   // Touch/mobile: single tap on the image opens the overlay,
   // double tap (within 350ms) on it closes it again.
   const handleImageTap = (id: string | number) => {
@@ -294,7 +346,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
     const foundModes = new Set<string>();
 
     allPrograms.forEach((p) => {
-      if (p.mode && typeof p.mode === "string" && p.mode.trim()) {
+      if (isProgramCategorized(p) && p.mode && typeof p.mode === "string" && p.mode.trim()) {
         const raw = p.mode.trim();
         const formatted = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
         foundModes.add(formatted);
@@ -315,26 +367,33 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
         label: m,
       })),
     ];
-  }, [allPrograms]);
+  }, [allPrograms, isProgramCategorized]);
 
   const filteredPrograms = useMemo(
     () =>
       allPrograms.filter((p) => {
+        const isCategorized = isProgramCategorized(p);
+
+        // When a program is uncategorized or there is no category present for it,
+        // it must NOT come in the 'All' filter (or any category filter)
+        if (!isCategorized) {
+          return false;
+        }
+
         let tabMatch = true;
         if (activeTab !== "all") {
-          if (activeTab === "uncategorized") {
-            tabMatch =
-              !p.categoryId || p.categoryId === "uncategorized" || p.tab === "uncategorized";
-          } else {
-            tabMatch = p.categoryId === activeTab || p.tab === activeTab;
-          }
+          const rawCatId = p.categoryId?._id || p.categoryId?.id || p.categoryId;
+          const catIdStr =
+            rawCatId !== null && rawCatId !== undefined ? String(rawCatId).trim() : "";
+          tabMatch = catIdStr === activeTab || String(p.tab).trim() === activeTab;
         }
+
         const progMode = (p.mode || "").trim().toLowerCase();
         const modeMatch =
           activeMode === "all" || progMode === activeMode.toLowerCase();
         return tabMatch && modeMatch;
       }),
-    [allPrograms, activeTab, activeMode],
+    [allPrograms, activeTab, activeMode, isProgramCategorized],
   );
 
   const handleTabChange = (tabId: string) => {

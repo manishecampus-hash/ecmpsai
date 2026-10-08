@@ -163,11 +163,15 @@ export default function UniversitySlider() {
                 </div>
 
                 <Link
-                  href={compareSearchHref(pair.a.university.trim(), pair.b.university.trim())}
+                  href={compareSearchHref(
+                    (pair.a.short || pair.a.university).trim(),
+                    (pair.b.short || pair.b.university).trim()
+                  )}
                   className="w-full mt-auto py-2.5 px-4 border border-red-500 text-red-600 bg-white hover:bg-red-600 hover:text-white rounded-2xl font-bold text-xs text-center transition-all duration-300 flex items-center justify-center gap-2 shadow-2xs group-hover:shadow-red-500/20"
                 >
                   <span>
-                    {pair.a.university} vs {pair.b.university}
+                    {pair.a.short || pair.a.university} vs{" "}
+                    {pair.b.short || pair.b.university}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>

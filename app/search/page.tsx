@@ -1011,7 +1011,7 @@ function SearchPage() {
           >
             <User size={14} color={T.accent} />
             <span style={{ fontSize: 13, fontWeight: 600, color: T.accent }}>
-              Save this answer
+              Login to Win Scholarship
             </span>
           </div>
           <p
@@ -1022,8 +1022,9 @@ function SearchPage() {
               lineHeight: 1.6,
             }}
           >
-            Sign up to bookmark answers, track your applications and get
-            personalised guidance.
+          Save your university picks, 
+          track your applications,
+           and make smarter decisions.
           </p>
           <button
             type="button"
@@ -1041,7 +1042,7 @@ function SearchPage() {
               boxShadow: "none",
             }}
           >
-            Signup
+            Login
           </button>
         </div>
       )}

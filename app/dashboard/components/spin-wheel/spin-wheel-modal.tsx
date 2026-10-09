@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Copy, Check, PartyPopper, Gift } from "lucide-react";
+import { Copy, Check, PartyPopper, Gift, RotateCw } from "lucide-react";
+
+// White button with a thin red outline, shared by "Spin" and "Claim Reward"
+const OUTLINE_BUTTON =
+  "group flex h-12 w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-red-500 bg-white text-sm font-bold uppercase tracking-wide text-red-600 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-50 hover:shadow-md hover:shadow-red-100 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:shadow-none sm:h-14";
 import { SPIN_WHEEL_REWARDS, type SpinWheelReward } from "./data";
 import { SpinWheelSvg, getTargetRotation } from "./wheel";
 
@@ -232,8 +236,13 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
                     type="button"
                     onClick={handleSpin}
                     disabled={phase === "spinning"}
-                    className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-red-600/25 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none sm:h-14"
+                    className={`mt-5 ${OUTLINE_BUTTON} disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400`}
                   >
+                    <RotateCw
+                      className={`h-4 w-4 transition-transform duration-300 ${
+                        phase === "spinning" ? "animate-spin" : "group-hover:rotate-90"
+                      }`}
+                    />
                     {phase === "spinning" ? "Spinning..." : "Spin The Wheel Now"}
                   </button>
                 </>
@@ -283,9 +292,9 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
                     type="button"
                     onClick={handleClaim}
                     disabled={claiming}
-                    className="mt-6 flex h-12 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-red-600 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-red-600/25 transition-all hover:-translate-y-0.5 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30 disabled:translate-y-0 disabled:cursor-not-allowed disabled:shadow-none sm:h-14"
+                    className={`mt-6 max-w-[320px] ${OUTLINE_BUTTON}`}
                   >
-                    <Gift className="h-4 w-4" /> Claim Reward
+                    <Gift className="h-4 w-4 transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" /> Claim Reward
                   </button>
                 </motion.div>
               )}

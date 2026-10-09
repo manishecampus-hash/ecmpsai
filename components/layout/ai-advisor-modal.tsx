@@ -8,7 +8,22 @@ import WelcomeBanner from "@/app/dashboard/components/welcome-banner";
 import StatsCards from "@/app/dashboard/components/stats-cards";
 import Recommendations from "@/app/dashboard/components/recommendations";
 import Milestones from "@/app/dashboard/components/milestones";
-import { X, ArrowLeft, ArrowRight, Sparkles, RefreshCw, Check, Target } from "lucide-react";
+import {
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  RefreshCw,
+  Check,
+  Target,
+  ChevronRight,
+  GraduationCap,
+  BookOpen,
+  Wallet,
+  TrendingUp,
+  Award,
+  type LucideIcon,
+} from "lucide-react";
 import {
   BUDGET_OPTIONS,
   CATEGORY_OPTIONS,
@@ -47,81 +62,90 @@ const AUTO_ADVANCE_DELAY = 400;
 type Phase = "wizard" | "analysis";
 const TOTAL_STEPS = ONBOARDING_STEPS.length;
 
-const STEP_COPY: Record<WizardStep, { title: string; subtitle: string }> = {
-  1: { title: "What is your highest completed qualification?", subtitle: "We'll show programs you're eligible for" },
-  2: { title: "What would you like to pursue?", subtitle: "Programs matched to your qualification" },
-  3: { title: "What is your budget?", subtitle: "Total programme fee you're comfortable with" },
-  4: { title: "Please tell us your current vs targeted salary", subtitle: "Helps us estimate the return on your degree" },
-  5: {
-    title: "Do you belong to any one of the categories?",
-    subtitle: "Special scholarships are available for these categories",
-  },
+const STEP_COPY: Record<WizardStep, { title: string; icon: LucideIcon }> = {
+  1: { title: "What's your highest completed qualification?", icon: GraduationCap },
+  2: { title: "What would you like to pursue?", icon: BookOpen },
+  3: { title: "What's your budget?", icon: Wallet },
+  4: { title: "Please tell us your current vs targeted salary", icon: TrendingUp },
+  5: { title: "Do you belong to any one of the categories?", icon: Award },
 };
 
-/* ─────────────── Reusable selection card ─────────────── */
+/* ─────────────── Reusable selection row ─────────────── */
 function ChoiceCard({
   selected,
   onSelect,
   title,
   subtitle,
   emphasis = false,
+  index = 0,
 }: {
   selected: boolean;
   onSelect: () => void;
   title: string;
   subtitle?: string;
-  /** Larger title for course abbreviations (BCA, MBA…) */
+  /** Slightly larger title for short names (BCA, MBA…) */
   emphasis?: boolean;
+  /** Position in its list — staggers the entrance */
+  index?: number;
 }) {
   return (
-    <button
+    <motion.button
       type="button"
       role="radio"
       aria-checked={selected}
       onClick={onSelect}
-      className={`group flex h-full w-full items-start gap-3.5 rounded-2xl border px-4 py-4 text-left transition-all duration-200 sm:px-5 sm:py-[18px] ${
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut", delay: 0.05 + index * 0.04 }}
+      whileTap={{ scale: 0.985 }}
+      className={`group flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors duration-200 ${
         selected
-          ? "border-red-500 bg-red-50/60 shadow-sm ring-1 ring-red-200"
-          : "border-gray-200 bg-white hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
+          ? "border-red-500 bg-red-50/70 ring-1 ring-red-200"
+          : "border-gray-200 bg-white hover:border-red-200 hover:bg-red-50/30"
       }`}
     >
       <span
-        className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-          selected ? "border-red-600" : "border-gray-300 group-hover:border-red-300"
+        className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+          selected ? "border-red-600 bg-red-600" : "border-gray-300 group-hover:border-red-300"
         }`}
       >
-        <span
-          className={`h-2.5 w-2.5 rounded-full bg-red-600 transition-transform duration-200 ${
-            selected ? "scale-100" : "scale-0"
-          }`}
+        <Check
+          className={`h-3 w-3 text-white transition-transform duration-200 ${selected ? "scale-100" : "scale-0"}`}
+          strokeWidth={3.5}
         />
       </span>
       <span className="min-w-0 flex-1">
         <span
           className={`block break-words font-semibold leading-snug ${
-            emphasis ? "text-base sm:text-lg" : "text-sm sm:text-[15px]"
-          } ${selected ? "text-gray-900" : "text-gray-800"}`}
+            emphasis ? "text-[15px]" : "text-sm"
+          } ${selected ? "text-red-700" : "text-gray-800"}`}
         >
           {title}
         </span>
         {subtitle && (
-          <span className="mt-1 block break-words text-xs leading-5 text-gray-500 sm:text-[13px]">{subtitle}</span>
+          <span className="mt-0.5 block break-words text-xs leading-5 text-gray-500">{subtitle}</span>
         )}
       </span>
-    </button>
+      <ChevronRight
+        className={`h-4 w-4 flex-shrink-0 transition-all duration-200 ${
+          selected ? "translate-x-0 text-red-500" : "-translate-x-1 text-gray-300 group-hover:translate-x-0 group-hover:text-red-400"
+        }`}
+      />
+    </motion.button>
   );
 }
 
-function OptionGrid({ children, columns = "sm:grid-cols-2 lg:grid-cols-3" }: { children: React.ReactNode; columns?: string }) {
+// One option per row, in a comfortable reading width
+function OptionList({ children }: { children: React.ReactNode }) {
   return (
-    <div role="radiogroup" className={`grid grid-cols-1 gap-3 sm:gap-4 ${columns}`}>
+    <div role="radiogroup" className="mx-auto flex w-full max-w-[460px] flex-col gap-2.5">
       {children}
     </div>
   );
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="mb-3 text-xs font-bold uppercase tracking-wider text-red-600 sm:text-sm">{children}</p>;
+  return <p className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-red-600">{children}</p>;
 }
 
 /* ─────────────── Step 2: programmes, grouped when the config groups them ─────────────── */
@@ -154,19 +178,23 @@ function CourseStep({
     <div className="space-y-6">
       {groups.map((g) => (
         <div key={g.name || "all"}>
-          {g.name && <SectionLabel>{g.name}</SectionLabel>}
-          <OptionGrid>
-            {g.items.map((c) => (
+          {g.name && (
+            <div className="mx-auto max-w-[460px]">
+              <SectionLabel>{g.name}</SectionLabel>
+            </div>
+          )}
+          <OptionList>
+            {g.items.map((c, i) => (
               <ChoiceCard
                 key={c.id}
                 selected={selected === c.id}
                 onSelect={() => onSelect(c.id)}
                 title={c.name}
-                subtitle={c.fullName}
                 emphasis
+                index={i}
               />
             ))}
-          </OptionGrid>
+          </OptionList>
         </div>
       ))}
     </div>
@@ -174,6 +202,8 @@ function CourseStep({
 }
 
 /* ─────────────── Step 4: working status + salary ─────────────── */
+const SALARY_COLUMN_EASE = { duration: 0.4, ease: [0.22, 1, 0.36, 1] } as const;
+
 function SalaryStep({
   data,
   onEmployment,
@@ -190,9 +220,9 @@ function SalaryStep({
   const targetColumn = (
     <div>
       <SectionLabel>Target Salary</SectionLabel>
-      <div role="radiogroup" className="flex flex-col gap-3">
-        {TARGET_SALARY_OPTIONS.map((o) => (
-          <ChoiceCard key={o.id} selected={data.targetSalary === o.id} onSelect={() => onTarget(o.id)} title={o.label} />
+      <div role="radiogroup" className="flex flex-col gap-2.5">
+        {TARGET_SALARY_OPTIONS.map((o, i) => (
+          <ChoiceCard key={o.id} selected={data.targetSalary === o.id} onSelect={() => onTarget(o.id)} title={o.label} index={i} />
         ))}
       </div>
     </div>
@@ -211,45 +241,59 @@ function SalaryStep({
                 role="radio"
                 aria-checked={active}
                 onClick={() => onEmployment(o.id)}
-                className={`min-w-[120px] rounded-full px-6 py-2.5 text-sm font-semibold transition-all sm:min-w-[150px] sm:text-base ${
-                  active ? "bg-white text-red-600 shadow-sm" : "text-red-500/80 hover:text-red-600"
+                className={`relative min-w-[120px] rounded-full px-6 py-2 text-sm font-semibold transition-colors duration-200 sm:min-w-[140px] ${
+                  active ? "text-red-600" : "text-red-500/80 hover:text-red-600"
                 }`}
               >
-                {o.label}
+                {/* white pill glides to the chosen option */}
+                {active && (
+                  <motion.span
+                    layoutId="employment-pill"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 rounded-full bg-white shadow-sm"
+                  />
+                )}
+                <span className="relative">{o.label}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Keyed views fade in on switch — no exit wait, so the salary options appear instantly */}
-      {!data.employmentStatus ? (
-          <p className="mt-8 text-center text-sm text-gray-500">Choose your current status to continue.</p>
-        ) : working ? (
+      {/* Keyed views animate in on switch — no exit wait, so the salary options appear instantly.
+          Columns glide in from their side while the rows stagger in like every other step. */}
+      {!data.employmentStatus ? null : working ? (
           <motion.div
             key="working"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2 md:gap-6"
+            className="mx-auto mt-7 grid max-w-[720px] grid-cols-1 gap-6 md:grid-cols-2 md:gap-5"
           >
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={SALARY_COLUMN_EASE}
+            >
               <SectionLabel>Current Salary</SectionLabel>
-              <div role="radiogroup" className="flex flex-col gap-3">
-                {CURRENT_SALARY_OPTIONS.map((o) => (
-                  <ChoiceCard key={o.id} selected={data.currentSalary === o.id} onSelect={() => onCurrent(o.id)} title={o.label} />
+              <div role="radiogroup" className="flex flex-col gap-2.5">
+                {CURRENT_SALARY_OPTIONS.map((o, i) => (
+                  <ChoiceCard key={o.id} selected={data.currentSalary === o.id} onSelect={() => onCurrent(o.id)} title={o.label} index={i} />
                 ))}
               </div>
-            </div>
-            {targetColumn}
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ...SALARY_COLUMN_EASE, delay: 0.06 }}
+            >
+              {targetColumn}
+            </motion.div>
           </motion.div>
         ) : (
           <motion.div
             key="non-working"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mx-auto mt-8 max-w-md"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={SALARY_COLUMN_EASE}
+            className="mx-auto mt-7 max-w-[460px]"
           >
             {targetColumn}
           </motion.div>
@@ -431,18 +475,18 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
     switch (step) {
       case 1:
         return (
-          <OptionGrid>
-            {QUALIFICATION_OPTIONS.map((o) => (
+          <OptionList>
+            {QUALIFICATION_OPTIONS.map((o, i) => (
               <ChoiceCard
                 key={o.id}
                 selected={data.highestQualification === o.id}
                 onSelect={() => setQualification(o.id)}
                 title={o.label}
-                subtitle={o.description}
                 emphasis
+                index={i}
               />
             ))}
-          </OptionGrid>
+          </OptionList>
         );
       case 2:
         return (
@@ -454,17 +498,18 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
         );
       case 3:
         return (
-          <OptionGrid>
-            {BUDGET_OPTIONS.map((o) => (
+          <OptionList>
+            {BUDGET_OPTIONS.map((o, i) => (
               <ChoiceCard
                 key={o.id}
                 selected={data.budget === o.id}
                 onSelect={() => setField("budget")(o.id)}
                 title={o.label}
                 emphasis
+                index={i}
               />
             ))}
-          </OptionGrid>
+          </OptionList>
         );
       case 4:
         return (
@@ -477,17 +522,17 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
         );
       case 5:
         return (
-          <OptionGrid>
-            {CATEGORY_OPTIONS.map((o) => (
+          <OptionList>
+            {CATEGORY_OPTIONS.map((o, i) => (
               <ChoiceCard
                 key={o.id}
                 selected={data.category === o.id}
                 onSelect={() => setField("category")(o.id)}
-                title={o.label}
-                subtitle={o.description}
+                title={o.description ? `${o.label} (${o.description})` : o.label}
+                index={i}
               />
             ))}
-          </OptionGrid>
+          </OptionList>
         );
     }
   };
@@ -518,8 +563,12 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
       <div className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain">
         <div className="flex min-h-full items-center justify-center p-2 sm:p-4">
           <div
-            className={`relative flex max-h-[calc(100dvh_-_1rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-[max-width] duration-300 sm:max-h-[calc(100dvh_-_2rem)] ${
-              phase === "analysis" ? "max-w-[440px] sm:max-w-[480px]" : "max-w-[1140px]"
+            className={`relative flex max-h-[calc(100dvh_-_1rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-[max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:max-h-[calc(100dvh_-_2rem)] ${
+              phase === "analysis"
+                ? "max-w-[440px] sm:max-w-[480px]"
+                : step === 4 && data.employmentStatus === "working"
+                  ? "max-w-[820px]"
+                  : "max-w-[600px]"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -580,9 +629,16 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
                     exit={{ opacity: 0, x: direction * -24 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                   >
-                    <div className="mx-auto mb-6 max-w-3xl text-center sm:mb-8">
-                      <h2 className="text-xl font-bold leading-snug text-gray-900 sm:text-[28px]">{copy.title}</h2>
-                      <p className="mt-1.5 text-sm text-gray-500">{copy.subtitle}</p>
+                    <div className="mx-auto mb-6 flex flex-col items-center text-center">
+                      <motion.span
+                        initial={{ scale: 0.6, opacity: 0, rotate: -12 }}
+                        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 380, damping: 20, delay: 0.05 }}
+                        className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100"
+                      >
+                        <copy.icon className="h-5 w-5" strokeWidth={2} />
+                      </motion.span>
+                      <h2 className="text-lg font-bold leading-snug text-gray-900 sm:text-[22px]">{copy.title}</h2>
                     </div>
                     {renderStep()}
                   </motion.div>
@@ -655,27 +711,17 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
               </AnimatePresence>
             </div>
 
-            {/* Footer navigation */}
-            {phase === "wizard" && (
-              <div className="flex flex-shrink-0 items-center justify-between gap-3 border-t border-gray-100 bg-white px-5 py-3.5 sm:px-8 sm:py-4">
-                {/* No Back on the first question — hidden (not removed) so the layout stays steady */}
+            {/* Footer navigation — Back only; options move forward on their own */}
+            {phase === "wizard" && step > 1 && (
+              <div className="flex flex-shrink-0 items-center border-t border-gray-100 bg-white px-5 py-3 sm:px-8">
                 <button
                   type="button"
                   onClick={handleBack}
-                  disabled={step === 1}
-                  aria-hidden={step === 1}
-                  tabIndex={step === 1 ? -1 : undefined}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-gray-500 transition hover:text-gray-800 ${
-                    step === 1 ? "invisible" : ""
-                  }`}
+                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-800"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
                 </button>
-
-                <span className="text-xs text-gray-400 sm:text-sm">
-                  {step === 4 ? "Select your salary details to continue" : "Tap an option to continue"}
-                </span>
               </div>
             )}
           </div>

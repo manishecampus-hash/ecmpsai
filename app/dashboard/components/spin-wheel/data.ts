@@ -17,11 +17,12 @@ export const SPIN_WHEEL_REWARDS: SpinWheelReward[] = [
   { id: "2k", label: "₹2,000", couponCode: "ECAMP2K" },
 ];
 
-// Alternating segment palette — tied to the eCampus brand red plus a gold
-// "reward" accent, rather than the blue/orange from the reference image.
+// Alternating segment palette — soft tints of the eCampus red and a warm peach,
+// with darker label colours so the amounts stay easy to read.
 export const SPIN_WHEEL_COLORS = {
-  primary: "#dc2626", // red-600 (brand)
-  accent: "#d97706", // amber-600 (reward gold)
-  ring: "#7f1d1d", // red-900, outer border + segment separators
-  text: "#ffffff",
+  primary: "#fef2f2", // red-50
+  accent: "#fff7ed", // orange-50
+  ring: "#fecaca", // red-200, outer border + segment separators
+  primaryText: "#b91c1c", // red-700
+  accentText: "#c2410c", // orange-700
 };

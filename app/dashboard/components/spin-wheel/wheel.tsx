@@ -95,7 +95,7 @@ export function SpinWheelSvg({
     <svg
       ref={svgRef}
       viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
-      className="h-full w-full drop-shadow-[0_10px_28px_rgba(127,29,29,0.35)]"
+      className="h-full w-full drop-shadow-[0_10px_28px_rgba(220,38,38,0.16)]"
       style={{
         transformOrigin: "50% 50%",
         transform: `rotate(${rotation}deg)`,
@@ -111,7 +111,8 @@ export function SpinWheelSvg({
         const start = i * segmentAngle;
         const end = start + segmentAngle;
         const mid = start + segmentAngle / 2;
-        const fill = i % 2 === 0 ? SPIN_WHEEL_COLORS.primary : SPIN_WHEEL_COLORS.accent;
+        const isPrimary = i % 2 === 0;
+        const fill = isPrimary ? SPIN_WHEEL_COLORS.primary : SPIN_WHEEL_COLORS.accent;
         const labelPos = pointOnCircle(LABEL_RADIUS, mid);
         const isLeftHalf = Math.cos(toRad(mid)) < 0;
         const textRotation = isLeftHalf ? mid + 180 : mid;
@@ -127,7 +128,7 @@ export function SpinWheelSvg({
             <text
               x={labelPos.x}
               y={labelPos.y}
-              fill={SPIN_WHEEL_COLORS.text}
+              fill={isPrimary ? SPIN_WHEEL_COLORS.primaryText : SPIN_WHEEL_COLORS.accentText}
               fontSize={13}
               fontWeight={700}
               textAnchor="middle"

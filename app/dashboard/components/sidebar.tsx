@@ -23,12 +23,13 @@ import {
 const navItems = [
   { id: "overview", label: "Overview", icon: LayoutGrid, href: "/dashboard" },
   { id: "matcher", label: "AI Degree Finder", icon: Compass, href: "/dashboard/matcher" },
+  { id: "applications", label: "My Applications", icon: ClipboardList, href: "/dashboard/applications" },
   { id: "counselor", label: "AI Counselor Sara", icon: MessageCircle, href: "/dashboard/counselor", live: true },
   { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
   { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];
 
-const ADVISOR_NAME = "Vishal";
+export const ADVISOR_NAME = "Vishal";
 
 const EXPANDED_WIDTH = 260;
 const COLLAPSED_WIDTH = 76;

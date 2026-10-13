@@ -6,6 +6,23 @@ import { ArrowLeft, Check } from "lucide-react";
 
 const STEPS = ["Review Details", "Payment"];
 
+// Content column + side panel; the header uses the same columns so the step tracker sits over the panel
+const COLUMNS = "lg:grid-cols-[minmax(0,1fr)_340px]";
+
+// Phones only: the header back link is hidden there, so screens put this beside their main button
+export function MobileBackLink({ href }: { href: string }) {
+  return (
+    <Link
+      href={href}
+      aria-label="Back"
+      title="Back"
+      className="flex w-12 flex-shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-[#ee2c3c] active:scale-95 sm:hidden"
+    >
+      <ArrowLeft className="h-5 w-5" />
+    </Link>
+  );
+}
+
 // Frame for the details and payment screens: back link, step tracker, content + side panel.
 export default function FlowShell({
   backHref,
@@ -22,16 +39,16 @@ export default function FlowShell({
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-50 px-4 pb-28 pt-6 sm:px-6 sm:pb-16 sm:pt-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className={`mb-6 flex items-center justify-center gap-4 sm:justify-between lg:grid lg:gap-6 ${COLUMNS}`}>
           <Link
             href={backHref}
-            className="inline-flex items-center gap-2 rounded-full px-1 py-1 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+            className="hidden items-center gap-2 rounded-full px-1 py-1 text-sm font-semibold text-slate-600 transition hover:text-slate-900 sm:inline-flex lg:justify-self-start"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Link>
 
-          <ol className="flex items-center gap-2 sm:gap-3" aria-label="Application progress">
+          <ol className="flex items-center justify-center gap-2 sm:gap-3" aria-label="Application progress">
             {STEPS.map((label, i) => {
               const n = i + 1;
               const done = n < step;
@@ -64,7 +81,7 @@ export default function FlowShell({
           </ol>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+        <div className={`grid gap-6 lg:items-start ${COLUMNS}`}>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

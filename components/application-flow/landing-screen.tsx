@@ -134,7 +134,7 @@ export default function LandingScreen() {
               type="button"
               onClick={() => router.push(cta.href)}
               whileTap={{ scale: 0.98 }}
-              className="group flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#ee2c3c] px-6 text-base font-bold uppercase tracking-wide text-white shadow-lg shadow-red-500/25 transition-colors hover:bg-[#d92233]"
+              className="group flex h-14 w-full items-center justify-center gap-3 rounded-xl border border-red-200 bg-red-50 px-6 text-base font-bold uppercase tracking-wide text-[#ee2c3c] transition-all duration-300 hover:border-[#ee2c3c] hover:bg-[#ee2c3c] hover:text-white hover:shadow-lg hover:shadow-red-500/25"
             >
               <span className="truncate">{cta.label}</span>
               <ArrowRight className="h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1" />

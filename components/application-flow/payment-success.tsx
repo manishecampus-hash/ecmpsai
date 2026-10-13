@@ -90,7 +90,7 @@ function CountUp({ value }: { value: number }) {
   return <>{formatINR(shown)}</>;
 }
 
-function CopyValue({ value }: { value: string }) {
+export function CopyValue({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -239,10 +239,10 @@ export default function PaymentSuccess() {
 
             <motion.div {...fadeUp(0.85)} className="mt-6 flex flex-col gap-3 sm:flex-row [@media(max-height:640px)]:mt-4">
               <Link
-                href="/dashboard"
+                href="/dashboard/applications"
                 className="group inline-flex h-11 items-center sm:flex-1 justify-center gap-2 rounded-xl bg-[#ee2c3c] px-6 text-sm font-bold text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-[#d92233]"
               >
-                Go to Dashboard <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Track Application <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href={`/universities/${program.slug}`}

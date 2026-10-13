@@ -7,13 +7,14 @@ import {
   ArrowRight,
   BadgeCheck,
   Briefcase,
+  Check,
   GraduationCap,
   MapPin,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
 import { useApplication } from "./application-context";
-import FlowShell from "./flow-shell";
+import FlowShell, { MobileBackLink } from "./flow-shell";
 import ProgramCard from "./program-card";
 import SelectField from "./select-field";
 import DatePickerField from "./date-picker-field";
@@ -399,29 +400,57 @@ export default function DetailsScreen() {
           transition={{ duration: 0.35, ease: EASE, delay: 0.3 }}
           className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-6"
         >
-          <label htmlFor="field-consent" className="flex cursor-pointer items-start gap-3">
+          <label
+            htmlFor="field-consent"
+            className={`relative flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors duration-300 ${
+              form.consent
+                ? "border-red-200 bg-red-50/60"
+                : errors.consent
+                  ? "border-red-300 bg-red-50/30"
+                  : "border-slate-200 bg-slate-50/60 hover:border-slate-300"
+            }`}
+          >
             <input
               id="field-consent"
               type="checkbox"
               checked={form.consent}
               onChange={(e) => set("consent")(e.target.checked)}
-              className="mt-0.5 h-4 w-4 flex-shrink-0 cursor-pointer accent-[#ee2c3c]"
+              className="peer sr-only"
             />
+            <span
+              aria-hidden
+              className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200 peer-focus-visible:ring-4 peer-focus-visible:ring-red-500/20 ${
+                form.consent ? "border-[#ee2c3c] bg-[#ee2c3c]" : "border-slate-300 bg-white"
+              }`}
+            >
+              <Check
+                strokeWidth={3.5}
+                className={`h-3 w-3 text-white transition-transform duration-200 ${form.consent ? "scale-100" : "scale-0"}`}
+              />
+            </span>
             <span className="text-[13px] leading-relaxed text-slate-600">
               I confirm these details are accurate and agree to be contacted by eCampus and{" "}
               {program.universityName} about my application.
             </span>
           </label>
-          {errors.consent && <p className="mt-2 pl-7 text-xs font-medium text-red-600">{errors.consent}</p>}
+          {errors.consent && <p className="mt-2 pl-1 text-xs font-medium text-red-600">{errors.consent}</p>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="group mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-[#d92233] disabled:opacity-70 sm:ml-auto sm:w-auto sm:px-8"
-          >
-            Save &amp; Continue to Payment
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </button>
+          {/* Light red until the consent box is ticked, then the full brand red */}
+          <div className="mt-5 flex gap-3 sm:justify-center">
+            <MobileBackLink href={basePath} />
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`group flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border text-[13px] font-bold uppercase tracking-wide transition-all duration-300 disabled:opacity-70 sm:flex-none sm:px-10 sm:text-sm ${
+                form.consent
+                  ? "border-[#ee2c3c] bg-[#ee2c3c] text-white shadow-lg shadow-red-500/25 hover:bg-[#d92233]"
+                  : "border-red-200 bg-red-50 text-[#ee2c3c] hover:border-red-300 hover:bg-red-100"
+              }`}
+            >
+              Save &amp; Continue to Payment
+              <ArrowRight className="h-4 w-4 flex-shrink-0 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
         </motion.div>
       </form>
     </FlowShell>

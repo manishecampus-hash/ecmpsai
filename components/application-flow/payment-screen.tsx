@@ -19,7 +19,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useApplication } from "./application-context";
-import FlowShell from "./flow-shell";
+import FlowShell, { MobileBackLink } from "./flow-shell";
 import ProgramCard from "./program-card";
 import PaymentSuccess from "./payment-success";
 import { formatINR } from "./options";
@@ -240,25 +240,28 @@ export default function PaymentScreen() {
             )}
           </AnimatePresence>
 
-          <button
-            type="button"
-            onClick={pay}
-            disabled={busy}
-            className="group mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] py-3.5 text-base font-bold text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-[#d92233] disabled:cursor-wait disabled:opacity-80"
-          >
-            {busy ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {status.kind === "loading" ? "Opening secure checkout…" : "Complete payment in the Razorpay window"}
-              </>
-            ) : (
-              <>
-                <Lock className="h-4 w-4" />
-                Pay {formatINR(amount)} securely
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </>
-            )}
-          </button>
+          <div className="mt-5 flex gap-3">
+            <MobileBackLink href={`${basePath}/details`} />
+            <button
+              type="button"
+              onClick={pay}
+              disabled={busy}
+              className="group flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] py-3.5 text-base font-bold text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-[#d92233] disabled:cursor-wait disabled:opacity-80"
+            >
+              {busy ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {status.kind === "loading" ? "Opening secure checkout…" : "Complete payment in the Razorpay window"}
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" />
+                  Pay {formatINR(amount)} securely
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] font-medium text-slate-500">
             <span className="inline-flex items-center gap-1.5">

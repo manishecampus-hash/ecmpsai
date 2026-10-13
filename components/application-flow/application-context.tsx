@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ApplicantDetails, ApplicationProgram, ApplicationState, PaymentRecord } from "./types";
+import { addSubmittedApplication } from "./submitted-applications";
 
 // The application is saved per university in this browser, so a refresh (or coming
 // back later) resumes where the student left off.
@@ -89,18 +90,22 @@ export function ApplicationProvider({
     [persist, state],
   );
 
-  // Frontend-only for now: the success screen shows right after paying, but the finished
-  // application isn't kept — a refresh starts a fresh application from the landing screen.
+  // Frontend-only for now: the success screen shows right after paying, then the draft is
+  // cleared so a refresh starts a fresh application. The paid application is kept separately
+  // for the dashboard's "My Applications" page.
   const savePayment = useCallback(
     (payment: PaymentRecord) => {
       setState({ ...state, payment });
+      if (state.applicationId && state.details) {
+        addSubmittedApplication({ applicationId: state.applicationId, program, details: state.details, payment });
+      }
       try {
         localStorage.removeItem(storageKey(program.slug));
       } catch {
         // Nothing saved to clear.
       }
     },
-    [state, program.slug],
+    [state, program],
   );
 
   const value = useMemo(

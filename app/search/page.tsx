@@ -1,1565 +1,471 @@
 // app/search/page.tsx
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import {
-  ArrowUp,
-  Search,
-  Sparkles,
-  ExternalLink,
-  ThumbsUp,
-  ThumbsDown,
-  Copy,
-  RefreshCw,
-  Share2,
-  BriefcaseBusiness,
-  GraduationCap,
-  Landmark,
-  BookOpen,
-  TrendingUp,
-  User,
-  X,
-  Lightbulb,
-  Check,
-  ArrowLeft,
-} from "lucide-react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, GraduationCap, IndianRupee, Landmark, Menu, Scale, Share2, Sparkles, SquarePen } from "lucide-react";
 import { SignupModal } from "@/components/layout/signup-modal";
 import { Footer } from "@/components/layout/footer";
+import ChatSidebar from "./components/chat-sidebar";
+import ChatComposer, { type ChatComposerHandle } from "./components/chat-composer";
+import { AssistantMessage, UserMessage } from "./components/chat-message";
+import { ConfirmDeleteDialog, ShareDialog } from "./components/chat-dialogs";
+import {
+  loadThreads,
+  parseFollowups,
+  saveThreads,
+  titleFrom,
+  toApiHistory,
+  uid,
+  type ChatMessage,
+  type ChatThread,
+} from "./components/chat-store";
 
-// ── Design tokens (minimal, ChatGPT-style neutral theme) ──────
-const T = {
-  bg: "#ffffff",
-  bgGradient: "#ffffff",
-  surface: "#ffffff",
-  border: "rgba(0,0,0,0.08)",
-  borderHov: "rgba(0,0,0,0.18)",
-  textPrim: "#0d0d0d",
-  textSec: "#5d5d5d",
-  textHint: "#8f8f8f",
-  accent: "#0d0d0d",
-  accentDark: "#000000",
-  accentLight: "#f4f4f4",
-  accentGradient: "#0d0d0d",
-  green: "#10a37f",
-  greenLight: "#ecfdf5",
-  red: "#5d5d5d",
-  redLight: "#f4f4f4",
-  btnGray: "#5d5d5d",
-  btnGrayBg: "#f4f4f4",
-  cardShadow: "none",
-};
+const SIDEBAR_KEY = "ecampus_ai_sidebar_collapsed";
+const SIDEBAR_SPRING = { type: "spring", stiffness: 320, damping: 34, mass: 0.9 } as const;
 
-const CHIP_ICONS = [
-  TrendingUp,
-  BookOpen,
-  GraduationCap,
-  BriefcaseBusiness,
-  Landmark,
-  Lightbulb,
+const SUGGESTIONS = [
+  { icon: GraduationCap, text: "Best online MBA programs in India" },
+  { icon: Scale, text: "Compare Amity vs Manipal online MBA" },
+  { icon: Landmark, text: "Is an online degree valid for government jobs?" },
+  { icon: IndianRupee, text: "Online BCA fees and EMI options" },
 ];
 
-function SourceLogo({ domain }: { domain: string }) {
-  const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-  return (
-    <div
-      style={{
-        width: 28,
-        height: 28,
-        borderRadius: 6,
-        background: T.accentGradient,
-        flexShrink: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-      }}
-    >
-      <img
-        src={faviconUrl}
-        alt={domain}
-        width={18}
-        height={18}
-        style={{ display: "block" }}
-        onError={(e) => {
-          const target = e.currentTarget;
-          target.style.display = "none";
-          const parent = target.parentElement;
-          if (parent) {
-            parent.style.fontSize = "13px";
-            parent.style.fontWeight = "700";
-            parent.style.color = "#fff";
-            parent.style.fontFamily = "Arial, sans-serif";
-            parent.innerHTML = domain[0].toUpperCase();
-          }
-        }}
-      />
-    </div>
-  );
-}
+type ApiHistory = ReturnType<typeof toApiHistory>;
 
-function Skeleton() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      {[100, 85, 92, 70, 88].map((w, i) => (
-        <div
-          key={i}
-          style={{
-            height: 14,
-            width: `${w}%`,
-            borderRadius: 8,
-            background:
-              "linear-gradient(90deg,#f4f4f4 25%,#ebebeb 50%,#f4f4f4 75%)",
-            backgroundSize: "200% 100%",
-            animation: `shimmer 1.4s ease-in-out ${i * 0.1}s infinite`,
-          }}
-        />
-      ))}
-      <style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
-    </div>
-  );
-}
-
-function FormattedAnswer({ text }: { text: string }) {
-  const clean = text.replace(/\**\s*FOLLOWUPS:[\s\S]*$/, "").trim();
-  return (
-    <div style={{ lineHeight: 1.85, fontSize: 15, color: T.textPrim }}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          h1: ({ children }) => (
-            <h1
-              style={{
-                fontSize: 18,
-                fontWeight: 700,
-                color: T.textPrim,
-                margin: "1.4rem 0 0.5rem",
-                paddingBottom: 4,
-                borderBottom: `1px solid ${T.border}`,
-              }}
-            >
-              {children}
-            </h1>
-          ),
-          h2: ({ children }) => (
-            <h2
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                color: T.textPrim,
-                margin: "1.4rem 0 0.5rem",
-                paddingBottom: 4,
-                borderBottom: `1px solid ${T.border}`,
-              }}
-            >
-              {children}
-            </h2>
-          ),
-          h3: ({ children }) => (
-            <h3
-              style={{
-                fontSize: 15,
-                fontWeight: 600,
-                color: T.textPrim,
-                margin: "1rem 0 0.4rem",
-              }}
-            >
-              {children}
-            </h3>
-          ),
-          p: ({ children }) => (
-            <p
-              style={{
-                margin: "0 0 0.8rem",
-                color: T.textPrim,
-                lineHeight: 1.85,
-              }}
-            >
-              {children}
-            </p>
-          ),
-          strong: ({ children }) => (
-            <strong style={{ fontWeight: 600, color: T.textPrim }}>
-              {children}
-            </strong>
-          ),
-          ul: ({ children }) => (
-            <ul
-              style={{
-                paddingLeft: 0,
-                margin: "0.4rem 0 0.8rem",
-                listStyle: "none",
-              }}
-            >
-              {children}
-            </ul>
-          ),
-          ol: ({ children }) => (
-            <ol
-              style={{
-                paddingLeft: 18,
-                margin: "0.4rem 0 0.8rem",
-                color: T.textPrim,
-              }}
-            >
-              {children}
-            </ol>
-          ),
-          li: ({ children }) => (
-            <li
-              style={{ marginBottom: 8, color: T.textPrim, lineHeight: 1.75 }}
-            >
-              {children}
-            </li>
-          ),
-          table: ({ children }) => (
-            <div
-              style={{
-                overflowX: "auto",
-                margin: "1rem 0",
-                borderRadius: 10,
-                border: `1px solid ${T.border}`,
-              }}
-            >
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: 13,
-                  minWidth: 320,
-                }}
-              >
-                {children}
-              </table>
-            </div>
-          ),
-          thead: ({ children }) => (
-            <thead style={{ background: T.accentLight }}>{children}</thead>
-          ),
-          th: ({ children }) => (
-            <th
-              style={{
-                padding: "10px 14px",
-                textAlign: "left",
-                fontWeight: 600,
-                color: T.accent,
-                borderBottom: `2px solid ${T.borderHov}`,
-                whiteSpace: "nowrap",
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-              }}
-            >
-              {children}
-            </th>
-          ),
-          tbody: ({ children }) => <tbody>{children}</tbody>,
-          tr: ({ children }) => (
-            <tr
-              style={{ transition: "background 0.15s" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#f9f9f9")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-            >
-              {children}
-            </tr>
-          ),
-          td: ({ children }) => (
-            <td
-              style={{
-                padding: "9px 14px",
-                borderBottom: `1px solid ${T.border}`,
-                color: T.textPrim,
-                verticalAlign: "top",
-                lineHeight: 1.6,
-              }}
-            >
-              {children}
-            </td>
-          ),
-          hr: () => (
-            <hr
-              style={{
-                border: "none",
-                borderTop: `1px solid ${T.border}`,
-                margin: "1.2rem 0",
-              }}
-            />
-          ),
-          blockquote: ({ children }) => (
-            <blockquote
-              style={{
-                borderLeft: `3px solid ${T.accent}`,
-                margin: "0.8rem 0",
-                paddingLeft: 14,
-                color: T.textSec,
-                fontStyle: "italic",
-              }}
-            >
-              {children}
-            </blockquote>
-          ),
-          code: ({ children }) => (
-            <code
-              style={{
-                background: T.accentLight,
-                color: T.accent,
-                borderRadius: 4,
-                padding: "1px 6px",
-                fontSize: 13,
-                fontFamily: "monospace",
-              }}
-            >
-              {children}
-            </code>
-          ),
-        }}
-      >
-        {clean}
-      </ReactMarkdown>
-    </div>
-  );
-}
-
-function SourceCard({ source }: { source: any }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <a
-      href={source.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: "block",
-        padding: "10px 12px",
-        borderRadius: 10,
-        textDecoration: "none",
-        border: `1px solid ${hov ? T.borderHov : T.border}`,
-        background: T.surface,
-        boxShadow: "none",
-        transition: "border-color 0.15s, box-shadow 0.15s",
-      }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-        <div style={{ flexShrink: 0 }}>
-          <SourceLogo domain={source.domain} />
-        </div>
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <p
-            style={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: T.textPrim,
-              margin: 0,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {source.title}
-          </p>
-          <p
-            style={{
-              fontSize: 11,
-              color: T.accent,
-              margin: "2px 0 0",
-              display: "flex",
-              alignItems: "center",
-              gap: 3,
-            }}
-          >
-            <ExternalLink size={10} />
-            {source.domain}
-          </p>
-        </div>
-      </div>
-    </a>
-  );
-}
-
-function getSourcesForQuery(q: string) {
-  const domains = [
-    "shiksha.com",
-    "careers360.com",
-    "collegedunia.com",
-    "getmyuni.com",
-    "indiatoday.in",
-  ];
-  return domains.slice(0, 4).map((domain, i) => ({
-    id: i + 1,
-    title: `${q} — Guide ${i + 1}`,
-    domain,
-    url: `https://${domain}`,
-  }));
-}
-
-function IconBtn({
-  icon: Icon,
-  label,
-  active,
-  activeColor,
-  activeBg,
-  onClick,
-}: any) {
-  const [hov, setHov] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 5,
-        padding: "6px 12px",
-        borderRadius: 999,
-        border: `1px solid ${active || hov ? T.borderHov : T.border}`,
-        background: active ? activeBg : hov ? T.btnGrayBg : "transparent",
-        color: active ? activeColor : T.btnGray,
-        fontSize: 13,
-        fontWeight: 500,
-        cursor: "pointer",
-        transition: "all 0.15s",
-      }}
-    >
-      <Icon size={14} />
-      {label}
-    </button>
-  );
-}
-
-function ActionBtn({ icon: Icon, label, onClick, active, activeColor }: any) {
-  const [hov, setHov] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 5,
-        padding: "6px 10px",
-        borderRadius: 999,
-        border: "none",
-        background: hov ? T.btnGrayBg : "transparent",
-        color: active ? activeColor : T.btnGray,
-        fontSize: 13,
-        fontWeight: 500,
-        cursor: "pointer",
-        transition: "all 0.15s",
-      }}
-    >
-      <Icon size={13} />
-      {label}
-    </button>
-  );
-}
-
-function Chip({
-  label,
-  iconIndex,
-  onClick,
-}: {
-  label: string;
-  iconIndex: number;
-  onClick: () => void;
-}) {
-  const [hov, setHov] = useState(false);
-  const Icon = CHIP_ICONS[iconIndex % CHIP_ICONS.length];
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "8px 14px",
-        borderRadius: 999,
-        border: `1px solid ${hov ? T.borderHov : T.border}`,
-        background: hov ? T.accentLight : T.surface,
-        fontSize: 13,
-        color: hov ? T.accentDark : T.textPrim,
-        cursor: "pointer",
-        transition: "all 0.15s",
-      }}
-    >
-      <Icon size={13} style={{ color: T.accent }} />
-      {label}
-    </button>
-  );
-}
-
-function ShareModal({ url, onClose }: { url: string; onClose: () => void }) {
-  const [copied, setCopied] = useState(false);
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const shareOptions = [
-    {
-      label: "WhatsApp",
-      color: "#25d366",
-      href: `https://wa.me/?text=${encodeURIComponent(url)}`,
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-        </svg>
-      ),
-    },
-    {
-      label: "Twitter / X",
-      color: "#000",
-      href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`,
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      ),
-    },
-    {
-      label: "LinkedIn",
-      color: "#0a66c2",
-      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 999,
-        background: "rgba(0,0,0,0.45)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0 16px",
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 16,
-          padding: 24,
-          width: "100%",
-          maxWidth: 340,
-          boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 20,
-          }}
-        >
-          <span style={{ fontWeight: 600, fontSize: 15, color: T.textPrim }}>
-            Share this answer
-          </span>
-          <button
-            onClick={onClose}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: T.textSec,
-            }}
-          >
-            <X size={16} />
-          </button>
-        </div>
-        <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
-          {shareOptions.map((opt) => (
-            <a
-              key={opt.label}
-              href={opt.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 6,
-                padding: "12px 8px",
-                borderRadius: 10,
-                background: opt.color,
-                textDecoration: "none",
-                transition: "opacity 0.15s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-            >
-              {opt.icon}
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 500 }}>
-                {opt.label}
-              </span>
-            </a>
-          ))}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: T.bg,
-            borderRadius: 10,
-            padding: "10px 12px",
-            border: `1px solid ${T.border}`,
-          }}
-        >
-          <span
-            style={{
-              flex: 1,
-              fontSize: 12,
-              color: T.textSec,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {url}
-          </span>
-          <button
-            onClick={copyLink}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              padding: "6px 12px",
-              borderRadius: 8,
-              background: copied ? T.green : T.accent,
-              color: "#fff",
-              border: "none",
-              fontSize: 12,
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "background 0.2s",
-              flexShrink: 0,
-            }}
-          >
-            {copied ? <Check size={12} /> : <Copy size={12} />}
-            {copied ? "Copied!" : "Copy"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Core search page ──────────────────────────────────────────
-function SearchPage() {
+// ChatGPT-style AI chat: saved threads on the left, the conversation and composer on the right.
+// `/search?q=…` (from the home search, navbar, compare links) starts a new chat with that question;
+// `/search?t=<id>` reopens a saved one.
+function AiChatPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const urlQuery = searchParams.get("q") ?? "";
+  const urlQuery = searchParams.get("q")?.trim() ?? "";
+  const urlThread = searchParams.get("t");
 
-  const [inputVal, setInputVal] = useState(urlQuery);
-  const [answer, setAnswer] = useState("");
-  const [isStreaming, setStreaming] = useState(false);
-  const [isDone, setDone] = useState(false);
-  // "Is this answer helpful?" prompt above the composer
-  const [feedbackDismissed, setFeedbackDismissed] = useState(false);
-  const [feedbackThanks, setFeedbackThanks] = useState(false);
-  const [showSrc, setShowSrc] = useState(false);
-  const [liked, setLiked] = useState<boolean | null>(null);
-  const [chips, setChips] = useState<string[]>([]);
-  const [sources, setSources] = useState<any[]>([]);
-  const [copied, setCopied] = useState(false);
-  const [showShare, setShowShare] = useState(false);
-  const [showAllFaqs, setShowAllFaqs] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
-
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const threadsRef = useRef<ChatThread[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const activeIdRef = useRef<string | null>(null);
+  const [streaming, setStreaming] = useState<{ threadId: string; messageId: string } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const [followUp, setFollowUp] = useState("");
-  const [fuFocused, setFuFocused] = useState(false);
 
-  // Below 768px the site's BottomNav (73.5px, hides while scrolling down) sits at the
-  // bottom of the screen — mirror its visibility so the composer always sits just above it.
-  const [hasBottomNav, setHasBottomNav] = useState(false);
-  const [bottomNavShown, setBottomNavShown] = useState(true);
-  useEffect(() => {
-    let lastY = window.scrollY;
-    const onResize = () => setHasBottomNav(window.innerWidth < 768);
-    const onScroll = () => {
-      const y = window.scrollY;
-      setBottomNavShown(!(y > lastY && y > 100));
-      lastY = y;
-    };
-    onResize();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-  const composerOffset = hasBottomNav && bottomNavShown ? 74 : 0;
+  const [draft, setDraft] = useState("");
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<ChatThread | null>(null);
+  const [showSignup, setShowSignup] = useState(false);
+  const [student, setStudent] = useState<{ name?: string } | null>(null);
 
-  // ── Detect mobile ──
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 800);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+  const composerRef = useRef<ChatComposerHandle>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef(true);
+  const [showJump, setShowJump] = useState(false);
+
+  // ── State helpers: every change goes through here so the ref is always current ──
+  const updateThreads = useCallback((fn: (prev: ChatThread[]) => ChatThread[], persist = false) => {
+    const next = fn(threadsRef.current);
+    threadsRef.current = next;
+    setThreads(next);
+    if (persist) saveThreads(next);
   }, []);
 
-  useEffect(() => {
-    const handleOpenSignup = () => setShowSignupModal(true);
-    window.addEventListener("open-signup", handleOpenSignup);
-    return () => window.removeEventListener("open-signup", handleOpenSignup);
+  const patchMessage = useCallback(
+    (threadId: string, messageId: string, patch: Partial<ChatMessage>, persist = false) =>
+      updateThreads(
+        (ts) =>
+          ts.map((t) =>
+            t.id !== threadId ? t : { ...t, messages: t.messages.map((m) => (m.id === messageId ? { ...m, ...patch } : m)) },
+          ),
+        persist,
+      ),
+    [updateThreads],
+  );
+
+  const showThread = useCallback((id: string | null, history: "push" | "replace" | "none" = "push") => {
+    activeIdRef.current = id;
+    setActiveId(id);
+    pinnedRef.current = true;
+    if (history !== "none") {
+      window.history[history === "push" ? "pushState" : "replaceState"](null, "", id ? `/search?t=${id}` : "/search");
+    }
   }, []);
 
-  useEffect(() => {
-    if (!urlQuery) return;
-    setInputVal(urlQuery);
-    runQuery(urlQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlQuery]);
+  // ── Streaming one answer; earlier turns go along so follow-ups keep their context ──
+  const streamAnswer = useCallback(
+    async (threadId: string, messageId: string, question: string, history: ApiHistory) => {
+      abortRef.current?.abort();
+      const ctrl = new AbortController();
+      abortRef.current = ctrl;
+      setStreaming({ threadId, messageId });
 
-  const handleBack = () => {
-    if (window.history.length > 1) router.back();
-    else router.push("/");
-  };
-
-  // Each new question gets a fresh feedback prompt
-  useEffect(() => {
-    setFeedbackDismissed(false);
-    setFeedbackThanks(false);
-  }, [urlQuery]);
-
-  const voteFeedback = (value: boolean) => {
-    setLiked(value);
-    setFeedbackThanks(true);
-    setTimeout(() => {
-      setFeedbackThanks(false);
-      setFeedbackDismissed(true);
-    }, 2000);
-  };
-
-  async function runQuery(q: string) {
-    abortRef.current?.abort();
-    const ctrl = new AbortController();
-    abortRef.current = ctrl;
-
-    setAnswer("");
-    setDone(false);
-    setShowSrc(false);
-    setLiked(null);
-    setChips([]);
-    setSources(getSourcesForQuery(q));
-    setStreaming(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q }),
-        signal: ctrl.signal,
-      });
-
-      if (!res.ok) throw new Error("API error");
-
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
       let full = "";
-      let srcShown = false;
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: question, messages: [...history, { role: "user", content: question }] }),
+          signal: ctrl.signal,
+        });
+        if (!res.ok || !res.body) throw new Error("API error");
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        full += decoder.decode(value, { stream: true });
-        setAnswer(full);
-        if (!srcShown && full.length > 60) {
-          setShowSrc(true);
-          srcShown = true;
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          full += decoder.decode(value, { stream: true });
+          patchMessage(threadId, messageId, { content: full });
+        }
+        patchMessage(threadId, messageId, { content: full, status: "done", followups: parseFollowups(full) }, true);
+      } catch (e: any) {
+        patchMessage(threadId, messageId, { content: full, status: e?.name === "AbortError" ? "stopped" : "error" }, true);
+      } finally {
+        if (abortRef.current === ctrl) {
+          abortRef.current = null;
+          setStreaming(null);
         }
       }
-
-      // The model sometimes bolds the marker ("**FOLLOWUPS:**") and puts the questions
-      // on the next line(s), so read everything after it and strip markdown leftovers.
-      const followMatch = full.match(/FOLLOWUPS:([\s\S]*)$/);
-      if (followMatch) {
-        const parsed = followMatch[1]
-          .split(/\||\n/)
-          .map((s) =>
-            s
-              .replace(/[*_`#>]/g, "")
-              .replace(/^\s*(?:[-•]|\d+[.)])\s*/, "")
-              .replace(/^["'“”]+|["'“”]+$/g, "")
-              .trim(),
-          )
-          .filter((s) => s.length > 3 && /[a-z]/i.test(s))
-          .slice(0, 5);
-        setChips(parsed);
-      }
-
-      setDone(true);
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
-        setAnswer("Sorry, something went wrong. Please try again.");
-        setDone(true);
-      }
-    } finally {
-      setStreaming(false);
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = inputVal.trim();
-    if (!q) return;
-    router.push(`/search?q=${encodeURIComponent(q)}`);
-  };
-
-  const handleChip = (label: string) => {
-    router.push(`/search?q=${encodeURIComponent(label)}`);
-  };
-
-  const handleCopy = () => {
-    const clean = answer
-      .replace(/\**\s*FOLLOWUPS:[\s\S]*$/, "")
-      .replace(/\*\*/g, "")
-      .replace(/##\s*/g, "")
-      .trim();
-    navigator.clipboard.writeText(clean);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleRetry = () => {
-    if (urlQuery) runQuery(urlQuery);
-  };
-  const handleShare = () => setShowShare(true);
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
-
-  const fallbackFaqs = [
-    {
-      q: `What should I know about ${urlQuery || "this topic"}?`,
-      a: "This FAQ is based on your current search topic.",
     },
-    {
-      q: `How do I compare options for ${urlQuery || "this search"}?`,
-      a: "Compare approval, fees, flexibility, specialization, support, and career value.",
-    },
-    {
-      q: "What should I verify before applying?",
-      a: "Verify UGC-DEB approval, latest fees, eligibility, admission deadline, and official terms.",
-    },
-    {
-      q: "Are EMI or installment options available?",
-      a: "Many private universities offer EMI, no-cost EMI, or semester-wise fee payment options.",
-    },
-    {
-      q: "Is this suitable for working professionals?",
-      a: "Online programs are usually suitable for working professionals because they offer flexible classes and recorded lectures.",
-    },
-  ];
-
-  const dynamicFaqs = [
-    ...chips.map((chip) => ({
-      q: chip,
-      a: "Click this question to explore it in detail.",
-    })),
-    ...fallbackFaqs,
-  ].slice(0, 6);
-
-  const visibleFaqs = showAllFaqs ? dynamicFaqs : dynamicFaqs.slice(0, 3);
-  const hasMoreFaqs = dynamicFaqs.length > 3;
-
-  // ── Sidebar / FAQ panel (shared between mobile & desktop) ──
-  const SidebarContent = (
-    <div
-      style={{
-        position: isMobile ? "static" : "sticky",
-        top: 88,
-        opacity: showSrc ? 1 : 0,
-        transform: showSrc ? "translateY(0)" : "translateY(14px)",
-        transition: "opacity 0.4s ease, transform 0.4s ease",
-      }}
-    >
-      {/* FAQ card */}
-      <div
-        style={{
-          background: T.surface,
-          border: `1px solid ${T.border}`,
-          borderRadius: 18,
-          padding: 18,
-          boxShadow: T.cardShadow,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 12,
-          }}
-        >
-          <p
-            style={{
-              fontWeight: 600,
-              fontSize: 14,
-              color: T.textPrim,
-              margin: 0,
-            }}
-          >
-            Frequently Asked Questions
-          </p>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {visibleFaqs.map((faq, index, arr) => (
-            <div
-              key={faq.q}
-              style={{
-                borderBottom:
-                  index === arr.length - 1 ? "none" : `1px solid ${T.border}`,
-                paddingBottom: index === arr.length - 1 ? 0 : 10,
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => handleChip(faq.q)}
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: T.textPrim,
-                  margin: "0 0 4px",
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  textAlign: "left",
-                  cursor: "pointer",
-                  width: "100%",
-                }}
-              >
-                {faq.q}
-              </button>
-              <p
-                style={{
-                  fontSize: 12,
-                  color: T.textSec,
-                  margin: 0,
-                  lineHeight: 1.5,
-                }}
-              >
-                {faq.a}
-              </p>
-            </div>
-          ))}
-        </div>
-        {hasMoreFaqs && (
-          <button
-            type="button"
-            onClick={() => setShowAllFaqs((prev) => !prev)}
-            style={{
-              marginTop: 14,
-              width: "100%",
-              border: `1px solid ${T.border}`,
-              background: T.surface,
-              color: T.accent,
-              borderRadius: 999,
-              padding: "8px 12px",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            {showAllFaqs ? "See less" : "See more"}
-          </button>
-        )}
-      </div>
-
-      {/* CTA card */}
-      {isDone && (
-        <div
-          style={{
-            marginTop: 12,
-            background: "#f9f9f9",
-            border: `1px solid ${T.border}`,
-            borderRadius: 18,
-            padding: 18,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              marginBottom: 8,
-            }}
-          >
-            <User size={14} color={T.accent} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: T.accent }}>
-              Login to Win Scholarship
-            </span>
-          </div>
-          <p
-            style={{
-              fontSize: 12,
-              color: "#444",
-              margin: "0 0 12px",
-              lineHeight: 1.6,
-            }}
-          >
-          Save your university picks, 
-          track your applications,
-           and make smarter decisions.
-          </p>
-          <button
-            type="button"
-            onClick={() => setShowSignupModal(true)}
-            style={{
-              width: "100%",
-              padding: "9px",
-              borderRadius: 999,
-              background: T.accentGradient,
-              color: "#fff",
-              border: "none",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              boxShadow: "none",
-            }}
-          >
-            Login
-          </button>
-        </div>
-      )}
-    </div>
+    [patchMessage],
   );
 
+  const ask = useCallback(
+    (text: string, threadId: string | null, history: "push" | "replace" = "push") => {
+      const question = text.trim();
+      if (!question) return;
+      const now = Date.now();
+      const existing = threadId ? threadsRef.current.find((t) => t.id === threadId) : undefined;
+      const reply: ChatMessage = { id: uid(), role: "assistant", content: "", status: "streaming" };
+      const messages: ChatMessage[] = [...(existing?.messages ?? []), { id: uid(), role: "user", content: question }, reply];
+      const thread: ChatThread = existing
+        ? { ...existing, messages, updatedAt: now }
+        : { id: uid(), title: titleFrom(question), messages, createdAt: now, updatedAt: now };
+
+      updateThreads((ts) => [thread, ...ts.filter((t) => t.id !== thread.id)], true);
+      if (existing) pinnedRef.current = true;
+      else showThread(thread.id, history);
+      streamAnswer(thread.id, reply.id, question, toApiHistory(existing?.messages ?? []));
+    },
+    [updateThreads, showThread, streamAnswer],
+  );
+
+  const regenerate = (threadId: string) => {
+    const thread = threadsRef.current.find((t) => t.id === threadId);
+    const msgs = thread?.messages ?? [];
+    const question = msgs[msgs.length - 2];
+    if (msgs[msgs.length - 1]?.role !== "assistant" || question?.role !== "user") return;
+    const reply: ChatMessage = { id: uid(), role: "assistant", content: "", status: "streaming" };
+    updateThreads((ts) => ts.map((t) => (t.id === threadId ? { ...t, messages: [...msgs.slice(0, -1), reply], updatedAt: Date.now() } : t)), true);
+    pinnedRef.current = true;
+    streamAnswer(threadId, reply.id, question.content, toApiHistory(msgs.slice(0, -2)));
+  };
+
+  // ── Load saved chats, sidebar preference and the signed-in student ──
+  useEffect(() => {
+    const saved = loadThreads();
+    threadsRef.current = saved;
+    setThreads(saved);
+    try {
+      setCollapsed(localStorage.getItem(SIDEBAR_KEY) === "1");
+      const s = localStorage.getItem("ecampus_student");
+      if (s) setStudent(JSON.parse(s));
+    } catch {
+      // Storage unavailable — defaults apply.
+    }
+    setHydrated(true);
+    return () => abortRef.current?.abort();
+  }, []);
+
+  // ── URL → chat: ?q= starts a new chat, ?t= opens a saved one, nothing = new chat screen ──
+  const handledQuery = useRef("");
+  useEffect(() => {
+    if (!hydrated) return;
+    if (urlQuery) {
+      if (handledQuery.current === urlQuery) return;
+      handledQuery.current = urlQuery;
+      ask(urlQuery, null, "replace");
+      return;
+    }
+    handledQuery.current = "";
+    if (urlThread === activeIdRef.current) return;
+    const exists = urlThread && threadsRef.current.some((t) => t.id === urlThread);
+    showThread(exists ? urlThread : null, urlThread && !exists ? "replace" : "none");
+  }, [hydrated, urlQuery, urlThread, ask, showThread]);
+
+  useEffect(() => {
+    const openSignup = () => setShowSignup(true);
+    window.addEventListener("open-signup", openSignup);
+    return () => window.removeEventListener("open-signup", openSignup);
+  }, []);
+
+  const active = threads.find((t) => t.id === activeId) ?? null;
+  const hasMessages = Boolean(active?.messages.length);
+  const streamingHere = streaming?.threadId === activeId;
+
+  // ── Scrolling: follow the answer while it streams unless the reader scrolled up ──
+  const scrollToBottom = (smooth = false) =>
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+
+  useLayoutEffect(() => {
+    if (pinnedRef.current) scrollToBottom();
+  }, [active?.messages]);
+
+  useLayoutEffect(() => {
+    setShowJump(false);
+  }, [activeId]);
+
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const gap = el.scrollHeight - el.scrollTop - el.clientHeight;
+    pinnedRef.current = gap < 80;
+    setShowJump(gap > 240);
+  };
+
+  // ── Actions ──
+  const submit = () => {
+    if (!draft.trim() || streamingHere) return;
+    ask(draft, activeId);
+    setDraft("");
+  };
+
+  const newChat = () => {
+    setDrawerOpen(false);
+    setDraft("");
+    showThread(null);
+    requestAnimationFrame(() => composerRef.current?.focus());
+  };
+
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      localStorage.setItem(SIDEBAR_KEY, next ? "1" : "0");
+    } catch {
+      // Not remembered — still applies for this visit.
+    }
+  };
+
+  const deleteThread = (thread: ChatThread) => {
+    if (streaming?.threadId === thread.id) abortRef.current?.abort();
+    updateThreads((ts) => ts.filter((t) => t.id !== thread.id), true);
+    if (thread.id === activeIdRef.current) showThread(null, "replace");
+    setPendingDelete(null);
+  };
+
+  const share = (question: string) => setShareUrl(`${window.location.origin}/search?q=${encodeURIComponent(question)}`);
+
+  const sidebarProps = {
+    threads,
+    activeId,
+    busyThreadId: streaming?.threadId ?? null,
+    student,
+    onNewChat: newChat,
+    onSelect: (id: string) => {
+      setDrawerOpen(false);
+      if (id !== activeIdRef.current) showThread(id);
+    },
+    onRename: (id: string, title: string) =>
+      updateThreads((ts) => ts.map((t) => (t.id === id ? { ...t, title } : t)), true),
+    onDelete: setPendingDelete,
+    onLogin: () => {
+      setDrawerOpen(false);
+      setShowSignup(true);
+    },
+  };
+
+  const firstName = student?.name?.trim().split(/\s+/)[0];
+  const firstQuestion = active?.messages.find((m) => m.role === "user")?.content;
+
   return (
-    <div style={{ minHeight: "100vh", background: T.bgGradient, backgroundColor: T.bg, color: T.textPrim }}>
-      {showShare && (
-        <ShareModal url={shareUrl} onClose={() => setShowShare(false)} />
-      )}
+    <>
+      <div className="flex h-[calc(100dvh-4rem)] overflow-hidden bg-white">
+        {/* Docked sidebar — tablets and up */}
+        <motion.aside
+          initial={false}
+          animate={{ width: collapsed ? 60 : 260 }}
+          transition={hydrated ? SIDEBAR_SPRING : { duration: 0 }}
+          className="hidden h-full flex-shrink-0 overflow-hidden border-r border-black/[0.06] bg-[#f9f9f9] md:block"
+        >
+          <ChatSidebar {...sidebarProps} variant="docked" collapsed={collapsed} onToggle={toggleCollapsed} />
+        </motion.aside>
 
-      {/* ══ Sticky header ══ */}
+        {/* Drawer — phones */}
+        <AnimatePresence>
+          {drawerOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                onClick={() => setDrawerOpen(false)}
+                className="fixed inset-0 z-[65] bg-black/40 md:hidden"
+              />
+              <motion.aside
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="fixed inset-y-0 left-0 z-[70] w-[280px] bg-[#f9f9f9] shadow-2xl md:hidden [&>div]:w-full"
+              >
+                <ChatSidebar {...sidebarProps} variant="drawer" onToggle={() => setDrawerOpen(false)} />
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>
 
-      {/* <form
-            onSubmit={handleSubmit}
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: T.surface,
-              border: `1.5px solid ${T.border}`,
-              borderRadius: 999,
-              padding: isMobile ? "5px 6px 5px 12px" : "6px 8px 6px 16px",
-              transition: "border-color 0.2s",
-              minWidth: 0, // critical: prevents overflow in flex
-            }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = T.accent)}
-            onBlur={(e) => (e.currentTarget.style.borderColor = T.border)}
-          >
-            <Search size={14} style={{ color: T.textHint, flexShrink: 0 }} />
-            <input
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Ask eCampus AI…"
-              style={{
-                flex: 1,
-                border: "none",
-                outline: "none",
-                background: "transparent",
-                fontSize: isMobile ? 13 : 14,
-                color: T.textPrim,
-                minWidth: 0, // critical: prevents input from overflowing
-              }}
-            />
-            {inputVal && (
+        {/* Conversation */}
+        <section className="relative flex min-w-0 flex-1 flex-col">
+          <header className="flex h-14 flex-shrink-0 items-center gap-1 px-2 sm:px-4">
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open chat history"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[#0d0d0d] hover:bg-black/[0.05] md:hidden"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <h1 className="min-w-0 flex-1 truncate px-1 text-lg font-semibold text-[#0d0d0d] md:px-2">eCampus AI</h1>
+            {firstQuestion && (
               <button
                 type="button"
-                onClick={() => setInputVal("")}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  color: T.textHint,
-                  padding: 4,
-                  display: "flex",
-                  borderRadius: "50%",
-                  flexShrink: 0,
-                }}
+                onClick={() => share(firstQuestion)}
+                className="hidden items-center gap-2 rounded-full border border-black/10 px-3.5 py-1.5 text-sm font-medium text-[#0d0d0d] transition hover:bg-black/[0.04] sm:flex"
               >
-                <X size={13} />
+                <Share2 className="h-4 w-4" /> Share
               </button>
             )}
             <button
-              type="submit"
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                background: "#3c4043",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
+              type="button"
+              onClick={newChat}
+              aria-label="New chat"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-[#0d0d0d] hover:bg-black/[0.05] md:hidden"
             >
-              <ArrowUp size={14} color="#fff" />
+              <SquarePen className="h-5 w-5" />
             </button>
-          </form> */}
+          </header>
 
-      {/* ══ Main body ══ */}
-      <main
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: isMobile ? "16px 12px 8px" : "32px 24px 16px",
-          display: isMobile ? "flex" : "grid",
-          flexDirection: isMobile ? "column" : undefined,
-          gridTemplateColumns: isMobile ? undefined : "1fr 308px",
-          gap: isMobile ? 16 : 32,
-          alignItems: "start",
-        }}
-      >
-        {/* ════ LEFT / Main column ════ */}
-        <div
-          style={{
-            minWidth: 0,
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            minHeight: isMobile ? "calc(100vh - 120px)" : "calc(100vh - 130px)",
-          }}
-        >
-          {/* ── The question being answered (shown like the user's message bubble) ── */}
-          {urlQuery && (
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: isMobile ? 18 : 26 }}>
-              <h1
-                style={{
-                  margin: 0,
-                  maxWidth: "85%",
-                  background: "#f4f4f4",
-                  color: T.textPrim,
-                  borderRadius: 22,
-                  padding: isMobile ? "10px 16px" : "12px 20px",
-                  fontSize: isMobile ? 15 : 16,
-                  lineHeight: 1.5,
-                  fontWeight: 400,
-                  wordBreak: "break-word",
-                }}
-              >
-                {urlQuery}
-              </h1>
-            </div>
-          )}
-
-          {/* ── AI Answer card ── */}
-          <div
-            style={{
-              background: "transparent",
-              padding: isMobile ? "0 2px" : "0 4px",
-              marginBottom: 16,
-            }}
-          >
-            {/* Card header */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 9,
-                marginBottom: 16,
-                flexWrap: "wrap",
-              }}
-            >
-              <div
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: "50%",
-                  background: T.accentGradient,
-                  boxShadow: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <Sparkles size={15} color="#fff" aria-label="eCampus AI" />
-              </div>
-              <span
-                style={{ fontWeight: 600, fontSize: 14, color: T.textPrim }}
-              >
-                AI Summary
-              </span>
-              {isStreaming && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: T.accent,
-                    background: T.accentLight,
-                    padding: "2px 10px",
-                    borderRadius: 999,
-                  }}
-                >
-                  Generating…
-                </span>
-              )}
-              {isDone && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: T.green,
-                    background: T.greenLight,
-                    padding: "2px 10px",
-                    borderRadius: 999,
-                  }}
-                >
-                  Done
-                </span>
-              )}
-            </div>
-
-            {/* Answer body */}
-            <div style={{ minHeight: 64 }}>
-              {!isStreaming && !isDone && !answer ? (
-                <Skeleton />
-              ) : answer ? (
-                <>
-                  <FormattedAnswer text={answer} />
-                  {isStreaming && (
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: 2,
-                        height: "1em",
-                        background: T.accent,
-                        verticalAlign: "middle",
-                        marginLeft: 2,
-                        animation: "blink 0.7s steps(1) infinite",
-                      }}
+          {hasMessages && active ? (
+            <div ref={scrollRef} onScroll={onScroll} className="order-1 min-h-0 flex-1 overflow-y-auto">
+              <div className="mx-auto w-full max-w-3xl space-y-8 px-4 pb-10 pt-2 sm:px-6">
+                {active.messages.map((m, i) =>
+                  m.role === "user" ? (
+                    <UserMessage key={m.id} message={m} />
+                  ) : (
+                    <AssistantMessage
+                      key={m.id}
+                      message={m}
+                      isLast={i === active.messages.length - 1}
+                      onFeedback={(value) =>
+                        patchMessage(active.id, m.id, { feedback: m.feedback === value ? undefined : value }, true)
+                      }
+                      onRegenerate={() => regenerate(active.id)}
+                      onShare={() => share(active.messages[i - 1]?.content ?? active.title)}
+                      onFollowup={(q) => ask(q, active.id)}
                     />
-                  )}
-                </>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    color: T.textSec,
-                    fontSize: 14,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 18,
-                      height: 18,
-                      border: `2px solid ${T.accent}`,
-                      borderTopColor: "transparent",
-                      borderRadius: "50%",
-                      animation: "spin 0.7s linear infinite",
-                      flexShrink: 0,
-                    }}
-                  />
-                  Thinking…
-                </div>
-              )}
-            </div>
-
-            {/* Actions row */}
-            {isDone && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: isMobile ? 2 : 4,
-                  flexWrap: "wrap",
-                  marginTop: 16,
-                  paddingTop: 12,
-                  borderTop: `1px solid ${T.border}`,
-                }}
-              >
-                <IconBtn
-                  icon={ThumbsUp}
-                  label={isMobile ? "" : "Helpful"}
-                  active={liked === true}
-                  activeColor={T.green}
-                  activeBg={T.greenLight}
-                  onClick={() => setLiked(true)}
-                />
-                <IconBtn
-                  icon={ThumbsDown}
-                  label={isMobile ? "" : "Not helpful"}
-                  active={liked === false}
-                  activeColor={T.red}
-                  activeBg={T.redLight}
-                  onClick={() => setLiked(false)}
-                />
-                <div style={{ flex: 1 }} />
-                <ActionBtn
-                  icon={copied ? Check : Copy}
-                  label={isMobile ? "" : copied ? "Copied!" : "Copy"}
-                  onClick={handleCopy}
-                  active={copied}
-                  activeColor={T.green}
-                />
-                <ActionBtn
-                  icon={Share2}
-                  label={isMobile ? "" : "Share"}
-                  onClick={handleShare}
-                />
-                <ActionBtn
-                  icon={RefreshCw}
-                  label={isMobile ? "" : "Retry"}
-                  onClick={handleRetry}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* ── Follow-up chips ── */}
-          {isDone && chips.length > 0 && (
-            <div style={{ marginBottom: 16 }}>
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: T.textSec,
-                  marginBottom: 10,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Related searches
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {chips.map((label, i) => (
-                  <Chip
-                    key={label}
-                    label={label}
-                    iconIndex={i}
-                    onClick={() => handleChip(label)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ── FAQ panel: mobile only (inline) ── */}
-          {isMobile && SidebarContent}
-
-          {/* ══ Composer: sticky (not fixed) so it scrolls away above the footer ══ */}
-          <div
-            style={{
-              position: "sticky",
-              bottom: composerOffset,
-              transition: "bottom 0.3s ease",
-              zIndex: 20,
-              marginTop: "auto",
-              paddingTop: 28,
-              paddingBottom: isMobile ? 14 : 22,
-              background: "linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 40%)",
-            }}
-          >
-            {/* "Is this answer helpful?" prompt — appears above the composer once an answer is done */}
-            {isDone && !feedbackDismissed && (liked === null || feedbackThanks) && (
-              <div
-                role="status"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  margin: "0 auto 10px",
-                  maxWidth: 520,
-                  background: "#ffffff",
-                  border: `1px solid ${T.border}`,
-                  borderRadius: 16,
-                  padding: "8px 8px 8px 16px",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-                  animation: "feedbackIn 0.25s ease-out",
-                }}
-              >
-                <span style={{ fontSize: 14, color: T.textPrim }}>
-                  {feedbackThanks ? "Thanks for your feedback!" : "Is this answer helpful?"}
-                </span>
-                {!feedbackThanks && (
-                  <span style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {[
-                      { label: "Helpful", icon: ThumbsUp, value: true },
-                      { label: "Not helpful", icon: ThumbsDown, value: false },
-                    ].map(({ label, icon: Icon, value }) => (
-                      <button
-                        key={label}
-                        type="button"
-                        aria-label={label}
-                        onClick={() => voteFeedback(value)}
-                        style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 10,
-                          border: "none",
-                          background: "transparent",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: T.textSec,
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = "#f4f4f4")}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                      >
-                        <Icon size={16} />
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      aria-label="Dismiss"
-                      onClick={() => setFeedbackDismissed(true)}
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 10,
-                        border: "none",
-                        background: "transparent",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: T.textHint,
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f4f4f4")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                      <X size={15} />
-                    </button>
-                  </span>
+                  ),
                 )}
               </div>
+            </div>
+          ) : (
+            <>
+              <div className="order-1 flex-1" />
+              <div className="order-2 px-4 text-center">
+                <motion.span
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 18 }}
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0d0d0d] shadow-lg shadow-black/10"
+                >
+                  <Sparkles className="h-5 w-5 text-white" />
+                </motion.span>
+                <motion.h2
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: 0.05 }}
+                  className="mt-4 text-2xl font-semibold tracking-tight text-[#0d0d0d] sm:text-[28px]"
+                >
+                  {firstName ? `Hi ${firstName}, what can I help with?` : "What can I help you with?"}
+                </motion.h2>
+                <p className="mt-2 text-sm text-[#5d5d5d]">Ask about online degrees, universities, fees, eligibility or careers.</p>
+              </div>
+              <div className="order-3 mx-auto mt-6 grid w-full max-w-3xl grid-cols-1 gap-2 px-4 sm:grid-cols-2 sm:px-6 md:order-5 md:mt-4">
+                {SUGGESTIONS.map(({ icon: Icon, text }, i) => (
+                  <motion.button
+                    key={text}
+                    type="button"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
+                    onClick={() => ask(text, null)}
+                    className="group flex items-center gap-3 rounded-2xl border border-black/[0.08] px-4 py-3 text-left text-sm text-[#0d0d0d] transition hover:border-black/15 hover:bg-[#f9f9f9]"
+                  >
+                    <Icon className="h-4 w-4 flex-shrink-0 text-[#5d5d5d] transition-colors group-hover:text-[#ee2c3c]" />
+                    {text}
+                  </motion.button>
+                ))}
+              </div>
+              <div className="order-4 flex-1 md:order-6" />
+            </>
+          )}
+
+          {/* Composer — sits above the phone bottom bar; in the middle of an empty chat on larger screens */}
+          <div
+            className={`relative flex-shrink-0 px-3 pt-2 sm:px-6 ${
+              hasMessages ? "order-2 pb-[88px] md:pb-3" : "order-5 pb-[88px] md:order-4 md:mt-8 md:pb-0"
+            }`}
+          >
+            <AnimatePresence>
+              {showJump && hasMessages && (
+                <motion.button
+                  type="button"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  onClick={() => {
+                    pinnedRef.current = true;
+                    scrollToBottom(true);
+                  }}
+                  aria-label="Scroll to latest"
+                  className="absolute -top-11 left-1/2 flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-black/10 bg-white text-[#0d0d0d] shadow-md transition hover:bg-[#f9f9f9]"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+            <ChatComposer
+              ref={composerRef}
+              value={draft}
+              onChange={setDraft}
+              onSubmit={submit}
+              onStop={() => abortRef.current?.abort()}
+              streaming={streamingHere}
+            />
+            {hasMessages && (
+              <p className="mt-2 text-center text-[11px] leading-snug text-[#8f8f8f]">
+                eCampus AI can make mistakes. Verify fees and approvals on the official university website.
+              </p>
             )}
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const t = followUp.trim();
-                if (t) {
-                  router.push(`/search?q=${encodeURIComponent(t)}`);
-                  setFollowUp("");
-                }
-              }}
-              style={{
-                background: T.surface,
-                border: `1px solid ${fuFocused ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.1)"}`,
-                borderRadius: 999,
-                padding: "6px 6px 6px 18px",
-                maxWidth: 680,
-                margin: "0 auto",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                boxShadow: fuFocused
-                  ? "0 4px 24px rgba(0,0,0,0.08)"
-                  : "0 2px 12px rgba(0,0,0,0.05)",
-                transition: "border-color 0.2s, box-shadow 0.2s",
-              }}
-            >
-              <input
-                name="fu"
-                value={followUp}
-                onChange={(e) => setFollowUp(e.target.value)}
-                onFocus={() => setFuFocused(true)}
-                onBlur={() => setFuFocused(false)}
-                placeholder="Ask anything"
-                aria-label="Ask eCampus AI"
-                autoComplete="off"
-                style={{
-                  flex: 1,
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  boxShadow: "none",
-                  borderRadius: 0,
-                  padding: "6px 0",
-                  fontSize: 15,
-                  color: T.textPrim,
-                  minWidth: 0,
-                }}
-              />
-              <button
-                type="submit"
-                disabled={!followUp.trim()}
-                aria-label="Send"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  background: followUp.trim() ? "#0d0d0d" : "#e5e5e5",
-                  border: "none",
-                  cursor: followUp.trim() ? "pointer" : "not-allowed",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  boxShadow: "none",
-                  transition: "background 0.2s, box-shadow 0.2s, transform 0.1s",
-                }}
-              >
-                <ArrowUp size={16} color="#ffffff" strokeWidth={2.5} />
-              </button>
-            </form>
-            <p
-              style={{
-                margin: "6px 0 0",
-                textAlign: "center",
-                fontSize: 11,
-                color: T.textHint,
-              }}
-            >
-              eCampus AI can make mistakes. Verify fees and approvals on the official university website.
-            </p>
           </div>
-        </div>
+        </section>
 
-        {/* ════ RIGHT: Desktop sidebar only ════ */}
-        {!isMobile && SidebarContent}
-      </main>
-
-      {/* ════ FOOTER ════ */}
-      <div className="relative z-10">
-        <Footer />
+        <ShareDialog url={shareUrl} onClose={() => setShareUrl(null)} />
+        <ConfirmDeleteDialog
+          title={pendingDelete?.title ?? null}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => pendingDelete && deleteThread(pendingDelete)}
+        />
+        <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} onSwitchToLogin={() => setShowSignup(false)} />
       </div>
 
-      <style>{`
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes feedbackIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin   { to{transform:rotate(360deg)} }
-      `}</style>
-
-      {/* Signup Modal */}
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-        onSwitchToLogin={() => setShowSignupModal(false)}
-      />
-    </div>
+      {/* Footer sits right under the full-height chat — scroll past the conversation to reach it */}
+      <div className="relative z-10 [&>footer]:mt-0">
+        <Footer />
+      </div>
+    </>
   );
 }
 
@@ -1567,22 +473,10 @@ export default function SearchResultsPage() {
   return (
     <Suspense
       fallback={
-        <div
-          style={{
-            minHeight: "100vh",
-            background: "#ffffff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            color: "#5f6368",
-          }}
-        >
-          Loading…
-        </div>
+        <div className="flex h-[calc(100dvh-4rem)] items-center justify-center bg-white text-sm text-[#5d5d5d]">Loading…</div>
       }
     >
-      <SearchPage />
+      <AiChatPage />
     </Suspense>
   );
 }

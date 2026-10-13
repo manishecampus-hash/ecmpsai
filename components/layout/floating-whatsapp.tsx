@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 
 interface FloatingWhatsAppProps {
   phoneNumber?: string;
@@ -12,6 +13,8 @@ export function FloatingWhatsApp({
   message = "Hi! I would like to get more information about online university programs.",
 }: FloatingWhatsAppProps) {
   const [isHovered, setIsHovered] = useState(false);
+  // The AI chat page keeps its message box at the bottom of the screen — sit just above it there
+  const aboveComposer = usePathname() === "/search";
 
   // Clean the phone number (remove any non-digit characters)
   const cleanNumber = phoneNumber.replace(/\D/g, "");
@@ -20,7 +23,7 @@ export function FloatingWhatsApp({
   const whatsappUrl = `https://wa.me/${cleanNumber}${message ? `?text=${encodedMessage}` : ""}`;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto">
+    <div className={`fixed ${aboveComposer ? "bottom-[196px] md:bottom-[112px]" : "bottom-20 md:bottom-6"} right-4 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto`}>
       {/* Tooltip / Prompt bubble on desktop */}
       <a
         href={whatsappUrl}
@@ -28,7 +31,7 @@ export function FloatingWhatsApp({
         rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`hidden md:flex items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 transform origin-right cursor-pointer hover:border-emerald-200 hover:text-emerald-700 hover:shadow-[0_10px_35px_rgba(37,211,102,0.2)] ${
+        className={`hidden ${aboveComposer ? "" : "md:flex"} items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 transform origin-right cursor-pointer hover:border-emerald-200 hover:text-emerald-700 hover:shadow-[0_10px_35px_rgba(37,211,102,0.2)] ${
           isHovered ? "opacity-100 translate-x-0 scale-100" : "opacity-90 translate-x-1 scale-95"
         }`}
         aria-label="Chat on WhatsApp"

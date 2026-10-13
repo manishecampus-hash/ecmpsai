@@ -832,7 +832,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Specialization" icon={Layers} selected={specializations.length}>
+      <FilterSection title="Specialization" icon={Layers} selected={specializations.length} defaultOpen={false}>
         <div className="-mx-2">
           {SPECIALIZATIONS.map((sp) => (
             <OptionRow
@@ -846,7 +846,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Study Mode" icon={Monitor} selected={modes.length}>
+      <FilterSection title="Study Mode" icon={Monitor} selected={modes.length} defaultOpen={false}>
         <div className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (
             <ModeTile
@@ -860,7 +860,7 @@ export default function AIDegreeMatcherPage() {
         </div>
       </FilterSection>
 
-      <FilterSection title="Annual Fee" icon={IndianRupee} selected={maxFee < MAX_FEE ? 1 : 0}>
+      <FilterSection title="Annual Fee" icon={IndianRupee} selected={maxFee < MAX_FEE ? 1 : 0} defaultOpen={false}>
         <div className="flex items-baseline justify-between">
           <span className="text-xs text-gray-500">Maximum budget</span>
           <span className="text-sm font-bold tabular-nums text-gray-900">
@@ -964,20 +964,17 @@ export default function AIDegreeMatcherPage() {
           <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
-                Find Your Perfect University
+                Find Your Perfect Online Degree in 60 Seconds
               </h1>
-              <p className="mt-1 max-w-xl text-sm text-gray-500">
-                Explore universities and degree programs matched to your goals, budget, and career plans.
-              </p>
+              <p className="mt-1 text-sm text-gray-500 text-nowrap">
+  Explore universities and degree programs matched to your goals, budget, and career plans.
+</p>
             </div>
-            <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-              <Sparkles className="h-3.5 w-3.5" />
-              AI-Powered Recommendations
-            </span>
+            
           </motion.div>
 
           {/* Search bar */}
-          <motion.div {...fadeUp(0.06)} className="relative z-20 mb-4 flex flex-col rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm transition-colors focus-within:border-red-300 focus-within:ring-4 focus-within:ring-red-50 sm:flex-row sm:items-center">
+          {/* <motion.div {...fadeUp(0.06)} className="relative z-20 mb-4 flex flex-col rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm transition-colors focus-within:border-red-300 focus-within:ring-4 focus-within:ring-red-50 sm:flex-row sm:items-center">
             <div className="flex flex-1 items-center gap-2.5 px-3 py-2.5">
               <Search className="h-[18px] w-[18px] flex-shrink-0 text-gray-400" />
               <input
@@ -1006,7 +1003,7 @@ export default function AIDegreeMatcherPage() {
               <Search className="h-4 w-4" />
               Search Universities
             </button>
-          </motion.div>
+          </motion.div> */}
 
           {/* AI recommendation banner */}
           <motion.div {...fadeUp(0.12)} className="mb-5 rounded-2xl border border-red-100 bg-red-50/60 px-4 py-3.5 sm:px-5">
@@ -1015,9 +1012,7 @@ export default function AIDegreeMatcherPage() {
                 <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
                 <div>
                   <p className="text-sm font-bold text-gray-900">AI Recommended for You</p>
-                  <p className="text-xs text-gray-500">
-                    Based on your academic profile, career goals &amp; budget target.
-                  </p>
+                  
                 </div>
               </div>
               <button
@@ -1095,8 +1090,8 @@ export default function AIDegreeMatcherPage() {
 
             {/* Results */}
             <div className="min-w-0 flex-1 space-y-4">
-              <div ref={resultsTopRef} className="relative z-10 flex scroll-mt-4 flex-wrap items-center justify-between gap-2">
-                <p className="text-sm text-gray-500">
+              <div ref={resultsTopRef} className="relative z-10 flex scroll-mt-4 flex-wrap items-center justify-between gap-x-3 gap-y-2.5">
+                <p className="flex-shrink-0 text-sm text-gray-500">
                   {sorted.length > 0 && (
                     <>
                       Showing{" "}
@@ -1117,6 +1112,32 @@ export default function AIDegreeMatcherPage() {
                   </motion.span>{" "}
                   Universities Found
                 </p>
+
+                {/* Search — between the count and Sort by when the row has room, otherwise on its own line */}
+                <div className="order-last flex basis-full justify-end md:order-none md:min-w-0 md:flex-1 md:basis-0 lg:order-last lg:basis-full xl:order-none xl:basis-0">
+                  <label className="group flex h-9 w-full items-center gap-2 rounded-xl border border-red-300 bg-white px-3 transition-[max-width,border-color,box-shadow] duration-300 ease-out hover:border-red-400 focus-within:border-red-500 focus-within:shadow-[0_0_0_3px_rgba(238,44,60,0.10)] md:max-w-[180px] md:focus-within:max-w-[300px] lg:max-w-none lg:focus-within:max-w-none xl:max-w-[220px] xl:focus-within:max-w-[300px]">
+                    <Search className="h-4 w-4 flex-shrink-0 text-gray-400 transition-colors group-focus-within:text-red-500" />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search universities…"
+                      aria-label="Search universities, degrees, or specializations"
+                      className="h-full w-full min-w-0 rounded-none border-0 bg-transparent p-0 text-[13px] text-gray-900 outline-none placeholder:text-gray-400 focus:border-0 focus:bg-transparent focus:shadow-none focus:outline-none focus:ring-0"
+                    />
+                    {search && (
+                      <button
+                        type="button"
+                        onClick={() => setSearch("")}
+                        aria-label="Clear search"
+                        className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-red-50 hover:text-red-600"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </label>
+                </div>
+
                 <div className="flex items-center gap-2 text-sm">
                   <span className="flex-shrink-0 text-gray-500">Sort by</span>
                   <div className="w-44">

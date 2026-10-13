@@ -264,8 +264,22 @@ export default function CourseHeroSection({
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-white to-transparent sm:w-8" />
 
-                  <div className="recognition-track flex w-max flex-nowrap items-center gap-2">
-                    {[...recognitionLogos, ...recognitionLogos].map(
+                  {/* Endless right-to-left scroll: the logos are repeated so one half of the
+                      track always covers the box, and the track slides by exactly that half. */}
+                  <style>{`
+                    @keyframes recognition-scroll {
+                      from { transform: translateX(0); }
+                      to { transform: translateX(-50%); }
+                    }
+                    .recognition-track { animation: recognition-scroll 18s linear infinite; }
+                    .recognition-track:hover { animation-play-state: paused; }
+                    @media (prefers-reduced-motion: reduce) {
+                      .recognition-track { animation: none; }
+                    }
+                  `}</style>
+
+                  <div className="recognition-track flex w-max flex-nowrap items-center gap-2 pr-2">
+                    {[...recognitionLogos, ...recognitionLogos, ...recognitionLogos, ...recognitionLogos].map(
                       (logo: any, i: number) => (
                         <div
                           key={`${logo.alt}-${i}`}

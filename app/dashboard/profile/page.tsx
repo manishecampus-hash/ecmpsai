@@ -28,9 +28,7 @@ import {
   Layers,
   IndianRupee,
   FileCheck2,
-  Landmark,
   Wallet,
-  CheckCircle2,
   Sparkles,
   Settings,
   GraduationCap,
@@ -72,6 +70,15 @@ const ADVISOR_ROW_ICONS: Record<string, typeof Target> = {
   format: Layers,
 };
 
+// Tile columns for the goals card, by number of answers (full class names so Tailwind keeps them)
+const GOAL_GRID_COLS: Record<number, string> = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-2 xl:grid-cols-4",
+  5: "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
+};
+
 export default function ProfilePage() {
   const [student, setStudent] = useState<StudentProfile>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -95,6 +102,11 @@ export default function ProfilePage() {
       setFormState(parsed.state || "");
     }
   }, []);
+
+  const goalRows = describeAdvisorProfile(student.advisorProfile).map((row) => ({
+    ...row,
+    icon: ADVISOR_ROW_ICONS[row.key] ?? Target,
+  }));
 
   const displayName = student.name?.trim() || "Rahul Kumar";
   const initial = displayName.charAt(0).toUpperCase();
@@ -207,8 +219,7 @@ export default function ProfilePage() {
                   <p className="mt-0.5 text-sm text-gray-500">
                     {student.coursesInterested?.length
                       ? student.coursesInterested[0]
-                      : "B.Tech CS"}{" "}
-                    · Cohort &apos;26
+                      : "B.Tech CS"}
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-red-600 shadow-sm">
@@ -247,57 +258,110 @@ export default function ProfilePage() {
               </div>
             </motion.div>
 
-            {/* Quick stats — same figures shown on the main dashboard, surfaced here for a single-glance account summary */}
-            <motion.div
-              variants={staggerContainer(0.05)}
-              className="grid grid-cols-2 gap-3 sm:grid-cols-4"
-            >
-              {[
-                { icon: Landmark, iconClass: "bg-red-50 text-red-500", hover: "hover:border-red-300 hover:shadow-red-100/60", label: "AI Matches", value: "14" },
-                { icon: Wallet, iconClass: "bg-emerald-50 text-emerald-500", hover: "hover:border-emerald-300 hover:shadow-emerald-100/60", label: "Scholarship", value: "₹10,000" },
-                { icon: CheckCircle2, iconClass: "bg-blue-50 text-blue-500", hover: "hover:border-blue-300 hover:shadow-blue-100/60", label: "App Readiness", value: "88%" },
-                { icon: Sparkles, iconClass: "bg-amber-50 text-amber-600", hover: "hover:border-amber-300 hover:shadow-amber-100/60", label: "AI Readiness", value: "94/100" },
-              ].map((s) => (
-                // Motion on a wrapper so the card's CSS hover lift isn't overridden
-                <motion.div key={s.label} variants={staggerItem}>
-                <div className={`h-full rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-4 ${s.hover}`}>
-                  <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.iconClass}`}
-                  >
-                    <s.icon className="h-4 w-4" strokeWidth={1.8} />
-                  </span>
-                  <p className="mt-2 text-base font-bold text-gray-900">
-                    {s.value}
-                  </p>
-                  <p className="text-[11px] text-gray-500">{s.label}</p>
-                </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
             <motion.div
               variants={staggerContainer(0.07)}
               className="grid grid-cols-1 gap-5 lg:grid-cols-2"
             >
-               <SectionCard title="Interested Programs">
-                {student.coursesInterested?.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {student.coursesInterested.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded-full bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-600"
-                      >
-                        {c}
-                      </span>
-                    ))}
+              {/* Academic & Career Goals — first, full width */}
+              <motion.div
+                variants={staggerItem}
+                className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6 lg:col-span-2"
+              >
+                {/* accent line that draws in on load */}
+                <motion.span
+                  aria-hidden
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.35 }}
+                  className="absolute inset-x-0 top-0 h-1 origin-left bg-red-600"
+                />
+                {/* soft glow in the corner */}
+                <motion.span
+                  aria-hidden
+                  animate={{ scale: [1, 1.12, 1], opacity: [0.55, 0.8, 0.55] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-red-100 blur-3xl"
+                />
+
+                <div className="relative flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex items-start gap-3.5">
+                    <span className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-red-600 text-white shadow-md shadow-red-500/30">
+                      <motion.span
+                        aria-hidden
+                        animate={{ scale: [1, 1.45], opacity: [0.5, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 0.8, ease: "easeOut" }}
+                        className="absolute inset-0 rounded-xl border-2 border-red-400"
+                      />
+                      <Target className="h-5 w-5" strokeWidth={2} />
+                    </span>
+                    <div>
+                      <h2 className="text-base font-bold text-gray-900 sm:text-lg">
+                       Your Choises
+                      </h2>
+                      <p className="mt-0.5 text-sm text-gray-500">
+                        Captured from your AI Advisor questionnaire — powers your course matches.
+                      </p>
+                    </div>
                   </div>
+
+                  {goalRows.length > 0 && (
+                    <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+                      <span className="relative flex h-2 w-2">
+                        <motion.span
+                          aria-hidden
+                          animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
+                          transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                          className="absolute inset-0 rounded-full bg-red-500"
+                        />
+                        <span className="relative h-2 w-2 rounded-full bg-red-600" />
+                      </span>
+                      AI Advisor · {goalRows.length} answers
+                    </span>
+                  )}
+                </div>
+
+                {goalRows.length > 0 ? (
+                  <motion.div
+                    variants={staggerContainer(0.07, 0.25)}
+                    className={`relative mt-5 grid grid-cols-1 gap-3 ${GOAL_GRID_COLS[goalRows.length] ?? "sm:grid-cols-2 lg:grid-cols-3"}`}
+                  >
+                    {goalRows.map((row, i) => (
+                      // Motion on a wrapper so the tile's CSS hover lift isn't overridden
+                      <motion.div key={row.label} variants={staggerItem}>
+                        <div className="group relative h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_14px_30px_-18px_rgba(238,44,60,0.45)]">
+                          {/* big background number */}
+                          <span
+                            aria-hidden
+                            className="pointer-events-none absolute -bottom-4 -right-1 select-none text-[72px] font-black leading-none tabular-nums text-red-100/60 transition-colors duration-300 group-hover:text-red-100"
+                          >
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <div className="relative flex items-center">
+                            <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors duration-300 group-hover:bg-red-600 group-hover:text-white">
+                              <row.icon className="h-4 w-4" strokeWidth={1.9} />
+                            </span>
+                          </div>
+                          <p className="relative mt-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                            {row.label}
+                          </p>
+                          <p className="relative mt-1 break-words text-sm font-bold leading-snug text-gray-900">
+                            {row.value}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
                 ) : (
-                  <p className="text-sm text-gray-500">
-                    No programs added yet. Use the AI Degree Matcher to discover
-                    courses tailored to you.
-                  </p>
+                  <div className="relative mt-5 flex items-center gap-3 rounded-xl border border-dashed border-red-200 bg-red-50/40 px-4 py-3.5">
+                    <Sparkles className="h-5 w-5 flex-shrink-0 text-red-500" />
+                    <p className="text-sm text-gray-600">
+                      Complete the AI Advisor questionnaire from your dashboard
+                      to personalize this section with your goals.
+                    </p>
+                  </div>
                 )}
-              </SectionCard>
+              </motion.div>
+
               <SectionCard title="Personal Information">
                 <AnimatePresence mode="wait" initial={false}>
                 {editing ? (
@@ -428,46 +492,6 @@ export default function ProfilePage() {
                 )}
                 </AnimatePresence>
               </SectionCard>
-
-              <SectionCard
-                title="Academic & Career Goals"
-                description="Captured from your AI Advisor questionnaire — powers your course matches."
-              >
-                {describeAdvisorProfile(student.advisorProfile).length > 0 ? (
-                  <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                    {describeAdvisorProfile(student.advisorProfile)
-                      .map((row) => ({ ...row, icon: ADVISOR_ROW_ICONS[row.key] ?? Target }))
-                      .map((row) => (
-                        <div
-                          key={row.label}
-                          className="flex items-start gap-3 rounded-xl bg-gray-50 px-3.5 py-3"
-                        >
-                          <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white text-red-600 shadow-sm">
-                            <row.icon className="h-4 w-4" strokeWidth={1.8} />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-[11px] font-medium text-gray-400">
-                              {row.label}
-                            </p>
-                            <p className="truncate text-sm font-semibold text-gray-900">
-                              {row.value}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3.5">
-                    <Sparkles className="h-5 w-5 flex-shrink-0 text-red-500" />
-                    <p className="text-sm text-gray-600">
-                      Complete the AI Advisor questionnaire from your dashboard
-                      to personalize this section with your goals.
-                    </p>
-                  </div>
-                )}
-              </SectionCard>
-
-             
 
               <SectionCard title="Verification & Trust">
                 <div className="divide-y divide-gray-50">

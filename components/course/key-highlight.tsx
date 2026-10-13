@@ -37,26 +37,29 @@ export default function KeyHighlights({ data }: { data?: any }) {
         </div>
 
         {/* Highlights List */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {list.map((h: any, i: number) => {
             const title = h.title || h.heading;
             const text = h.text || h.description || h.detail;
             if (!title && !text) return null;
 
             return (
-              <div key={i} className="flex items-start gap-3">
-                <div className="h-9 w-9 shrink-0 text-red-500 flex items-center justify-center">
-                  <Check className="h-5 w-5" />
+              <div
+                key={i}
+                className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_18px_40px_-22px_rgba(238,44,60,0.4)]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                  <Check className="h-5 w-5" strokeWidth={2.5} />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   {title && (
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-[15px] font-bold leading-snug text-slate-900 sm:text-base">
                       {title}
                     </h3>
                   )}
                   {text && (
-                    <p className="mt-1 text-sm text-slate-600 leading-relaxed">
+                    <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
                       {text}
                     </p>
                   )}

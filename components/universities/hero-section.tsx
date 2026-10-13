@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ApplicationForm } from "@/components/form/common-form";
+import { getApplicationFlow, toUniversitySlug } from "@/data/application-flows";
 import {
   Star,
   BookOpen,
@@ -110,6 +112,11 @@ export default function UniversityHeroWithStats({
   university,
 }: Props) {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const router = useRouter();
+
+  // Universities with the online application flow open it; the rest keep the quick form
+  const universitySlug = toUniversitySlug(university?.slug);
+  const applyHref = getApplicationFlow(universitySlug) ? `/universities/${universitySlug}/apply` : null;
 
   // Extract database fields with clean fallbacks
   const banner = university?.details?.banner || {};
@@ -348,7 +355,7 @@ export default function UniversityHeroWithStats({
                 {/* Primary Action: Apply to University */}
                 <button
                   type="button"
-                  onClick={() => setShowApplicationForm(true)}
+                  onClick={() => (applyHref ? router.push(applyHref) : setShowApplicationForm(true))}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] active:scale-[0.99] py-3.5 px-6 text-sm font-bold text-white shadow-sm hover:shadow transition-all cursor-pointer"
                 >
                   <Send className="h-4 w-4" fill="currentColor" />

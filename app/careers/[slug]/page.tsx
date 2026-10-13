@@ -14,6 +14,20 @@ import { CareerOutcomes } from "@/components/careers-pages/career-outcomes";
 import { CareerMentor } from "@/components/careers-pages/career-mentor";
 import { Footer } from "@/components/layout/footer";
 import { LogoCarousel } from "@/components/careers-pages/carousel";
+import FAQ from "@/components/home/faq";
+
+// Same FAQs as the home page (from the homepage API; the FAQ component has its own fallback)
+async function fetchHomepageFaqs() {
+  const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  try {
+    const res = await fetch(`${apiUrl}/homepage`, { next: { revalidate: 60 } });
+    if (!res.ok) return undefined;
+    const data = await res.json();
+    return data?.faqs;
+  } catch {
+    return undefined;
+  }
+}
 
 type Props = {
   params: Promise<{
@@ -36,6 +50,8 @@ export default async function CareerPage({ params }: Props) {
     notFound();
   }
 
+  const faqs = await fetchHomepageFaqs();
+
   return (
     <main className="bg-white">
       <CareerHero hero={career.hero} />
@@ -48,6 +64,7 @@ export default async function CareerPage({ params }: Props) {
       <LogoCarousel/>
       <CareerMentor />
       {/* <CareerCourses /> */}
+      <FAQ items={faqs} />
       <Footer />
     </main>
   );

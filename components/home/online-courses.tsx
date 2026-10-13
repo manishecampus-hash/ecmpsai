@@ -327,6 +327,27 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
     [validCategoryIds]
   );
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: 0 };
+    allPrograms.forEach((p) => {
+      if (!isProgramCategorized(p)) return;
+
+      counts.all = (counts.all || 0) + 1;
+
+      const rawCatId = p.categoryId?._id || p.categoryId?.id || p.categoryId;
+      const catIdStr =
+        rawCatId !== null && rawCatId !== undefined ? String(rawCatId).trim() : "";
+      if (catIdStr) {
+        counts[catIdStr] = (counts[catIdStr] || 0) + 1;
+      }
+      const tabStr = p.tab ? String(p.tab).trim() : "";
+      if (tabStr && tabStr !== catIdStr) {
+        counts[tabStr] = (counts[tabStr] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [allPrograms, isProgramCategorized]);
+
   // Touch/mobile: single tap on the image opens the overlay,
   // double tap (within 350ms) on it closes it again.
   const handleImageTap = (id: string | number) => {
@@ -471,6 +492,94 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
           overflow: hidden;
           visibility: hidden;
           font-weight: 700;
+        }
+
+        /* ---- Course Tab Buttons & Badges ---- */
+        .__tabItem {
+          position: relative;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 6px 2px 14px 2px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14.5px;
+          font-weight: 500;
+          color: #64748b;
+          white-space: nowrap;
+          border-bottom: 2.5px solid transparent;
+          margin-bottom: -1px;
+          transition: color 0.18s ease, border-color 0.18s ease;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+          letter-spacing: -0.01em;
+        }
+
+        .__tabItem:hover {
+          color: #0f172a;
+        }
+
+        .__tabItem:hover .__tabBadge {
+          background: #f1f5f9;
+          color: #0f172a;
+          border-color: #cbd5e1;
+        }
+
+        .__tabItemActive {
+          color: #ff3b4f !important;
+          font-weight: 700 !important;
+          border-bottom: 2.5px solid #ff3b4f !important;
+        }
+
+        .__tabItemActive .__tabBadge {
+          background: #fff1f2 !important;
+          color: #e11d48 !important;
+          border-color: #fecdd3 !important;
+          box-shadow: 0 1px 3px rgba(225, 29, 72, 0.12);
+        }
+
+        /* ---- Tab Count Badge ---- */
+        .__tabBadge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 20px;
+          height: 20px;
+          padding: 0 7px;
+          font-size: 11px;
+          font-weight: 700;
+          line-height: 1;
+          border-radius: 9999px;
+          background: #f8fafc;
+          color: #64748b;
+          border: 1px solid #e2e8f0;
+          transition: all 0.18s ease;
+          letter-spacing: 0;
+        }
+
+        /* ---- Mode Toggle Capsule ---- */
+        .__modePill {
+          border: none;
+          border-radius: 20px;
+          padding: 4px 13px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          white-space: nowrap;
+          color: #64748b;
+          background: transparent;
+        }
+        .__modePill:hover {
+          color: #0f172a;
+          background: rgba(255, 255, 255, 0.85);
+        }
+        .__modePillActive {
+          color: #ffffff !important;
+          background: #ff3b4f !important;
+          font-weight: 700 !important;
+          box-shadow: 0 2px 8px rgba(255, 59, 79, 0.32);
         }
 
         /* ---- __imgWrap ---- */
@@ -758,7 +867,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
             style={{
               flex: 1,
               display: "flex",
-              gap: "28px",
+              gap: "24px",
               overflowX: "auto",
               scrollbarWidth: "none",
               padding: "0 2px",
@@ -770,28 +879,14 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
           >
             {courseTabs.map((tab) => {
               const isActive = activeTab === tab.id;
+              const count = categoryCounts[tab.id];
               return (
                 <button
                   type="button"
                   key={tab.id}
                   onPointerDown={preventFocusScroll}
                   onClick={() => handleTabChange(tab.id)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "0 0 12px",
-                    fontSize: "14px",
-                    color: isActive ? "#000" : "#64748b",
-                    whiteSpace: "nowrap",
-                    borderBottom: isActive
-                      ? "2px solid #000"
-                      : "2px solid transparent",
-                    marginBottom: "-1px",
-                    transition: "color 0.2s",
-                    WebkitTapHighlightColor: "transparent",
-                    touchAction: "manipulation",
-                  }}
+                  className={`__tabItem ${isActive ? "__tabItemActive" : ""}`}
                 >
                   <span
                     className="__tabLabel"
@@ -800,28 +895,15 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
                   >
                     {tab.label}
                   </span>
+                  {typeof count === "number" && (
+                    <span className="__tabBadge">
+                      {count}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
-
-          {/* <button
-            type="button"
-            className="__tabArrow"
-            onPointerDown={preventFocusScroll}
-            onClick={() => scrollTabs(1)}
-            style={{
-              ...tabArrowStyle(tabRight),
-              width: 20,
-              height: 20,
-              minWidth: 20,
-              padding: 0,
-              marginLeft: "6px",
-            }}
-            aria-label="Scroll tabs right"
-          >
-            <ChevronRight size={16} />
-          </button> */}
 
           <div
             className="__modeToggle"
@@ -829,24 +911,30 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
               display: "flex",
               alignItems: "center",
               gap: "8px",
-              paddingBottom: "12px",
+              paddingBottom: "10px",
               flexShrink: 0,
             }}
           >
             <span
               style={{
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "#475569",
+                fontSize: "11.5px",
+                fontWeight: 700,
+                color: "#64748b",
                 whiteSpace: "nowrap",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
               }}
             >
-              Mode:
+              Mode
             </span>
             <div
               style={{
                 display: "flex",
-                gap: "6px",
+                gap: "3px",
+                background: "#f1f5f9",
+                padding: "3px",
+                borderRadius: "24px",
+                border: "1px solid #e2e8f0",
               }}
             >
               {dynamicModeTabs.map((mode) => {
@@ -857,21 +945,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
                     key={mode.id}
                     onPointerDown={preventFocusScroll}
                     onClick={() => handleModeChange(mode.id)}
-                    style={{
-                      background: isActive ? "#ff3b4f" : "#f8fafc",
-                      border: isActive
-                        ? "1.5px solid #ff3b4f"
-                        : "1.5px solid #e2e8f0",
-                      borderRadius: "20px",
-                      padding: "5px 16px",
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      color: isActive ? "#fff" : "#475569",
-                      cursor: "pointer",
-                      transition:
-                        "background 0.2s, border-color 0.2s, color 0.2s",
-                      whiteSpace: "nowrap",
-                    }}
+                    className={`__modePill ${isActive ? "__modePillActive" : ""}`}
                   >
                     {mode.label}
                   </button>

@@ -237,18 +237,12 @@ export default function PaymentSuccess() {
               ))}
             </ol>
 
-            <motion.div {...fadeUp(0.85)} className="mt-6 flex flex-col gap-3 sm:flex-row [@media(max-height:640px)]:mt-4">
+            <motion.div {...fadeUp(0.85)} className="mt-6 [@media(max-height:640px)]:mt-4">
               <Link
                 href="/dashboard/applications"
-                className="group inline-flex h-11 items-center sm:flex-1 justify-center gap-2 rounded-xl bg-[#ee2c3c] px-6 text-sm font-bold text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-[#d92233]"
+                className="group flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-6 text-sm font-bold text-[#ee2c3c] transition-all duration-300 hover:border-[#ee2c3c] hover:bg-[#ee2c3c] hover:text-white hover:shadow-lg hover:shadow-red-500/25"
               >
                 Track Application <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href={`/universities/${program.slug}`}
-                className="inline-flex h-11 items-center sm:flex-1 justify-center rounded-xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Back to University
               </Link>
             </motion.div>
           </div>

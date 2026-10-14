@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
 import { Info } from "lucide-react";
+import { CourseSection, Reveal, SectionHeading } from "./section-ui";
 
 export default function EligibilityDuration({ data }: { data?: any }) {
   const heading = data?.heading || data?.title;
@@ -26,32 +26,16 @@ export default function EligibilityDuration({ data }: { data?: any }) {
   ].filter(Boolean) as { title: string; html: string; icon: React.ReactNode }[];
 
   return (
-    <section className="w-full px-4 py-10 font-sans sm:px-6 sm:py-12 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl font-[Inter]">
-        {/* Section Heading */}
-        <div className="mb-8 text-center sm:mb-10">
-          <h2 className="text-[23px] font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Eligibility") ? (
-              <>
-                {heading.split("Eligibility")[0]}
-                <span className="text-[#ee2c3c]">Eligibility</span>
-                {heading.split("Eligibility")[1]}
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-        </div>
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Eligibility/} />
 
-        {/* Qualification & duration cards */}
-        {cards.length > 0 && (
-          <div className={`grid gap-5 ${cards.length > 1 ? "md:grid-cols-2" : "mx-auto max-w-3xl grid-cols-1"}`}>
-            {cards.map((card) => (
+      {/* Qualification & duration cards */}
+      {cards.length > 0 && (
+        <div className={`grid gap-5 ${cards.length > 1 ? "md:grid-cols-2" : "mx-auto max-w-3xl grid-cols-1"}`}>
+          {cards.map((card, i) => (
+            <Reveal key={card.title} delay={i * 0.08}>
               <div
-                key={card.title}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_16px_40px_-20px_rgba(238,44,60,0.35)] sm:p-7"
+                className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_16px_40px_-20px_rgba(238,44,60,0.35)] sm:p-7"
               >
                 {/* thin brand accent */}
                 <span className="absolute inset-x-0 top-0 h-1 bg-[#ee2c3c] opacity-90" />
@@ -64,30 +48,30 @@ export default function EligibilityDuration({ data }: { data?: any }) {
                   <div className="min-w-0 pt-0.5">
                     <h3 className="text-lg font-bold text-slate-900 sm:text-xl">{card.title}</h3>
                     <div
-                      className="prose prose-slate mt-2.5 max-w-none text-sm font-normal leading-relaxed text-slate-600 sm:text-[15px]"
+                      className="mt-2.5 text-sm font-normal leading-relaxed text-slate-600 sm:text-[15px]"
                       dangerouslySetInnerHTML={{ __html: card.html }}
                     />
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </Reveal>
+          ))}
+        </div>
+      )}
 
-        {/* Important Note */}
-        {eligNote && (
-          <div className="mt-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-amber-900">
-            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-400 text-white">
-              <Info className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </span>
-            <div
-              className="prose prose-slate max-w-none text-sm font-medium leading-relaxed text-amber-900"
-              dangerouslySetInnerHTML={{ __html: eligNote }}
-            />
-          </div>
-        )}
-      </div>
-    </section>
+      {/* Important Note */}
+      {eligNote && (
+        <div className="mt-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-amber-900">
+          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-400 text-white">
+            <Info className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </span>
+          <div
+            className="text-sm font-medium leading-relaxed text-amber-900"
+            dangerouslySetInnerHTML={{ __html: eligNote }}
+          />
+        </div>
+      )}
+    </CourseSection>
   );
 }
 

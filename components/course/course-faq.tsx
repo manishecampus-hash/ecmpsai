@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { CourseSection, SectionHeading } from "./section-ui";
 
 export default function CourseFAQ({ data }: { data?: any }) {
   const heading = data?.heading || data?.title;
@@ -29,25 +29,10 @@ export default function CourseFAQ({ data }: { data?: any }) {
   };
 
   return (
-    <section className="max-w-4xl mx-auto px-4 py-10 font-sans">
-      <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 text-center">
-        {heading.includes("*") ? (
-          <HighlightedText text={heading} className="text-[#ee2c3c]" />
-        ) : heading.includes("Questions") ? (
-          <>
-            {heading.split("Questions")[0]}
-            <span className="text-[#ee2c3c]">Questions</span>
-            {heading.split("Questions")[1]}
-          </>
-        ) : (
-          heading
-        )}
-      </h2>
-      <p className="mt-4 text-slate-500 text-center leading-relaxed">
-        Quick answers to the questions most people ask.
-      </p>
+    <CourseSection width="max-w-4xl">
+      <SectionHeading heading={heading} fallback={/Questions/} sub="Quick answers to the questions most people ask." />
 
-      <div className="mt-6 space-y-4">
+      <div className="space-y-3">
         {list.map((faq: any, index: number) => {
           const question = faq.question || faq.q || faq.title;
           const answer = faq.answer || faq.a || faq.desc || faq.text;
@@ -92,6 +77,6 @@ export default function CourseFAQ({ data }: { data?: any }) {
           );
         })}
       </div>
-    </section>
+    </CourseSection>
   );
 }

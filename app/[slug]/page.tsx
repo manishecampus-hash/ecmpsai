@@ -17,6 +17,7 @@ import TypesOfOnlineCourse from "@/components/course/type-online-course";
 import CourseOffer from "@/components/course/course-offer";
 import Professionals from "@/components/course/professionals";
 import CourseFAQ from "@/components/course/course-faq";
+import { buildPodcastScript } from "@/components/course/podcast-script";
 
 interface SeoSettings {
   title?: string;
@@ -146,7 +147,11 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
       <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
 
       <section id="hero-section">
-        <CourseHeroSection data={detailsObj?.banner} />
+        <CourseHeroSection
+          data={detailsObj?.banner}
+          universities={universities}
+          podcastScript={buildPodcastScript(detailsObj)}
+        />
       </section>
 
       <section id="university-section">
@@ -154,7 +159,7 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
       </section>
 
       <section id="about">
-        <CourseOverview data={detailsObj?.about} />
+        <CourseOverview data={detailsObj?.about} banner={detailsObj?.banner} />
       </section>
 
       <section id="key-highlights">

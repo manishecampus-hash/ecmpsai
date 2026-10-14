@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { CourseSection, SectionHeading } from "./section-ui";
+
+// "Subject A, Subject B, …" → individual subjects; sentence-style text stays as it is
+function toSubjects(text: string): string[] | null {
+  const parts = text.split(/\s*,\s*/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2 || /[.!?](\s|$)/.test(text.trim())) return null;
+  return parts.some((p) => p.split(/\s+/).length > 6) ? null : parts;
+}
 
 export default function CourseSyllabus({ data }: { data?: any }) {
   const heading = data?.heading || data?.title;
@@ -48,164 +55,139 @@ export default function CourseSyllabus({ data }: { data?: any }) {
   }
 
   return (
-    <section className="relative w-full max-w-6xl mx-auto px-4 py-10 font-sans text-black sm:px-6 lg:px-8 font-[Inter]">
-      <div className="max-w-6xl mx-auto">
-        {/* Main Section Header */}
-        <div className="mb-8 text-center">
-          <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Syllabus") ? (
-              <>
-                {heading.split("Syllabus")[0]}
-                <span className="text-[#ee2c3c]">Syllabus</span>
-                {heading.split("Syllabus")[1]}
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-        </div>
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Syllabus/} />
 
-        <div className="space-y-6">
-          {/* Segment 1: Programme Structure Journey */}
-          {showSegment1 && (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/40 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-8">
-              {(journeyBadge || journeyTitle || journeySubtitle) && (
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between border-b border-slate-100 pb-5">
+      <div className="space-y-6">
+        {/* Segment 1: semester-wise syllabus table */}
+        {showSegment1 && (
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            {(journeyBadge || journeyTitle || journeySubtitle) && (
+              <div className="flex flex-col gap-1 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+                <div>
+                  {journeyBadge && (
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#ee2c3c]">{journeyBadge}</p>
+                  )}
+                  {journeyTitle && <h3 className="mt-0.5 text-lg font-bold text-slate-900 sm:text-xl">{journeyTitle}</h3>}
+                </div>
+                {journeySubtitle && <p className="text-sm text-slate-500">{journeySubtitle}</p>}
+              </div>
+            )}
+
+            {semesters.length > 0 && (
+              <table className="w-full border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th scope="col" className="w-[32%] px-5 py-3 sm:w-[220px] sm:px-6">Semester</th>
+                    <th scope="col" className="px-5 py-3 sm:px-6">Subjects</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {semesters.map((sem, idx) => {
+                    const subjects = toSubjects(sem.text);
+                    return (
+                      <tr key={idx} className="align-top transition-colors hover:bg-slate-50/70">
+                        <th scope="row" className="border-r border-slate-100 px-5 py-4 font-semibold text-slate-900 sm:px-6">
+                          <span className="block border-l-[3px] border-[#ee2c3c] pl-3 leading-snug">{sem.title}</span>
+                        </th>
+                        <td className="px-5 py-4 sm:px-6">
+                          {subjects ? (
+                            <ul className="grid gap-x-8 gap-y-2 md:grid-cols-2">
+                              {subjects.map((subject) => (
+                                <li key={subject} className="flex items-start gap-2.5 leading-snug text-slate-700">
+                                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#ee2c3c]" />
+                                  {subject}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="leading-relaxed text-slate-600">{sem.text}</p>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/* Segment 2: Core Subjects Covered */}
+        {showSegment2 && (
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
+            {/* Card Header */}
+            {(coreSubLabel || coreTitle || coreBadge) && (
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8">
+                <div className="flex items-center gap-3.5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-white shadow-md shadow-red-500/25">
+                    <TargetIcon />
+                  </span>
+
                   <div>
-                    {journeyBadge && (
+                    {coreSubLabel && (
                       <p className="text-xs font-bold uppercase tracking-wider text-[#ee2c3c]">
-                        {journeyBadge}
+                        {coreSubLabel}
                       </p>
                     )}
-                    {journeyTitle && (
-                      <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
-                        {journeyTitle}
+                    {coreTitle && (
+                      <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
+                        {coreTitle}
                       </h3>
                     )}
                   </div>
-
-                  {journeySubtitle && (
-                    <p className="text-xs sm:text-sm text-slate-400 font-normal">
-                      {journeySubtitle}
-                    </p>
-                  )}
                 </div>
+
+                {coreBadge && (
+                  <span className="rounded-full border border-red-100 bg-red-50 px-3.5 py-1 text-xs font-bold text-[#ee2c3c]">
+                    {coreBadge}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Card Content */}
+            <div className="p-6 sm:p-8">
+              {coreDescription && (
+                <p className="mb-6 max-w-4xl text-sm font-normal leading-relaxed text-slate-600">
+                  {coreDescription}
+                </p>
               )}
 
-              {semesters.length > 0 && (
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {semesters.map((sem, idx) => (
+              {coreSubjects.length > 0 && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {coreSubjects.map((subject, idx) => (
                     <div
                       key={idx}
-                      className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_18px_40px_-20px_rgba(238,44,60,0.4)]"
+                      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-3 transition-colors hover:border-red-200 hover:bg-red-50/40"
                     >
-                      {/* large faint number watermark */}
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute -bottom-6 -right-1 select-none text-8xl font-black leading-none text-slate-50 transition-colors duration-300 group-hover:text-red-50"
-                      >
-                        {sem.number}
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                       </span>
-
-                      <div className="relative flex items-center gap-3">
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-sm font-extrabold tabular-nums text-white shadow-md shadow-red-500/25">
-                          {sem.number}
-                        </span>
-                        <h4 className="text-base font-bold text-slate-900 sm:text-lg">
-                          {sem.title}
-                        </h4>
-                      </div>
-
-                      <div className="relative mt-4 border-t border-dashed border-slate-200 pt-4">
-                        <p className="text-sm font-normal leading-relaxed text-slate-600">
-                          {sem.text}
-                        </p>
-                      </div>
+                      <span className="text-sm font-semibold leading-snug text-slate-800">
+                        {subject}
+                      </span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Segment 2: Core Subjects Covered */}
-          {showSegment2 && (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
-              {/* Card Header */}
-              {(coreSubLabel || coreTitle || coreBadge) && (
-                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-slate-50 px-6 py-5 sm:px-8">
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ee2c3c] text-white shadow-md shadow-red-500/25">
-                      <TargetIcon />
-                    </span>
-
-                    <div>
-                      {coreSubLabel && (
-                        <p className="text-xs font-bold uppercase tracking-wider text-[#ee2c3c]">
-                          {coreSubLabel}
-                        </p>
-                      )}
-                      {coreTitle && (
-                        <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                          {coreTitle}
-                        </h3>
-                      )}
-                    </div>
-                  </div>
-
-                  {coreBadge && (
-                    <span className="rounded-full border border-red-100 bg-red-50 px-3.5 py-1 text-xs font-bold text-[#ee2c3c]">
-                      {coreBadge}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Card Content */}
-              <div className="p-6 sm:p-8">
-                {coreDescription && (
-                  <p className="mb-6 max-w-4xl text-sm font-normal leading-relaxed text-slate-600">
-                    {coreDescription}
-                  </p>
-                )}
-
-                {coreSubjects.length > 0 && (
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {coreSubjects.map((subject, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-3 transition-colors hover:border-red-200 hover:bg-red-50/40"
-                      >
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
-                            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                        <span className="text-sm font-semibold leading-snug text-slate-800">
-                          {subject}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Optional Note */}
-          {note && (
-            <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-sm font-medium text-amber-900">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-bold text-white">
-                i
-              </span>
-              <div dangerouslySetInnerHTML={{ __html: note }} />
-            </div>
-          )}
-        </div>
+        {/* Optional Note */}
+        {note && (
+          <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-sm font-medium text-amber-900">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-bold text-white">
+              i
+            </span>
+            <div dangerouslySetInnerHTML={{ __html: note }} />
+          </div>
+        )}
       </div>
-    </section>
+    </CourseSection>
   );
 }
 

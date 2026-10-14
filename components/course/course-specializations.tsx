@@ -1,8 +1,42 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
-import { Check } from "lucide-react";
+import {
+  BarChart3,
+  Briefcase,
+  Cpu,
+  Factory,
+  Globe2,
+  GraduationCap,
+  HeartPulse,
+  IndianRupee,
+  Landmark,
+  Megaphone,
+  Rocket,
+  Settings2,
+  ShieldCheck,
+  Truck,
+  UsersRound,
+  type LucideIcon,
+} from "lucide-react";
+import { CARD_W, CENTERED_GRID, CourseSection, Reveal, SectionHeading, iconFor } from "./section-ui";
+
+const SPECIALIZATION_ICONS: [RegExp, LucideIcon][] = [
+  [/market|brand|sales|advertis/i, Megaphone],
+  [/financ|account|fintech/i, IndianRupee],
+  [/bank|insurance/i, Landmark],
+  [/human|hr\b|people|talent/i, UsersRound],
+  [/analytic|data|business intelligence/i, BarChart3],
+  [/health|hospital|pharma/i, HeartPulse],
+  [/information|technolog|\bit\b|computer|software|digital|ai\b/i, Cpu],
+  [/international|global|foreign/i, Globe2],
+  [/supply|logistic/i, Truck],
+  [/operation|project/i, Settings2],
+  [/entrepreneur|startup|family business/i, Rocket],
+  [/manufactur|production/i, Factory],
+  [/risk|security|cyber/i, ShieldCheck],
+  [/strateg|general|leadership/i, Briefcase],
+];
 
 export default function CourseSpecializations({ data }: { data?: any }) {
   const heading = data?.heading || data?.title;
@@ -29,66 +63,43 @@ export default function CourseSpecializations({ data }: { data?: any }) {
   }
 
   return (
-    <section className="relative mx-auto w-full max-w-6xl px-4 py-10 font-sans text-black sm:px-6 sm:py-12 lg:px-8">
-      <div className="mx-auto max-w-5xl font-[Inter]">
-        {/* Main Heading */}
-        <div className="mb-8 text-center sm:mb-10">
-          <h2 className="text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Specializations") ? (
-              <>
-                {heading.split("Specializations")[0]}
-                <span className="text-[#ee2c3c]">Specializations</span>
-                {heading.split("Specializations")[1]}
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-        </div>
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Specializations/} />
 
-        {/* Card */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
-          <TableCaption>{cardTitle}</TableCaption>
+      <p className="mb-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+        <span className="h-px w-8 bg-slate-300" />
+        {cardTitle}
+        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] text-[#ee2c3c] ring-1 ring-red-100">{items.length}</span>
+        <span className="h-px w-8 bg-slate-300" />
+      </p>
 
-          <div className="divide-y divide-slate-100">
-            {items.map((item, idx) => (
-              <div
-                key={idx}
-                className="group grid grid-cols-1 items-start gap-2 px-5 py-4 transition-colors hover:bg-red-50/40 sm:px-7 sm:py-5 md:grid-cols-12 md:gap-6"
-              >
-                {/* Key / title */}
-                <div className="flex items-center gap-3 md:col-span-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <h4 className="text-sm font-bold leading-snug text-slate-900 sm:text-base">
-                    {item.key}
-                  </h4>
-                </div>
+      <div className={CENTERED_GRID}>
+        {items.map((item, idx) => {
+          const Icon = iconFor(item.key, SPECIALIZATION_ICONS, GraduationCap);
+          return (
+            <Reveal key={idx} delay={(idx % 4) * 0.06} className={CARD_W[4]}>
+              <div className="group relative flex h-full gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-22px_rgba(238,44,60,0.45)] sm:flex-col sm:gap-0 sm:p-5">
+                {/* accent bar that sweeps in on hover */}
+                <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-[#ee2c3c] transition-transform duration-300 group-hover:scale-x-100" />
 
-                {/* Value / description */}
-                <div className="flex items-start gap-2.5 md:col-span-8">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  <p className="text-sm font-normal leading-relaxed text-slate-600">{item.value}</p>
+                <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors duration-300 group-hover:bg-[#ee2c3c] group-hover:text-white">
+                  <Icon className="h-5 w-5" />
+                </span>
+
+                {/* number as its own badge, not a background watermark */}
+                <span className="absolute right-3.5 top-3.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-slate-500 ring-1 ring-slate-200 transition-colors duration-300 group-hover:bg-[#ee2c3c] group-hover:text-white group-hover:ring-[#ee2c3c]">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+
+                <div className="relative min-w-0 pr-10 sm:pr-0">
+                  <h3 className="text-[15px] font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#ee2c3c] sm:mt-4">{item.key}</h3>
+                  {item.value && <p className="mt-1 text-sm leading-relaxed text-slate-600 sm:mt-1.5">{item.value}</p>}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </Reveal>
+          );
+        })}
       </div>
-    </section>
-  );
-}
-
-function TableCaption({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-7">
-      <span className="h-5 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
-      <h3 className="text-sm font-semibold leading-snug text-slate-800 sm:text-base">{children}</h3>
-    </div>
+    </CourseSection>
   );
 }

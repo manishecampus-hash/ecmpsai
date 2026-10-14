@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { SectionHeading } from "./section-ui";
 import {
   Building2,
   UserPlus,
@@ -32,30 +32,9 @@ export default function CourseEnrol({ data }: { data?: any }) {
     : [];
 
   return (
-    <section className="relative w-full overflow-hidden bg-white py-12 font-sans text-black sm:py-16">
+    <section className="relative w-full overflow-hidden bg-white py-8 font-sans text-black sm:py-10">
       <div className="mx-auto max-w-6xl px-4 font-[Inter] sm:px-6 lg:px-8">
-        {/* Main Heading & Subheading */}
-        <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
-          <h2 className="text-[23px] font-bold leading-snug tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Online MBA") ? (
-              <>
-                {heading.split("Online MBA")[0]}
-                <span className="text-[#ee2c3c]">Online MBA</span>
-                {heading.split("Online MBA")[1]}
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-
-          {subHeading && (
-            <p className="mt-3 text-sm leading-relaxed text-slate-500 sm:text-base">
-              {subHeading}
-            </p>
-          )}
-        </div>
+        <SectionHeading heading={heading} fallback={/Online MBA/} sub={subHeading} />
 
         {/* Steps — horizontal timeline on desktop, vertical timeline on mobile */}
         {stepsList && stepsList.length > 0 && (
@@ -142,7 +121,7 @@ export default function CourseEnrol({ data }: { data?: any }) {
 
         {/* Bottom Alert Note */}
         {note && (
-          <div className="mx-auto mt-10 flex max-w-4xl items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-slate-700">
+          <div className="mx-auto mt-6 flex max-w-4xl items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 px-5 py-4 text-slate-700">
             <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
               <CheckCircle2 className="h-4 w-4" strokeWidth={2.5} />
             </span>

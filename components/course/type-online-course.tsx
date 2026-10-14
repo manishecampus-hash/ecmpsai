@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { Clock3, IndianRupee } from "lucide-react";
+import { CARD_W, CENTERED_GRID, CheckDot, CourseSection, Reveal, SectionHeading } from "./section-ui";
 
 type CourseType = {
   name: string;
@@ -53,118 +54,64 @@ export default function TypesOfOnlineCourse({ data }: { data?: any }) {
   const types: CourseType[] = data?.types || data?.list || DEFAULT_TYPES;
 
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
-      <div className="max-w-6xl mx-auto font-[Inter]">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8 text-center">
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Programs") || heading.includes("MBA") || heading.includes("Course") ? (
-              <>
-                {heading.split(/(Programs|MBA|Course)/)[0]}
-                <span className="text-[#ee2c3c]">
-                  {heading.match(/(Programs|MBA|Course)/)?.[0]}
-                </span>
-                {heading.split(/(Programs|MBA|Course)/).slice(2).join("")}
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-        </div>
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Programs|MBA|Course/} />
 
-        {types && Array.isArray(types) && types.length > 0 && (
-          <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
-            {cardTitle && <TableCaption>{cardTitle}</TableCaption>}
+      {cardTitle && (
+        <p className="mx-auto -mt-2 mb-6 flex w-fit max-w-full items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-center text-xs font-semibold text-slate-600 shadow-sm">
+          <IndianRupee className="h-3.5 w-3.5 shrink-0 text-[#ee2c3c]" />
+          {cardTitle}
+        </p>
+      )}
 
-            <div className="hidden grid-cols-[260px_1fr] border-b border-slate-200 bg-white md:grid">
-              <div className="px-7 py-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Courses</h4>
-              </div>
-              <div className="border-l border-slate-100 px-7 py-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Details</h4>
-              </div>
-            </div>
+      {Array.isArray(types) && types.length > 0 && (
+        <div className={CENTERED_GRID}>
+          {types.map((type: any, i: number) => {
+            const typeName = type.name || type.title || type.heading;
+            const typeAbout = type.about || type.description || type.details || "";
+            const typeDuration = type.duration || "";
+            const typeFees = type.fees || type.fee || "";
 
-            <div className="divide-y divide-slate-100">
-              {types.map((type: any, i: number) => {
-                const typeName = type.name || type.title || type.heading;
-                const typeAbout = type.about || type.description || type.details || "";
-                const typeDuration = type.duration || "";
-                const typeFees = type.fees || type.fee || "";
-
-                return (
-                  <div
-                    key={i}
-                    className="group grid gap-3 px-5 py-5 transition-colors hover:bg-red-50/40 sm:px-7 md:grid-cols-[260px_1fr] md:gap-0"
-                  >
-                    <div className="flex items-start gap-3 md:pr-6">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="pt-1 text-sm font-bold leading-snug text-slate-900 sm:text-base">
-                        {typeName}
-                      </span>
-                    </div>
-
-                    <div className="space-y-3 md:border-l md:border-slate-100 md:pl-7">
-                      {typeAbout && (
-                        <div className="flex items-start gap-2.5">
-                          <CheckBubble />
-                          <span className="text-sm leading-relaxed text-slate-600">{typeAbout}</span>
-                        </div>
-                      )}
-
-                      {(typeDuration || typeFees) && (
-                        <div className="flex flex-wrap gap-2 pl-7">
-                          {typeDuration && (
-                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-600 ring-1 ring-slate-200">
-                              <span className="font-semibold text-slate-900">Duration —</span>
-                              {typeDuration}
-                            </span>
-                          )}
-                          {typeFees && (
-                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-red-50/70 px-2.5 py-1.5 text-xs text-slate-700 ring-1 ring-red-100">
-                              <span className="font-semibold text-slate-900">Fees —</span>
-                              {typeFees}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
+            return (
+              <Reveal key={i} delay={(i % 3) * 0.07} className={CARD_W[3]}>
+                <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_22px_44px_-22px_rgba(238,44,60,0.5)] sm:p-5">
+                  <div className="relative flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#ee2c3c] to-[#c81e2f] text-sm font-extrabold tabular-nums text-white shadow-md shadow-red-500/25 transition-transform duration-300 group-hover:scale-105">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="pt-1 text-base font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#ee2c3c]">{typeName}</h3>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
 
-function CheckBubble() {
-  return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M20 6L9 17l-5-5"
-          stroke="currentColor"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
+                  {typeAbout && (
+                    <div className="relative mt-3 flex flex-1 items-start gap-2.5 sm:mt-4">
+                      <CheckDot />
+                      <p className="text-sm leading-relaxed text-slate-600">{typeAbout}</p>
+                    </div>
+                  )}
 
-function TableCaption({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-7">
-      <span className="h-5 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
-      <h3 className="text-sm font-semibold leading-snug text-slate-800 sm:text-base">{children}</h3>
-    </div>
+                  {(typeDuration || typeFees) && (
+                    <div className="relative mt-3 flex flex-wrap gap-2 border-t border-dashed border-slate-200 pt-3 sm:mt-4 sm:pt-4">
+                      {typeDuration && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 text-xs text-slate-600 ring-1 ring-slate-200">
+                          <Clock3 className="h-3.5 w-3.5 text-[#ee2c3c]" />
+                          <span className="font-semibold text-slate-900">Duration</span> {typeDuration}
+                        </span>
+                      )}
+                      {typeFees && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs text-slate-700 ring-1 ring-red-100">
+                          <IndianRupee className="h-3.5 w-3.5 text-[#ee2c3c]" />
+                          <span className="font-semibold text-slate-900">Fees</span> {typeFees}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  <span aria-hidden className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-[#ee2c3c] transition-transform duration-300 group-hover:scale-x-100" />
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      )}
+    </CourseSection>
   );
 }

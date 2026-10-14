@@ -32,6 +32,18 @@ function cleanCourseName(name?: string): string {
     .trim();
 }
 
+// Curves for the section backdrop (viewBox 1440×560) and the points where they meet
+const UNI_LINES = [
+  "M-40 120 C 260 40, 420 220, 720 140 S 1180 40, 1480 130",
+  "M-40 300 C 220 220, 480 380, 760 300 S 1220 200, 1480 290",
+  "M-40 470 C 300 400, 520 540, 820 450 S 1240 380, 1480 470",
+  "M180 -20 C 260 160, 120 360, 240 580",
+  "M1240 -20 C 1160 180, 1320 380, 1200 580",
+];
+const UNI_NODES: [number, number][] = [
+  [248, 156], [720, 140], [1180, 98], [212, 258], [1288, 286], [820, 450], [232, 470], [1214, 432],
+];
+
 export default function CourseUniversitySection({
   universities: propUniversities,
   courseName,
@@ -136,10 +148,44 @@ export default function CourseUniversitySection({
   return (
     <section
       style={{ fontFamily: "'Inter', sans-serif" }}
-      className="relative w-full bg-slate-50/30 px-4 py-16 sm:px-6 lg:px-8"
+      className="relative isolate w-full overflow-hidden bg-slate-50/30 px-4 py-8 sm:px-6 sm:py-10 lg:px-8"
     >
+      {/* Backdrop: thin flowing lines with light travelling along them */}
+      <svg
+        aria-hidden
+        viewBox="0 0 1440 560"
+        preserveAspectRatio="xMidYMid slice"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+      >
+        <defs>
+          <linearGradient id="uni-line" x1="0" x2="1">
+            <stop offset="0" stopColor="#ee2c3c" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#ee2c3c" stopOpacity="0.35" />
+            <stop offset="1" stopColor="#ee2c3c" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {UNI_LINES.map((d, i) => (
+          <g key={i}>
+            <path d={d} fill="none" stroke="url(#uni-line)" strokeWidth="1" />
+            <path d={d} fill="none" stroke="#ee2c3c" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" pathLength={100} strokeDasharray="6 94" className="uni-flow" style={{ animationDelay: `${i * -1.6}s`, animationDuration: `${7 + i}s` }} />
+          </g>
+        ))}
+        {UNI_NODES.map(([cx, cy], i) => (
+          <g key={i}>
+            <circle cx={cx} cy={cy} r="3" fill="#ee2c3c" fillOpacity="0.45" />
+            <circle cx={cx} cy={cy} r="3" fill="none" stroke="#ee2c3c" strokeOpacity="0.35" className="uni-pulse" style={{ animationDelay: `${i * 0.7}s` }} />
+          </g>
+        ))}
+      </svg>
+      <style>{`
+        @keyframes uni-flow { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+        @keyframes uni-pulse { 0% { r: 3; stroke-opacity: .45 } 100% { r: 14; stroke-opacity: 0 } }
+        .uni-flow { animation: uni-flow linear infinite; }
+        .uni-pulse { animation: uni-pulse 2.8s ease-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .uni-flow, .uni-pulse { animation: none; } }
+      `}</style>
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto mb-10 max-w-3xl text-center">
+        <div className="mx-auto mb-7 max-w-3xl text-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
             AI Compare for <span className="text-[#ee2c3c]">Top Universities</span>
           </h2>

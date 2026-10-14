@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { Award, Briefcase } from "lucide-react";
+import { CheckDot, CourseSection, Reveal, SectionHeading, VsBadge } from "./section-ui";
 
 const DEFAULT_PARAGRAPHS = [
   "Yes, an Online MBA can be valid when it is offered by a properly recognized university and meets the applicable regulatory requirements for online education.",
@@ -69,95 +70,89 @@ export default function UgcValidity({ data }: { data?: any }) {
 
   const importantNote = data?.importantNote || data?.disclaimer || DEFAULT_IMPORTANT_NOTE;
 
+  // "(With MBA)" → "With MBA". When both sides share a title (e.g. "Corporate Employee"),
+  // show it once above the cards and let the subtitles become the card titles.
+  const clean = (v: string) => (v || "").trim().replace(/^\((.*)\)$/, "$1").trim();
+  const sharedTitle = clean(indiaTitle) && clean(indiaTitle) === clean(abroadTitle) ? clean(indiaTitle) : "";
+  const columns = [
+    { title: sharedTitle ? clean(indiaSubtitle) || sharedTitle : clean(indiaTitle), subtitle: sharedTitle ? "" : clean(indiaSubtitle), items: indiaApprovals },
+    { title: sharedTitle ? clean(abroadSubtitle) || sharedTitle : clean(abroadTitle), subtitle: sharedTitle ? "" : clean(abroadSubtitle), items: foreignApprovals },
+  ];
+
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-slate-900">
-      <div className="max-w-6xl mx-auto font-[Inter]">
-        {/* Header */}
-        <div className="mb-6 text-center sm:mb-8">
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Valid?") ? (
-              <>
-                {heading.split("Valid?")[0]}
-                <span className="text-[#ee2c3c]">Valid?</span>
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Valid\?/} />
+
+      {paragraphs && paragraphs.length > 0 && (
+        <div className="mx-auto -mt-2 mb-7 max-w-4xl space-y-3 text-center text-sm leading-relaxed text-slate-600 sm:text-base">
+          {paragraphs.map((p, idx) => (
+            <p key={idx}>{p}</p>
+          ))}
         </div>
+      )}
 
-        {/* Paragraphs */}
-        {paragraphs && paragraphs.length > 0 && (
-          <div className="mx-auto max-w-4xl text-center space-y-3 mb-10 text-slate-600 text-sm sm:text-base leading-relaxed">
-            {paragraphs.map((p, idx) => (
-              <p key={idx}>{p}</p>
-            ))}
-          </div>
-        )}
+      {sharedTitle && (
+        <div className="mb-6 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-bold text-[#ee2c3c]">
+            <Briefcase className="h-4 w-4" />
+            {sharedTitle}
+          </span>
+        </div>
+      )}
 
-        {/* Comparison Cards Grid */}
-        <div className="grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
-          {/* Left Card - Online University in India */}
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div className="bg-[#ee2c3c] px-6 py-4 text-center">
-              <h3 className="text-base font-bold text-white">{indiaTitle}</h3>
-              {indiaSubtitle && (
-                <p className="text-xs text-red-100 font-medium mt-0.5">{indiaSubtitle}</p>
-              )}
+      <div className="relative mx-auto grid max-w-5xl items-stretch gap-4 md:grid-cols-2 md:gap-10">
+        {/* Muted side */}
+        <Reveal>
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <div className="border-b border-slate-100 bg-slate-50 px-6 py-5 sm:px-7">
+              <h3 className="text-2xl font-extrabold tracking-tight text-slate-700 sm:text-[28px]">{columns[0].title}</h3>
+              {columns[0].subtitle && <p className="mt-1 text-sm font-medium text-slate-500">{columns[0].subtitle}</p>}
             </div>
-
-            <ul className="p-6 space-y-3.5 flex-1 bg-white">
-              {indiaApprovals.map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3">
-                  <span className="h-5 w-5 shrink-0 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center font-bold text-xs">
-                    ✓
-                  </span>
-                  <span className="text-sm font-semibold text-slate-800">
-                    {item}
-                  </span>
+            <ul className="flex-1 space-y-4 p-6 sm:px-7">
+              {columns[0].items.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-300" />
+                  <span className="text-sm leading-relaxed text-slate-600">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
+        </Reveal>
 
-          {/* Right Card - Online University Abroad */}
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col">
-            <div className="bg-[#2b3342] px-6 py-4 text-center">
-              <h3 className="text-base font-bold text-white">{abroadTitle}</h3>
-              {abroadSubtitle && (
-                <p className="text-xs text-slate-300 font-medium mt-0.5">{abroadSubtitle}</p>
-              )}
+        <VsBadge />
+
+        {/* Highlighted side */}
+        <Reveal delay={0.1}>
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border-2 border-[#ee2c3c] bg-white shadow-[0_16px_36px_-20px_rgba(238,44,60,0.45)]">
+            <div className="flex items-start justify-between gap-3 bg-[#ee2c3c] px-6 py-5 sm:px-7">
+              <div>
+                <h3 className="text-2xl font-extrabold tracking-tight text-white sm:text-[28px]">{columns[1].title}</h3>
+                {columns[1].subtitle && <p className="mt-1 text-sm font-medium text-red-100">{columns[1].subtitle}</p>}
+              </div>
+              <Award className="mt-1 h-6 w-6 shrink-0 text-white/90" />
             </div>
-
-            <ul className="p-6 space-y-3.5 flex-1 bg-white">
-              {foreignApprovals.map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3">
-                  <span className="h-5 w-5 shrink-0 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center font-bold text-xs">
-                    ✓
-                  </span>
-                  <span className="text-sm font-semibold text-slate-800">
-                    {item}
-                  </span>
+            <ul className="flex-1 space-y-4 p-6 sm:px-7">
+              {columns[1].items.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <CheckDot tone="red" />
+                  <span className="text-sm font-semibold leading-relaxed text-slate-800">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
-        </div>
-
-        {/* Important Note Alert */}
-        {importantNote && (
-          <div className="mt-8 max-w-5xl mx-auto rounded-xl border-l-4 border-amber-500 bg-[#fffdf0] p-4 shadow-sm flex items-start gap-3">
-            <span className="mt-0.5 h-6 w-6 shrink-0 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs">
-              !
-            </span>
-            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-              <strong className="font-bold text-slate-900">Important:</strong> {importantNote}
-            </p>
-          </div>
-        )}
+        </Reveal>
       </div>
-    </section>
+
+      {importantNote && (
+        <div className="mx-auto mt-7 flex max-w-5xl items-start gap-3 rounded-xl border-l-4 border-amber-500 bg-[#fffdf0] p-4 shadow-sm">
+          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">
+            !
+          </span>
+          <p className="text-xs leading-relaxed text-slate-700 sm:text-sm">
+            <strong className="font-bold text-slate-900">Important:</strong> {importantNote}
+          </p>
+        </div>
+      )}
+    </CourseSection>
   );
 }

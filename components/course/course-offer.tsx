@@ -1,7 +1,16 @@
 "use client";
 
 import React from "react";
-import HighlightedText from "@/components/universities/HighlightedText";
+import { Check, Clock3, Sparkles, Star, TrendingUp, UsersRound, Wallet, type LucideIcon } from "lucide-react";
+import { CourseSection, Reveal, SectionHeading, iconFor } from "./section-ui";
+
+const CATEGORY_ICONS: [RegExp, LucideIcon][] = [
+  [/cost|fee|afford|money/i, Wallet],
+  [/flexib|time|schedule/i, Clock3],
+  [/network|peer|community/i, UsersRound],
+  [/professional|career|job/i, TrendingUp],
+  [/personal|self|confidence/i, Sparkles],
+];
 
 type Category = {
   name: string;
@@ -66,57 +75,46 @@ export default function CourseOffer({ data }: { data?: any }) {
   const cardTitle = data?.cardTitle || data?.subtitle || "What Online Degree Courses Offer";
   const categories: Category[] = data?.categories || data?.list || DEFAULT_CATEGORIES;
 
+  const list = (Array.isArray(categories) ? categories : []).map((cat: any) => ({
+    name: cat.name || cat.title || cat.heading || "",
+    items: (Array.isArray(cat.items) ? cat.items : Array.isArray(cat.points) ? cat.points : []) as string[],
+  }));
+
+  // One panel, categories side by side with thin dividers (stacked on phones)
   return (
-    <section className="font-sans relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-black">
-      <div className="max-w-6xl mx-auto font-[Inter]">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8 text-center">
-          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            {heading.includes("*") ? (
-              <HighlightedText text={heading} className="text-[#ee2c3c]" />
-            ) : heading.includes("Offer") ? (
-              <>
-                {heading.split("Offer")[0]}
-                <span className="text-[#ee2c3c]">Offer?</span>
-              </>
-            ) : (
-              heading
+    <CourseSection>
+      <SectionHeading heading={heading} fallback={/Offer\??/} />
+
+      {list.length > 0 && (
+        <Reveal>
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            {cardTitle && (
+              <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-3.5 sm:px-6">
+                <span className="h-4 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
+                <h3 className="text-sm font-semibold text-slate-800 sm:text-[15px]">{cardTitle}</h3>
+              </div>
             )}
-          </h2>
-        </div>
 
-        {categories && Array.isArray(categories) && categories.length > 0 && (
-          <div className="mx-auto mt-6 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_40px_-24px_rgba(15,23,42,0.18)]">
-            {cardTitle && <TableCaption>{cardTitle}</TableCaption>}
-
-            <div className="divide-y divide-slate-100">
-              {categories.map((cat: any, i: number) => {
-                const catName = cat.name || cat.title || cat.heading;
-                const catItems: string[] = Array.isArray(cat.items)
-                  ? cat.items
-                  : Array.isArray(cat.points)
-                  ? cat.points
-                  : [];
-
+            <div
+              className="grid sm:grid-cols-2 lg:[grid-template-columns:repeat(var(--cols),minmax(0,1fr))]"
+              style={{ "--cols": list.length } as React.CSSProperties}
+            >
+              {list.map((cat, i) => {
+                const Icon = iconFor(cat.name, CATEGORY_ICONS, Star);
                 return (
                   <div
                     key={i}
-                    className="group grid gap-4 px-5 py-5 transition-colors hover:bg-red-50/40 sm:px-7 md:grid-cols-[240px_1fr] md:gap-0"
+                    className="group border-slate-100 p-5 transition-colors hover:bg-red-50/30 max-sm:border-t max-sm:first:border-t-0 sm:max-lg:even:border-l sm:max-lg:[&:nth-child(n+3)]:border-t lg:border-l lg:first:border-l-0 sm:p-6"
                   >
-                    <div className="flex items-start gap-3 md:pr-6">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="pt-1 text-sm font-bold leading-snug text-slate-900 sm:text-base">
-                        {catName}
-                      </span>
-                    </div>
-
-                    <ul className="grid gap-x-6 gap-y-2.5 sm:grid-cols-2 md:border-l md:border-slate-100 md:pl-7">
-                      {catItems.map((item: string, j: number) => (
-                        <li key={j} className="flex items-start gap-2.5">
-                          <CheckBubble />
-                          <span className="text-sm leading-relaxed text-slate-600">{item}</span>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
+                      <Icon className="h-[18px] w-[18px]" />
+                    </span>
+                    <h4 className="mt-3.5 text-[15px] font-bold leading-snug text-slate-900">{cat.name}</h4>
+                    <ul className="mt-3 space-y-2">
+                      {cat.items.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm leading-relaxed text-slate-600">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" strokeWidth={2.5} />
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -125,33 +123,8 @@ export default function CourseOffer({ data }: { data?: any }) {
               })}
             </div>
           </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function CheckBubble() {
-  return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M20 6L9 17l-5-5"
-          stroke="currentColor"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
-
-function TableCaption({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-7">
-      <span className="h-5 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
-      <h3 className="text-sm font-semibold leading-snug text-slate-800 sm:text-base">{children}</h3>
-    </div>
+        </Reveal>
+      )}
+    </CourseSection>
   );
 }

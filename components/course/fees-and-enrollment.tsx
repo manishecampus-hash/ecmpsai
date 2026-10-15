@@ -7,6 +7,20 @@ import { CourseSection, Reveal, SectionHeading } from "./section-ui";
 
 const PAGE_SIZE = 10;
 
+// Indicative EMI shown until real EMI plans come from the backend:
+// standard reducing-balance formula on the starting fee, 36 months at 12% p.a.
+const EMI_MONTHS = 36;
+const EMI_ANNUAL_RATE = 0.12;
+
+function monthlyEmi(fee: string) {
+  const first = String(fee).match(/\d[\d,]*/);
+  const principal = first ? Number(first[0].replace(/,/g, "")) : 0;
+  if (!principal) return null;
+  const r = EMI_ANNUAL_RATE / 12;
+  const emi = (principal * r * (1 + r) ** EMI_MONTHS) / ((1 + r) ** EMI_MONTHS - 1);
+  return `₹${Math.round(emi).toLocaleString("en-IN")}`;
+}
+
 export default function FeesAndEnrollment({ data }: { data?: any }) {
   const [page, setPage] = useState(0);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -52,12 +66,13 @@ export default function FeesAndEnrollment({ data }: { data?: any }) {
 
       <Reveal>
         <div ref={tableRef} className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-          <table className="w-full min-w-[520px] border-collapse text-left text-[15px]">
+          <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
             <thead>
               <tr className="border-b border-red-100 bg-red-50 text-slate-900">
                 <th scope="col" className="w-16 border-r border-red-100 px-4 py-4 text-center font-bold">#</th>
                 <th scope="col" className="border-r border-red-100 px-6 py-4 font-bold">{col1Header}</th>
-                <th scope="col" className="px-6 py-4 font-bold">{col2Header}</th>
+                <th scope="col" className="border-r border-red-100 px-6 py-4 font-bold">{col2Header}</th>
+                <th scope="col" className="px-6 py-4 font-bold">EMI Starting From</th>
               </tr>
             </thead>
             <AnimatePresence mode="wait" initial={false}>
@@ -84,7 +99,17 @@ export default function FeesAndEnrollment({ data }: { data?: any }) {
                         row.university
                       )}
                     </td>
-                    <td className="px-6 py-4 font-medium tabular-nums text-slate-700">{row.fee}</td>
+                    <td className="border-r border-slate-200 px-6 py-4 font-medium tabular-nums text-slate-700">{row.fee}</td>
+                    <td className="px-6 py-4 font-medium tabular-nums text-slate-700">
+                      {monthlyEmi(String(row.fee)) ? (
+                        <>
+                          {monthlyEmi(String(row.fee))}
+                          <span className="text-sm font-normal text-slate-500">/month</span>
+                        </>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                   </tr>
                 );
               })}

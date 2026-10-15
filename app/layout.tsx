@@ -74,10 +74,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Ecampus Edu",
-              "alternateName": [
-                "eCampus Edu",
-                "ecampusapp.com",
-              ],
+              "alternateName": "eCampus Edu",
               "url": "https://www.ecampusapp.com/",
             }),
           }}

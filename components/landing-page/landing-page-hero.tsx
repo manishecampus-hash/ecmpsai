@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ShieldCheck,
   Award,
+  BriefcaseBusiness,
 } from "lucide-react";
 import HighlightedTitle from "./highlighted-title";
 import ApplyNowModal from "@/components/form/apply-now-modal";
@@ -29,6 +30,13 @@ interface LandingPageHeroProps {
   hero: LandingPageHeroData;
   onCtaClick?: () => void;
 }
+
+// Backdrop curves (viewBox 1440×600)
+const HERO_LINES = [
+  "M-40 140 C 260 60, 520 240, 820 150 S 1240 60, 1480 140",
+  "M-40 420 C 280 340, 560 520, 860 420 S 1260 320, 1480 410",
+  "M1000 -20 C 920 180, 1100 380, 980 620",
+];
 
 export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
@@ -57,11 +65,38 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
   return (
     <section className="relative z-10 w-full overflow-hidden bg-gradient-to-b from-red-50/50 via-white to-white border-b border-slate-100 !m-0 !p-0">
+      {/* Flowing line backdrop with light travelling along it */}
+      <svg aria-hidden viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 h-full w-full">
+        <defs>
+          <linearGradient id="lp-hero-line" x1="0" x2="1">
+            <stop offset="0" stopColor="#ef4444" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#ef4444" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#ef4444" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {HERO_LINES.map((d, i) => (
+          <g key={i}>
+            <path d={d} fill="none" stroke="url(#lp-hero-line)" strokeWidth="1" />
+            <path d={d} fill="none" stroke="#ef4444" strokeOpacity="0.5" strokeWidth="1.6" strokeLinecap="round" pathLength={100} strokeDasharray="5 95" className="lp-hero-flow" style={{ animationDuration: `${8 + i * 1.5}s`, animationDelay: `${i * -2}s` }} />
+          </g>
+        ))}
+      </svg>
+      <style>{`
+        @keyframes lp-hero-flow { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
+        @keyframes lp-hero-float { 0%,100% { translate: 0 0 } 50% { translate: 0 -8px } }
+        @keyframes lp-hero-spin { to { rotate: 360deg } }
+        .lp-hero-flow { animation: lp-hero-flow linear infinite; }
+        .lp-hero-float { animation: lp-hero-float 5s ease-in-out infinite; }
+        .lp-hero-float-late { animation: lp-hero-float 5s ease-in-out 1.2s infinite; }
+        .lp-hero-spin { animation: lp-hero-spin 50s linear infinite; }
+        @media (prefers-reduced-motion: reduce) { .lp-hero-flow, .lp-hero-float, .lp-hero-float-late, .lp-hero-spin { animation: none; } }
+      `}</style>
+
       {/* Top subtle radial aura */}
       <div className="pointer-events-none absolute -top-28 left-1/2 h-[420px] w-full max-w-6xl -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08),transparent_70%)]" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="grid items-center gap-10 py-12 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20">
+        <div className="grid items-center gap-10 py-10 sm:gap-12 sm:py-12 lg:grid-cols-12 lg:gap-14 lg:py-14">
           {/* ================= LEFT CONTENT ================= */}
           <div className="flex flex-col items-start gap-5 lg:col-span-7">
             {/* Tag / Pre-headline */}
@@ -148,11 +183,25 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
             {/* Concentric Subtle Rings */}
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-red-200/50 sm:h-[400px] sm:w-[400px]" />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-[270px] w-[270px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-red-300/40 sm:h-[320px] sm:w-[320px]" />
+            <div className="lp-hero-spin pointer-events-none absolute left-1/2 top-1/2 -ml-[170px] -mt-[170px] h-[340px] w-[340px] sm:-ml-[200px] sm:-mt-[200px] sm:h-[400px] sm:w-[400px]">
+              <span className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500 shadow-[0_0_0_4px_rgba(239,68,68,0.15)]" />
+            </div>
 
             {/* Floating Credential Chip */}
             <div className="pointer-events-none absolute -right-2 top-2 z-20 hidden items-center gap-2 rounded-full border border-red-100/90 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-md backdrop-blur-md sm:flex">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Verified Doctorate</span>
+            </div>
+
+            {/* Study-while-working chip */}
+            <div className="lp-hero-float-late pointer-events-none absolute -right-3 top-[48%] z-20 hidden items-center gap-2.5 rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-[0_14px_30px_-12px_rgba(15,23,42,0.3)] sm:flex">
+              <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-red-50 text-red-600">
+                <BriefcaseBusiness className="h-4 w-4" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-xs font-extrabold text-slate-900">Study while you work</span>
+                <span className="block text-[10px] font-semibold text-slate-500">100% online, flexible</span>
+              </span>
             </div>
 
             {/* Images Wrapper */}
@@ -181,7 +230,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
               {/* BEFORE IMAGE CARD */}
               {beforeImg && (
-                <div className="group/before relative w-[48%] max-w-[215px] translate-y-3 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_12px_28px_rgba(15,23,42,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.15)]">
+                <div className="lp-hero-float group/before relative w-[48%] max-w-[215px] translate-y-3 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_12px_28px_rgba(15,23,42,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.15)]">
                   <div className="relative h-[250px] w-full overflow-hidden sm:h-[290px] lg:h-[310px]">
                     <img
                       src={beforeImg}
@@ -198,7 +247,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
               {/* AFTER IMAGE CARD */}
               {afterImg && (
-                <div className="group/after relative w-[48%] max-w-[215px] -translate-y-2 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_20px_40px_rgba(239,68,68,0.22),0_8px_20px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_24px_48px_rgba(239,68,68,0.28)] ring-2 ring-red-500/20">
+                <div className="lp-hero-float-late group/after relative w-[48%] max-w-[215px] -translate-y-2 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_20px_40px_rgba(239,68,68,0.22),0_8px_20px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_24px_48px_rgba(239,68,68,0.28)] ring-2 ring-red-500/20">
                   <div className="relative h-[250px] w-full overflow-hidden sm:h-[290px] lg:h-[310px]">
                     <img
                       src={afterImg}

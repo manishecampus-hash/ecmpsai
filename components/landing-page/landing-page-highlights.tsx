@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Bookmark,
   CheckSquare,
@@ -9,8 +9,13 @@ import {
   Users,
   Award,
   BookOpen,
+  ArrowRight,
+  Check,
+  Crown,
+  Minus,
 } from "lucide-react";
-import HighlightedTitle from "./highlighted-title";
+import ApplyNowModal from "@/components/form/apply-now-modal";
+import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
 export interface ComparisonColumnItem {
   id: string;
@@ -48,145 +53,123 @@ export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps
       ];
   const rows = highlights.rows;
 
+  const [showForm, setShowForm] = useState(false);
+  // The first column (DBA) is the recommended one: raised card, red checks; the rest stay muted
+  const [lead, ...others] = columns;
+  const grid: React.CSSProperties = {
+    gridTemplateColumns: `minmax(210px,1fr) minmax(0,1.25fr) ${others.map(() => "minmax(0,1fr)").join(" ")}`,
+    gridTemplateRows: `auto repeat(${rows.length}, auto)`,
+  };
+  const at = (col: number, row: number): React.CSSProperties => ({ gridColumn: col, gridRow: row });
+
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-slate-50/60 border-b border-slate-100 !m-0 !p-0">
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 font-sans sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-        {/* ================= SECTION HEADING ================= */}
-        <div className="mx-auto max-w-3xl mb-12 sm:mb-14 lg:mb-16 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-            <HighlightedTitle text={sectionHeading} fallbackLastWord={true} />
-          </h2>
+    <LpSection tone="muted">
+      <LpHeading heading={sectionHeading} />
 
-          <div className="mx-auto mt-4 h-1.5 w-14 rounded-full bg-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
-        </div>
-
-        {/* ================= DESKTOP TABLE ================= */}
-        <div className="relative hidden overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm md:block">
-          {/* TABLE HEADER */}
+      {/* Desktop: comparison with the DBA column lifted out as a card */}
+      <LpReveal className="hidden md:block">
+        <div className="relative mb-5 mt-9 grid rounded-2xl border border-slate-200 bg-white" style={grid}>
+          {/* highlighted DBA column */}
           <div
-            className="grid border-b border-slate-200 bg-slate-100/60"
-            style={{
-              gridTemplateColumns: `1.15fr ${columns.map(() => "1fr").join(" ")}`,
-            }}
-          >
-            {/* Empty first corner */}
-            <div className="p-4 flex items-center px-6">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Features &amp; Comparison</span>
-            </div>
+            aria-hidden
+            style={{ gridColumn: 2, gridRow: "1 / -1" }}
+            className="-my-5 rounded-3xl bg-gradient-to-b from-red-50 via-white to-white shadow-[0_28px_60px_-28px_rgba(220,38,38,0.55)] ring-2 ring-red-500"
+          />
 
-            {/* Column Headers */}
-            {columns.map((col, idx) => (
-              <div
-                key={col.id}
-                className="flex items-end justify-center p-3.5"
-              >
-                <div
-                  className={`flex h-12 w-full max-w-[220px] items-center justify-center rounded-xl px-5 text-sm sm:text-base font-black text-white shadow-xs ${
-                    idx === 0
-                      ? "bg-gradient-to-r from-red-600 to-red-500 shadow-[0_4px_12px_rgba(239,68,68,0.25)]"
-                      : "bg-slate-900 text-slate-100"
-                  }`}
-                >
-                  {col.title}
-                </div>
-              </div>
-            ))}
+          {/* header */}
+          <div style={at(1, 1)} className="flex items-end px-6 pb-5 pt-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+            Features &amp; Comparison
           </div>
+          <div style={at(2, 1)} className="relative flex flex-col items-center px-6 pb-5 pt-1 text-center">
+            <span className="-mt-4 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-md">
+              <Crown className="h-3.5 w-3.5" /> Recommended
+            </span>
+            <span className="mt-3 text-3xl font-extrabold tracking-tight text-red-600">{lead.title}</span>
+            <span className="mt-0.5 text-xs font-semibold text-slate-500">Best for working professionals</span>
+          </div>
+          {others.map((col, i) => (
+            <div key={col.id} style={at(i + 3, 1)} className="flex flex-col items-center justify-end px-6 pb-5 pt-6 text-center">
+              <span className="text-2xl font-extrabold tracking-tight text-slate-400">{col.title}</span>
+              <span className="mt-0.5 text-xs font-semibold text-slate-400">Academic research track</span>
+            </div>
+          ))}
 
-          {/* TABLE ROWS */}
-          {rows.map((row, rIdx) => {
-            const Icon = ROW_ICONS[rIdx % ROW_ICONS.length];
-
+          {/* rows */}
+          {rows.map((row, r) => {
+            const Icon = ROW_ICONS[r % ROW_ICONS.length];
+            const line = "border-t border-slate-100";
             return (
-              <div
-                key={row.id || row.title}
-                className={`grid border-b border-slate-100 last:border-b-0 transition-colors ${
-                  rIdx % 2 === 0 ? "bg-white" : "bg-slate-50/40"
-                }`}
-                style={{
-                  gridTemplateColumns: `1.15fr ${columns.map(() => "1fr").join(" ")}`,
-                }}
-              >
-                {/* Row Title Column */}
-                <div className="flex min-h-[85px] items-center gap-3.5 px-6 py-4">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50/90 text-red-600 border border-red-100/70">
-                    <Icon className="h-4.5 w-4.5" strokeWidth={2.2} />
-                  </div>
-                  <span className="text-sm sm:text-[15px] font-bold text-slate-900">
-                    {row.title}
+              <React.Fragment key={row.id || row.title}>
+                <div style={at(1, r + 2)} className={`flex items-center gap-3 px-6 py-4 ${line}`}>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-red-50 text-red-600 ring-1 ring-red-100">
+                    <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
                   </span>
+                  <span className="text-[15px] font-bold text-slate-900">{row.title}</span>
                 </div>
-
-                {/* Column values */}
-                {columns.map((col, colIdx) => (
-                  <div
-                    key={col.id}
-                    className={`flex min-h-[85px] items-center border-l border-slate-100 px-6 py-4 ${
-                      colIdx === 0
-                        ? "bg-red-50/30 font-semibold text-slate-900"
-                        : "text-slate-600 text-sm leading-relaxed"
-                    }`}
-                  >
-                    <p className="m-0 text-sm sm:text-[14px] leading-relaxed font-medium">
-                      {row.columnValues?.[col.id] || "—"}
-                    </p>
+                <div style={at(2, r + 2)} className="relative mx-4 flex items-start gap-3 border-t border-red-100 px-2 py-4">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+                    <Check className="h-3 w-3" strokeWidth={3.5} />
+                  </span>
+                  <p className="text-sm font-medium leading-relaxed text-slate-800">{row.columnValues?.[lead.id] || "—"}</p>
+                </div>
+                {others.map((col, i) => (
+                  <div key={col.id} style={at(i + 3, r + 2)} className={`flex items-start gap-3 px-6 py-4 ${line}`}>
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                      <Minus className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    <p className="text-sm leading-relaxed text-slate-500">{row.columnValues?.[col.id] || "—"}</p>
                   </div>
                 ))}
-              </div>
+              </React.Fragment>
             );
           })}
         </div>
+      </LpReveal>
 
-        {/* ================= MOBILE CARDS ================= */}
-        <div className="space-y-4 md:hidden">
-          {rows.map((row, rIdx) => {
-            const Icon = ROW_ICONS[rIdx % ROW_ICONS.length];
-
-            return (
-              <div
-                key={row.id || row.title}
-                className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs"
-              >
-                {/* Title */}
-                <div className="flex items-center gap-3 bg-slate-50 px-4 py-3.5 border-b border-slate-100">
-                  <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-100/60">
-                    <Icon className="h-4 w-4" strokeWidth={2.2} />
-                  </div>
-                  <h3 className="m-0 text-sm font-bold text-slate-900">
-                    {row.title}
-                  </h3>
-                </div>
-
-                {/* Column details */}
-                <div className="divide-y divide-slate-100">
-                  {columns.map((col, colIdx) => (
-                    <div
-                      key={col.id}
-                      className={`p-4 ${
-                        colIdx === 0 ? "bg-red-50/40 text-slate-900" : "bg-white text-slate-700"
-                      }`}
-                    >
-                      <div
-                        className={`inline-block mb-1.5 rounded-md px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${
-                          colIdx === 0
-                            ? "bg-red-600 text-white"
-                            : "bg-slate-100 text-slate-700"
-                        }`}
-                      >
-                        {col.title}
-                      </div>
-                      <p className="m-0 text-xs sm:text-sm font-medium leading-relaxed">
-                        {row.columnValues?.[col.id] || "—"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+      {/* Mobile: one card per feature, DBA answer highlighted */}
+      <div className="space-y-3 md:hidden">
+        {rows.map((row, r) => {
+          const Icon = ROW_ICONS[r % ROW_ICONS.length];
+          return (
+            <div key={row.id || row.title} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <div className="flex items-center gap-3 px-4 pt-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-red-50 text-red-600 ring-1 ring-red-100">
+                  <Icon className="h-4 w-4" strokeWidth={2} />
+                </span>
+                <h3 className="text-[15px] font-bold text-slate-900">{row.title}</h3>
               </div>
-            );
-          })}
-        </div>
+              <div className="m-3 rounded-xl border border-red-200 bg-red-50/60 p-3">
+                <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-red-600">
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} /> {lead.title}
+                  {r === 0 && <span className="ml-auto rounded-full bg-red-600 px-2 py-0.5 text-[9px] text-white">Recommended</span>}
+                </p>
+                <p className="text-sm font-medium leading-relaxed text-slate-800">{row.columnValues?.[lead.id] || "—"}</p>
+              </div>
+              {others.map((col) => (
+                <div key={col.id} className="mx-3 mb-3 px-3">
+                  <p className="mb-0.5 text-[11px] font-bold uppercase tracking-wide text-slate-400">{col.title}</p>
+                  <p className="text-sm leading-relaxed text-slate-500">{row.columnValues?.[col.id] || "—"}</p>
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
-    </section>
+
+      {/* Lead prompt */}
+      <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4 md:mt-16">
+        <p className="text-sm font-medium text-slate-600">Not sure which doctorate fits your goals?</p>
+        <button
+          type="button"
+          onClick={() => setShowForm(true)}
+          className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
+        >
+          Talk to a DBA Counsellor
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </button>
+      </div>
+      <ApplyNowModal isOpen={showForm} onClose={() => setShowForm(false)} />
+    </LpSection>
   );
 }
 

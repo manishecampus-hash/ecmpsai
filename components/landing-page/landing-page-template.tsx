@@ -11,6 +11,7 @@ import LandingPagePartners, { LandingPageGlobalPartnersData } from "./landing-pa
 import LandingPageCounsellors, { LandingPageCounsellorsData } from "./landing-page-counsellors";
 import LandingPagePlacementPartners, { LandingPagePlacementPartnersData } from "./landing-page-placement-partners";
 import LandingPageFaq, { LandingPageFaqData } from "./landing-page-faq";
+import { DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
 
 export interface LandingPageData {
   id?: string;
@@ -33,6 +34,9 @@ interface LandingPageTemplateProps {
 }
 
 export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProps) {
+  // Extra DBA-specific sections (who it's for, admission path, closing CTA)
+  const isDba = /dba/i.test(data.slug || data.name || "");
+
   return (
     <>
       {/* Preview Bar Banner if in preview mode */}
@@ -62,8 +66,12 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
         <UniversityPrograms />
       </div>
 
+      {isDba && <DbaAudience />}
+
       {/* 5. Experience / Benefits Section */}
       {data.experience && <LandingPageExperience experience={data.experience} />}
+
+      {isDba && <DbaJourney />}
 
       {/* 6. Global University Partners */}
       {data.globalPartners?.logos && data.globalPartners.logos.length > 0 && (
@@ -82,6 +90,8 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
 
       {/* 9. FAQ Section */}
       {data.faqSection && <LandingPageFaq faqSection={data.faqSection} />}
+
+      {isDba && <DbaFinalCta />}
 
       {/* 10. Footer */}
       <Footer />

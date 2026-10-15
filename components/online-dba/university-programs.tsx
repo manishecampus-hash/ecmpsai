@@ -12,6 +12,7 @@ import {
 
 import { universities } from "@/data/universities";
 import ApplyNowModal from "@/components/form/apply-now-modal";
+import { LpHeading, LpReveal, LpSection } from "@/components/landing-page/lp-ui";
 
 interface UniversityProgramsProps {
   onApplyClick?: (universityName: string) => void;
@@ -51,105 +52,73 @@ export default function UniversityPrograms({
   };
 
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-slate-50/50 border-b border-slate-100 !m-0 !p-0">
-      {/* Background Subtle Auras */}
-      <div className="pointer-events-none absolute left-0 top-0 h-72 w-72 rounded-full bg-red-50/50 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-red-50/40 blur-3xl" />
+    <LpSection>
+      <LpHeading
+        heading="Programs From Top *Online Universities*"
+        description="Explore globally accredited Doctor of Business Administration programs curated for working executives and business leaders."
+      />
 
-      {/* Main Container */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 font-sans sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-        {/* ================= HEADING ================= */}
-        <div className="mx-auto max-w-3xl mb-12 sm:mb-14 lg:mb-16 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-            Programs From Top <span className="text-red-600 font-black">Online Universities</span>
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
-            Explore globally accredited Doctor of Business Administration programs curated for working executives and business leaders.
-          </p>
-          <div className="mx-auto mt-4 h-1.5 w-14 rounded-full bg-red-500 shadow-[0_2px_8px_rgba(239,68,68,0.35)]" />
-        </div>
+      <div className="flex flex-wrap justify-center gap-4 sm:gap-5">
+        {dbaUniversities.map((university, i) => {
+          const LocationIcon = university.locationIcon === "Globe" ? Globe : MapPin;
+          const meta = [
+            { icon: LocationIcon, text: `${university.location} · ${university.region}` },
+            { icon: GraduationCap, text: "Doctorate · DBA" },
+            { icon: Clock3, text: "Flexible Online Learning" },
+            { icon: Award, text: "University Recognized Program" },
+          ];
 
-        {/* ================= UNIVERSITY GRID ================= */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {dbaUniversities.map((university) => {
-            const LocationIcon = university.locationIcon === "Globe" ? Globe : MapPin;
-
-            return (
-              <article
-                key={university.slug}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl"
-              >
-                {/* IMAGE AREA */}
-                <div className="relative h-48 w-full overflow-hidden bg-slate-100 sm:h-52">
+          return (
+            <LpReveal
+              key={university.slug}
+              delay={(i % 3) * 0.07}
+              className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.34px)]"
+            >
+              <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)]">
+                {/* Logo */}
+                <div className="relative flex h-32 items-center justify-center border-b border-slate-100 bg-slate-50/60 px-8">
+                  <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-600 ring-1 ring-red-100">
+                    <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> Online DBA
+                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={university.image}
                     alt={university.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    loading="lazy"
+                    className="max-h-16 max-w-[80%] object-contain transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
-
-                  {/* Online DBA Chip */}
-                  <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-[11px] font-extrabold text-red-600 shadow-xs backdrop-blur-xs uppercase tracking-wide">
-                    <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-                    Online DBA
-                  </div>
                 </div>
 
-                {/* CARD CONTENT */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6">
-                  {/* University Name */}
-                  <h3 className="m-0 text-base font-bold leading-snug text-slate-900 group-hover:text-red-600 line-clamp-2 min-h-[48px] transition-colors sm:text-lg">
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="line-clamp-2 min-h-[48px] text-[17px] font-bold leading-snug text-slate-900 transition-colors group-hover:text-red-600">
                     {university.name}
                   </h3>
 
-                  {/* META DETAILS */}
-                  <div className="mt-4 space-y-2.5 text-xs sm:text-[13px] font-medium text-slate-600">
-                    {/* Location */}
-                    <div className="flex items-center gap-2.5">
-                      <LocationIcon className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
-                      <span className="truncate">{university.location}</span>
-                      <span className="text-slate-300">•</span>
-                      <span className="truncate">{university.region}</span>
-                    </div>
+                  <ul className="mt-3 space-y-2 text-[13px] font-medium text-slate-600">
+                    {meta.map(({ icon: Icon, text }) => (
+                      <li key={text} className="flex items-center gap-2.5">
+                        <Icon className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2} />
+                        <span className="truncate">{text}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                    {/* Program Type */}
-                    <div className="flex items-center gap-2.5">
-                      <GraduationCap className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
-                      <span>Doctorate • DBA</span>
-                    </div>
-
-                    {/* Learning Format */}
-                    <div className="flex items-center gap-2.5">
-                      <Clock3 className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
-                      <span>Flexible Online Learning</span>
-                    </div>
-
-                    {/* Accreditation */}
-                    <div className="flex items-center gap-2.5">
-                      <Award className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2.2} />
-                      <span className="truncate">University Recognized Program</span>
-                    </div>
-                  </div>
-
-                  {/* APPLY BUTTON */}
-                  <div className="mt-auto pt-6">
-                    <button
-                      type="button"
-                      onClick={() => handleApply(university.name)}
-                      className="group/btn flex h-11.5 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-xs sm:text-sm font-bold text-white shadow-xs transition-all duration-200 hover:from-red-700 hover:to-red-600 hover:shadow-md active:translate-y-0 cursor-pointer"
-                    >
-                      <span>Apply Now</span>
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleApply(university.name)}
+                    className="group/btn mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 text-sm font-bold text-red-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-[0_10px_20px_-10px_rgba(220,38,38,0.7)]"
+                  >
+                    Apply Now
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                  </button>
                 </div>
               </article>
-            );
-          })}
-        </div>
+            </LpReveal>
+          );
+        })}
       </div>
 
       <ApplyNowModal isOpen={showModal} onClose={() => setShowModal(false)} />
-    </section>
+    </LpSection>
   );
 }

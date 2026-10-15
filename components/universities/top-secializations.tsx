@@ -449,9 +449,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
 
                             <div className="__card-content flex flex-col flex-grow p-3.5">
                               <h3 className="text-sm font-bold text-slate-900 mb-2.5 line-clamp-2 leading-snug">
-                                {card.name.toLowerCase().startsWith("online")
-                                  ? card.name
-                                  : `Online ${card.name}`}
+                                {card.name}
                               </h3>
 
                               <ul className="space-y-2 text-xs mb-3.5 border-t border-slate-100 pt-2.5">

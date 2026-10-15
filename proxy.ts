@@ -24,12 +24,17 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(`https://www.ecampusapp.com${pathname}${search}`, 308);
   }
 
+  // Root homepage never requires a redirect lookup; bypass network call immediately
+  if (pathname === "/" || pathname === "") {
+    return NextResponse.next();
+  }
+
   try {
     const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
     const requestUrl = `${apiUrl}/redirects/match?url=${encodeURIComponent(pathname)}`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    const timeoutId = setTimeout(() => controller.abort(), 600);
 
     const res = await fetch(requestUrl, {
       signal: controller.signal,

@@ -16,20 +16,63 @@ export const revalidate = 60;
 const FRONTEND_API_URL =
   process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
 
-const fetchHomepageData = cache(async () => {
+let inMemoryHomepageCache: { data: any; expiresAt: number } | null = null;
+let isRefreshingHomepage = false;
+const HOMEPAGE_CACHE_TTL = 60 * 1000;
+
+async function getHomepageData() {
+  const now = Date.now();
+
+  // Fresh in-memory cache
+  if (inMemoryHomepageCache && now < inMemoryHomepageCache.expiresAt) {
+    return inMemoryHomepageCache.data;
+  }
+
+  // Stale in-memory cache: return immediately and update in background
+  if (inMemoryHomepageCache?.data && !isRefreshingHomepage) {
+    isRefreshingHomepage = true;
+    fetch(`${FRONTEND_API_URL}/homepage`, { next: { revalidate: 60 } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((fresh) => {
+        if (fresh) {
+          inMemoryHomepageCache = {
+            data: fresh,
+            expiresAt: Date.now() + HOMEPAGE_CACHE_TTL,
+          };
+        }
+      })
+      .catch((err) =>
+        console.error("Background homepage data fetch error:", err)
+      )
+      .finally(() => {
+        isRefreshingHomepage = false;
+      });
+    return inMemoryHomepageCache.data;
+  }
+
   try {
     const res = await fetch(`${FRONTEND_API_URL}/homepage`, {
       next: { revalidate: 60 },
     });
-    if (!res.ok) {
-      console.warn(`Homepage API returned status ${res.status}`);
-      return null;
+    if (res.ok) {
+      const data = await res.json();
+      inMemoryHomepageCache = {
+        data,
+        expiresAt: Date.now() + HOMEPAGE_CACHE_TTL,
+      };
+      return data;
     }
-    return await res.json();
   } catch (err) {
     console.error("Failed to fetch homepage dynamic content from API:", err);
-    return null;
+    if (inMemoryHomepageCache?.data) {
+      return inMemoryHomepageCache.data;
+    }
   }
+  return null;
+}
+
+const fetchHomepageData = cache(async () => {
+  return getHomepageData();
 });
 
 export async function generateMetadata(): Promise<Metadata> {

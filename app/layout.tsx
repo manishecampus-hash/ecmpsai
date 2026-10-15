@@ -30,6 +30,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  applicationName: "Ecampus Edu",
   referrer: "strict-origin-when-cross-origin",
   title: "eCampus — Your Career Starts Here",
   description:
@@ -42,6 +43,7 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
+    siteName: "Ecampus Edu",
     images: [{ url: "" }],
   },
 
@@ -63,6 +65,23 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <meta property="og:site_name" content="Ecampus Edu" />
+        <meta name="application-name" content="Ecampus Edu" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Ecampus Edu",
+              "alternateName": [
+                "eCampus Edu",
+                "ecampusapp.com",
+              ],
+              "url": "https://www.ecampusapp.com/",
+            }),
+          }}
+        />
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-18451315310"

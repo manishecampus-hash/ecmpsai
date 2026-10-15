@@ -144,11 +144,11 @@ export default function UgcValidity({ data }: { data?: any }) {
       </div>
 
       {importantNote && (
-        <div className="mx-auto mt-7 flex max-w-5xl items-start gap-3 rounded-xl border-l-4 border-amber-500 bg-[#fffdf0] p-4 shadow-sm">
-          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">
+        <div className="mx-auto mt-7 flex max-w-5xl items-start gap-3 rounded-xl border border-red-100 border-l-4 border-l-[#ee2c3c] bg-white px-5 py-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-[#ee2c3c]">
             !
           </span>
-          <p className="text-xs leading-relaxed text-slate-700 sm:text-sm">
+          <p className="text-sm leading-relaxed text-slate-700">
             <strong className="font-bold text-slate-900">Important:</strong> {importantNote}
           </p>
         </div>

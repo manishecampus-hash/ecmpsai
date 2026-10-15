@@ -13,6 +13,7 @@ import CourseEnrol from "@/components/course/course-enrol";
 import CourseSpecializations from "@/components/course/course-specializations";
 import UgcValidity from "@/components/course/ugc-validity";
 import OnlineVsRegular from "@/components/course/online-vs-regular";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import TypesOfOnlineCourse from "@/components/course/type-online-course";
 import CourseOffer from "@/components/course/course-offer";
 import Professionals from "@/components/course/professionals";
@@ -194,9 +195,11 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
         <OnlineVsRegular data={detailsObj?.onlineVsRegular || detailsObj?.comparison} />
       </section>
 
+      {/* Fees comparison (typesOfCourse) hidden for now — restore by uncommenting
       <section id="types-of-course">
         <TypesOfOnlineCourse data={detailsObj?.typesOfCourse} />
       </section>
+      */}
 
       <section id="course-offer">
         <CourseOffer data={detailsObj?.courseOffer} />

@@ -4,7 +4,7 @@ import React from "react";
 import { Footer } from "@/components/layout/footer";
 import UniversityPrograms from "@/components/online-dba/university-programs";
 import LandingPageHero, { LandingPageHeroData } from "./landing-page-hero";
-import LandingPageStats, { LandingPageStatisticItem } from "./landing-page-stats";
+import type { LandingPageStatisticItem } from "./landing-page-stats";
 import LandingPageHighlights, { LandingPageHighlightsData } from "./landing-page-highlights";
 import LandingPageExperience, { LandingPageExperienceData } from "./landing-page-experience";
 import LandingPagePartners, { LandingPageGlobalPartnersData } from "./landing-page-partners";
@@ -37,6 +37,23 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
   // Extra DBA-specific sections (who it's for, admission path, closing CTA)
   const isDba = /dba/i.test(data.slug || data.name || "");
 
+  // Frontend content overrides for the DBA page (until they're updated in the CMS)
+  const hero = data.hero && isDba
+    ? { ...data.hero, mainHeading: data.hero.mainHeading.replace(/\bManoj\b/g, "Rajesh") }
+    : data.hero;
+  const COUNSELLOR_NAMES = ["Priya Jain", "Vishal Kumar"];
+  const counsellorsSection = data.counsellorsSection && isDba
+    ? {
+        ...data.counsellorsSection,
+        counsellors: data.counsellorsSection.counsellors?.map((c, i) => ({
+          ...c,
+          name: COUNSELLOR_NAMES[i] ?? c.name,
+          // Priya's photo is still the old (male) one — leave it empty until a new photo is added
+          image: i === 0 ? "" : c.image,
+        })),
+      }
+    : data.counsellorsSection;
+
   return (
     <>
       {/* Preview Bar Banner if in preview mode */}
@@ -53,10 +70,9 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       )}
 
       {/* 1. Hero Section */}
-      {data.hero && <LandingPageHero hero={data.hero} />}
+      {hero && <LandingPageHero hero={hero} />}
 
-      {/* 2. Trust / Statistics */}
-      {data.statistics && <LandingPageStats stats={data.statistics} />}
+      {/* 2. Trust / Statistics — hidden for now */}
 
       {/* 3. Key Highlights / Comparison */}
       {data.highlights && <LandingPageHighlights highlights={data.highlights} />}
@@ -79,8 +95,8 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       )}
 
       {/* 7. Counsellors Section */}
-      {data.counsellorsSection && (
-        <LandingPageCounsellors counsellorsSection={data.counsellorsSection} />
+      {counsellorsSection && (
+        <LandingPageCounsellors counsellorsSection={counsellorsSection} />
       )}
 
       {/* 8. Top Placement Partners (Dynamic from Admin) */}

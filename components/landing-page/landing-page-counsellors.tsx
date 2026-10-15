@@ -57,8 +57,14 @@ export function LandingPageCounsellors({
           <LpReveal key={c.id || c.name} delay={i * 0.08}>
             <article className="group flex h-full items-center gap-5 rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)] sm:p-6">
               <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-40 sm:w-36">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image || "/dba/counsellor-1.png"} alt={c.name} className="h-full w-full object-cover object-top" />
+                {c.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.image} alt={c.name} className="h-full w-full object-cover object-top" />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-slate-300">
+                    {c.name.trim().charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700 ring-1 ring-amber-200">

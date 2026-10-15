@@ -83,63 +83,111 @@ export default function OnlineVsRegular({ data }: { data?: any }) {
     };
   });
 
-  // factor | regular | vs | online — the header row uses the same columns so the labels sit over their cells
-  const COLS = "lg:grid-cols-[220px_minmax(0,1fr)_32px_minmax(0,1fr)]";
-
   return (
     <CourseSection>
       <SectionHeading heading={heading} fallback={/Regular|Degree|MBA/} sub={description} />
 
       {items.length > 0 && (
-        <>
-          <div className={`mb-3 hidden items-center gap-3 px-3 lg:grid ${COLS}`}>
-            <span />
-            <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-600">
-              <Building2 className="h-4 w-4 text-slate-400" /> Regular On-Campus Degree
-            </span>
-            <span />
-            <span className="inline-flex items-center gap-2 text-sm font-bold text-[#ee2c3c]">
-              <MonitorSmartphone className="h-4 w-4" /> Online Degree
-            </span>
+        <Reveal>
+          {/* Desktop / tablet: one table, Online column framed in red */}
+          <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_40px_-28px_rgba(15,23,42,0.35)] md:block">
+            <table className="w-full table-fixed border-collapse text-left text-[15px]">
+              <colgroup>
+                <col className="w-[26%]" />
+                <col className="w-[34%]" />
+                <col className="w-[40%]" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" className="border-b border-slate-200 bg-slate-50 px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Factor
+                  </th>
+                  <th scope="col" className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+                    <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-600">
+                      <Building2 className="h-4 w-4 text-slate-400" /> Regular On-Campus Degree
+                    </span>
+                  </th>
+                  <th scope="col" className="relative border-x border-b border-red-200 border-b-red-100 bg-gradient-to-b from-red-50 to-white px-5 py-4">
+                    <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[#ee2c3c] to-rose-400" />
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[#ee2c3c]">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#ee2c3c] shadow-sm ring-1 ring-red-100">
+                          <MonitorSmartphone className="h-4 w-4" />
+                        </span>
+                        Online Degree
+                      </span>
+                      <span className="rounded-full bg-[#ee2c3c] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                        Recommended
+                      </span>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((it, i) => {
+                  const last = i === items.length - 1;
+                  return (
+                    <tr key={i} className="group">
+                      <th scope="row" className={`px-5 py-4 align-top font-normal ${last ? "" : "border-b border-slate-100"}`}>
+                        <span className="flex items-center gap-3">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+                            <it.icon className="h-[18px] w-[18px]" />
+                          </span>
+                          <span className="text-[15px] font-bold leading-snug text-slate-900">{it.factor}</span>
+                        </span>
+                      </th>
+                      <td className={`px-5 py-4 align-top text-sm leading-relaxed text-slate-500 ${last ? "" : "border-b border-slate-100"}`}>
+                        <span className="flex items-start gap-2.5">
+                          <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
+                          {it.regular}
+                        </span>
+                      </td>
+                      <td
+                        className={`border-x border-red-200 bg-red-50/25 px-5 py-4 align-top text-sm font-medium leading-relaxed text-slate-800 transition-colors group-hover:bg-red-50/60 ${
+                          last ? "" : "border-b border-b-red-100/70"
+                        }`}
+                      >
+                        <span className="flex items-start gap-2.5">
+                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-[#ee2c3c] ring-1 ring-red-200">
+                            <CheckIcon />
+                          </span>
+                          {it.online}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
-          <div className="space-y-3">
+          {/* Phones: one compact block per factor */}
+          <div className="space-y-3 md:hidden">
             {items.map((it, i) => (
-              <Reveal key={i} delay={(i % 4) * 0.05}>
-                <div className={`group grid items-stretch gap-2.5 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:border-red-200 hover:shadow-[0_14px_30px_-22px_rgba(238,44,60,0.5)] sm:grid-cols-2 lg:items-center lg:gap-3 ${COLS}`}>
-                  <div className="flex items-center gap-3 px-1 py-1 sm:col-span-2 lg:col-span-1">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                      <it.icon className="h-[18px] w-[18px]" />
-                    </span>
-                    <h3 className="text-[15px] font-bold leading-snug text-slate-900">{it.factor}</h3>
-                  </div>
-
-                  <div className="h-full rounded-xl bg-slate-50 p-3.5 ring-1 ring-slate-200">
-                    <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 lg:hidden">Regular On-Campus</p>
-                    <p className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-600">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                      {it.regular}
-                    </p>
-                  </div>
-
-                  <span aria-hidden className="hidden h-8 w-8 items-center justify-center rounded-full border border-red-100 bg-white text-[10px] font-extrabold text-[#ee2c3c] lg:flex">
-                    VS
+              <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <div className="flex items-center gap-3 px-4 pt-4">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100">
+                    <it.icon className="h-[18px] w-[18px]" />
                   </span>
-
-                  <div className="h-full rounded-xl border-l-[3px] border-[#ee2c3c] bg-red-50 p-3.5 ring-1 ring-red-100">
-                    <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wider text-[#ee2c3c] lg:hidden">Online Degree</p>
-                    <p className="flex items-start gap-2.5 text-sm font-medium leading-relaxed text-slate-800">
-                      <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#ee2c3c] text-white">
-                        <CheckIcon />
-                      </span>
-                      {it.online}
-                    </p>
-                  </div>
+                  <h3 className="text-[15px] font-bold text-slate-900">{it.factor}</h3>
                 </div>
-              </Reveal>
+                <div className="px-4 pt-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Regular On-Campus</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-slate-500">{it.regular}</p>
+                </div>
+                <div className="m-3 rounded-xl border border-red-100 bg-red-50/40 p-3">
+                  <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#ee2c3c]">
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[#ee2c3c] ring-1 ring-red-200">
+                      <CheckIcon />
+                    </span>
+                    Online Degree
+                  </p>
+                  <p className="mt-1 text-sm font-medium leading-relaxed text-slate-800">{it.online}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </>
+        </Reveal>
       )}
     </CourseSection>
   );

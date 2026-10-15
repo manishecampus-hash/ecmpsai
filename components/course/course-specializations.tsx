@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   BarChart3,
   Briefcase,
@@ -17,9 +17,11 @@ import {
   ShieldCheck,
   Truck,
   UsersRound,
+  ArrowUpRight,
+  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
-import { CARD_W, CENTERED_GRID, CourseSection, Reveal, SectionHeading, iconFor } from "./section-ui";
+import { CourseSection, Reveal, SectionHeading, iconFor } from "./section-ui";
 
 const SPECIALIZATION_ICONS: [RegExp, LucideIcon][] = [
   [/market|brand|sales|advertis/i, Megaphone],
@@ -38,7 +40,10 @@ const SPECIALIZATION_ICONS: [RegExp, LucideIcon][] = [
   [/strateg|general|leadership/i, Briefcase],
 ];
 
+const INITIAL_COUNT = 6;
+
 export default function CourseSpecializations({ data }: { data?: any }) {
+  const [showAll, setShowAll] = useState(false);
   const heading = data?.heading || data?.title;
 
   if (!heading || typeof heading !== "string" || !heading.trim()) {
@@ -62,44 +67,61 @@ export default function CourseSpecializations({ data }: { data?: any }) {
     return null;
   }
 
+  // Same list panel as the Top Specializations sub-page; the top ones show first
+  const shown = showAll ? items : items.slice(0, INITIAL_COUNT);
+  const hidden = items.length - INITIAL_COUNT;
+
   return (
     <CourseSection>
       <SectionHeading heading={heading} fallback={/Specializations/} />
 
-      <p className="mb-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-        <span className="h-px w-8 bg-slate-300" />
-        {cardTitle}
-        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] text-[#ee2c3c] ring-1 ring-red-100">{items.length}</span>
-        <span className="h-px w-8 bg-slate-300" />
-      </p>
-
-      <div className={CENTERED_GRID}>
-        {items.map((item, idx) => {
-          const Icon = iconFor(item.key, SPECIALIZATION_ICONS, GraduationCap);
-          return (
-            <Reveal key={idx} delay={(idx % 4) * 0.06} className={CARD_W[4]}>
-              <div className="group relative flex h-full gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-22px_rgba(238,44,60,0.45)] sm:flex-col sm:gap-0 sm:p-5">
-                {/* accent bar that sweeps in on hover */}
-                <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-[#ee2c3c] transition-transform duration-300 group-hover:scale-x-100" />
-
-                <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ee2c3c] ring-1 ring-red-100 transition-colors duration-300 group-hover:bg-[#ee2c3c] group-hover:text-white">
-                  <Icon className="h-5 w-5" />
-                </span>
-
-                {/* number as its own badge, not a background watermark */}
-                <span className="absolute right-3.5 top-3.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-extrabold tabular-nums text-slate-500 ring-1 ring-slate-200 transition-colors duration-300 group-hover:bg-[#ee2c3c] group-hover:text-white group-hover:ring-[#ee2c3c]">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-
-                <div className="relative min-w-0 pr-10 sm:pr-0">
-                  <h3 className="text-[15px] font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#ee2c3c] sm:mt-4">{item.key}</h3>
-                  {item.value && <p className="mt-1 text-sm leading-relaxed text-slate-600 sm:mt-1.5">{item.value}</p>}
+      <Reveal>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          {cardTitle && (
+            <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-6 py-3.5">
+              <span className="h-4 w-1 shrink-0 rounded-full bg-[#ee2c3c]" />
+              <h3 className="text-sm font-semibold text-slate-800 sm:text-[15px]">{cardTitle}</h3>
+              <span className="ml-auto rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-[#ee2c3c] ring-1 ring-red-100">{items.length}</span>
+            </div>
+          )}
+          <div className="grid sm:grid-cols-2">
+            {shown.map((item, i) => {
+              const Icon = iconFor(item.key, SPECIALIZATION_ICONS, GraduationCap);
+              return (
+                <div
+                  key={item.key || i}
+                  className={`group flex items-center gap-4 border-b border-slate-200 px-6 py-5 transition-colors hover:bg-red-50/50 ${i % 2 === 0 ? "sm:border-r" : ""}`}
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-500 transition-colors group-hover:bg-red-500 group-hover:text-white">
+                    <Icon className="h-5 w-5" strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-slate-800 underline decoration-slate-300 underline-offset-2 group-hover:text-red-500 group-hover:decoration-red-300 sm:text-base">
+                      {item.key}
+                    </span>
+                    {item.value && <span className="mt-1 block text-[13px] leading-relaxed text-slate-500">{item.value}</span>}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-red-500" />
                 </div>
-              </div>
-            </Reveal>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+
+          {hidden > 0 && (
+            <div className="-mt-px flex justify-center border-t border-slate-200 bg-white px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setShowAll((v) => !v)}
+                aria-expanded={showAll}
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-[#ee2c3c] transition-all duration-300 hover:border-[#ee2c3c] hover:bg-[#ee2c3c] hover:text-white"
+              >
+                {showAll ? "Show less" : `See more specializations (${hidden})`}
+                <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showAll ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+          )}
+        </div>
+      </Reveal>
     </CourseSection>
   );
 }

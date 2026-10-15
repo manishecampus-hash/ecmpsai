@@ -88,7 +88,7 @@ export default function CourseSyllabus({ data }: { data?: any }) {
                     return (
                       <tr key={idx} className="align-top transition-colors hover:bg-slate-50/70">
                         <th scope="row" className="border-r border-slate-100 px-5 py-4 font-semibold text-slate-900 sm:px-6">
-                          <span className="block border-l-[3px] border-[#ee2c3c] pl-3 leading-snug">{sem.title}</span>
+                          <span className="block border-l-[3px] border-[#ee2c3c] pl-3 leading-snug">{sem.title.replace(/\b0+(\d)/g, "$1")}</span>
                         </th>
                         <td className="px-5 py-4 sm:px-6">
                           {subjects ? (

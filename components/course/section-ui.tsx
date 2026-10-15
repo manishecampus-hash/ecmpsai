@@ -126,8 +126,11 @@ export const CARD_W = {
 export function VsBadge() {
   return (
     <div className="relative z-10 -my-1 flex justify-center md:absolute md:left-1/2 md:top-1/2 md:my-0 md:-translate-x-1/2 md:-translate-y-1/2">
-      <span className="flex h-12 w-12 items-center justify-center rounded-full border border-red-200 bg-white text-sm font-extrabold tracking-wide text-[#ee2c3c] shadow-[0_6px_16px_-6px_rgba(238,44,60,0.45)] ring-4 ring-slate-50">
-        VS
+      <span className="flex h-14 w-14 rotate-[-8deg] items-center justify-center rounded-2xl bg-gradient-to-br from-[#ee2c3c] to-rose-500 shadow-[0_12px_24px_-8px_rgba(238,44,60,0.65)] ring-4 ring-white">
+        <span className="rotate-[8deg] font-black italic leading-none tracking-tight text-white">
+          <span className="text-xl">V</span>
+          <span className="text-base">s</span>
+        </span>
       </span>
     </div>
   );

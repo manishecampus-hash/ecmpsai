@@ -1,16 +1,15 @@
 "use client";
 
-import React from "react";
-import { ArrowUpRight } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { CourseSection, Reveal, SectionHeading } from "./section-ui";
 
-/** "₹2,07,000 - ₹4,13,000" → 207000 (the starting fee), or null when there's no number */
-function startingFee(fee: string) {
-  const first = fee.match(/\d[\d,]*/);
-  return first ? Number(first[0].replace(/,/g, "")) : null;
-}
+const PAGE_SIZE = 10;
 
 export default function FeesAndEnrollment({ data }: { data?: any }) {
+  const [page, setPage] = useState(0);
+  const tableRef = useRef<HTMLDivElement>(null);
   const heading = data?.heading || data?.title;
 
   if (!heading || typeof heading !== "string" || !heading.trim()) {
@@ -34,82 +33,117 @@ export default function FeesAndEnrollment({ data }: { data?: any }) {
     return null;
   }
 
-  // Fee bar: each university's starting fee against the highest starting fee in the list
-  const fees = rows.map((r) => startingFee(String(r.fee)));
-  const known = fees.filter((f): f is number => f !== null && f > 0);
-  const maxFee = known.length ? Math.max(...known) : 0;
-  const minFee = known.length > 1 ? Math.min(...known) : null;
+  const pages = Math.ceil(rows.length / PAGE_SIZE);
+  const current = Math.min(page, pages - 1);
+  const visible = rows.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE);
+
+  // Change page, then bring the table top back into view (below the sticky navbar + sub-header)
+  const goTo = (n: number) => {
+    setPage(n);
+    const el = tableRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 140;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+  };
 
   return (
     <CourseSection>
       <SectionHeading heading={heading} fallback={/Fees/} sub={subHeading} />
 
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-          <span className="h-4 w-1 rounded-full bg-[#ee2c3c]" />
-          {col1Header}
-        </p>
-        {maxFee > 0 && (
-          <p className="flex items-center gap-2 text-[11px] font-medium text-slate-500">
-            Lower
-            <span className="h-1.5 w-16 rounded-full bg-gradient-to-r from-red-200 to-[#ee2c3c]" />
-            Higher {col2Header.toLowerCase()}
-          </p>
-        )}
-      </div>
+      <Reveal>
+        <div ref={tableRef} className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+          <table className="w-full min-w-[520px] border-collapse text-left text-[15px]">
+            <thead>
+              <tr className="border-b border-red-100 bg-red-50 text-slate-900">
+                <th scope="col" className="w-16 border-r border-red-100 px-4 py-4 text-center font-bold">#</th>
+                <th scope="col" className="border-r border-red-100 px-6 py-4 font-bold">{col1Header}</th>
+                <th scope="col" className="px-6 py-4 font-bold">{col2Header}</th>
+              </tr>
+            </thead>
+            <AnimatePresence mode="wait" initial={false}>
+            <motion.tbody
+              key={current}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {visible.map((row, idx) => {
+                const i = current * PAGE_SIZE + idx;
+                const hasLink = row.link && row.link !== "#";
+                return (
+                  <tr key={i} className="border-b border-slate-200 transition-colors last:border-b-0 hover:bg-red-50/40">
+                    <td className="border-r border-slate-200 px-4 py-4 text-center font-semibold tabular-nums text-slate-500">{i + 1}</td>
+                    <td className="border-r border-slate-200 px-6 py-4 font-semibold text-slate-900">
+                      {hasLink ? (
+                        <a href={row.link} className="inline-flex items-center gap-1 hover:text-[#ee2c3c]">
+                          {row.university}
+                          <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" />
+                        </a>
+                      ) : (
+                        row.university
+                      )}
+                    </td>
+                    <td className="px-6 py-4 font-medium tabular-nums text-slate-700">{row.fee}</td>
+                  </tr>
+                );
+              })}
+            </motion.tbody>
+            </AnimatePresence>
+          </table>
+        </div>
 
-      <div className="grid gap-2.5 sm:gap-3 md:grid-cols-2">
-        {rows.map((row, i) => {
-          const fee = fees[i];
-          const isLowest = minFee !== null && fee === minFee;
-          const hasLink = row.link && row.link !== "#";
-          const Card = hasLink ? "a" : "div";
-
-          return (
-            <Reveal key={i} delay={(i % 6) * 0.05}>
-              <Card
-                {...(hasLink ? { href: row.link } : {})}
-                className="group flex h-full items-start gap-3.5 rounded-2xl border border-slate-200 bg-white p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_18px_36px_-22px_rgba(238,44,60,0.45)] sm:p-5"
+        {pages > 1 && (
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <nav
+              aria-label="Table pages"
+              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1.5 shadow-[0_10px_24px_-16px_rgba(15,23,42,0.35)]"
+            >
+              <button
+                type="button"
+                onClick={() => goTo(current - 1)}
+                disabled={current === 0}
+                className="inline-flex h-9 items-center gap-1 rounded-full px-3 text-sm font-semibold text-slate-600 transition hover:bg-red-50 hover:text-[#ee2c3c] disabled:pointer-events-none disabled:opacity-35"
               >
-                <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-base font-extrabold text-[#ee2c3c] ring-1 ring-red-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                  {row.university?.trim().charAt(0) || "•"}
-                  <span className="absolute -left-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-slate-600 shadow-sm ring-1 ring-slate-200">
-                    {i + 1}
-                  </span>
-                </span>
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-[15px] font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#ee2c3c]">
-                      {row.university}
-                      {hasLink && <ArrowUpRight className="ml-1 inline h-3.5 w-3.5 text-slate-400 group-hover:text-[#ee2c3c]" />}
-                    </h3>
-                    {isLowest && (
-                      <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-100">
-                        Lowest fee
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{col2Header}</span>
-                    <span className="text-[15px] font-extrabold tabular-nums text-slate-900 sm:text-base">{row.fee}</span>
-                  </div>
-
-                  {fee !== null && maxFee > 0 && (
-                    <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                      <span
-                        className="block h-full rounded-full bg-gradient-to-r from-red-300 to-[#ee2c3c] transition-[width] duration-700"
-                        style={{ width: `${Math.max(8, Math.round((fee / maxFee) * 100))}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </Reveal>
-          );
-        })}
-      </div>
+                <ChevronLeft className="h-4 w-4" /> Prev
+              </button>
+              {Array.from({ length: pages }, (_, n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => goTo(n)}
+                  aria-current={n === current ? "page" : undefined}
+                  aria-label={`Page ${n + 1}`}
+                  className={`h-9 w-9 rounded-full text-sm font-bold tabular-nums transition-all duration-300 ${
+                    n === current
+                      ? "scale-105 bg-gradient-to-br from-[#ee2c3c] to-rose-500 text-white shadow-[0_8px_16px_-6px_rgba(238,44,60,0.7)]"
+                      : "text-slate-600 hover:bg-red-50 hover:text-[#ee2c3c]"
+                  }`}
+                >
+                  {n + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => goTo(current + 1)}
+                disabled={current === pages - 1}
+                className="inline-flex h-9 items-center gap-1 rounded-full px-3 text-sm font-semibold text-slate-600 transition hover:bg-red-50 hover:text-[#ee2c3c] disabled:pointer-events-none disabled:opacity-35"
+              >
+                Next <ChevronRight className="h-4 w-4" />
+              </button>
+            </nav>
+            <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
+              <span className="h-1 w-24 overflow-hidden rounded-full bg-slate-200">
+                <span
+                  className="block h-full rounded-full bg-[#ee2c3c] transition-[width] duration-500"
+                  style={{ width: `${((current * PAGE_SIZE + visible.length) / rows.length) * 100}%` }}
+                />
+              </span>
+              Showing {current * PAGE_SIZE + 1}–{current * PAGE_SIZE + visible.length} of {rows.length} universities
+            </div>
+          </div>
+        )}
+      </Reveal>
     </CourseSection>
   );
 }

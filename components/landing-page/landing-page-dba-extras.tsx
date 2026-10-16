@@ -38,7 +38,7 @@ const JOURNEY: { icon: LucideIcon; title: string; text: string }[] = [
 export function DbaAudience() {
   return (
     <LpSection tone="muted">
-      <LpHeading heading="Who Is an *Online DBA* For?" description="Built for experienced professionals who want a doctorate without stepping away from work." />
+      <LpHeading heading="Who Can Pursue an *Online DBA*?" description="Built for experienced professionals who want a doctorate without stepping away from work." />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {AUDIENCE.map(({ icon: Icon, title, text }, i) => (
           <LpReveal key={title} delay={i * 0.07}>
@@ -59,7 +59,7 @@ export function DbaAudience() {
 export function DbaJourney() {
   return (
     <LpSection tone="muted">
-      <LpHeading heading="Your Path to *'Dr.'*" description="A simple, guided journey from your first call to your doctorate." />
+      <LpHeading heading="Your Path to *'Dr. Title'*" description="A simple, guided journey from your first call to your doctorate." />
       <ol className="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
         {/* connector through the step icons on wide screens */}
         <span aria-hidden className="absolute left-[10%] right-[10%] top-7 hidden border-t-2 border-dashed border-red-200 lg:block" />

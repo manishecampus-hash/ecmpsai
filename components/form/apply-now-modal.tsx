@@ -24,7 +24,7 @@ export function ApplyNowModal({ isOpen, onClose }: ApplyNowModalProps) {
   if (!isOpen) return null;
 
   return (
-    <LeadFormModalFrame onClose={onClose} title="Apply now">
+    <LeadFormModalFrame onClose={onClose} title="Apply now" imageSrc="/application-form-popup.webp">
       <ApplicationForm onSubmit={() => onClose()} onBack={() => onClose()} />
     </LeadFormModalFrame>
   );

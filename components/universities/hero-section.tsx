@@ -541,7 +541,7 @@ export default function UniversityHeroWithStats({
 
       {/* ── 3. Application Form Modal ── */}
       {showApplicationForm && (
-        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now">
+        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now" imageSrc="/application-form-popup.webp">
           <ApplicationForm
             onSubmit={() => {
               setShowApplicationForm(false);

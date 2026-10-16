@@ -52,14 +52,26 @@ export function LpHeading({
 }
 
 /** Fades content up the first time it scrolls into view */
-export function LpReveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+export function LpReveal({
+  children,
+  className,
+  delay = 0,
+  duration = 0.45,
+  distance = 14,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  distance?: number;
+}) {
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 14 }}
+      initial={{ opacity: 0, y: distance }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: Math.min(delay, 0.4) }}
+      transition={{ duration, ease: [0.22, 1, 0.36, 1], delay: Math.min(delay, 0.4) }}
     >
       {children}
     </motion.div>

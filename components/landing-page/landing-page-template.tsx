@@ -41,6 +41,9 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
   const hero = data.hero && isDba
     ? { ...data.hero, mainHeading: data.hero.mainHeading.replace(/\bManoj\b/g, "Rajesh") }
     : data.hero;
+  const experience = data.slug === "online-dba" && data.experience
+    ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
+    : data.experience;
   const COUNSELLOR_NAMES = ["Priya Jain", "Vishal Kumar"];
   const counsellorsSection = data.counsellorsSection && isDba
     ? {
@@ -85,7 +88,7 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       {isDba && <DbaAudience />}
 
       {/* 5. Experience / Benefits Section */}
-      {data.experience && <LandingPageExperience experience={data.experience} />}
+      {experience && <LandingPageExperience experience={experience} />}
 
       {isDba && <DbaJourney />}
 

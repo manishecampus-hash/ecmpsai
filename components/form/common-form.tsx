@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -324,23 +324,34 @@ export function ApplicationForm({
   };
 
   return (
-    <div className="mx-auto w-full max-w-lg bg-white px-5 py-7 sm:px-8 sm:py-8">
-      <div className="mb-5 pr-10 text-left">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-red-600">Get started</p>
-        <h2 className="mt-1 text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-[28px]">
-          Apply Now
+    <div className="relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-rose-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+      <div className="relative z-10 mb-5 text-center">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-orange-500">
+            Get ₹10,000* Scholarship
+          </p>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm shadow-blue-600/25">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Connect With An Expert
+          </span>
+        </div>
+        <h2 className="mt-2 flex items-center justify-center gap-2 text-[30px] font-black leading-tight tracking-[-0.04em] text-gray-900 sm:text-[34px]">
+          <span className="bg-gradient-to-r from-red-600 via-orange-500 to-rose-600 bg-clip-text text-transparent">
+            Apply Now
+          </span>
+          <Sparkles className="h-6 w-6 text-orange-400" />
         </h2>
-        <p className="mt-1.5 text-sm text-gray-500">Share your details and we’ll help you with the next steps.</p>
+        <p className="mt-1.5 whitespace-nowrap text-[10px] text-gray-500 sm:text-xs">Share your details and we’ll help you with the next steps.</p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-3.5"
+        className="relative z-10 flex flex-col gap-3.5"
       >
         {/* Name */}
         <div>
           <Input
-            placeholder="Enter name"
+            placeholder="Enter Full Name"
             value={formData.fullName}
             onChange={(e) =>
               setFormData({
@@ -366,7 +377,7 @@ export function ApplicationForm({
         <div>
           <Input
             type="email"
-            placeholder="Enter email"
+            placeholder="Enter Full Email Address"
             value={formData.email}
             onChange={(e) =>
               setFormData({
@@ -450,8 +461,8 @@ export function ApplicationForm({
               type="tel"
               placeholder={
                 selectedCountry.code === "in"
-                  ? ""
-                  : "Enter phone number"
+                  ? "xxxxxxxxxx"
+                  : "Enter Phone Number"
               }
               value={formData.mobile.replace(/\D/g, "")}
               onChange={(e) => {
@@ -561,11 +572,15 @@ export function ApplicationForm({
           </div>
         )}
 
+        <p className="pt-1 text-center text-xs font-medium text-gray-500">
+          🔒 Your information is secure with us
+        </p>
+
         {/* Submit */}
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="mt-1 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
+          className="mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-lg bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />
@@ -581,7 +596,7 @@ export function ApplicationForm({
       <div
         role="timer"
         aria-live="off"
-        className="mt-4 flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
+        className="relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
       >
         {offerExpired ? (
           <span className="font-semibold text-red-700">Offer Expired</span>

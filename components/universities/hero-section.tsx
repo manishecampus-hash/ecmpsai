@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ApplicationForm } from "@/components/form/common-form";
+import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
 import { getApplicationFlow, toUniversitySlug } from "@/data/application-flows";
 import {
   Star,
@@ -24,7 +25,6 @@ import {
   CheckCircle2,
   Share2,
   ExternalLink,
-  X,
   Compass,
   GraduationCap,
   Briefcase,
@@ -541,33 +541,16 @@ export default function UniversityHeroWithStats({
 
       {/* ── 3. Application Form Modal ── */}
       {showApplicationForm && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-fade-in"
-          onClick={() => setShowApplicationForm(false)}
-        >
-          <div
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-slate-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setShowApplicationForm(false)}
-              className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
-              aria-label="Close form"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            <ApplicationForm
-              onSubmit={() => {
-                setShowApplicationForm(false);
-              }}
-              onBack={() => {
-                setShowApplicationForm(false);
-              }}
-            />
-          </div>
-        </div>
+        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now">
+          <ApplicationForm
+            onSubmit={() => {
+              setShowApplicationForm(false);
+            }}
+            onBack={() => {
+              setShowApplicationForm(false);
+            }}
+          />
+        </LeadFormModalFrame>
       )}
     </header>
   );

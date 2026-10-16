@@ -23,7 +23,7 @@ const CustomSelectTrigger = ({
 }) => {
   return (
     <SelectTrigger
-      className="relative h-10 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl text-sm cursor-pointer pr-10 [&>svg:last-child]:hidden"
+      className="relative !h-11 bg-white border border-gray-200 text-gray-700 w-full px-3 rounded-lg text-sm cursor-pointer pr-10 focus:border-red-500 focus:ring-2 focus:ring-red-100 [&>svg:last-child]:hidden"
     >
       {children}
 
@@ -292,16 +292,18 @@ export function BrochureForm({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-6">
-      <div className="flex flex-col items-center text-center space-y-1.5 mb-3">
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+    <div className="mx-auto w-full max-w-lg bg-white px-5 py-7 sm:px-8 sm:py-8">
+      <div className="mb-5 pr-10 text-left">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-red-600">Program information</p>
+        <h2 className="mt-1 text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-[28px]">
           Download Brochure
         </h2>
+        <p className="mt-1.5 text-sm text-gray-500">Enter your details to receive the program brochure.</p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-3 mt-2"
+        className="flex flex-col gap-3.5"
       >
         {/* Name */}
         <div>
@@ -314,10 +316,10 @@ export function BrochureForm({
                 fullName: e.target.value,
               })
             }
-            className={`h-10 w-full px-3 rounded-xl border text-sm ${
+            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.fullName
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white focus:border-emerald-400"
+                : "border-gray-200 bg-white"
             }`}
           />
 
@@ -340,10 +342,10 @@ export function BrochureForm({
                 email: e.target.value,
               })
             }
-            className={`h-10 w-full px-3 rounded-xl border text-sm ${
+            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.email
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white focus:border-emerald-400"
+                : "border-gray-200 bg-white"
             }`}
           />
 
@@ -388,13 +390,13 @@ export function BrochureForm({
         {/* Phone */}
         <div>
           <div
-            className={`__phone-input-wrapper h-10 w-full flex items-center rounded-xl border overflow-hidden ${
+            className={`__phone-input-wrapper flex h-11 w-full items-center overflow-hidden rounded-lg border transition focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
                 : "border-gray-200 bg-white"
             }`}
           >
-            <div className="__country-code px-3 bg-gray-50 text-gray-700 font-medium text-sm border-r border-gray-200 flex items-center min-w-fit h-full whitespace-nowrap">
+            <div className="__country-code flex h-full min-w-fit items-center whitespace-nowrap border-r border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-700">
               +{selectedCountry.dialCode}
             </div>
 
@@ -430,7 +432,7 @@ export function BrochureForm({
                   ? selectedCountry.length
                   : undefined
               }
-              className="__phone-input flex-1 px-3 h-full outline-none text-sm text-gray-900 bg-transparent placeholder-gray-400"
+              className="__phone-input h-full flex-1 bg-transparent px-3 text-sm text-gray-900 outline-none placeholder:text-gray-400"
             />
           </div>
 
@@ -525,7 +527,7 @@ export function BrochureForm({
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="w-full h-10 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors mt-1 text-sm flex items-center justify-center gap-2"
+          className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin w-4 h-4" />

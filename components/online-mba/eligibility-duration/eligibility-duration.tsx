@@ -82,7 +82,7 @@ export default function SubEligibilityDuration({ data, title }: SubEligibilityDu
                   key={idx}
                   className="flex items-start gap-3 rounded-xl border border-transparent bg-slate-50/70 px-3.5 py-3 transition-colors hover:border-red-100 hover:bg-red-50/40"
                 >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-[#ee2c3c] ring-1 ring-red-200">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
                     <Check className="h-3 w-3" strokeWidth={3.5} />
                   </span>
                   <span className="text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">{String(point).replace(/^\s*[*•\-–]+\s*/, "")}</span>

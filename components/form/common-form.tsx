@@ -42,6 +42,8 @@ const courseList = [
   "Certificate in Chief data & AI officer",
 ];
 
+const OFFER_DURATION_SECONDS = 5 * 24 * 60 * 60;
+
 // ── Countries ────────────────────────────────────────────────────────────────
 
 const countryList = [
@@ -147,9 +149,23 @@ export function ApplicationForm({
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [offerSecondsRemaining, setOfferSecondsRemaining] = useState(OFFER_DURATION_SECONDS);
 
   useEffect(() => {
     getUtmParams();
+  }, []);
+
+  useEffect(() => {
+    const offerDeadline = Date.now() + OFFER_DURATION_SECONDS * 1000;
+    const updateCountdown = () => {
+      setOfferSecondsRemaining(
+        Math.max(0, Math.ceil((offerDeadline - Date.now()) / 1000)),
+      );
+    };
+
+    updateCountdown();
+    const countdownInterval = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(countdownInterval);
   }, []);
 
   const [selectedCountry, setSelectedCountry] = useState(
@@ -219,6 +235,12 @@ export function ApplicationForm({
     formData.course &&
     formData.state
   );
+
+  const offerExpired = offerSecondsRemaining === 0;
+  const offerDays = Math.floor(offerSecondsRemaining / (24 * 60 * 60));
+  const offerHours = Math.floor((offerSecondsRemaining % (24 * 60 * 60)) / 3600);
+  const offerMinutes = Math.floor((offerSecondsRemaining % 3600) / 60);
+  const offerSeconds = offerSecondsRemaining % 60;
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -302,16 +324,18 @@ export function ApplicationForm({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-2xl px-4 sm:px-6 py-4 sm:py-6">
-      <div className="flex flex-col items-center text-center space-y-1.5 mb-3">
-        <h2 className="text-1xl sm:text-2xl font-extrabold text-gray-900 leading-tight xl:2xl">
+    <div className="mx-auto w-full max-w-lg bg-white px-5 py-7 sm:px-8 sm:py-8">
+      <div className="mb-5 pr-10 text-left">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-red-600">Get started</p>
+        <h2 className="mt-1 text-2xl font-bold leading-tight tracking-tight text-gray-900 sm:text-[28px]">
           Apply Now
         </h2>
+        <p className="mt-1.5 text-sm text-gray-500">Share your details and we’ll help you with the next steps.</p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-3 mt-2"
+        className="flex flex-col gap-3.5"
       >
         {/* Name */}
         <div>
@@ -324,10 +348,10 @@ export function ApplicationForm({
                 fullName: e.target.value,
               })
             }
-            className={`h-10 w-full px-3 rounded-xl border text-sm ${
+            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.fullName
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white focus:border-emerald-400"
+                : "border-gray-200 bg-white"
             }`}
           />
 
@@ -350,10 +374,10 @@ export function ApplicationForm({
                 email: e.target.value,
               })
             }
-            className={`h-10 w-full px-3 rounded-xl border text-sm ${
+            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.email
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white focus:border-emerald-400"
+                : "border-gray-200 bg-white"
             }`}
           />
 
@@ -388,7 +412,7 @@ export function ApplicationForm({
               }
             }}
           >
-            <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
+            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
 
@@ -412,13 +436,13 @@ export function ApplicationForm({
         {/* Mobile */}
         <div>
           <div
-            className={`__phone-input-wrapper h-10 w-full flex items-center rounded-xl border overflow-hidden ${
+            className={`__phone-input-wrapper flex h-11 w-full items-center overflow-hidden rounded-lg border transition focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
                 : "border-gray-200 bg-white"
             }`}
           >
-            <div className="__country-code px-3 bg-gray-50 text-gray-700 font-medium text-sm border-r border-gray-200 flex items-center min-w-fit h-full whitespace-nowrap">
+            <div className="__country-code flex h-full min-w-fit items-center whitespace-nowrap border-r border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-700">
               +{selectedCountry.dialCode}
             </div>
 
@@ -454,7 +478,7 @@ export function ApplicationForm({
                   ? selectedCountry.length
                   : undefined
               }
-              className="__phone-input flex-1 px-3 h-full outline-none text-sm text-gray-900 bg-transparent placeholder-gray-400"
+              className="__phone-input h-full flex-1 bg-transparent px-3 text-sm text-gray-900 outline-none placeholder:text-gray-400"
             />
           </div>
 
@@ -476,14 +500,14 @@ export function ApplicationForm({
               })
             }
           >
-            <SelectTrigger className="!h-10 !min-h-0 !py-0 bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
+            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
               <SelectValue placeholder="Select Course" />
             </SelectTrigger>
 
             <SelectContent
               side="bottom"
               align="start"
-              className="z-[10000] bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+              className="z-[10000] max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto border border-gray-200 bg-white text-gray-900"
             >
               {courseList.map((c) => (
                 <SelectItem key={c} value={c}>
@@ -512,14 +536,14 @@ export function ApplicationForm({
                 })
               }
             >
-              <SelectTrigger className="!h-10 !min-h-[40px] bg-white border border-gray-200 text-gray-900 w-full px-3 rounded-xl flex items-center text-sm">
+              <SelectTrigger className="!h-11 !min-h-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
 
               <SelectContent
                 side="bottom"
                 align="start"
-                className="z-[10000] bg-white border border-gray-200 text-gray-900 max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto"
+                className="z-[10000] max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto border border-gray-200 bg-white text-gray-900"
               >
                 {indianStates.map((s) => (
                   <SelectItem key={s} value={s}>
@@ -541,7 +565,7 @@ export function ApplicationForm({
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="w-full h-10 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors mt-1 text-sm"
+          className="mt-1 h-11 w-full rounded-lg bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />
@@ -553,6 +577,26 @@ export function ApplicationForm({
           )}
         </Button>
       </form>
+
+      <div
+        role="timer"
+        aria-live="off"
+        className="mt-4 flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
+      >
+        {offerExpired ? (
+          <span className="font-semibold text-red-700">Offer Expired</span>
+        ) : (
+          <>
+            <span>Offer Expires In:</span>
+            <span className="font-bold tabular-nums text-red-700">
+              {String(offerDays).padStart(2, "0")}d&nbsp; : &nbsp;
+              {String(offerHours).padStart(2, "0")}h&nbsp; : &nbsp;
+              {String(offerMinutes).padStart(2, "0")}m&nbsp; : &nbsp;
+              {String(offerSeconds).padStart(2, "0")}s
+            </span>
+          </>
+        )}
+      </div>
     </div>
   );
 }

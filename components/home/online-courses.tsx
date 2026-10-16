@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { BrochureForm } from "./../form/brochure-form";
 import { ApplicationForm } from "../form/common-form";
+import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
 import HighlightedText from "@/components/universities/HighlightedText";
 
 
@@ -1339,62 +1340,29 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
         </div>
       </div>
       {showBrochureForm && (
-  <div
-    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
-    onClick={() => setShowBrochureForm(false)}
-  >
-   <div
-  className="relative w-full max-w-md max-h-[90vh] overflow-visible rounded-2xl bg-white shadow-2xl"
-  onClick={(e) => e.stopPropagation()}
->
-      <button
-        type="button"
-        onClick={() => setShowBrochureForm(false)}
-        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-lg font-medium text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
-        aria-label="Close brochure form"
-      >
-        ×
-      </button>
-
-      <BrochureForm
-        onSubmit={() => {
-          setShowBrochureForm(false);
-        }}
-        onBack={() => {
-          setShowBrochureForm(false);
-        }}
-      />
-    </div>
-  </div>
-)}
-{showApplicationForm && (
-  <div
-    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
-    onClick={() => setShowApplicationForm(false)}
-  >
-    <div
-      className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        type="button"
-        onClick={() => setShowApplicationForm(false)}
-        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-xl text-gray-600 shadow"
-      >
-        ×
-      </button>
-
-      <ApplicationForm
-        onSubmit={() => {
-          setShowApplicationForm(false);
-        }}
-        onBack={() => {
-          setShowApplicationForm(false);
-        }}
-      />
-    </div>
-  </div>
-)}
+        <LeadFormModalFrame onClose={() => setShowBrochureForm(false)} title="Download brochure">
+          <BrochureForm
+            onSubmit={() => {
+              setShowBrochureForm(false);
+            }}
+            onBack={() => {
+              setShowBrochureForm(false);
+            }}
+          />
+        </LeadFormModalFrame>
+      )}
+      {showApplicationForm && (
+        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now">
+          <ApplicationForm
+            onSubmit={() => {
+              setShowApplicationForm(false);
+            }}
+            onBack={() => {
+              setShowApplicationForm(false);
+            }}
+          />
+        </LeadFormModalFrame>
+      )}
     </section>
   );
 }

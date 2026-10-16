@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { Fragment, useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,6 +10,7 @@ import {
   Compass,
   GraduationCap,
   ClipboardList,
+  ReceiptText,
   Scale,
   ShieldCheck,
   Gift,
@@ -18,6 +19,7 @@ import {
   Settings,
   X,
   ChevronsLeft,
+  ChevronDown,
 } from "lucide-react";
 
 const navItems = [
@@ -83,6 +85,13 @@ function CollapsedTooltip({ label }: { label: string }) {
 
 function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
+  const [applicationsOpen, setApplicationsOpen] = useState(
+    () => pathname.startsWith("/dashboard/applications") || pathname === "/dashboard/receipts",
+  );
+
+  useEffect(() => {
+    setApplicationsOpen(pathname.startsWith("/dashboard/applications") || pathname === "/dashboard/receipts");
+  }, [pathname]);
 
   // Labels fade out quickly when collapsing and fade back in once there's room
   const labelMotion = {
@@ -153,8 +162,8 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
       >
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = item.href ? pathname === item.href : false;
-          const className = `relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-[17px] py-2.5 text-left text-sm font-medium transition-colors ${
+          const active = item.href ? pathname === item.href || (item.id === "applications" && pathname.startsWith("/dashboard/applications/")) : false;
+          const className = `relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-[17px] py-2.5 text-left text-sm font-medium transition-colors ${item.id === "applications" && !collapsed ? "pr-9" : ""} ${
             active
               ? "bg-red-50 text-red-600"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -203,26 +212,58 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
           );
 
           return (
-            <div key={item.id} className="group/item relative">
-              {item.href ? (
-                <Link
-                  href={item.href}
-                  aria-label={collapsed ? item.label : undefined}
-                  className={className}
-                >
-                  {content}
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  aria-label={collapsed ? item.label : undefined}
-                  className={className}
-                >
-                  {content}
-                </button>
+            <Fragment key={item.id}>
+              <div className="group/item relative">
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    aria-label={collapsed ? item.label : undefined}
+                    className={className}
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label={collapsed ? item.label : undefined}
+                    className={className}
+                  >
+                    {content}
+                  </button>
+                )}
+                {item.id === "applications" && !collapsed && (
+                  <button
+                    type="button"
+                    onClick={() => setApplicationsOpen((open) => !open)}
+                    aria-label={applicationsOpen ? "Close application links" : "Open application links"}
+                    aria-expanded={applicationsOpen}
+                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 transition hover:bg-white hover:text-gray-700"
+                  >
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${applicationsOpen ? "rotate-180" : ""}`} />
+                  </button>
+                )}
+                {collapsed && <CollapsedTooltip label={item.label} />}
+              </div>
+              {item.id === "applications" && applicationsOpen && (
+                <div className="group/item relative">
+                  <Link
+                    href="/dashboard/receipts"
+                    aria-label={collapsed ? "Payment Receipts" : undefined}
+                    aria-current={pathname === "/dashboard/receipts" ? "page" : undefined}
+                    className={`relative mt-1 flex items-center rounded-lg text-xs font-medium transition-colors ${
+                      collapsed
+                        ? "mx-auto h-10 w-10 justify-center"
+                        : "ml-5 gap-2.5 border-l border-gray-200 py-2 pl-5"
+                    } ${pathname === "/dashboard/receipts" ? "text-red-600" : "text-gray-500 hover:text-gray-900"}`}
+                  >
+                    {pathname === "/dashboard/receipts" && !collapsed && <span className="absolute -left-px top-1/2 h-5 -translate-y-1/2 border-l-2 border-red-600" />}
+                    <ReceiptText className={`h-4 w-4 flex-shrink-0 ${collapsed ? "h-[18px] w-[18px]" : ""}`} strokeWidth={1.8} />
+                    {!collapsed && <span>Payment Receipts</span>}
+                  </Link>
+                  {collapsed && <CollapsedTooltip label="Payment Receipts" />}
+                </div>
               )}
-              {collapsed && <CollapsedTooltip label={item.label} />}
-            </div>
+            </Fragment>
           );
         })}
       </nav>

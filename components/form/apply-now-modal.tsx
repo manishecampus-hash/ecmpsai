@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { ApplicationForm } from "@/components/form/common-form";
+import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
 
 interface ApplyNowModalProps {
   isOpen: boolean;
@@ -23,33 +24,9 @@ export function ApplyNowModal({ isOpen, onClose }: ApplyNowModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-xl text-gray-600 shadow cursor-pointer"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-        <ApplicationForm
-          onSubmit={() => {
-            onClose();
-          }}
-          onBack={() => {
-            onClose();
-          }}
-        />
-      </div>
-    </div>
+    <LeadFormModalFrame onClose={onClose} title="Apply now">
+      <ApplicationForm onSubmit={() => onClose()} onBack={() => onClose()} />
+    </LeadFormModalFrame>
   );
 }
 

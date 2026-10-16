@@ -19,13 +19,12 @@ import {
   MapPin,
   MessageCircle,
   Route,
-  ShieldCheck,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
 import type { SubmittedApplication } from "@/components/application-flow/submitted-applications";
 import { CopyValue } from "@/components/application-flow/payment-success";
-import { formatINR, formatLongDate } from "@/components/application-flow/options";
+import { formatLongDate } from "@/components/application-flow/options";
 import ApplicationJourney, { buildJourney } from "./application-journey";
 import { ADVISOR_NAME } from "../sidebar";
 import { EASE_OUT, staggerContainer, staggerItem } from "../motion";
@@ -67,15 +66,6 @@ const daysUntil = (iso?: string) => {
   today.setHours(0, 0, 0, 0);
   return Math.round((start.getTime() - today.getTime()) / 86_400_000);
 };
-
-const dateTime = (iso: string) =>
-  new Date(iso).toLocaleString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 
 export default function ApplicationDetail({ application }: { application: SubmittedApplication }) {
   const { applicationId, program, details, payment } = application;
@@ -144,20 +134,6 @@ export default function ApplicationDetail({ application }: { application: Submit
       ],
     },
   ].map((g) => ({ ...g, rows: g.rows.filter(([, v]) => Boolean(v?.trim())) as [string, string][] }));
-
-  const receipt: { label: string; value: React.ReactNode; copy?: string }[] = [
-    { label: "Payment ID", value: payment.paymentId, copy: payment.paymentId },
-    { label: "Paid on", value: dateTime(payment.paidAt) },
-    { label: "Paid via", value: "Razorpay" },
-    {
-      label: "Status",
-      value: (
-        <span className="inline-flex items-center gap-1.5 text-emerald-600">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Successful
-        </span>
-      ),
-    },
-  ];
 
   return (
     <motion.div variants={staggerContainer(0.08, 0.05)} initial="enter" animate="center" className="space-y-5">
@@ -343,49 +319,13 @@ export default function ApplicationDetail({ application }: { application: Submit
 
         <div className="space-y-5 xl:sticky xl:top-0">
           {/* ── Payment receipt ── */}
-          <motion.section variants={staggerItem} className={`${card} relative overflow-hidden`}>
-            <div className="bg-gradient-to-b from-emerald-50 to-white px-5 pb-5 pt-5 text-center sm:px-6">
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 320, damping: 16, delay: 0.35 }}
-                className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 ring-[6px] ring-emerald-100"
-              >
-                <ShieldCheck className="h-6 w-6" />
-              </motion.span>
-              <p className="mt-3 text-xs font-bold uppercase tracking-wider text-emerald-700">Payment successful</p>
-              <p className="mt-1 text-3xl font-extrabold tracking-tight text-gray-900">{formatINR(payment.amount)}</p>
-              <p className="mt-0.5 text-xs text-gray-500">{program.payment.label} · inclusive of all taxes</p>
-            </div>
-
-            {/* ticket perforation */}
-            <div className="relative h-0 border-t border-dashed border-gray-200">
-              <span className="absolute -left-3 -top-3 h-6 w-6 rounded-full border border-gray-100 bg-[#f9fafb]" />
-              <span className="absolute -right-3 -top-3 h-6 w-6 rounded-full border border-gray-100 bg-[#f9fafb]" />
-            </div>
-
-            <div className="px-5 pb-5 pt-4 sm:px-6">
-              <dl className="space-y-3 text-sm">
-                {receipt.map(({ label, value, copy }) => (
-                  <div key={label} className="flex items-center justify-between gap-3">
-                    <dt className="flex-shrink-0 text-gray-500">{label}</dt>
-                    <dd className="flex min-w-0 items-center gap-0.5 font-semibold text-gray-900">
-                      <span className="truncate">{value}</span>
-                      {copy && <CopyValue value={copy} />}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              {program.payment.note && (
-                <p className="mt-4 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs leading-relaxed text-emerald-700">
-                  {program.payment.note}
-                </p>
-              )}
-            </div>
-          </motion.section>
-
-          {/* ── Help ── */}
-          <motion.section variants={staggerItem} className={`${card} relative overflow-hidden p-5 sm:p-6`}>
+          <motion.section variants={staggerItem} className={`${card} p-5 sm:p-6`}>
+            <p className="text-sm font-bold text-gray-900">Payment confirmed</p>
+            <p className="mt-1 text-xs leading-relaxed text-gray-500">Your payment record and downloadable receipt are available in Payment Receipts.</p>
+            <Link href="/dashboard/receipts" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700">
+              <FileText className="h-4 w-4" /> View receipt <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </motion.section>          <motion.section variants={staggerItem} className={`${card} relative overflow-hidden p-5 sm:p-6`}>
             <span aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-red-50 blur-2xl" />
             <div className="relative flex items-center gap-3">
               <span className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-base font-bold text-white shadow-md shadow-red-500/25">

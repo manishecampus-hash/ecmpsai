@@ -17,6 +17,7 @@ import TypesOfOnlineCourse from "@/components/course/type-online-course";
 import CourseOffer from "@/components/course/course-offer";
 import Professionals from "@/components/course/professionals";
 import CourseFAQ from "@/components/course/course-faq";
+import CourseStickyPopup from "@/components/course/course-sticky-popup";
 
 interface SeoSettings {
   title?: string;
@@ -55,6 +56,9 @@ interface CourseData {
   seoSettings?: SeoSettings;
   associatedUniversities?: University[];
   subHeaders?: any[];
+  duration?: string;
+  mode?: string;
+  brochureUrl?: string;
 }
 
 interface PageProps {
@@ -141,6 +145,38 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
 
   const universities = course.associatedUniversities || [];
 
+  // Extract duration with priority fallback
+  const bannerDuration = detailsObj?.banner?.stats?.find((s: any) =>
+    s?.label?.toLowerCase()?.includes("duration")
+  )?.value;
+  const duration =
+    course.duration ||
+    detailsObj?.eligibility?.durationText ||
+    detailsObj?.eligibility?.duration ||
+    bannerDuration ||
+    "2 Years";
+
+  // Extract mode
+  const bannerMode = detailsObj?.banner?.stats?.find((s: any) =>
+    s?.label?.toLowerCase()?.includes("mode")
+  )?.value;
+  const mode = course.mode || bannerMode || "Online";
+
+  // Extract rating
+  const bannerRating = detailsObj?.banner?.stats?.find((s: any) =>
+    s?.label?.toLowerCase()?.includes("rating")
+  )?.value;
+  const rating = bannerRating || "4.8";
+
+  // Extract starting fee
+  let fee = "";
+  if (universities.length > 0) {
+    const uniWithFee = universities.find((u) => u.startingFee);
+    if (uniWithFee?.startingFee) {
+      fee = `₹${uniWithFee.startingFee.toLocaleString("en-IN")}`;
+    }
+  }
+
   return (
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
       <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
@@ -206,6 +242,16 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
       </section>
 
       <Footer />
+
+      {/* Floating Action Bar: triggers after 20% scroll, hides on scroll-up */}
+      <CourseStickyPopup
+        courseName={course.name}
+        duration={duration}
+        mode={mode}
+        rating={rating}
+        fee={fee}
+        brochureUrl={course.brochureUrl}
+      />
     </main>
   );
 }

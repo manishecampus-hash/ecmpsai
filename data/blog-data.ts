@@ -1478,6 +1478,7 @@ This article covers job opportunities after diploma in civil engineering, eligib
 
 export const categories: string[] = [
   "Latest Articles",
+  "Most Read",
   "Career Opportunities",
   "MBA",
   "Career Guidance",

@@ -16,8 +16,42 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
 
   const categories = useMemo(() => {
     const blogCategories = blogs.map((b) => b.category).filter(Boolean);
-    return Array.from(new Set(["Latest Articles", ...blogCategories]));
+    const unique = Array.from(
+      new Set(
+        blogCategories.filter(
+          (c) =>
+            c.toLowerCase() !== "latest articles" &&
+            c.toLowerCase() !== "most read",
+        ),
+      ),
+    );
+    return ["Latest Articles", "Most Read", ...unique];
   }, [blogs]);
+
+  // Helper to extract numeric read/view count from blog
+  const parseCount = (val: any): number => {
+    if (typeof val === "number" && !isNaN(val)) return val;
+    if (typeof val === "string") {
+      const match = val.trim().match(/^([\d,.]+)\s*([kKmMbB])?/);
+      if (match) {
+        let num = parseFloat(match[1].replace(/,/g, ""));
+        const unit = (match[2] || "").toLowerCase();
+        if (unit === "k") num *= 1000;
+        else if (unit === "m") num *= 1000000;
+        else if (unit === "b") num *= 1000000000;
+        return isNaN(num) ? 0 : num;
+      }
+      const parsed = parseFloat(val);
+      if (!isNaN(parsed)) return parsed;
+    }
+    return 0;
+  };
+
+  const getBlogReads = (blog: Blog): number => {
+    const fromView = parseCount((blog as any).view);
+    const fromReads = parseCount(blog.reads);
+    return Math.max(fromView, fromReads);
+  };
 
   const sortedBlogs = useMemo(() => {
     return [...blogs].sort((a, b) => {
@@ -27,12 +61,26 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
     });
   }, [blogs]);
 
+  const mostReadBlogs = useMemo(() => {
+    return [...blogs].sort((a, b) => {
+      const readsA = getBlogReads(a);
+      const readsB = getBlogReads(b);
+      if (readsB !== readsA) {
+        return readsB - readsA;
+      }
+      const dateA = new Date(a.updatedAt || a.createdAt || (a as any).date || 0).getTime();
+      const dateB = new Date(b.updatedAt || b.createdAt || (b as any).date || 0).getTime();
+      return dateB - dateA;
+    });
+  }, [blogs]);
+
   const filteredBlogs = useMemo(() => {
     if (activeCategory === "Latest Articles") return sortedBlogs;
+    if (activeCategory.toLowerCase() === "most read") return mostReadBlogs;
     return sortedBlogs.filter(
       (b) => b.category.toLowerCase() === activeCategory.toLowerCase(),
     );
-  }, [activeCategory, sortedBlogs]);
+  }, [activeCategory, sortedBlogs, mostReadBlogs]);
 
   const visibleBlogs = filteredBlogs.slice(0, visibleCount);
   const canLoadMore = visibleCount < filteredBlogs.length;
@@ -64,7 +112,11 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2.5">
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-              {activeCategory === "Latest Articles" ? "Latest Articles" : activeCategory}
+              {activeCategory === "Latest Articles"
+                ? "Latest Articles"
+                : activeCategory.toLowerCase() === "most read"
+                ? "Most Read Articles"
+                : activeCategory}
             </h2>
             <span className="text-xs font-bold text-slate-600 bg-slate-200/80 px-2.5 py-0.5 rounded-full border border-slate-300/50">
               {filteredBlogs.length}

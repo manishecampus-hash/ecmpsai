@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { Star, Clock, X, ArrowRight } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
 
@@ -27,6 +26,26 @@ export default function CourseStickyPopup({
 
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
+
+  // Sync state with body class and custom event so FloatingWhatsApp can float gracefully above it
+  useEffect(() => {
+    const active = isVisible && !isDismissed;
+    if (active) {
+      document.body.classList.add("course-popup-active");
+    } else {
+      document.body.classList.remove("course-popup-active");
+    }
+    window.dispatchEvent(
+      new CustomEvent("course-popup-toggle", { detail: { isVisible: active } })
+    );
+
+    return () => {
+      document.body.classList.remove("course-popup-active");
+      window.dispatchEvent(
+        new CustomEvent("course-popup-toggle", { detail: { isVisible: false } })
+      );
+    };
+  }, [isVisible, isDismissed]);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY || document.documentElement.scrollTop;
@@ -73,46 +92,27 @@ export default function CourseStickyPopup({
         }`}
       >
         <div className="relative border-t border-slate-200 bg-white shadow-[0_-8px_32px_rgba(15,23,42,0.12)]">
-          {/* Dismiss Button */}
-          <button
-            type="button"
-            onClick={() => setIsDismissed(true)}
-            className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
-            aria-label="Dismiss quick action bar"
-            title="Dismiss"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          {/* ── Desktop Layout (sm:flex hidden) ────────────────────────── */}
+          <div className="hidden sm:flex mx-auto max-w-7xl items-center justify-between gap-6 px-6 py-3.5 lg:px-8 relative">
+            {/* Desktop Dismiss Button */}
+            <button
+              type="button"
+              onClick={() => setIsDismissed(true)}
+              className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+              aria-label="Dismiss quick action bar"
+              title="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
 
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-3.5 sm:px-6 sm:py-4 lg:px-8">
-            {/* Left: Bigger eCampus Logo + Divider + Bigger Course Info */}
-            <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-              {/* Bigger eCampus Logo */}
-              <div className="relative h-10 w-32 sm:h-12 sm:w-40 md:h-14 md:w-48 shrink-0">
-                <Image
-                  src="/image/logo.png"
-                  alt="eCampus"
-                  fill
-                  sizes="(max-width: 640px) 130px, 190px"
-                  className="object-contain object-left"
-                  priority
-                />
-              </div>
-
-              {/* Taller Vertical Divider */}
-              <div
-                className="hidden sm:block h-12 w-px bg-slate-200 shrink-0"
-                aria-hidden="true"
-              />
-
-              {/* Bigger Course Title + Sub-details */}
+            {/* Left: Course Info */}
+            <div className="flex min-w-0 flex-1 items-center">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-extrabold text-slate-900 sm:text-xl lg:text-2xl leading-snug tracking-tight">
                   {courseName}
                 </h3>
 
-                <div className="mt-1 flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-slate-600 font-semibold">
-                  {/* Rating */}
+                <div className="mt-1 flex flex-wrap items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-semibold">
                   <span className="inline-flex items-center gap-1 text-slate-900 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/70">
                     <span>{rating}</span>
                     <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 inline -translate-y-[0.5px]" />
@@ -138,26 +138,73 @@ export default function CourseStickyPopup({
               </div>
             </div>
 
-            {/* Right: Bigger Apply Now CTA + Status Notice */}
-            <div className="flex shrink-0 flex-col items-end gap-1.5 pr-6 sm:pr-8">
-              {/* Bigger Apply Now Button in eCampus Brand Color */}
+            {/* Right: Apply Now CTA + Status Notice */}
+            <div className="flex shrink-0 flex-col items-end gap-1.5 pr-8">
               <button
                 type="button"
                 onClick={() => setShowApplyModal(true)}
-                className="group inline-flex h-11 sm:h-13 items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-[#f83d46] px-6 sm:px-9 text-sm sm:text-base font-extrabold text-white shadow-[0_6px_20px_rgba(248,61,70,0.36)] transition-all hover:bg-[#ef343d] hover:shadow-[0_8px_25px_rgba(248,61,70,0.48)] active:scale-[0.98]"
+                className="group inline-flex h-12 sm:h-13 items-center justify-center gap-2 rounded-2xl bg-[#f83d46] px-8 sm:px-9 text-sm sm:text-base font-extrabold text-white shadow-[0_6px_20px_rgba(248,61,70,0.36)] transition-all hover:bg-[#ef343d] hover:shadow-[0_8px_25px_rgba(248,61,70,0.48)] active:scale-[0.98]"
               >
                 <span>Apply Now</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
 
-              {/* Status Notice */}
               <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 font-medium">
                 <Clock className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                 <span>
-                  Application Closes{" "}
-                  <strong className="font-bold text-amber-700">Today</strong>
+                  Application Closes <strong className="font-bold text-amber-700">Today</strong>
                 </span>
               </div>
+            </div>
+          </div>
+
+          {/* ── Mobile Layout (< sm) ─────────────────────────────────── */}
+          <div className="block sm:hidden px-3.5 py-2.5">
+            {/* Top Row: Title + Dismiss */}
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <h4 className="truncate text-sm font-bold text-slate-900 leading-tight flex-1 min-w-0">
+                {courseName}
+              </h4>
+
+              <button
+                type="button"
+                onClick={() => setIsDismissed(true)}
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 active:scale-95"
+                aria-label="Dismiss quick action bar"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* Bottom Row: Details Pills + Compact Apply Now Button */}
+            <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-100">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 overflow-hidden min-w-0">
+                <span className="inline-flex items-center gap-0.5 text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 font-bold shrink-0">
+                  <span>{rating}</span>
+                  <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400 -translate-y-[0.5px]" />
+                </span>
+                <span className="text-slate-300 shrink-0">·</span>
+                <span className="text-slate-700 shrink-0 font-medium">{duration}</span>
+                <span className="text-slate-300 shrink-0">·</span>
+                <span className="inline-flex items-center text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 font-bold shrink-0">
+                  {mode}
+                </span>
+                {fee && (
+                  <>
+                    <span className="text-slate-300 shrink-0">·</span>
+                    <span className="text-slate-700 font-bold shrink-0">{fee}</span>
+                  </>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowApplyModal(true)}
+                className="inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-lg bg-[#f83d46] px-3.5 text-xs font-extrabold text-white shadow-[0_2px_8px_rgba(248,61,70,0.3)] active:scale-95"
+              >
+                <span>Apply Now</span>
+                <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
           </div>
         </div>

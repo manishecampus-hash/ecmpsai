@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
@@ -69,7 +70,7 @@ interface PageProps {
   }>;
 }
 
-async function fetchCourse(slug: string): Promise<CourseData | null> {
+const fetchCourse = cache(async (slug: string): Promise<CourseData | null> => {
   const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
   try {
     const res = await fetch(`${apiUrl}/root-courses/${slug}`, {
@@ -82,7 +83,7 @@ async function fetchCourse(slug: string): Promise<CourseData | null> {
     console.error("Failed to fetch course details:", error);
   }
   return null;
-}
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

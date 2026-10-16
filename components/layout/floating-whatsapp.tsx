@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 interface FloatingWhatsAppProps {
@@ -13,8 +13,22 @@ export function FloatingWhatsApp({
   message = "Hi! I would like to get more information about online university programs.",
 }: FloatingWhatsAppProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // The AI chat page keeps its message box at the bottom of the screen — sit just above it there
-  const aboveComposer = usePathname() === "/search";
+  const [hasCourseBar, setHasCourseBar] = useState(false);
+  const pathname = usePathname();
+  const aboveComposer = pathname === "/search";
+
+  useEffect(() => {
+    const handleToggle = (e: any) => {
+      setHasCourseBar(Boolean(e.detail?.isVisible));
+    };
+    window.addEventListener("course-popup-toggle", handleToggle);
+
+    if (typeof document !== "undefined") {
+      setHasCourseBar(document.body.classList.contains("course-popup-active"));
+    }
+
+    return () => window.removeEventListener("course-popup-toggle", handleToggle);
+  }, []);
 
   // Clean the phone number (remove any non-digit characters)
   const cleanNumber = phoneNumber.replace(/\D/g, "");
@@ -22,8 +36,17 @@ export function FloatingWhatsApp({
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${cleanNumber}${message ? `?text=${encodedMessage}` : ""}`;
 
+  // When course bar is active on mobile, lift WhatsApp smoothly above it with generous clearance
+  const bottomPositionClass = aboveComposer
+    ? "bottom-[196px] md:bottom-[112px]"
+    : hasCourseBar
+      ? "bottom-[88px] md:bottom-6"
+      : "bottom-20 md:bottom-6";
+
   return (
-    <div className={`fixed ${aboveComposer ? "bottom-[196px] md:bottom-[112px]" : "bottom-20 md:bottom-6"} right-4 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto`}>
+    <div
+      className={`fixed ${bottomPositionClass} right-3 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto transition-all duration-300 ease-out`}
+    >
       {/* Tooltip / Prompt bubble on desktop */}
       <a
         href={whatsappUrl}
@@ -31,16 +54,15 @@ export function FloatingWhatsApp({
         rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`hidden ${aboveComposer ? "" : "md:flex"} items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 transform origin-right cursor-pointer hover:border-emerald-200 hover:text-emerald-700 hover:shadow-[0_10px_35px_rgba(37,211,102,0.2)] ${
-          isHovered ? "opacity-100 translate-x-0 scale-100" : "opacity-90 translate-x-1 scale-95"
-        }`}
+        className={`hidden ${aboveComposer ? "" : "md:flex"} items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 transform origin-right cursor-pointer hover:border-emerald-200 hover:text-emerald-700 hover:shadow-[0_10px_35px_rgba(37,211,102,0.2)] ${isHovered ? "opacity-100 translate-x-0 scale-100" : "opacity-90 translate-x-1 scale-95"
+          }`}
         aria-label="Chat on WhatsApp"
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
-        <span>Chat with us on WhatsApp</span>
+        <span>Chat on WhatsApp</span>
       </a>
 
       {/* Main WhatsApp Floating Button */}
@@ -50,8 +72,8 @@ export function FloatingWhatsApp({
         rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative group flex h-14 w-14 sm:h-15 sm:w-15 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_12px_32px_rgba(37,211,102,0.65)] active:scale-95 cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
-        aria-label="Chat with us on WhatsApp"
+        className="relative group flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_12px_32px_rgba(37,211,102,0.65)] active:scale-95 cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
+        aria-label="Chat on WhatsApp"
         title="Chat on WhatsApp (+91 9873794789)"
       >
         {/* Soft pulsing aura */}
@@ -59,7 +81,7 @@ export function FloatingWhatsApp({
 
         {/* Crisp Official WhatsApp SVG Icon */}
         <svg
-          className="h-8 w-8 sm:h-8.5 sm:w-8.5 fill-current transition-transform duration-300 group-hover:scale-105"
+          className="h-6 w-6 sm:h-7.5 sm:w-7.5 fill-current transition-transform duration-300 group-hover:scale-105"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -67,9 +89,9 @@ export function FloatingWhatsApp({
         </svg>
 
         {/* Small Mobile badge dot */}
-        <span className="md:hidden absolute top-0.5 right-0.5 flex h-3.5 w-3.5">
+        <span className="md:hidden absolute top-0.5 right-0.5 flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-300 border-2 border-[#25D366]"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-300 border-2 border-[#25D366]"></span>
         </span>
       </a>
     </div>

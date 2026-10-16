@@ -5,6 +5,7 @@ import SubHeader from "@/components/subheader/sub-header";
 import SubHeaderTemplateRenderer, { SubHeaderData } from "@/components/subheader/SubHeaderTemplateRenderer";
 import SubHeaderFaqSection from "@/components/subheader/SubHeaderFaqSection";
 import { Navbar } from "@/components/layout/navbar";
+import CourseStickyPopup from "@/components/course/course-sticky-popup";
 
 interface CourseData {
   id: string;
@@ -153,6 +154,14 @@ export default async function SubHeaderDynamicPage({ params }: PageProps) {
       </div>
 
       <Footer />
+
+      <CourseStickyPopup
+        courseName={course.name}
+        duration={(course as any).duration || "2 Years"}
+        mode={(course as any).mode || "Online"}
+        rating="4.8"
+        brochureUrl={(course as any).brochureUrl}
+      />
     </main>
   );
 }

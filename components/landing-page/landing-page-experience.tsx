@@ -41,15 +41,15 @@ export function LandingPageExperience({ experience }: LandingPageExperienceProps
           const Icon = BENEFIT_ICONS[index % BENEFIT_ICONS.length];
           return (
             <LpReveal key={card.id || index} delay={index * 0.08}>
-              <div className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)]">
+              <div className="group relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 transition-all sm:p-6 duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)]">
                 <span aria-hidden className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-red-600 transition-transform duration-300 group-hover:scale-x-100" />
                 <div className="flex items-center justify-between">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors group-hover:bg-red-600 group-hover:text-white">
                     <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
-                  <span className="text-4xl font-extrabold tracking-tight text-slate-900 transition-colors group-hover:text-red-600">{card.value}</span>
+                  <span className="text-3xl font-extrabold tracking-tight text-slate-900 transition-colors group-hover:text-red-600 sm:text-4xl">{card.value}</span>
                 </div>
-                <h3 className="mt-5 text-[17px] font-bold text-slate-900">{card.title}</h3>
+                <h3 className="mt-3 text-[17px] font-bold text-slate-900 sm:mt-5">{card.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{card.description}</p>
               </div>
             </LpReveal>

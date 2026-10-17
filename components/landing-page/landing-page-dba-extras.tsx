@@ -37,15 +37,15 @@ export function DbaAudience() {
   return (
     <LpSection tone="muted">
       <LpHeading heading="Who Can Pursue an *Online DBA*?" description="Built for experienced professionals who want a doctorate without stepping away from work." />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {AUDIENCE.map(({ icon: Icon, title, text }, i) => (
           <LpReveal key={title} delay={i * 0.07}>
-            <div className="group h-full rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)]">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors group-hover:bg-red-600 group-hover:text-white">
-                <Icon className="h-5 w-5" strokeWidth={2} />
+            <div className="group h-full rounded-2xl border border-slate-200 bg-white p-4 transition-all sm:p-5 duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors group-hover:bg-red-600 group-hover:text-white sm:h-11 sm:w-11">
+                <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
               </span>
-              <h3 className="mt-4 text-[17px] font-bold text-slate-900">{title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{text}</p>
+              <h3 className="mt-3 text-[15px] font-bold text-slate-900 sm:mt-4 sm:text-[17px]">{title}</h3>
+              <p className="mt-1 text-[13px] leading-relaxed text-slate-600 sm:mt-1.5 sm:text-sm">{text}</p>
             </div>
           </LpReveal>
         ))}

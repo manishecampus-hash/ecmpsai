@@ -49,7 +49,11 @@ export default function UniversityPrograms() {
         description="Explore globally accredited Doctor of Business Administration programs curated for working executives and business leaders."
       />
 
-      <div className="flex flex-wrap justify-start gap-5 sm:gap-6">
+      <p className="-mt-3 mb-4 text-center text-xs font-semibold text-slate-500 sm:hidden">
+        {`Swipe to see all ${dbaUniversities.length} universities →`}
+      </p>
+      {/* Phones: swipeable row with the next card peeking in. sm and up: wrapped grid */}
+      <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-start sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
         {dbaUniversities.map((university, i) => {
           const LocationIcon = university.locationIcon === "Globe" ? Globe : MapPin;
           const meta = [
@@ -65,7 +69,7 @@ export default function UniversityPrograms() {
               delay={i * 0.09}
               duration={0.75}
               distance={8}
-              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+              className="w-[82%] shrink-0 snap-start max-sm:![animation:none] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
             >
               <article className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-slate-200 border-t-[3px] border-t-red-600 bg-white shadow-[0_8px_24px_-18px_rgba(15,23,42,0.3)] transition duration-500 hover:-translate-y-0.5 hover:border-slate-300 hover:border-t-red-600 hover:shadow-[0_18px_34px_-22px_rgba(15,23,42,0.32)]">
                 <div className="relative h-36 overflow-hidden bg-slate-100 sm:h-40">

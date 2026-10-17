@@ -219,7 +219,7 @@ export function LandingPageHero({ hero }: LandingPageHeroProps) {
                       src={beforeImg}
                       alt={beforeLabel || "Before"}
                       fill
-                      priority
+                      loading="eager"
                       sizes="(max-width: 640px) 48vw, 215px"
                       quality={60}
                       className="object-cover object-center grayscale-[15%] transition-transform duration-500 group-hover/before:scale-[1.03]"
@@ -240,7 +240,7 @@ export function LandingPageHero({ hero }: LandingPageHeroProps) {
                       src={afterImg}
                       alt={afterLabel || "After"}
                       fill
-                      priority
+                      loading="eager"
                       sizes="(max-width: 640px) 48vw, 215px"
                       quality={60}
                       className="object-cover object-center transition-transform duration-500 group-hover/after:scale-[1.03]"

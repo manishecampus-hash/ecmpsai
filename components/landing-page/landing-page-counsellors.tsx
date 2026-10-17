@@ -73,11 +73,11 @@ export function LandingPageCounsellors({
                 <ul className="mt-3.5 space-y-2 text-sm font-medium text-slate-600">
                   <li className="flex items-center gap-2">
                     <BriefcaseBusiness className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2} />
-                    <span className="truncate">{c.experience}</span>
+                    <span className="leading-snug">{c.experience}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <UserRound className="h-4 w-4 shrink-0 text-red-500" strokeWidth={2} />
-                    <span className="truncate">{c.students}</span>
+                    <span className="leading-snug">{c.students}</span>
                   </li>
                 </ul>
               </div>

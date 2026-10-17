@@ -1,18 +1,37 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 
-const ambientSparkles = Array.from({ length: 32 }, (_, index) => ({
-  left: (index * 37 + 7) % 97,
-  top: (index * 53 + 11) % 94,
-  size: 2 + (index % 3),
-  duration: 2.4 + ((index * 7) % 18) / 10,
-  delay: (index * 3) % 5,
-  color: ["#e0f2fe", "#bfdbfe", "#ede9fe", "#ffffff"][index % 4],
+// Backdrop: dark navy scrim, soft blue/red glows and confetti pieces that fall
+// slowly from top to bottom. CSS-only (transform/opacity), so it stays smooth.
+const CONFETTI = Array.from({ length: 56 }, (_, i) => ({
+  left: (i * 29 + 5) % 100,
+  size: 5 + (i % 4) * 2,
+  duration: 9 + ((i * 7) % 9),
+  // negative delay so the screen is already filled when the popup opens
+  delay: -((i * 13) % 17),
+  sway: (i % 2 ? 1 : -1) * (12 + (i % 5) * 6),
+  spin: (i % 3 ? 1 : -1) * (240 + (i % 4) * 90),
+  color: ["#3b82f6", "#ffffff", "#f59e0b", "#ee2c3c", "#60a5fa", "#ffffff"][i % 6],
+  shape: i % 3,
+  opacity: 0.55 + (i % 4) * 0.12,
 }));
+
+const BACKDROP_CSS = `
+  @keyframes lfm-fall {
+    from { transform: translate3d(0, -12vh, 0) rotate(0deg); }
+    to { transform: translate3d(var(--lfm-sway), 112vh, 0) rotate(var(--lfm-spin)); }
+  }
+  @keyframes lfm-drift-a { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(6vw, 4vh, 0) scale(1.12); } }
+  @keyframes lfm-drift-b { 0%, 100% { transform: translate3d(0, 0, 0) scale(1.08); } 50% { transform: translate3d(-5vw, -5vh, 0) scale(0.94); } }
+  .lfm-piece { position: absolute; top: 0; will-change: transform; animation: lfm-fall linear infinite; }
+  .lfm-glow-a { animation: lfm-drift-a 16s ease-in-out infinite; }
+  .lfm-glow-b { animation: lfm-drift-b 20s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .lfm-piece { display: none; } .lfm-glow-a, .lfm-glow-b { animation: none; } }
+`;
 
 export default function LeadFormModalFrame({
   children,
@@ -44,76 +63,48 @@ export default function LeadFormModalFrame({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[10000] flex items-center justify-center overflow-y-auto px-3 py-4 backdrop-blur-[2px] sm:px-6 sm:py-6"
-      style={{
-        backgroundColor: "rgba(8, 12, 28, 0.84)",
-        backgroundImage:
-          "radial-gradient(ellipse at 12% 22%, rgba(56,189,248,0.15), transparent 35%), radial-gradient(ellipse at 88% 78%, rgba(129,140,248,0.16), transparent 38%)",
-      }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="fixed inset-0 z-[10000] flex items-center justify-center overflow-y-auto bg-[rgba(11,20,46,0.8)] px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-6"
       onClick={onClose}
     >
-      {!reduceMotion && (
-        <>
-          <motion.span
-            aria-hidden="true"
-            animate={{ opacity: [0.1, 0.65, 0.1], scaleX: [0.72, 1, 0.82] }}
-            transition={{ duration: 7, ease: "easeInOut", repeat: Infinity }}
-            className="pointer-events-none absolute left-[-12%] top-[24%] h-px w-[124%] rotate-[-11deg] bg-gradient-to-r from-transparent via-cyan-200/70 to-transparent shadow-[0_0_16px_rgba(125,211,252,0.55)]"
+      <style>{BACKDROP_CSS}</style>
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
+        <span className="lfm-glow-a absolute -left-[12%] -top-[18%] h-[60vmax] w-[60vmax] rounded-full bg-[radial-gradient(closest-side,rgba(59,130,246,0.3),transparent)]" />
+        <span className="lfm-glow-b absolute -bottom-[22%] -right-[14%] h-[55vmax] w-[55vmax] rounded-full bg-[radial-gradient(closest-side,rgba(238,44,60,0.22),transparent)]" />
+        {CONFETTI.map((piece, i) => (
+          <span
+            key={i}
+            className="lfm-piece"
+            style={
+              {
+                left: `${piece.left}%`,
+                width: piece.shape === 2 ? piece.size * 0.6 : piece.size,
+                height: piece.shape === 2 ? piece.size * 1.4 : piece.size,
+                backgroundColor: piece.color,
+                opacity: piece.opacity,
+                borderRadius: piece.shape === 1 ? "50%" : "1.5px",
+                animationDuration: `${piece.duration}s`,
+                animationDelay: `${piece.delay}s`,
+                "--lfm-sway": `${piece.sway}px`,
+                "--lfm-spin": `${piece.spin}deg`,
+              } as CSSProperties
+            }
           />
-          <motion.span
-            aria-hidden="true"
-            animate={{ opacity: [0.08, 0.48, 0.08], scaleX: [0.8, 1, 0.7] }}
-            transition={{ duration: 9, ease: "easeInOut", repeat: Infinity, delay: 1.5 }}
-            className="pointer-events-none absolute left-[-10%] top-[72%] h-px w-[120%] rotate-[9deg] bg-gradient-to-r from-transparent via-indigo-200/70 to-transparent shadow-[0_0_18px_rgba(165,180,252,0.55)]"
-          />
-          <motion.span
-            aria-hidden="true"
-            animate={{ opacity: [0.06, 0.38, 0.06], scaleX: [0.75, 1, 0.85] }}
-            transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, delay: 2.5 }}
-            className="pointer-events-none absolute left-[-8%] top-[48%] h-px w-[116%] rotate-[-4deg] bg-gradient-to-r from-transparent via-sky-100/60 to-transparent shadow-[0_0_15px_rgba(186,230,253,0.5)]"
-          />
-          {ambientSparkles.map((sparkle, index) => (
-          <motion.span
-            key={index}
-            aria-hidden="true"
-            initial={{ opacity: 0.15, scale: 0.55, rotate: 0 }}
-            animate={{
-              opacity: [0.15, 0.95, 0.25, 0.75, 0.15],
-              scale: [0.55, 1.35, 0.8, 1.15, 0.55],
-              rotate: [0, 45, 90, 135, 180],
-            }}
-            transition={{
-              duration: sparkle.duration,
-              delay: sparkle.delay,
-              ease: "easeInOut",
-              repeat: Infinity,
-            }}
-            className="pointer-events-none absolute rounded-full shadow-[0_0_10px_currentColor]"
-            style={{
-              left: `${sparkle.left}%`,
-              top: `${sparkle.top}%`,
-              width: sparkle.size,
-              height: sparkle.size,
-              color: sparkle.color,
-              backgroundColor: sparkle.color,
-            }}
-          />
-          ))}
-        </>
-      )}
+        ))}
+      </div>
       <motion.div
-        initial={reduceMotion ? undefined : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.24, ease: "easeOut" }}
+        initial={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative z-10 grid max-h-[94vh] w-full max-w-5xl grid-cols-1 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.32)] md:max-h-[90vh] md:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] ${imageSrc ? "grid-rows-[auto_minmax(0,1fr)] md:grid-rows-1" : ""}`}
+        className={`relative z-10 grid max-h-[94vh] w-full max-w-5xl grid-cols-1 overflow-hidden rounded-2xl border border-white/10 bg-white shadow-[0_32px_100px_-12px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:max-h-[90vh] md:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] ${imageSrc ? "grid-rows-[auto_minmax(0,1fr)] md:grid-rows-1" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         {imageSrc ? (
           <>
-            <div aria-hidden="true" className="relative h-32 overflow-hidden md:hidden">
+            <div aria-hidden="true" className="relative h-[74px] overflow-hidden md:hidden">
               <img src={imageSrc} alt="" className="h-full w-full object-cover object-top" />
             </div>
             <div aria-hidden="true" className="hidden min-h-0 overflow-hidden bg-[#fffafa] md:flex md:items-center md:justify-center">

@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import {
   Bookmark,
   CheckSquare,
@@ -14,7 +12,7 @@ import {
   Crown,
   Minus,
 } from "lucide-react";
-import ApplyNowModal from "@/components/form/apply-now-modal";
+import { ApplyNowButton } from "@/components/form/apply-now-modal";
 import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
 export interface ComparisonColumnItem {
@@ -53,7 +51,6 @@ export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps
       ];
   const rows = highlights.rows;
 
-  const [showForm, setShowForm] = useState(false);
   // The first column (DBA) is the recommended one: raised card, red checks; the rest stay muted
   const [lead, ...others] = columns;
   const grid: React.CSSProperties = {
@@ -89,7 +86,7 @@ export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps
           </div>
           {others.map((col, i) => (
             <div key={col.id} style={at(i + 3, 1)} className="flex flex-col items-center justify-end px-6 pb-5 pt-6 text-center">
-              <span className="text-2xl font-extrabold tracking-tight text-slate-400">{col.title}</span>
+              <span className="text-2xl font-extrabold tracking-tight text-slate-500">{col.title}</span>
               <span className="mt-0.5 text-xs font-semibold text-slate-400">Academic research track</span>
             </div>
           ))}
@@ -159,16 +156,11 @@ export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps
       {/* Lead prompt */}
       <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4 md:mt-16">
         <p className="text-sm font-medium text-slate-600">Not sure which doctorate fits your goals?</p>
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
-        >
+        <ApplyNowButton className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-700 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white">
           Talk to a DBA Counsellor
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </button>
+        </ApplyNowButton>
       </div>
-      <ApplyNowModal isOpen={showForm} onClose={() => setShowForm(false)} />
     </LpSection>
   );
 }

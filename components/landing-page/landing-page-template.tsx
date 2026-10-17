@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Footer } from "@/components/layout/footer";
 import UniversityPrograms from "@/components/online-dba/university-programs";
@@ -12,6 +10,7 @@ import LandingPageCounsellors, { LandingPageCounsellorsData } from "./landing-pa
 import LandingPagePlacementPartners, { LandingPagePlacementPartnersData } from "./landing-page-placement-partners";
 import LandingPageFaq, { LandingPageFaqData } from "./landing-page-faq";
 import { DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
+import { LP_REVEAL_CSS } from "./lp-ui";
 
 export interface LandingPageData {
   id?: string;
@@ -44,21 +43,21 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
   const experience = data.slug === "online-dba" && data.experience
     ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
     : data.experience;
-  const COUNSELLOR_NAMES = ["Priya Jain", "Vishal Kumar"];
+  const COUNSELLOR_NAMES = ["Harsh Sharma", "Vishal Kumar"];
   const counsellorsSection = data.counsellorsSection && isDba
     ? {
         ...data.counsellorsSection,
         counsellors: data.counsellorsSection.counsellors?.map((c, i) => ({
           ...c,
           name: COUNSELLOR_NAMES[i] ?? c.name,
-          // Priya's photo is still the old (male) one — leave it empty until a new photo is added
-          image: i === 0 ? "" : c.image,
         })),
       }
     : data.counsellorsSection;
 
   return (
     <>
+      <style>{LP_REVEAL_CSS}</style>
+
       {/* Preview Bar Banner if in preview mode */}
       {isPreview && (
         <div className="sticky top-16 z-50 flex items-center justify-between bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 shadow-md">

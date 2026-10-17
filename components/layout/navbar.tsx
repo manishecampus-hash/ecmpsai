@@ -584,8 +584,9 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ComponentType } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -603,12 +604,41 @@ import {
   Building2,
   Phone,
   LogOut,
+  GraduationCap,
+  Briefcase,
+  School,
+  Award,
+  Globe,
+  Laptop,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SignupModal } from "@/components/layout/signup-modal";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
-import * as LucideIcons from "lucide-react";
+
+// The signup modal is large — load its code only when it is first opened.
+const SignupModal = dynamic(() => import("@/components/layout/signup-modal").then((m) => m.SignupModal), { ssr: false });
+
+// Icons the menu commonly uses; any other CMS icon name is loaded on demand,
+// so the whole lucide library isn't shipped with every page.
+const KNOWN_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  BookOpen, GraduationCap, Briefcase, School, Award, Globe, Laptop, Building2, Scale, Search, Clock, CheckCircle, Phone,
+};
+
+function LucideByName({ name, className }: { name: string; className?: string }) {
+  const [Loaded, setLoaded] = useState<ComponentType<{ className?: string }> | null>(null);
+  const Known = KNOWN_ICONS[name];
+  useEffect(() => {
+    if (Known) return;
+    let alive = true;
+    import("lucide-react").then((icons) => {
+      const Found = (icons as any)[name];
+      if (alive && Found) setLoaded(() => Found);
+    });
+    return () => { alive = false; };
+  }, [name, Known]);
+  const Icon = Known || Loaded || BookOpen;
+  return <Icon className={className} />;
+}
 
 type Student = {
   name?: string;
@@ -616,7 +646,7 @@ type Student = {
 };
 
 function CategoryIcon({ icon, className }: { icon: any; className?: string }) {
-  if (!icon) return <LucideIcons.BookOpen className={className} />;
+  if (!icon) return <BookOpen className={className} />;
 
   // If it's a React component / function, render it directly
   if (typeof icon === "function" || (typeof icon === "object" && icon !== null)) {
@@ -629,11 +659,10 @@ function CategoryIcon({ icon, className }: { icon: any; className?: string }) {
     if (icon.startsWith("http") || icon.startsWith("/") || icon.includes(".")) {
       return <img src={icon} alt="" className="w-5 h-5 object-contain rounded-sm flex-shrink-0" />;
     }
-    const IconComponent = (LucideIcons as any)[icon] || LucideIcons.BookOpen;
-    return <IconComponent className={className} />;
+    return <LucideByName name={icon} className={className} />;
   }
 
-  return <LucideIcons.BookOpen className={className} />;
+  return <BookOpen className={className} />;
 }
 
 function GrayIcon({
@@ -943,6 +972,10 @@ function MobileDrawer({
 export function Navbar() {
   const [student, setStudent] = useState<Student | null>(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [signupRequested, setSignupRequested] = useState(false);
+  useEffect(() => {
+    if (showSignupModal) setSignupRequested(true);
+  }, [showSignupModal]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1376,11 +1409,13 @@ export function Navbar() {
       {/* Bottom Navigation Bar - Modern Design */}
       <BottomNav />
       {/* Signup Modal */}
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-        onSwitchToLogin={() => setShowSignupModal(false)}
-      />
+      {signupRequested && (
+        <SignupModal
+          isOpen={showSignupModal}
+          onClose={() => setShowSignupModal(false)}
+          onSwitchToLogin={() => setShowSignupModal(false)}
+        />
+      )}
 
       {/* Logout confirmation */}
       <AnimatePresence>

@@ -1340,7 +1340,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
         </div>
       </div>
       {showBrochureForm && (
-        <LeadFormModalFrame onClose={() => setShowBrochureForm(false)} title="Download brochure" imageSrc="/application-form-popup.webp">
+        <LeadFormModalFrame onClose={() => setShowBrochureForm(false)} title="Download brochure" imageSrc="/application-form-popup.jpeg">
           <BrochureForm
             onSubmit={() => {
               setShowBrochureForm(false);
@@ -1352,7 +1352,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
         </LeadFormModalFrame>
       )}
       {showApplicationForm && (
-        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now" imageSrc="/application-form-popup.webp">
+        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now" imageSrc="/application-form-popup.jpeg">
           <ApplicationForm
             onSubmit={() => {
               setShowApplicationForm(false);

@@ -1,6 +1,5 @@
-"use client";
-
 import React from "react";
+import Image from "next/image";
 import { BriefcaseBusiness, UserRound, Star } from "lucide-react";
 import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
@@ -58,8 +57,7 @@ export function LandingPageCounsellors({
             <article className="group flex h-full items-center gap-5 rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-[0_20px_40px_-24px_rgba(220,38,38,0.45)] sm:p-6">
               <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-40 sm:w-36">
                 {c.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.image} alt={c.name} className="h-full w-full object-cover object-top" />
+                  <Image src={c.image} alt={c.name} fill sizes="144px" className="object-cover object-top" />
                 ) : (
                   <span className="flex h-full w-full items-center justify-center text-3xl font-bold text-slate-300">
                     {c.name.trim().charAt(0).toUpperCase()}

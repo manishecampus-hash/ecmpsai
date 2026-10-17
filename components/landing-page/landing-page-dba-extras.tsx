@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -15,7 +13,7 @@ import {
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
-import ApplyNowModal from "@/components/form/apply-now-modal";
+import { ApplyNowButton } from "@/components/form/apply-now-modal";
 import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
 // Static DBA sections that sit between the CMS-driven ones on the landing page.
@@ -60,32 +58,33 @@ export function DbaJourney() {
   return (
     <LpSection tone="muted">
       <LpHeading heading="Your Path to *'Dr. Title'*" description="A simple, guided journey from your first call to your doctorate." />
-      <ol className="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
+      <div className="relative">
         {/* connector through the step icons on wide screens */}
         <span aria-hidden className="absolute left-[10%] right-[10%] top-7 hidden border-t-2 border-dashed border-red-200 lg:block" />
-        {JOURNEY.map(({ icon: Icon, title, text }, i) => (
-          <LpReveal key={title} delay={i * 0.08}>
-            <li className="relative flex gap-4 lg:flex-col lg:items-center lg:text-center">
-              <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-red-600 shadow-sm ring-1 ring-red-100">
-                <Icon className="h-6 w-6" strokeWidth={2} />
-                <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-slate-50">
-                  {i + 1}
+        <ol className="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
+          {JOURNEY.map(({ icon: Icon, title, text }, i) => (
+            <li key={title}>
+              <LpReveal delay={i * 0.08} className="relative flex gap-4 lg:flex-col lg:items-center lg:text-center">
+                <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-red-600 shadow-sm ring-1 ring-red-100">
+                  <Icon className="h-6 w-6" strokeWidth={2} />
+                  <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-slate-50">
+                    {i + 1}
+                  </span>
                 </span>
-              </span>
-              <div className="lg:mt-4">
-                <h3 className="text-base font-bold text-slate-900">{title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-slate-600">{text}</p>
-              </div>
+                <div className="lg:mt-4">
+                  <h3 className="text-base font-bold text-slate-900">{title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-600">{text}</p>
+                </div>
+              </LpReveal>
             </li>
-          </LpReveal>
-        ))}
-      </ol>
+          ))}
+        </ol>
+      </div>
     </LpSection>
   );
 }
 
 export function DbaFinalCta() {
-  const [open, setOpen] = useState(false);
   return (
     <section className="w-full bg-white px-4 pb-12 pt-2 font-sans sm:px-6 sm:pb-14 lg:px-8">
       <LpReveal className="mx-auto max-w-7xl">
@@ -103,17 +102,14 @@ export function DbaFinalCta() {
               Talk to a DBA counsellor and find the right program for your goals, budget and schedule.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
+          <ApplyNowButton
             className="group relative mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-red-600 shadow-lg transition hover:bg-red-50 lg:mt-0 lg:shrink-0"
           >
             Talk to a Counsellor
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </button>
+          </ApplyNowButton>
         </div>
       </LpReveal>
-      <ApplyNowModal isOpen={open} onClose={() => setOpen(false)} />
     </section>
   );
 }

@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import {
   ArrowRight,
   Sparkles,
@@ -9,8 +7,9 @@ import {
   Award,
   BriefcaseBusiness,
 } from "lucide-react";
+import Image from "next/image";
 import HighlightedTitle from "./highlighted-title";
-import ApplyNowModal from "@/components/form/apply-now-modal";
+import { ApplyNowButton } from "@/components/form/apply-now-modal";
 
 export interface LandingPageHeroData {
   mainHeading: string;
@@ -28,7 +27,6 @@ export interface LandingPageHeroData {
 
 interface LandingPageHeroProps {
   hero: LandingPageHeroData;
-  onCtaClick?: () => void;
 }
 
 // Backdrop curves (viewBox 1440×600)
@@ -38,7 +36,7 @@ const HERO_LINES = [
   "M1000 -20 C 920 180, 1100 380, 980 620",
 ];
 
-export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
+export function LandingPageHero({ hero }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
   const beforeImg = hero.beforeImage || "/dba/before.png";
   const afterImg = hero.afterImage || "/dba/after.png";
@@ -48,20 +46,6 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
   const isDbaTransition =
     badgeText.toLowerCase().includes("mr") && badgeText.toLowerCase().includes("dr");
-
-  const [showApplyModal, setShowApplyModal] = useState(false);
-
-  const handlePrimaryCtaClick = (e: React.MouseEvent) => {
-    if (hero.primaryCtaUrl?.startsWith("http") && !onCtaClick) {
-      return;
-    }
-    e.preventDefault();
-    if (onCtaClick) {
-      onCtaClick();
-    } else {
-      setShowApplyModal(true);
-    }
-  };
 
   return (
     <section className="relative z-10 w-full overflow-hidden bg-gradient-to-b from-red-50/50 via-white to-white border-b border-slate-100 !m-0 !p-0">
@@ -85,7 +69,8 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
         @keyframes lp-hero-flow { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
         @keyframes lp-hero-float { 0%,100% { translate: 0 0 } 50% { translate: 0 -8px } }
         @keyframes lp-hero-spin { to { rotate: 360deg } }
-        .lp-hero-flow { animation: lp-hero-flow linear infinite; }
+        .lp-hero-flow { display: none; }
+        @media (min-width: 1024px) { .lp-hero-flow { display: inline; animation: lp-hero-flow linear infinite; } }
         .lp-hero-float { animation: lp-hero-float 5s ease-in-out infinite; }
         .lp-hero-float-late { animation: lp-hero-float 5s ease-in-out 1.2s infinite; }
         .lp-hero-spin { animation: lp-hero-spin 50s linear infinite; }
@@ -121,7 +106,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3.5 pt-2">
-              {hero.primaryCtaUrl?.startsWith("http") && !onCtaClick ? (
+              {hero.primaryCtaUrl?.startsWith("http") ? (
                 <a
                   href={hero.primaryCtaUrl}
                   target="_blank"
@@ -135,9 +120,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
                   />
                 </a>
               ) : (
-                <button
-                  type="button"
-                  onClick={handlePrimaryCtaClick}
+                <ApplyNowButton
                   className="group inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0"
                 >
                   <span>{ctaText}</span>
@@ -145,7 +128,7 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
                     size={18}
                     className="transition-transform duration-200 group-hover:translate-x-1"
                   />
-                </button>
+                </ApplyNowButton>
               )}
 
               {hero.secondaryCtaText && (
@@ -232,10 +215,14 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
               {beforeImg && (
                 <div className="lp-hero-float group/before relative w-[48%] max-w-[215px] translate-y-3 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_12px_28px_rgba(15,23,42,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.15)]">
                   <div className="relative h-[250px] w-full overflow-hidden sm:h-[290px] lg:h-[310px]">
-                    <img
+                    <Image
                       src={beforeImg}
                       alt={beforeLabel || "Before"}
-                      className="h-full w-full object-cover object-center filter grayscale-[15%] transition-transform duration-500 group-hover/before:scale-[1.03]"
+                      fill
+                      priority
+                      sizes="(max-width: 640px) 48vw, 215px"
+                      quality={60}
+                      className="object-cover object-center grayscale-[15%] transition-transform duration-500 group-hover/before:scale-[1.03]"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
                   </div>
@@ -249,10 +236,14 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
               {afterImg && (
                 <div className="lp-hero-float-late group/after relative w-[48%] max-w-[215px] -translate-y-2 overflow-hidden rounded-2xl border-[3.5px] border-white bg-slate-100 shadow-[0_20px_40px_rgba(239,68,68,0.22),0_8px_20px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-3 hover:shadow-[0_24px_48px_rgba(239,68,68,0.28)] ring-2 ring-red-500/20">
                   <div className="relative h-[250px] w-full overflow-hidden sm:h-[290px] lg:h-[310px]">
-                    <img
+                    <Image
                       src={afterImg}
                       alt={afterLabel || "After"}
-                      className="h-full w-full object-cover object-center transition-transform duration-500 group-hover/after:scale-[1.03]"
+                      fill
+                      priority
+                      sizes="(max-width: 640px) 48vw, 215px"
+                      quality={60}
+                      className="object-cover object-center transition-transform duration-500 group-hover/after:scale-[1.03]"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-red-950/40 via-transparent to-transparent opacity-50" />
                   </div>
@@ -266,11 +257,6 @@ export function LandingPageHero({ hero, onCtaClick }: LandingPageHeroProps) {
           </div>
         </div>
       </div>
-
-      <ApplyNowModal
-        isOpen={showApplyModal}
-        onClose={() => setShowApplyModal(false)}
-      />
     </section>
   );
 }

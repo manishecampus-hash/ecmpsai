@@ -1,10 +1,9 @@
-"use client";
-
 import React from "react";
-import { motion } from "framer-motion";
+import Image from "next/image";
 import HighlightedTitle from "./highlighted-title";
 
 // Shared frame for every landing-page section: same width, rhythm and heading style.
+// No client JS here, so sections built from these render on the server.
 
 export function LpSection({
   id,
@@ -39,7 +38,7 @@ export function LpHeading({
   return (
     <div className="mx-auto mb-6 max-w-3xl text-center sm:mb-8">
       {eyebrow && (
-        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600">
+        <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-700">
           {eyebrow}
         </p>
       )}
@@ -51,7 +50,7 @@ export function LpHeading({
   );
 }
 
-/** Fades content up the first time it scrolls into view */
+/** Fades content up as it scrolls into view (pure CSS — see LP_REVEAL_CSS) */
 export function LpReveal({
   children,
   className,
@@ -65,18 +64,35 @@ export function LpReveal({
   duration?: number;
   distance?: number;
 }) {
+  const style = {
+    "--lp-reveal-delay": Math.min(delay, 0.4),
+    "--lp-reveal-distance": `${distance}px`,
+    "--lp-reveal-length": duration / 0.45,
+  } as React.CSSProperties;
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: distance }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-      transition={{ duration, ease: [0.22, 1, 0.36, 1], delay: Math.min(delay, 0.4) }}
-    >
+    <div className={`lp-reveal ${className ?? ""}`} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }
+
+/**
+ * Scroll-driven reveal for LpReveal, rendered once by the landing-page template.
+ * Runs on the compositor with no JavaScript; browsers without scroll timelines
+ * simply show the content without the fade.
+ */
+export const LP_REVEAL_CSS = `
+  @keyframes lp-reveal { from { opacity: 0; translate: 0 var(--lp-reveal-distance, 14px); } }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .lp-reveal {
+        animation: lp-reveal cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-timeline: view();
+        animation-range: entry calc(var(--lp-reveal-delay, 0) * 40%) entry calc((45% + var(--lp-reveal-delay, 0) * 40%) * var(--lp-reveal-length, 1));
+      }
+    }
+  }
+`;
 
 /** Seamless right-to-left logo strip (the list is doubled and the track moves by half) */
 export function LogoMarquee({
@@ -101,8 +117,13 @@ export function LogoMarquee({
                 key={`${copy}-${i}`}
                 className={`flex shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white px-4 transition-colors hover:border-red-200 ${tile}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.logo} alt={copy === 0 ? p.name || "" : ""} loading="lazy" className={`max-w-full object-contain ${img}`} />
+                <Image
+                  src={p.logo}
+                  alt={copy === 0 ? p.name || "" : ""}
+                  width={160}
+                  height={64}
+                  className={`h-auto w-auto max-w-full object-contain ${img}`}
+                />
               </div>
             ))}
           </div>

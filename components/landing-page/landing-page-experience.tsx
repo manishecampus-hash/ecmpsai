@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { TrendingUp, Users, Target, Award, Sparkles } from "lucide-react";
 import { LpHeading, LpReveal, LpSection } from "./lp-ui";

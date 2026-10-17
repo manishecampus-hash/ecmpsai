@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { DIcons } from "dicons";
+import { SocialIcons as DIcons } from "./social-icons";
 import { Phone, MessageCircle, Send, Pin, Globe } from "lucide-react";
 import { FooterCta } from "./footer-cta";
 import ChildFooter from "./child-footer";

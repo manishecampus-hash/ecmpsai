@@ -324,22 +324,22 @@ export function ApplicationForm({
   };
 
   return (
-    <div className="relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-rose-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+    <div className="relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8">
       <div className="relative z-10 mb-5 text-center">
         <div className="flex flex-col items-center gap-2">
-          <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-orange-500">
+          <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-[#ee2c3c]">
             Get ₹10,000* Scholarship
           </p>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm shadow-blue-600/25">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ee2c3c] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm shadow-red-600/25">
             <ShieldCheck className="h-3.5 w-3.5" />
             Connect With An Expert
           </span>
         </div>
         <h2 className="mt-2 flex items-center justify-center gap-2 text-[30px] font-black leading-tight tracking-[-0.04em] text-gray-900 sm:text-[34px]">
-          <span className="bg-gradient-to-r from-red-600 via-orange-500 to-rose-600 bg-clip-text text-transparent">
-            Apply Now
+          <span>
+            Apply <span className="text-[#ee2c3c]">Now</span>
           </span>
-          <Sparkles className="h-6 w-6 text-orange-400" />
+          <Sparkles className="h-6 w-6 text-[#ee2c3c]" />
         </h2>
         <p className="mt-1.5 whitespace-nowrap text-[10px] text-gray-500 sm:text-xs">Share your details and we’ll help you with the next steps.</p>
       </div>
@@ -359,7 +359,7 @@ export function ApplicationForm({
                 fullName: e.target.value,
               })
             }
-            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
+            className={`h-11 w-full rounded-xl border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.fullName
                 ? "border-red-300 bg-red-50"
                 : "border-gray-200 bg-white"
@@ -385,7 +385,7 @@ export function ApplicationForm({
                 email: e.target.value,
               })
             }
-            className={`h-11 w-full rounded-lg border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
+            className={`h-11 w-full rounded-xl border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
               errors.email
                 ? "border-red-300 bg-red-50"
                 : "border-gray-200 bg-white"
@@ -423,7 +423,7 @@ export function ApplicationForm({
               }
             }}
           >
-            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
 
@@ -447,7 +447,7 @@ export function ApplicationForm({
         {/* Mobile */}
         <div>
           <div
-            className={`__phone-input-wrapper flex h-11 w-full items-center overflow-hidden rounded-lg border transition focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 ${
+            className={`__phone-input-wrapper flex h-11 w-full items-center overflow-hidden rounded-xl border transition focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
                 : "border-gray-200 bg-white"
@@ -489,7 +489,7 @@ export function ApplicationForm({
                   ? selectedCountry.length
                   : undefined
               }
-              className="__phone-input h-full flex-1 bg-transparent px-3 text-sm text-gray-900 outline-none placeholder:text-gray-400"
+              className="__phone-input h-full flex-1 rounded-none border-0 bg-transparent px-3 text-sm text-gray-900 shadow-none outline-none placeholder:text-gray-400 focus:border-0 focus:bg-transparent focus:shadow-none"
             />
           </div>
 
@@ -511,7 +511,7 @@ export function ApplicationForm({
               })
             }
           >
-            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
               <SelectValue placeholder="Select Course" />
             </SelectTrigger>
 
@@ -547,7 +547,7 @@ export function ApplicationForm({
                 })
               }
             >
-              <SelectTrigger className="!h-11 !min-h-0 flex w-full items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+              <SelectTrigger className="!h-11 !min-h-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
 
@@ -580,7 +580,7 @@ export function ApplicationForm({
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-lg bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
+          className="mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />
@@ -596,7 +596,7 @@ export function ApplicationForm({
       <div
         role="timer"
         aria-live="off"
-        className="relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
+        className="relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
       >
         {offerExpired ? (
           <span className="font-semibold text-red-700">Offer Expired</span>

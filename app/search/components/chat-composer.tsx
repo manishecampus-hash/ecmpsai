@@ -19,8 +19,13 @@ const ChatComposer = forwardRef<
     onStop: () => void;
     streaming: boolean;
     autoFocus?: boolean;
+    placeholder?: string;
+    label?: string;
   }
->(function ChatComposer({ value, onChange, onSubmit, onStop, streaming, autoFocus }, ref) {
+>(function ChatComposer(
+  { value, onChange, onSubmit, onStop, streaming, autoFocus, placeholder = "Ask anything", label = "Ask eCampus AI" },
+  ref,
+) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useImperativeHandle(ref, () => ({ focus: () => textareaRef.current?.focus() }), []);
 
@@ -54,8 +59,8 @@ const ChatComposer = forwardRef<
               if (canSend) onSubmit();
             }
           }}
-          placeholder="Ask anything"
-          aria-label="Ask eCampus AI"
+          placeholder={placeholder}
+          aria-label={label}
           className="max-h-[200px] min-h-[40px] flex-1 resize-none rounded-none border-0 bg-transparent px-0 py-2 text-[15px] leading-6 text-[#0d0d0d] shadow-none outline-none transition-none placeholder:text-[#8f8f8f] focus:border-0 focus:bg-transparent focus:shadow-none"
         />
         {streaming ? (

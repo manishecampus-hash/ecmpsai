@@ -15,7 +15,7 @@ export function FloatingWhatsApp({
   const [isHovered, setIsHovered] = useState(false);
   const [hasCourseBar, setHasCourseBar] = useState(false);
   const pathname = usePathname();
-  const aboveComposer = pathname === "/search";
+  const aboveComposer = pathname === "/search" || pathname === "/dashboard/mychat";
 
   useEffect(() => {
     const handleToggle = (e: any) => {

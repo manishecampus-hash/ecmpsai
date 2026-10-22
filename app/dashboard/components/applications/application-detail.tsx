@@ -342,10 +342,10 @@ export default function ApplicationDetail({ application }: { application: Submit
             </p>
             <div className="relative mt-4 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
               <Link
-                href="/dashboard/counselor"
+                href="/dashboard/mychat"
                 className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-bold text-red-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/25"
               >
-                <MessageCircle className="h-4 w-4" /> Ask AI Counselor Sara
+                <MessageCircle className="h-4 w-4" /> Ask in My Chat
               </Link>
               <Link
                 href={`/universities/${program.slug}`}

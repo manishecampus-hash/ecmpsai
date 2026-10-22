@@ -21,6 +21,8 @@ import {
 import { groupThreads, type ChatThread } from "./chat-store";
 
 interface SidebarProps {
+  /** Brand shown at the top; defaults to "eCampus AI" */
+  title?: string;
   threads: ChatThread[];
   activeId: string | null;
   /** Thread whose answer is streaming right now */
@@ -184,6 +186,7 @@ function ThreadRow({
 }
 
 export default function ChatSidebar({
+  title = "eCampus AI",
   threads,
   activeId,
   busyThreadId,
@@ -252,7 +255,7 @@ export default function ChatSidebar({
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0d0d0d]">
             <Sparkles className="h-3.5 w-3.5 text-white" aria-hidden />
           </span>
-          <span className="text-[15px] font-semibold text-[#0d0d0d]">eCampus AI</span>
+          <span className="truncate text-[15px] font-semibold text-[#0d0d0d]">{title}</span>
         </span>
         <button
           type="button"

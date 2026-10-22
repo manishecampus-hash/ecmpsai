@@ -26,7 +26,7 @@ const navItems = [
   { id: "overview", label: "Overview", icon: LayoutGrid, href: "/dashboard" },
   { id: "matcher", label: "AI Degree Finder", icon: Compass, href: "/dashboard/matcher" },
   { id: "applications", label: "My Applications", icon: ClipboardList, href: "/dashboard/applications" },
-  { id: "counselor", label: "AI Counselor Sara", icon: MessageCircle, href: "/dashboard/counselor", live: true },
+  { id: "mychat", label: "My Chat", icon: MessageCircle, href: "/dashboard/mychat", live: true },
   { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
   { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];

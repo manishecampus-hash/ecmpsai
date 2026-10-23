@@ -35,11 +35,13 @@ export interface LandingPageHighlightsData {
 
 interface LandingPageHighlightsProps {
   highlights?: LandingPageHighlightsData;
+  /** Options for the Apply form's course dropdown on this page */
+  formCourses?: string[];
 }
 
 const ROW_ICONS = [Bookmark, CheckSquare, Search, CalendarDays, Users, Award, BookOpen];
 
-export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps) {
+export function LandingPageHighlights({ highlights, formCourses }: LandingPageHighlightsProps) {
   if (!highlights || !highlights.rows || highlights.rows.length === 0) return null;
 
   const sectionHeading = highlights.sectionHeading || "Key Highlights";
@@ -156,7 +158,7 @@ export function LandingPageHighlights({ highlights }: LandingPageHighlightsProps
       {/* Lead prompt */}
       <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4 md:mt-16">
         <p className="text-sm font-medium text-slate-600">Not sure which doctorate fits your goals?</p>
-        <ApplyNowButton className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-700 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white">
+        <ApplyNowButton courses={formCourses} className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-700 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white">
           Talk to a DBA Counsellor
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </ApplyNowButton>

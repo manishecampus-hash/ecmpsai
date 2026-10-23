@@ -9,7 +9,7 @@ import LandingPagePartners, { LandingPageGlobalPartnersData } from "./landing-pa
 import LandingPageCounsellors, { LandingPageCounsellorsData } from "./landing-page-counsellors";
 import LandingPagePlacementPartners, { LandingPagePlacementPartnersData } from "./landing-page-placement-partners";
 import LandingPageFaq, { LandingPageFaqData } from "./landing-page-faq";
-import { DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
+import { DBA_SPECIALISATIONS, DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
 import { LP_REVEAL_CSS } from "./lp-ui";
 
 export interface LandingPageData {
@@ -35,10 +35,16 @@ interface LandingPageTemplateProps {
 export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProps) {
   // Extra DBA-specific sections (who it's for, admission path, closing CTA)
   const isDba = /dba/i.test(data.slug || data.name || "");
+  // DBA page: the Apply form's dropdown lists DBA specialisations instead of all courses
+  const formCourses = isDba ? DBA_SPECIALISATIONS : undefined;
 
   // Frontend content overrides for the DBA page (until they're updated in the CMS)
   const hero = data.hero && isDba
-    ? { ...data.hero, mainHeading: data.hero.mainHeading.replace(/\bManoj\b/g, "Rajesh") }
+    ? {
+        ...data.hero,
+        mainHeading: data.hero.mainHeading.replace(/\bManoj\b/g, "Rajesh"),
+        primaryCtaText: "Start Your Dr. Journey",
+      }
     : data.hero;
   const experience = data.slug === "online-dba" && data.experience
     ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
@@ -72,16 +78,16 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       )}
 
       {/* 1. Hero Section */}
-      {hero && <LandingPageHero hero={hero} />}
+      {hero && <LandingPageHero hero={hero} formCourses={formCourses} />}
 
       {/* 2. Trust / Statistics — hidden for now */}
 
       {/* 3. Key Highlights / Comparison */}
-      {data.highlights && <LandingPageHighlights highlights={data.highlights} />}
+      {data.highlights && <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} />}
 
       {/* 4. Programs From Top Online Universities (Static as requested) */}
       <div id="programs">
-        <UniversityPrograms />
+        <UniversityPrograms formCourses={formCourses} />
       </div>
 
       {isDba && <DbaAudience />}
@@ -107,7 +113,7 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       )}
 
       {/* 9. FAQ Section */}
-      {data.faqSection && <LandingPageFaq faqSection={data.faqSection} />}
+      {data.faqSection && <LandingPageFaq faqSection={data.faqSection} formCourses={formCourses} />}
 
       {isDba && <DbaFinalCta />}
 

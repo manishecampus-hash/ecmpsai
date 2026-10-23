@@ -41,7 +41,7 @@ const universityCardArtwork: Record<string, string> = {
   "golden-gate-university": "https://images.unsplash.com/photo-1741636371515-8ce169441e2a?auto=format&fit=crop&w=800&q=70",
 };
 
-export default function UniversityPrograms() {
+export default function UniversityPrograms({ formCourses }: { formCourses?: string[] } = {}) {
   return (
     <LpSection>
       <LpHeading
@@ -118,6 +118,7 @@ export default function UniversityPrograms() {
                   </ul>
 
                   <ApplyNowButton
+                    courses={formCourses}
                     className="group/btn mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 text-sm font-bold text-red-700 transition-colors duration-300 hover:border-red-700 hover:bg-red-700 hover:text-white group-hover:border-red-700 group-hover:bg-red-700 group-hover:text-white"
                   >
                     Apply Now

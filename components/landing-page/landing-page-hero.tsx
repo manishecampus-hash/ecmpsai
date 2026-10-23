@@ -27,6 +27,8 @@ export interface LandingPageHeroData {
 
 interface LandingPageHeroProps {
   hero: LandingPageHeroData;
+  /** Options for the Apply form's course dropdown on this page */
+  formCourses?: string[];
 }
 
 // Backdrop curves (viewBox 1440×600)
@@ -36,7 +38,7 @@ const HERO_LINES = [
   "M1000 -20 C 920 180, 1100 380, 980 620",
 ];
 
-export function LandingPageHero({ hero }: LandingPageHeroProps) {
+export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
   const beforeImg = hero.beforeImage || "/dba/before.png";
   const afterImg = hero.afterImage || "/dba/after.png";
@@ -121,6 +123,7 @@ export function LandingPageHero({ hero }: LandingPageHeroProps) {
                 </a>
               ) : (
                 <ApplyNowButton
+                  courses={formCourses}
                   className="group inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0"
                 >
                   <span>{ctaText}</span>

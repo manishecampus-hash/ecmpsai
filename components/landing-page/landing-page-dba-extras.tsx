@@ -18,6 +18,23 @@ import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
 // Static DBA sections that sit between the CMS-driven ones on the landing page.
 
+/** Specialisations shown in the Apply form's dropdown on the DBA landing page */
+export const DBA_SPECIALISATIONS = [
+  "DBA_(Business_Analytics)",
+  "DBA_(Data_Science)",
+  "DBA_(Finance)",
+  "DBA_(General_Management)",
+  "DBA_(Healthcare_Management)",
+  "DBA_(Human_Resource_Management)",
+  "DBA_(International_Business)",
+  "DBA_(Marketing)",
+  "DBH_(Supply_Chain_Management)",
+  "DBA_(Information_Technology)",
+  "DBA_(Internet_of_Things_IoT)",
+  "DBA_(Cybersecurity)",
+  "DBA_(Artificial_Intelligence_AI)",
+];
+
 const AUDIENCE: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Building2, title: "CXOs & Senior Leaders", text: "Add doctoral authority to your boardroom experience and lead strategy with evidence." },
   { icon: BriefcaseBusiness, title: "Mid-Senior Managers", text: "Move from managing teams to shaping direction, without pausing your career." },
@@ -103,6 +120,7 @@ export function DbaFinalCta() {
             </p>
           </div>
           <ApplyNowButton
+            courses={DBA_SPECIALISATIONS}
             className="group relative mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-red-600 shadow-lg transition hover:bg-red-50 lg:mt-0 lg:shrink-0"
           >
             Talk to a Counsellor

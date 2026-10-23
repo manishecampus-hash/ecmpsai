@@ -143,9 +143,14 @@ const getUtmParams = () => {
 export function ApplicationForm({
   onSubmit,
   onBack,
+  courses,
+  coursePlaceholder = "Select Course",
 }: {
   onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
+  /** Page-specific options for the course dropdown; defaults to the shared course list */
+  courses?: string[];
+  coursePlaceholder?: string;
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -512,7 +517,7 @@ export function ApplicationForm({
             }
           >
             <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
-              <SelectValue placeholder="Select Course" />
+              <SelectValue placeholder={coursePlaceholder} />
             </SelectTrigger>
 
             <SelectContent
@@ -520,7 +525,7 @@ export function ApplicationForm({
               align="start"
               className="z-[10000] max-h-48 w-[var(--radix-select-trigger-width)] overflow-y-auto border border-gray-200 bg-white text-gray-900"
             >
-              {courseList.map((c) => (
+              {(courses?.length ? courses : courseList).map((c) => (
                 <SelectItem key={c} value={c}>
                   {c}
                 </SelectItem>

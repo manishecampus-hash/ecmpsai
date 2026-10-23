@@ -19,10 +19,12 @@ export interface LandingPageFaqData {
 
 interface LandingPageFaqProps {
   faqSection?: LandingPageFaqData;
+  /** Options for the Apply form's course dropdown on this page */
+  formCourses?: string[];
 }
 
 // Same look as the home page FAQ: heading + help card on the left, accordion on the right.
-export function LandingPageFaq({ faqSection }: LandingPageFaqProps) {
+export function LandingPageFaq({ faqSection, formCourses }: LandingPageFaqProps) {
   const faqs = faqSection?.faqs || [];
   // First answer open; the rest open on click
   const [openIndexes, setOpenIndexes] = useState<number[]>([0]);
@@ -136,7 +138,7 @@ export function LandingPageFaq({ faqSection }: LandingPageFaqProps) {
         <div className="lg:hidden">{helpCard}</div>
       </div>
 
-      <ApplyNowModal isOpen={applyOpen} onClose={() => setApplyOpen(false)} />
+      <ApplyNowModal isOpen={applyOpen} onClose={() => setApplyOpen(false)} courses={formCourses} />
     </LpSection>
   );
 }

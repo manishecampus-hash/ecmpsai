@@ -11,9 +11,11 @@ const LeadFormModalFrame = dynamic(() => import("@/components/form/lead-form-mod
 interface ApplyNowModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Page-specific options for the form's course dropdown (e.g. DBA specialisations) */
+  courses?: string[];
 }
 
-export function ApplyNowModal({ isOpen, onClose }: ApplyNowModalProps) {
+export function ApplyNowModal({ isOpen, onClose, courses }: ApplyNowModalProps) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -29,7 +31,12 @@ export function ApplyNowModal({ isOpen, onClose }: ApplyNowModalProps) {
 
   return (
     <LeadFormModalFrame onClose={onClose} title="Apply now" imageSrc="/application-form-popup.jpeg">
-      <ApplicationForm onSubmit={() => onClose()} onBack={() => onClose()} />
+      <ApplicationForm
+        onSubmit={() => onClose()}
+        onBack={() => onClose()}
+        courses={courses}
+        coursePlaceholder={courses?.length ? "Choose Specialisation" : undefined}
+      />
     </LeadFormModalFrame>
   );
 }
@@ -38,14 +45,22 @@ export function ApplyNowModal({ isOpen, onClose }: ApplyNowModalProps) {
  * A button that opens the Apply Now popup. Lets server-rendered sections
  * have an Apply button without making the whole section a client component.
  */
-export function ApplyNowButton({ className, children }: { className?: string; children: React.ReactNode }) {
+export function ApplyNowButton({
+  className,
+  children,
+  courses,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  courses?: string[];
+}) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} className={className}>
         {children}
       </button>
-      <ApplyNowModal isOpen={open} onClose={() => setOpen(false)} />
+      <ApplyNowModal isOpen={open} onClose={() => setOpen(false)} courses={courses} />
     </>
   );
 }

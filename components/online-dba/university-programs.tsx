@@ -9,7 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-import { universities } from "@/data/universities";
+import { universities, type University } from "@/data/universities";
 import { ApplyNowButton } from "@/components/form/apply-now-modal";
 import { LpHeading, LpReveal, LpSection } from "@/components/landing-page/lp-ui";
 
@@ -29,9 +29,21 @@ const dbaUniversitySlugs = [
    FILTER ONLY DBA UNIVERSITIES
 ============================================================ */
 
-const dbaUniversities = universities.filter((university) =>
-  dbaUniversitySlugs.includes(university.slug)
-);
+// EIMT isn't in the shared university list (used across the site), so it is added for this section only
+const eimt: University = {
+  slug: "eimt",
+  name: "European Institute of Management and Technology (EIMT)",
+  courses: "",
+  location: "Switzerland",
+  region: "International",
+  image: "/doctorate/eimt_logo.webp",
+  locationIcon: "Globe",
+};
+
+const dbaUniversities = [
+  ...universities.filter((university) => dbaUniversitySlugs.includes(university.slug)),
+  eimt,
+];
 
 const universityCardArtwork: Record<string, string> = {
   "rushford-business-school": "https://images.unsplash.com/photo-1559135197-8a45ea74d367?auto=format&fit=crop&w=800&q=70",
@@ -39,6 +51,7 @@ const universityCardArtwork: Record<string, string> = {
   esgci: "https://images.unsplash.com/photo-1777202740019-5340f67184f8?auto=format&fit=crop&w=800&q=70",
   ssbm: "https://images.unsplash.com/photo-1763615834709-cd4b196980db?auto=format&fit=crop&w=800&q=70",
   "golden-gate-university": "https://images.unsplash.com/photo-1741636371515-8ce169441e2a?auto=format&fit=crop&w=800&q=70",
+  eimt: "https://images.unsplash.com/photo-1698074175473-33ea02d1a4ea?auto=format&fit=crop&w=800&q=70",
 };
 
 export default function UniversityPrograms({ formCourses }: { formCourses?: string[] } = {}) {

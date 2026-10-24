@@ -113,17 +113,71 @@ export async function POST(req: NextRequest) {
       metadata: { phone_e164: normalized.e164 },
     });
 
+    // Also update web_users if matching record exists
+    let webUser: any = null;
+    try {
+      const db = await (await import("@/lib/mongodb")).getDb();
+      const webUsers = db.collection("web_users");
+      if (user.email) {
+        await webUsers.updateOne(
+          { email: user.email },
+          { $set: { phone: normalized.e164, phoneVerified: true, updatedAt: now } }
+        );
+        webUser = await webUsers.findOne({ email: user.email });
+      }
+    } catch {}
+
+    const mergedName = updatedUser.full_name?.trim() || webUser?.name?.trim() || "";
+    const mergedState = updatedUser.state || webUser?.state || "";
+    const mergedCourses =
+      updatedUser.coursesInterested ||
+      webUser?.coursesInterested ||
+      updatedUser.course_interested ||
+      (webUser?.course ? [webUser.course] : []);
+    const mergedCourse = updatedUser.course || webUser?.course || mergedCourses[0] || "";
+    const mergedAdvisorProfile =
+      updatedUser.advisorProfile || webUser?.advisorProfile || null;
+
+    const hasProfileDetails = Boolean(
+      mergedName.trim() &&
+      mergedState.trim() &&
+      (mergedCourse.trim() || mergedCourses.length > 0)
+    );
+    const hasAdvisorProfile = Boolean(
+      mergedAdvisorProfile &&
+        (mergedAdvisorProfile.highestQualification ||
+          mergedAdvisorProfile.coursePreference ||
+          mergedAdvisorProfile.goal ||
+          mergedAdvisorProfile.budget)
+    );
+
+    const studentData = {
+      id: updatedUser.id,
+      name: mergedName,
+      email: updatedUser.email || webUser?.email || "",
+      phone: normalized.e164,
+      state: mergedState,
+      course: mergedCourse,
+      coursesInterested: mergedCourses,
+      advisorProfile: mergedAdvisorProfile || undefined,
+      status: "ACTIVE",
+    };
+
     const res = NextResponse.json({
       success: true,
       status: "ACTIVE",
+      phone_required: false,
+      hasProfileDetails,
+      hasAdvisorProfile,
       message: "Phone verified successfully. Your account is now active!",
       user: {
         id: updatedUser.id,
         phone_e164: updatedUser.phone_e164,
         email: updatedUser.email,
-        full_name: updatedUser.full_name,
+        full_name: mergedName,
         status: updatedUser.status,
       },
+      student: studentData,
     });
 
     setAuthCookies(res, { accessToken: upgradedAccessToken });

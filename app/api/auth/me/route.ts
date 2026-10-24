@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthContext } from "@/lib/auth/guards";
 import { getSessionsCollection } from "@/lib/auth/db";
+import { getDb } from "@/lib/mongodb";
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,6 +27,31 @@ export async function GET(req: NextRequest) {
       expires_at: { $gt: new Date() },
     });
 
+    // Merge from web_users if fields are missing in users record
+    let webUser: any = null;
+    if (!user.advisorProfile || !user.full_name) {
+      try {
+        const db = await getDb();
+        const webUsers = db.collection("web_users");
+        if (user.phone_e164) {
+          webUser = await webUsers.findOne({ phone: user.phone_e164 });
+        } else if (user.email) {
+          webUser = await webUsers.findOne({ email: user.email });
+        }
+      } catch {}
+    }
+
+    const fullName = user.full_name || webUser?.name || "";
+    const courses =
+      user.coursesInterested ||
+      webUser?.coursesInterested ||
+      user.course_interested ||
+      (webUser?.course ? [webUser.course] : []);
+    const course = user.course || webUser?.course || courses[0] || "";
+    const state = user.state || webUser?.state || "";
+    const advisorProfile = user.advisorProfile || webUser?.advisorProfile || null;
+    const spinReward = user.spinReward || webUser?.spinReward || null;
+
     return NextResponse.json({
       authenticated: true,
       user: {
@@ -34,10 +60,14 @@ export async function GET(req: NextRequest) {
         phone_verified_at: user.phone_verified_at,
         email: user.email,
         email_verified_at: user.email_verified_at,
-        full_name: user.full_name,
+        full_name: fullName,
         status: user.status,
-        state: user.state,
-        course_interested: user.course_interested,
+        state,
+        course,
+        course_interested: courses,
+        coursesInterested: courses,
+        advisorProfile,
+        spinReward,
         created_at: user.created_at,
       },
       permissions: {

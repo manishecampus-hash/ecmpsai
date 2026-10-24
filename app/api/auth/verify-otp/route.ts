@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { normalizePhone } from "@/lib/auth/phone";
 import { verifyOtpChallenge } from "@/lib/auth/otp";
 import { getUsersCollection } from "@/lib/auth/db";
+import { getDb } from "@/lib/mongodb";
 import { createAccessToken, createSession, setAuthCookies } from "@/lib/auth/tokens";
 import { jsonError } from "@/lib/auth/guards";
 import { logAuthEvent } from "@/lib/auth/audit";
@@ -80,6 +81,16 @@ export async function POST(req: NextRequest) {
     } else {
       // Phone verification -> ACTIVE
       user = await users.findOne({ phone_e164: target });
+
+      if (!user) {
+        // Check if user already exists under the email saved in web_users
+        const db = await getDb();
+        const webUser = await db.collection("web_users").findOne({ phone: target });
+        if (webUser?.email) {
+          user = await users.findOne({ email: webUser.email.trim().toLowerCase() });
+        }
+      }
+
       if (!user) {
         const newUser: UserRecord = {
           id: randomUUID(),
@@ -96,13 +107,14 @@ export async function POST(req: NextRequest) {
           created_at: now,
           updated_at: now,
         };
-        await users.insertOne(newUser);
+        await users.insertOne(newUser as any);
         user = newUser;
       } else {
         await users.updateOne(
           { id: user.id },
           {
             $set: {
+              phone_e164: target,
               phone_verified_at: now,
               status: "ACTIVE",
               last_login_at: now,
@@ -110,10 +122,78 @@ export async function POST(req: NextRequest) {
             },
           }
         );
-        user.status = "ACTIVE";
-        user.phone_verified_at = now;
+        user = {
+          ...user,
+          phone_e164: target,
+          phone_verified_at: now,
+          status: "ACTIVE",
+        };
       }
     }
+
+    // Check web_users collection to retrieve previous details/questionnaire answers
+    let webUser: any = null;
+    try {
+      const db = await getDb();
+      const webUsers = db.collection("web_users");
+      if (!isEmail) {
+        await webUsers.updateOne(
+          { phone: target },
+          { $set: { phoneVerified: true, updatedAt: now } }
+        );
+      }
+      webUser = await webUsers.findOne(
+        isEmail ? { email: target } : { phone: target }
+      );
+    } catch {}
+
+    const mergedName = user.full_name?.trim() || webUser?.name?.trim() || "";
+    const mergedEmail =
+      user.email || (webUser?.email ? webUser.email.trim().toLowerCase() : null);
+    const mergedPhone = user.phone_e164 || webUser?.phone || null;
+    const mergedState = user.state || webUser?.state || "";
+    const mergedCourses =
+      user.coursesInterested ||
+      webUser?.coursesInterested ||
+      user.course_interested ||
+      (webUser?.course ? [webUser.course] : []);
+    const mergedCourse = user.course || webUser?.course || mergedCourses[0] || "";
+    const mergedAdvisorProfile =
+      user.advisorProfile || webUser?.advisorProfile || null;
+    const mergedSpinReward = user.spinReward || webUser?.spinReward || null;
+
+    // Sync any merged fields back into users collection
+    if (mergedName || mergedAdvisorProfile || mergedState || mergedCourses.length) {
+      await users.updateOne(
+        { id: user.id },
+        {
+          $set: {
+            full_name: mergedName,
+            state: mergedState,
+            course: mergedCourse,
+            coursesInterested: mergedCourses,
+            course_interested: mergedCourses,
+            ...(mergedAdvisorProfile ? { advisorProfile: mergedAdvisorProfile } : {}),
+            ...(mergedSpinReward ? { spinReward: mergedSpinReward } : {}),
+            updated_at: now,
+          },
+        }
+      );
+    }
+
+    const hasProfileDetails = Boolean(
+      mergedName.trim() &&
+      mergedState.trim() &&
+      (mergedCourse.trim() || mergedCourses.length > 0)
+    );
+    const hasAdvisorProfile = Boolean(
+      mergedAdvisorProfile &&
+        (mergedAdvisorProfile.highestQualification ||
+          mergedAdvisorProfile.coursePreference ||
+          mergedAdvisorProfile.goal ||
+          mergedAdvisorProfile.budget)
+    );
+    const isExistingUser = Boolean(user.full_name || webUser?.name);
 
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
@@ -133,17 +213,35 @@ export async function POST(req: NextRequest) {
       metadata: { target },
     });
 
+    const studentData = {
+      id: user.id,
+      name: mergedName,
+      email: mergedEmail || "",
+      phone: mergedPhone || "",
+      state: mergedState,
+      course: mergedCourse,
+      coursesInterested: mergedCourses,
+      advisorProfile: mergedAdvisorProfile || undefined,
+      spinReward: mergedSpinReward || undefined,
+      status: user.status,
+    };
+
     const res = NextResponse.json({
       success: true,
       status: user.status,
       phone_required: user.status === "PENDING_PHONE_VERIFICATION",
       message: "OTP verified successfully!",
+      isExistingUser,
+      hasProfileDetails,
+      hasAdvisorProfile,
       user: {
         id: user.id,
         phone: user.phone_e164,
         email: user.email,
+        full_name: mergedName,
         status: user.status,
       },
+      student: studentData,
     });
 
     setAuthCookies(res, { accessToken, refreshToken });

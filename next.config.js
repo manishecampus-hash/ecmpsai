@@ -17,11 +17,7 @@ const nextConfig = {
         destination: 'https://www.ecampusapp.com/:path*',
         permanent: true,
       },
-      {
-        source: '/login',
-        destination: '/',
-        permanent: false,
-      },
+
       {
         source: '/blogs',
         destination: '/blog',

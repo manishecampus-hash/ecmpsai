@@ -43,18 +43,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(data.user);
         setStatus(data.user.status);
 
-        // Sync local storage for client components
+        // Sync local storage for client components without blowing away existing answers
         if (typeof window !== "undefined") {
-          localStorage.setItem(
-            "ecampus_student",
-            JSON.stringify({
-              id: data.user.id,
-              name: data.user.full_name,
-              email: data.user.email,
-              phone: data.user.phone_e164,
-              status: data.user.status,
-            })
-          );
+          const raw = localStorage.getItem("ecampus_student");
+          let existing: Record<string, any> = {};
+          try {
+            existing = raw ? JSON.parse(raw) : {};
+          } catch {}
+
+          const merged = {
+            ...existing,
+            id: data.user.id,
+            name: data.user.full_name || existing.name,
+            email: data.user.email || existing.email,
+            phone: data.user.phone_e164 || existing.phone,
+            state: data.user.state || existing.state,
+            course: data.user.course || existing.course,
+            coursesInterested: data.user.coursesInterested || existing.coursesInterested,
+            advisorProfile: data.user.advisorProfile || existing.advisorProfile,
+            spinReward: data.user.spinReward || existing.spinReward,
+            status: data.user.status,
+          };
+          localStorage.setItem("ecampus_student", JSON.stringify(merged));
         }
       } else {
         setUser(null);

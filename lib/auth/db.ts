@@ -60,7 +60,7 @@ export async function ensureAuthIndexes(): Promise<void> {
       { phone_e164: 1 },
       {
         unique: true,
-        sparse: true,
+        partialFilterExpression: { phone_e164: { $type: "string" } },
         name: "idx_users_phone_e164_unique",
       }
     );
@@ -68,7 +68,7 @@ export async function ensureAuthIndexes(): Promise<void> {
       { email: 1 },
       {
         unique: true,
-        sparse: true,
+        partialFilterExpression: { email: { $type: "string" } },
         name: "idx_users_email_unique",
       }
     );

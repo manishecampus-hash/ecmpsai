@@ -615,8 +615,9 @@ import { Button } from "@/components/ui/button";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
 
-// The signup modal is large — load its code only when it is first opened.
+// The auth modals are dynamically imported so initial bundle remains lightweight.
 const SignupModal = dynamic(() => import("@/components/layout/signup-modal").then((m) => m.SignupModal), { ssr: false });
+const LoginModal = dynamic(() => import("@/components/layout/login-modal").then((m) => m.LoginModal), { ssr: false });
 
 // Icons the menu commonly uses; any other CMS icon name is loaded on demand,
 // so the whole lucide library isn't shipped with every page.
@@ -846,6 +847,7 @@ function MobileDrawer({
   displayName,
   onLogout,
   onSignup,
+  onLogin,
   pathname,
   navLinks,
 }: {
@@ -855,6 +857,7 @@ function MobileDrawer({
   displayName: string | undefined;
   onLogout: () => void;
   onSignup: () => void;
+  onLogin: () => void;
   pathname: string;
   navLinks: any[];
 }) {
@@ -953,7 +956,16 @@ function MobileDrawer({
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                className="w-24 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black"
+                className="flex-1 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black font-semibold text-xs py-2"
+                onClick={() => {
+                  onLogin();
+                  onClose();
+                }}
+              >
+                Log In
+              </Button>
+              <Button
+                className="flex-1 rounded-full bg-[#ee2c3c] text-white hover:bg-[#d02534] font-semibold text-xs py-2"
                 onClick={() => {
                   onSignup();
                   onClose();
@@ -973,9 +985,16 @@ export function Navbar() {
   const [student, setStudent] = useState<Student | null>(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [signupRequested, setSignupRequested] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginRequested, setLoginRequested] = useState(false);
+
   useEffect(() => {
     if (showSignupModal) setSignupRequested(true);
   }, [showSignupModal]);
+
+  useEffect(() => {
+    if (showLoginModal) setLoginRequested(true);
+  }, [showLoginModal]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1115,8 +1134,13 @@ export function Navbar() {
 
   useEffect(() => {
     const handleOpenSignup = () => setShowSignupModal(true);
+    const handleOpenLogin = () => setShowLoginModal(true);
     window.addEventListener("open-signup", handleOpenSignup);
-    return () => window.removeEventListener("open-signup", handleOpenSignup);
+    window.addEventListener("open-login", handleOpenLogin);
+    return () => {
+      window.removeEventListener("open-signup", handleOpenSignup);
+      window.removeEventListener("open-login", handleOpenLogin);
+    };
   }, []);
 
   useEffect(() => {
@@ -1344,11 +1368,18 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="hidden sm:flex items-center gap-2"> 
+                <div className="hidden sm:flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginModal(true)}
+                    className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-red-600 rounded-full hover:bg-red-50/50 transition-colors cursor-pointer"
+                  >
+                    Log In
+                  </button>
                   <Button  
                     size="sm"
                     onClick={() => setShowSignupModal(true)}
-                    className="bg-[#ee2c3c] text-white rounded-full hover:bg-[#d02534] transition-colors px-4 py-1.5 text-xs font-semibold shadow-xs"
+                    className="bg-[#ee2c3c] text-white rounded-full hover:bg-[#d02534] transition-colors px-4 py-1.5 text-xs font-semibold shadow-xs cursor-pointer"
                   >
                     Sign Up
                   </Button>
@@ -1402,18 +1433,35 @@ export function Navbar() {
         displayName={displayName}
         onLogout={requestLogout}
         onSignup={() => setShowSignupModal(true)}
+        onLogin={() => setShowLoginModal(true)}
         pathname={pathname}
         navLinks={headerNavLinks}
       />
 
       {/* Bottom Navigation Bar - Modern Design */}
       <BottomNav />
+
+      {/* Login Modal */}
+      {loginRequested && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onSwitchToSignup={() => {
+            setShowLoginModal(false);
+            setShowSignupModal(true);
+          }}
+        />
+      )}
+
       {/* Signup Modal */}
       {signupRequested && (
         <SignupModal
           isOpen={showSignupModal}
           onClose={() => setShowSignupModal(false)}
-          onSwitchToLogin={() => setShowSignupModal(false)}
+          onSwitchToLogin={() => {
+            setShowSignupModal(false);
+            setShowLoginModal(true);
+          }}
         />
       )}
 

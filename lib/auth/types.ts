@@ -34,8 +34,12 @@ export interface UserRecord {
   // Metadata & Profile
   state?: string;
   course_interested?: string[];
+  coursesInterested?: string[];
+  course?: string;
   referral_code?: string;
   whatsapp_opt_in?: boolean;
+  advisorProfile?: Record<string, any>;
+  spinReward?: Record<string, any>;
 }
 
 export interface OtpChallengeRecord {

@@ -55,6 +55,10 @@ export async function POST(req: NextRequest) {
       userData.advisorProfile = advisorProfile;
     }
 
+    if (body.phoneVerified === true) {
+      userData.phoneVerified = true;
+    }
+
     // Save directly to MongoDB collection 'web_users'
     const db = await getDb();
     const collection = db.collection("web_users");
@@ -82,6 +86,39 @@ export async function POST(req: NextRequest) {
       },
       { upsert: true }
     );
+
+    // Also sync to auth 'users' collection so auth session and profile stay in sync
+    try {
+      const usersCollection = db.collection("users");
+      const userUpdateDoc: Record<string, any> = {
+        full_name: name.trim(),
+        updated_at: now,
+        state: state || "",
+        coursesInterested: courses,
+        course_interested: courses,
+        course: course || courses[0] || "",
+        referral_code: referralCode?.trim() || "",
+        whatsapp_opt_in: Boolean(whatsappOptIn),
+      };
+      if (email?.trim()) userUpdateDoc.email = email.trim().toLowerCase();
+      if (advisorProfile) userUpdateDoc.advisorProfile = advisorProfile;
+
+      const userFilter =
+        phone?.trim() && email?.trim()
+          ? {
+              $or: [
+                { phone_e164: phone.trim() },
+                { email: email.trim().toLowerCase() },
+              ],
+            }
+          : phone?.trim()
+          ? { phone_e164: phone.trim() }
+          : { email: email.trim().toLowerCase() };
+
+      await usersCollection.updateOne(userFilter, { $set: userUpdateDoc });
+    } catch (usersSyncErr) {
+      console.error("Warning: Could not sync to users collection:", usersSyncErr);
+    }
 
     // Optionally also sync to ecampus-backend if running
     try {

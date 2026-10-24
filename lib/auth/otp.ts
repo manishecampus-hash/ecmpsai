@@ -231,15 +231,25 @@ export async function verifyOtpChallenge(options: {
   } else if (target && purpose) {
     query.target = target.toLowerCase().trim();
     query.purpose = purpose;
+  } else if (target) {
+    query.target = target.toLowerCase().trim();
   } else {
     return { valid: false, error: "Challenge identifier is missing." };
   }
 
   query.consumed_at = null;
 
-  const challenge = await challenges.findOne(query, {
+  let challenge = await challenges.findOne(query, {
     sort: { created_at: -1 },
   });
+
+  // Fallback: If not found with specific purpose, try finding latest unconsumed challenge for target
+  if (!challenge && target && !challengeId) {
+    challenge = await challenges.findOne(
+      { target: target.toLowerCase().trim(), consumed_at: null },
+      { sort: { created_at: -1 } }
+    );
+  }
 
   if (!challenge) {
     return {

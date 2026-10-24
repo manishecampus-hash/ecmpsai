@@ -259,6 +259,33 @@ export function SignupModal({
         throw new Error(data.message || "Invalid OTP code. Please try again.");
       }
 
+      // CRITICAL REQUIREMENT:
+      // If user account is already made and already has answers to questions, do not ask them again!
+      if (data.isExistingUser && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
+        localStorage.setItem("ecampus_student", JSON.stringify(data.student));
+        window.dispatchEvent(new Event("ecampus-auth-change"));
+        onClose();
+        router.push("/dashboard");
+        return;
+      }
+
+      // Pre-fill whatever answers the system already has on record
+      if (data.student) {
+        if (data.student.name) setName(data.student.name);
+        if (data.student.email && !email) setEmail(data.student.email);
+        if (data.student.state) setState(data.student.state);
+        if (data.student.course) setCourse(data.student.course);
+        else if (data.student.coursesInterested?.length) setCourse(data.student.coursesInterested[0]);
+
+        // If user already answered profile details but only lacks advisor questions, skip straight to advisor
+        if (data.hasProfileDetails && !data.hasAdvisorProfile) {
+          localStorage.setItem("ecampus_student", JSON.stringify(data.student));
+          window.dispatchEvent(new Event("ecampus-auth-change"));
+          setShowAdvisor(true);
+          return;
+        }
+      }
+
       if (mode === "mobile") {
         setPhoneVerified(true);
       } else {

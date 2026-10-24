@@ -1,7 +1,7 @@
 // app/search/components/ai-chat.tsx
 "use client";
 
-import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -23,16 +23,8 @@ import ChatSidebar from "./chat-sidebar";
 import ChatComposer, { type ChatComposerHandle } from "./chat-composer";
 import { AssistantMessage, UserMessage } from "./chat-message";
 import { ConfirmDeleteDialog, ShareDialog } from "./chat-dialogs";
-import {
-  loadThreads,
-  parseFollowups,
-  saveThreads,
-  titleFrom,
-  toApiHistory,
-  uid,
-  type ChatMessage,
-  type ChatThread,
-} from "./chat-store";
+import type { ChatThread } from "./chat-store";
+import { useAiChat } from "./use-ai-chat";
 
 const SIDEBAR_KEY = "ecampus_ai_sidebar_collapsed";
 const SIDEBAR_SPRING = { type: "spring", stiffness: 320, damping: 34, mass: 0.9 } as const;
@@ -68,8 +60,6 @@ export interface AiChatProps {
   embedded?: boolean;
 }
 
-type ApiHistory = ReturnType<typeof toApiHistory>;
-
 // ChatGPT-style AI chat: saved threads on the left, the conversation and composer on the right.
 // `<page>?q=…` (from the home search, navbar, compare links) starts a new chat with that question;
 // `<page>?t=<id>` reopens a saved one. Used by /search and the dashboard's My Chat.
@@ -88,13 +78,24 @@ function AiChatBody({
   const urlQuery = searchParams.get("q")?.trim() ?? "";
   const urlThread = searchParams.get("t");
 
-  const [threads, setThreads] = useState<ChatThread[]>([]);
-  const threadsRef = useRef<ChatThread[]>([]);
-  const [hydrated, setHydrated] = useState(false);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const activeIdRef = useRef<string | null>(null);
-  const [streaming, setStreaming] = useState<{ threadId: string; messageId: string } | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const {
+    threads,
+    threadsRef,
+    hydrated,
+    activeId,
+    activeIdRef,
+    streaming,
+    pinnedRef,
+    updateThreads,
+    patchMessage,
+    showThread,
+    ask,
+    regenerate,
+    stop,
+    removeThread,
+  } = useAiChat((id, history) =>
+    window.history[history === "push" ? "pushState" : "replaceState"](null, "", id ? `${pathname}?t=${id}` : pathname),
+  );
 
   const [draft, setDraft] = useState("");
   const [collapsed, setCollapsed] = useState(false);
@@ -106,113 +107,10 @@ function AiChatBody({
 
   const composerRef = useRef<ChatComposerHandle>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pinnedRef = useRef(true);
   const [showJump, setShowJump] = useState(false);
 
-  // ── State helpers: every change goes through here so the ref is always current ──
-  const updateThreads = useCallback((fn: (prev: ChatThread[]) => ChatThread[], persist = false) => {
-    const next = fn(threadsRef.current);
-    threadsRef.current = next;
-    setThreads(next);
-    if (persist) saveThreads(next);
-  }, []);
-
-  const patchMessage = useCallback(
-    (threadId: string, messageId: string, patch: Partial<ChatMessage>, persist = false) =>
-      updateThreads(
-        (ts) =>
-          ts.map((t) =>
-            t.id !== threadId ? t : { ...t, messages: t.messages.map((m) => (m.id === messageId ? { ...m, ...patch } : m)) },
-          ),
-        persist,
-      ),
-    [updateThreads],
-  );
-
-  const showThread = useCallback((id: string | null, history: "push" | "replace" | "none" = "push") => {
-    activeIdRef.current = id;
-    setActiveId(id);
-    pinnedRef.current = true;
-    if (history !== "none") {
-      window.history[history === "push" ? "pushState" : "replaceState"](null, "", id ? `${pathname}?t=${id}` : pathname);
-    }
-  }, [pathname]);
-
-  // ── Streaming one answer; earlier turns go along so follow-ups keep their context ──
-  const streamAnswer = useCallback(
-    async (threadId: string, messageId: string, question: string, history: ApiHistory) => {
-      abortRef.current?.abort();
-      const ctrl = new AbortController();
-      abortRef.current = ctrl;
-      setStreaming({ threadId, messageId });
-
-      let full = "";
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: question, messages: [...history, { role: "user", content: question }] }),
-          signal: ctrl.signal,
-        });
-        if (!res.ok || !res.body) throw new Error("API error");
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          full += decoder.decode(value, { stream: true });
-          patchMessage(threadId, messageId, { content: full });
-        }
-        patchMessage(threadId, messageId, { content: full, status: "done", followups: parseFollowups(full) }, true);
-      } catch (e: any) {
-        patchMessage(threadId, messageId, { content: full, status: e?.name === "AbortError" ? "stopped" : "error" }, true);
-      } finally {
-        if (abortRef.current === ctrl) {
-          abortRef.current = null;
-          setStreaming(null);
-        }
-      }
-    },
-    [patchMessage],
-  );
-
-  const ask = useCallback(
-    (text: string, threadId: string | null, history: "push" | "replace" = "push") => {
-      const question = text.trim();
-      if (!question) return;
-      const now = Date.now();
-      const existing = threadId ? threadsRef.current.find((t) => t.id === threadId) : undefined;
-      const reply: ChatMessage = { id: uid(), role: "assistant", content: "", status: "streaming" };
-      const messages: ChatMessage[] = [...(existing?.messages ?? []), { id: uid(), role: "user", content: question }, reply];
-      const thread: ChatThread = existing
-        ? { ...existing, messages, updatedAt: now }
-        : { id: uid(), title: titleFrom(question), messages, createdAt: now, updatedAt: now };
-
-      updateThreads((ts) => [thread, ...ts.filter((t) => t.id !== thread.id)], true);
-      if (existing) pinnedRef.current = true;
-      else showThread(thread.id, history);
-      streamAnswer(thread.id, reply.id, question, toApiHistory(existing?.messages ?? []));
-    },
-    [updateThreads, showThread, streamAnswer],
-  );
-
-  const regenerate = (threadId: string) => {
-    const thread = threadsRef.current.find((t) => t.id === threadId);
-    const msgs = thread?.messages ?? [];
-    const question = msgs[msgs.length - 2];
-    if (msgs[msgs.length - 1]?.role !== "assistant" || question?.role !== "user") return;
-    const reply: ChatMessage = { id: uid(), role: "assistant", content: "", status: "streaming" };
-    updateThreads((ts) => ts.map((t) => (t.id === threadId ? { ...t, messages: [...msgs.slice(0, -1), reply], updatedAt: Date.now() } : t)), true);
-    pinnedRef.current = true;
-    streamAnswer(threadId, reply.id, question.content, toApiHistory(msgs.slice(0, -2)));
-  };
-
-  // ── Load saved chats, sidebar preference and the signed-in student ──
+  // ── Load the sidebar preference and the signed-in student ──
   useEffect(() => {
-    const saved = loadThreads();
-    threadsRef.current = saved;
-    setThreads(saved);
     try {
       setCollapsed(localStorage.getItem(SIDEBAR_KEY) === "1");
       const s = localStorage.getItem("ecampus_student");
@@ -220,8 +118,6 @@ function AiChatBody({
     } catch {
       // Storage unavailable — defaults apply.
     }
-    setHydrated(true);
-    return () => abortRef.current?.abort();
   }, []);
 
   // ── URL → chat: ?q= starts a new chat, ?t= opens a saved one, nothing = new chat screen ──
@@ -295,9 +191,7 @@ function AiChatBody({
   };
 
   const deleteThread = (thread: ChatThread) => {
-    if (streaming?.threadId === thread.id) abortRef.current?.abort();
-    updateThreads((ts) => ts.filter((t) => t.id !== thread.id), true);
-    if (thread.id === activeIdRef.current) showThread(null, "replace");
+    removeThread(thread);
     setPendingDelete(null);
   };
 
@@ -499,7 +393,7 @@ function AiChatBody({
               value={draft}
               onChange={setDraft}
               onSubmit={submit}
-              onStop={() => abortRef.current?.abort()}
+              onStop={stop}
               streaming={streamingHere}
               placeholder={placeholder}
               label={`Ask ${assistantName}`}

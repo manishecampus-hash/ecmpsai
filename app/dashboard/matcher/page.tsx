@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "../components/applied-badge";
+import WhyEcampusCard from "../components/ai-assist/why-ecampus-card";
+import AiChatCard from "../components/ai-assist/ai-chat-card";
+import AiChatPanel from "../components/ai-assist/ai-chat-panel";
+import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
 import {
   AnimatePresence,
   MotionConfig,
@@ -645,11 +649,19 @@ export default function AIDegreeMatcherPage() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [whyMatchOpen, setWhyMatchOpen] = useState(false);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("ecampus_student");
     if (saved) setStudent(JSON.parse(saved));
   }, []);
+
+  // Course picked in the AI Advisor questionnaire, e.g. "MBA" — personalises the AI card
+  const preferredCourse = useMemo(
+    () => describeAdvisorProfile(student.advisorProfile).find((r) => r.key === "course")?.value,
+    [student.advisorProfile],
+  );
+  const closeAiChat = useCallback(() => setAiChatOpen(false), []);
 
   const locations = useMemo(
     () => ["Any Location", ...Array.from(new Set(UNIVERSITIES.map((u) => u.location)))],
@@ -961,6 +973,9 @@ export default function AIDegreeMatcherPage() {
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
         <main ref={mainRef} className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
+          {/* On wide screens the advisor + AI cards get their own column from the top of the page */}
+          <div className="flex flex-1 gap-5 min-[1700px]:items-start">
+          <div className="flex min-w-0 flex-1 flex-col">
           <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
@@ -1380,7 +1395,21 @@ export default function AIDegreeMatcherPage() {
                   </button>
                 </motion.div>
               )}
+
+              {/* Advisor + AI cards — below the results until there's room for their own column */}
+              <div className="grid gap-4 pt-2 sm:grid-cols-2 min-[1700px]:hidden">
+                <WhyEcampusCard />
+                <AiChatCard course={preferredCourse} onChat={() => setAiChatOpen(true)} />
+              </div>
             </div>
+          </div>
+          </div>
+
+            {/* Advisor + AI cards — own column on wide screens, pinned while the results scroll */}
+            <aside className="hidden w-[340px] flex-shrink-0 space-y-5 min-[1700px]:sticky min-[1700px]:top-0 min-[1700px]:block">
+              <WhyEcampusCard delay={0.08} />
+              <AiChatCard course={preferredCourse} onChat={() => setAiChatOpen(true)} delay={0.16} />
+            </aside>
           </div>
         </main>
       </div>
@@ -1438,6 +1467,8 @@ export default function AIDegreeMatcherPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AiChatPanel open={aiChatOpen} onClose={closeAiChat} />
 
       {/* Sticky compare bar */}
       <AnimatePresence>

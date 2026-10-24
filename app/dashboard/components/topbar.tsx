@@ -8,6 +8,7 @@ import {
   BellRing,
   ChevronDown,
   Menu,
+  Phone,
   UserCircle,
   Settings,
   Gift,
@@ -176,10 +177,16 @@ export default function Topbar({
         )}
 
         <div className="ml-auto flex flex-shrink-0 items-center gap-2 sm:gap-3">
-          <span className="hidden items-center gap-1.5 rounded-full border border-green-100 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700 sm:inline-flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-            AI Readiness 94/100
-          </span>
+          {/* Toll-free helpline — dials on phones, opens the default calling app on desktop */}
+          <a
+            href="tel:18001216201"
+            title="Call us at 1800 121 6201 (toll-free)"
+            aria-label="Need help? Call 1800 121 6201"
+            className="group inline-flex h-9 items-center gap-2 rounded-xl border border-red-500 bg-white px-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all duration-200 hover:bg-red-50 hover:shadow-md hover:shadow-red-500/10 active:scale-[0.97] sm:px-3.5"
+          >
+            <Phone className="h-4 w-4 text-red-600 transition-transform group-hover:-rotate-12" fill="currentColor" strokeWidth={1.5} />
+            <span className="hidden sm:inline">Need Help?</span>
+          </a>
 
           <div
             ref={notificationsRef}

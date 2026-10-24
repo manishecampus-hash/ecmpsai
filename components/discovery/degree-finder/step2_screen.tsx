@@ -445,7 +445,7 @@ type Course = {
   duration: string;
   feeMin: number;
   feeMax: number;
-  rating: number;
+  rating?: number;
   category: string;
 };
 
@@ -617,7 +617,7 @@ export default function Step2Screen({
     list = [...list];
     switch (sortBy) {
       case "rating":
-        list.sort((a, b) => b.rating - a.rating);
+        list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         break;
       case "fees-low":
         list.sort((a, b) => a.feeMin - b.feeMin);

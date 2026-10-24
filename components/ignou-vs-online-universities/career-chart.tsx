@@ -52,7 +52,7 @@ export function CareerMomentumChart() {
     },
   ];
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-lg">
@@ -63,7 +63,7 @@ export function CareerMomentumChart() {
             {payload[0].payload.label}
           </p>
           <div className="mt-2 space-y-1">
-            {payload.map((entry, index) => (
+            {payload.map((entry: any, index: number) => (
               <p
                 key={index}
                 className="text-sm font-medium"
@@ -159,7 +159,7 @@ export function CareerMomentumChart() {
                   style: { fill: "#64748b" },
                 }}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip /> as any} />
               <Legend
                 wrapperStyle={{ paddingTop: "20px" }}
                 iconType="line"

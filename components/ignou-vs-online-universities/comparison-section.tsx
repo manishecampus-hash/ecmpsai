@@ -78,7 +78,7 @@ export function ComparisonSection() {
     },
   ];
 
-  const getIconComponent = (iconName) => {
+  const getIconComponent = (iconName: string) => {
     const iconProps = "h-4 w-4 sm:h-5 sm:w-5";
     switch (iconName) {
       case "check":

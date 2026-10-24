@@ -58,7 +58,8 @@ export const idOverrideMap: Record<string, string[]> = {
 export interface QuizOption {
   id: string;
   label: string;
-  emoji: string;
+  emoji?: string;
+  recommended?: boolean;
   min?: number;
   max?: number;
 }
@@ -186,6 +187,7 @@ export const quizQuestions: QuizQuestion[] = [
 export interface QuizAnswers {
   budget: string | null;
   salary: string | null;
+  package?: string | null;
   qualification: string | null;
   scholarship: string | null;
 }

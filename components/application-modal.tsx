@@ -240,7 +240,6 @@ export function ApplicationModal({ trigger }: any) {
                   requiredLength: required,
                 });
               }}
-              disableFormatting={phoneMeta.countryCode === "in"}
               autoFormat={phoneMeta.countryCode !== "in"}
               countryCodeEditable={false}
               inputProps={{ maxLength: phoneMeta.requiredLength + 4 }}

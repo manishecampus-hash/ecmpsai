@@ -1,7 +1,8 @@
-interface OtpData {
+export interface OtpData {
   otp: string;
-  email: string;
-  name: string;
+  email?: string;
+  phone?: string;
+  name?: string;
   createdAt: number;
   expiresIn: number;
 }

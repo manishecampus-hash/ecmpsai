@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 export default function ScrollBallEffect() {
-  const effectSectionRef = useRef(null);
+  const effectSectionRef = useRef<HTMLDivElement | null>(null);
   const [ballPosition, setBallPosition] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -36,6 +36,7 @@ export default function ScrollBallEffect() {
 
     const handleScroll = () => {
       const section = effectSectionRef.current;
+      if (!section) return;
       const sectionRect = section.getBoundingClientRect();
       const sectionHeight = section.offsetHeight;
 
@@ -58,7 +59,7 @@ export default function ScrollBallEffect() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isVisible]);
 
-  const getBallCoordinates = (progress) => {
+  const getBallCoordinates = (progress: number) => {
     const segmentIndex = Math.floor(progress * 4);
     const segmentProgress = (progress * 4) % 1;
 

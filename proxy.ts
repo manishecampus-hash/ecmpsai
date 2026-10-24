@@ -1,15 +1,19 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+// proxy.ts
+import { NextResponse, type NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
-export const config = {
-  // Apply proxy to all paths except files and assets
-  matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
-};
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "ecampus_super_secret_jwt_key_987654321_2026"
+);
+
+const ACCESS_TOKEN_COOKIE = "ecampus_access_token";
+
+const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/settings", "/account"];
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Exclude static assets, Next.js internal calls, favicon, and API paths
+  // 1. Exclude static assets, Next internal calls, images, and API paths
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -19,54 +23,115 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 2. Canonical domain redirect
   const host = request.headers.get("host")?.split(":")[0] || "";
   if (host === "ecampusapp.com") {
-    return NextResponse.redirect(`https://www.ecampusapp.com${pathname}${search}`, 308);
+    return NextResponse.redirect(
+      `https://www.ecampusapp.com${pathname}${search}`,
+      308
+    );
   }
 
-  // Root homepage never requires a redirect lookup; bypass network call immediately
-  if (pathname === "/" || pathname === "") {
-    return NextResponse.next();
+  // 3. Extract and verify Access Token
+  const token = request.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
+  let tokenPayload: any = null;
+
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      tokenPayload = payload;
+    } catch {
+      tokenPayload = null;
+    }
   }
 
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
-    const requestUrl = `${apiUrl}/redirects/match?url=${encodeURIComponent(pathname)}`;
+  const isProtectedPath = PROTECTED_PREFIXES.some((prefix) =>
+    pathname.startsWith(prefix)
+  );
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 600);
+  // 4. CORE STATE MACHINE ENFORCEMENT:
+  // If user is authenticated in PENDING_PHONE_VERIFICATION state,
+  // they are strictly restricted to /verify-phone!
+  if (
+    tokenPayload &&
+    (tokenPayload.status === "PENDING_PHONE_VERIFICATION" ||
+      tokenPayload.scope === "phone_verification")
+  ) {
+    if (pathname !== "/verify-phone" && !pathname.startsWith("/api/auth")) {
+      const verifyUrl = new URL("/verify-phone", request.url);
+      verifyUrl.searchParams.set("returnUrl", pathname);
+      return NextResponse.redirect(verifyUrl);
+    }
+  }
 
-    const res = await fetch(requestUrl, {
-      signal: controller.signal,
-      headers: {
-        "Accept": "application/json"
-      }
-    });
-    
-    clearTimeout(timeoutId);
+  // 5. If user is ACTIVE and visits /verify-phone, redirect to dashboard
+  if (
+    pathname === "/verify-phone" &&
+    tokenPayload &&
+    tokenPayload.status === "ACTIVE"
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
-    if (res.ok && res.status !== 204) {
-      const text = await res.text();
-      if (text.trim()) {
-        const redirectRule = JSON.parse(text);
-        if (redirectRule && redirectRule.newUrl) {
-          const { newUrl, type } = redirectRule;
-          const statusCode = type === 301 ? 301 : 302;
+  // 6. Gated Route Protection
+  if (isProtectedPath) {
+    if (!tokenPayload) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("returnUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
 
-          let destination = newUrl;
-          // If relative URL, build absolute URL using current request host and origin
-          if (!newUrl.startsWith("http://") && !newUrl.startsWith("https://")) {
-            const origin = request.nextUrl.origin;
-            destination = `${origin}${newUrl}${search}`;
+    if (tokenPayload.status !== "ACTIVE") {
+      const verifyUrl = new URL("/verify-phone", request.url);
+      verifyUrl.searchParams.set("returnUrl", pathname);
+      return NextResponse.redirect(verifyUrl);
+    }
+  }
+
+  // 7. Dynamic backend redirects from proxy.ts (for landing pages / slugs)
+  if (pathname !== "/" && pathname !== "") {
+    try {
+      const apiUrl =
+        process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+        "http://localhost:5000";
+      const requestUrl = `${apiUrl}/redirects/match?url=${encodeURIComponent(
+        pathname
+      )}`;
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600);
+
+      const res = await fetch(requestUrl, {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok && res.status !== 204) {
+        const text = await res.text();
+        if (text.trim()) {
+          const rule = JSON.parse(text);
+          if (rule && rule.newUrl) {
+            const statusCode = rule.type === 301 ? 301 : 302;
+            let destination = rule.newUrl;
+            if (
+              !rule.newUrl.startsWith("http://") &&
+              !rule.newUrl.startsWith("https://")
+            ) {
+              destination = `${request.nextUrl.origin}${rule.newUrl}${search}`;
+            }
+            return NextResponse.redirect(destination, statusCode);
           }
-
-          return NextResponse.redirect(destination, statusCode);
         }
       }
+    } catch {
+      // Non-blocking redirect lookup failure fallback
     }
-  } catch (err) {
-    console.error("Redirect proxy error:", err);
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+};

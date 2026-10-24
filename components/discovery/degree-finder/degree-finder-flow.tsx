@@ -475,6 +475,7 @@ import {
   quizQuestions,
   useDegreeFinderFlow,
   QuizAnswers,
+  FlowStep,
 } from "@/data/degreefinder";
 import CourseDetails from "./../../discovery/degree-finder/course-details";
 import Step1Screen from "./step1-screen";
@@ -594,7 +595,7 @@ function AnswerPills({
   quizQuestions.forEach((q, i) => {
     if (upToStep > i + quizStepOffset && answers[q.id]) {
       const opt = q.options.find((o) => o.id === answers[q.id]);
-      if (opt) pills.push({ emoji: opt.emoji, label: opt.label });
+      if (opt) pills.push({ emoji: opt.emoji || "", label: opt.label });
     }
   });
 
@@ -908,11 +909,15 @@ export default function DegreeFinderFlow() {
     if (flowStep === "results") {
       setLeadStep("quiz");
     }
-    setFlowStep(targetStepId);
+    setFlowStep(targetStepId as FlowStep);
   };
 
-  const handleLeadSubmit = (data: LeadData) => {
-    setLeadData(data);
+  const handleLeadSubmit = (data: any) => {
+    setLeadData({
+      name: data.name,
+      email: data.email,
+      phone: data.mobile || data.phone || "",
+    });
     setLeadStep("results");
   };
 

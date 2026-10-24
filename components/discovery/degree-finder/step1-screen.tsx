@@ -53,7 +53,7 @@ const degreeTypes = [
   },
 ];
 
-const colorMap = {
+const colorMap: Record<string, { bg: string; icon: string; line: string; arrow: string }> = {
   red: {
     bg: "bg-red-50",
     icon: "text-red-500",
@@ -80,7 +80,7 @@ const colorMap = {
   },
 };
 
-const icons = {
+const icons: Record<string, React.ReactNode> = {
   all: (
     <svg
       viewBox="0 0 24 24"
@@ -221,7 +221,11 @@ const footerItems = [
   },
 ];
 
-export default function Step1Screen({ onTypeSelect }) {
+export default function Step1Screen({
+  onTypeSelect,
+}: {
+  onTypeSelect: (typeId: string) => void;
+}) {
   return (
     <div className="py-5 px-4">
       {/* Header */}

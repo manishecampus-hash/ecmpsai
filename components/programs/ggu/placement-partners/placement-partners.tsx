@@ -8,6 +8,7 @@ interface StatCard {
 interface PartnerCompany {
   name: string;
   initials: string;
+  logo?: string;
 }
 
 const placementPartners: string[][] = [

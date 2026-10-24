@@ -335,7 +335,10 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
 
       counts.all = (counts.all || 0) + 1;
 
-      const rawCatId = p.categoryId?._id || p.categoryId?.id || p.categoryId;
+      const rawCatId =
+        (p.categoryId as any)?._id ||
+        (p.categoryId as any)?.id ||
+        p.categoryId;
       const catIdStr =
         rawCatId !== null && rawCatId !== undefined ? String(rawCatId).trim() : "";
       if (catIdStr) {
@@ -404,7 +407,10 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
 
         let tabMatch = true;
         if (activeTab !== "all") {
-          const rawCatId = p.categoryId?._id || p.categoryId?.id || p.categoryId;
+          const rawCatId =
+            (p.categoryId as any)?._id ||
+            (p.categoryId as any)?.id ||
+            p.categoryId;
           const catIdStr =
             rawCatId !== null && rawCatId !== undefined ? String(rawCatId).trim() : "";
           tabMatch = catIdStr === activeTab || String(p.tab).trim() === activeTab;

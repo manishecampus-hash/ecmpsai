@@ -59,9 +59,17 @@ export async function POST(req: NextRequest) {
     const db = await getDb();
     const collection = db.collection("web_users");
 
-    const filter = phone?.trim()
-      ? { phone: phone.trim() }
-      : { email: email.trim() };
+    const filter =
+      phone?.trim() && email?.trim()
+        ? {
+            $or: [
+              { phone: phone.trim() },
+              { email: email.trim().toLowerCase() },
+            ],
+          }
+        : phone?.trim()
+        ? { phone: phone.trim() }
+        : { email: email.trim().toLowerCase() };
 
     const result = await collection.updateOne(
       filter,

@@ -49,7 +49,13 @@ const reviews = [
   },
 ];
 
-function StarRow({ rating, size = "h-4 w-4" }) {
+function StarRow({
+  rating,
+  size = "h-4 w-4",
+}: {
+  rating: number;
+  size?: string;
+}) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (

@@ -264,3 +264,39 @@ export function getUniversitiesByLocation(location: string): ComparisonItem[] {
     uni.location.toLowerCase().includes(location.toLowerCase()),
   );
 }
+
+export interface PopularComparisonItem {
+  slug: string;
+  uni1: {
+    name: string;
+    type: string;
+    image: string;
+    fees: string;
+    popularCourse: string;
+  };
+  uni2: {
+    name: string;
+    type: string;
+    image: string;
+    fees: string;
+    popularCourse: string;
+  };
+}
+
+export const popularComparisons: PopularComparisonItem[] = UNIVERSITY_COMPARISONS.map((p) => ({
+  slug: p.id,
+  uni1: {
+    name: p.a.university,
+    type: p.a.location,
+    image: p.a.image,
+    fees: "Recognized European / US Institution",
+    popularCourse: p.a.name,
+  },
+  uni2: {
+    name: p.b.university,
+    type: p.b.location,
+    image: p.b.image,
+    fees: "Recognized European / US Institution",
+    popularCourse: p.b.name,
+  },
+}));

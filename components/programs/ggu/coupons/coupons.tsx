@@ -13,7 +13,7 @@ const CONFETTI_COLORS = [
   "#facc15",
 ];
 
-function ConfettiBurst({ burstKey }) {
+function ConfettiBurst({ burstKey }: { burstKey: string }) {
   const pieces = useMemo(() => {
     return Array.from({ length: 70 }).map((_, i) => {
       const size = 6 + Math.random() * 7;
@@ -37,17 +37,19 @@ function ConfettiBurst({ burstKey }) {
         <span
           key={p.id}
           className="confetti-piece"
-          style={{
-            left: `${p.left}%`,
-            width: p.size,
-            height: p.size,
-            backgroundColor: p.color,
-            borderRadius: p.rounded ? "50%" : "2px",
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-            "--drift": `${p.drift}px`,
-            "--spin": `${p.spin}deg`,
-          }}
+          style={
+            {
+              left: `${p.left}%`,
+              width: p.size,
+              height: p.size,
+              backgroundColor: p.color,
+              borderRadius: p.rounded ? "50%" : "2px",
+              animationDuration: `${p.duration}s`,
+              animationDelay: `${p.delay}s`,
+              "--drift": `${p.drift}px`,
+              "--spin": `${p.spin}deg`,
+            } as React.CSSProperties
+          }
         />
       ))}
     </div>
@@ -86,7 +88,9 @@ const coupons = [
 ];
 
 export default function GGUCoupons() {
-  const [activeCoupon, setActiveCoupon] = useState(null);
+  const [activeCoupon, setActiveCoupon] = useState<(typeof coupons)[0] | null>(
+    null
+  );
 
   return (
     <section className="w-full bg-white px-4 py-8 sm:px-6 sm:py-10 lg:px-8">

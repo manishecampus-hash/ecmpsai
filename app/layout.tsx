@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AppShell } from "@/components/layout/app-shell";
 import { AnalyticsInjector } from "@/components/analytics/AnalyticsInjector";
 import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
+import { AuthProvider } from "@/components/auth/auth-context";
 
 import Script from "next/script";
 
@@ -103,8 +104,10 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <AppShell>{children}</AppShell>
-          <FloatingWhatsApp phoneNumber="919873794789" />
+          <AuthProvider>
+            <AppShell>{children}</AppShell>
+            <FloatingWhatsApp phoneNumber="919873794789" />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

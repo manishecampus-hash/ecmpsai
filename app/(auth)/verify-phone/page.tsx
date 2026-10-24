@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { Suspense, useState, useEffect, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldAlert,
@@ -36,7 +36,7 @@ const countryCodes = [
   { code: "+81", flag: "🇯🇵", name: "Japan" },
 ];
 
-export default function VerifyPhonePage() {
+function VerifyPhoneContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get("returnUrl") || "/dashboard";
@@ -561,5 +561,22 @@ export default function VerifyPhonePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyPhonePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
+            <p className="text-sm font-semibold text-slate-600">Loading Verification…</p>
+          </div>
+        </div>
+      }
+    >
+      <VerifyPhoneContent />
+    </Suspense>
   );
 }

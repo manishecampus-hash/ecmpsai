@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Copy, Check, PartyPopper, Gift, RotateCw } from "lucide-react";
+import { Copy, Check, PartyPopper, Gift, RotateCw, X } from "lucide-react";
 
 // White button with a thin red outline, shared by "Spin" and "Claim Reward"
 const OUTLINE_BUTTON =
@@ -18,6 +18,7 @@ interface SpinWheelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRewardWon?: (reward: SpinWheelReward) => void;
+  onSkip?: () => void;
 }
 
 interface ClaimDelta {
@@ -31,7 +32,12 @@ interface ClaimDelta {
 // own declared duration when mixed with simultaneous x/y/scale/opacity keys.
 type ClaimStage = "idle" | "dip" | "rise" | "swoop";
 
-export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWheelModalProps) {
+export default function SpinWheelModal({
+  isOpen,
+  onClose,
+  onRewardWon,
+  onSkip,
+}: SpinWheelModalProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [rotation, setRotation] = useState(0);
   const [rewardIndex, setRewardIndex] = useState<number | null>(null);
@@ -53,6 +59,21 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
     if (dialogRef.current) dialogRef.current.scrollTop = 0;
     dialogRef.current?.focus();
   }, [isOpen]);
+
+  // Allow Escape key to skip and close modal when not actively spinning
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && phase !== "spinning") {
+        if (phase === "idle") {
+          onSkip?.();
+        }
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, phase, onSkip, onClose]);
 
   const handleSpin = () => {
     if (phase !== "idle") return;
@@ -137,6 +158,14 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
                 ? { duration: 0.42, ease: "easeInOut" }
                 : { duration: 0.2 }
             }
+            onClick={() => {
+              if (phase !== "spinning") {
+                if (phase === "idle") {
+                  onSkip?.();
+                }
+                onClose();
+              }
+            }}
             className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0a1428]/70 p-3 backdrop-blur-sm"
           >
             <motion.div
@@ -171,7 +200,23 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
               }`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* No close control on purpose: the spin is mandatory, and "Claim Reward" is the only exit. */}
+              {/* Cross icon: user can skip spinning or close the modal */}
+              {phase !== "spinning" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (phase === "idle") {
+                      onSkip?.();
+                    }
+                    onClose();
+                  }}
+                  aria-label={phase === "idle" ? "Skip spinning" : "Close"}
+                  className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-all hover:bg-gray-200 hover:text-gray-700 active:scale-95 sm:right-5 sm:top-5"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+
               {phase !== "result" ? (
                 <>
                   <span className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600">
@@ -244,6 +289,18 @@ export default function SpinWheelModal({ isOpen, onClose, onRewardWon }: SpinWhe
                       }`}
                     />
                     {phase === "spinning" ? "Spinning..." : "Spin The Wheel Now"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSkip?.();
+                      onClose();
+                    }}
+                    disabled={phase === "spinning"}
+                    className="mt-3 text-xs font-semibold text-gray-400 underline-offset-2 transition hover:text-gray-600 hover:underline"
+                  >
+                    Skip for now
                   </button>
                 </>
               ) : (

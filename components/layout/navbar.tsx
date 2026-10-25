@@ -610,14 +610,14 @@ import {
   Award,
   Globe,
   Laptop,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
 
-// The auth modals are dynamically imported so initial bundle remains lightweight.
+// The auth modal is dynamically imported so initial bundle remains lightweight.
 const SignupModal = dynamic(() => import("@/components/layout/signup-modal").then((m) => m.SignupModal), { ssr: false });
-const LoginModal = dynamic(() => import("@/components/layout/login-modal").then((m) => m.LoginModal), { ssr: false });
 
 // Icons the menu commonly uses; any other CMS icon name is loaded on demand,
 // so the whole lucide library isn't shipped with every page.
@@ -847,7 +847,6 @@ function MobileDrawer({
   displayName,
   onLogout,
   onSignup,
-  onLogin,
   pathname,
   navLinks,
 }: {
@@ -857,7 +856,6 @@ function MobileDrawer({
   displayName: string | undefined;
   onLogout: () => void;
   onSignup: () => void;
-  onLogin: () => void;
   pathname: string;
   navLinks: any[];
 }) {
@@ -953,25 +951,16 @@ function MobileDrawer({
               </Button>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               <Button
-                variant="outline"
-                className="flex-1 rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black font-semibold text-xs py-2"
-                onClick={() => {
-                  onLogin();
-                  onClose();
-                }}
-              >
-                Log In
-              </Button>
-              <Button
-                className="flex-1 rounded-full bg-[#ee2c3c] text-white hover:bg-[#d02534] font-semibold text-xs py-2"
+                className="w-full relative group overflow-hidden rounded-full py-2.5 text-xs font-bold text-white tracking-wide bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 hover:from-red-700 hover:via-red-600 hover:to-rose-700 shadow-[0_4px_16px_rgba(238,44,60,0.3)] hover:shadow-[0_6px_20px_rgba(238,44,60,0.45)] border border-red-400/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
                 onClick={() => {
                   onSignup();
                   onClose();
                 }}
               >
-                Sign Up
+                <span>Sign Up</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
               </Button>
             </div>
           )}
@@ -985,16 +974,10 @@ export function Navbar() {
   const [student, setStudent] = useState<Student | null>(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [signupRequested, setSignupRequested] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginRequested, setLoginRequested] = useState(false);
 
   useEffect(() => {
     if (showSignupModal) setSignupRequested(true);
   }, [showSignupModal]);
-
-  useEffect(() => {
-    if (showLoginModal) setLoginRequested(true);
-  }, [showLoginModal]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [floating, setFloating] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -1134,7 +1117,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleOpenSignup = () => setShowSignupModal(true);
-    const handleOpenLogin = () => setShowLoginModal(true);
+    const handleOpenLogin = () => setShowSignupModal(true);
     window.addEventListener("open-signup", handleOpenSignup);
     window.addEventListener("open-login", handleOpenLogin);
     return () => {
@@ -1368,20 +1351,17 @@ export function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="hidden sm:flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowLoginModal(true)}
-                    className="px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-red-600 rounded-full hover:bg-red-50/50 transition-colors cursor-pointer"
-                  >
-                    Log In
-                  </button>
+                <div className="hidden sm:flex items-center">
                   <Button  
                     size="sm"
                     onClick={() => setShowSignupModal(true)}
-                    className="bg-[#ee2c3c] text-white rounded-full hover:bg-[#d02534] transition-colors px-4 py-1.5 text-xs font-semibold shadow-xs cursor-pointer"
+                    className="relative group overflow-hidden rounded-full px-5 py-2 text-xs font-bold text-white tracking-wide bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 hover:from-red-700 hover:via-red-600 hover:to-rose-700 shadow-[0_4px_16px_rgba(238,44,60,0.35)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.5)] border border-red-400/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
                   >
-                    Sign Up
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <span>Sign Up</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                   </Button>
                 </div>
               )}
@@ -1433,7 +1413,6 @@ export function Navbar() {
         displayName={displayName}
         onLogout={requestLogout}
         onSignup={() => setShowSignupModal(true)}
-        onLogin={() => setShowLoginModal(true)}
         pathname={pathname}
         navLinks={headerNavLinks}
       />
@@ -1441,27 +1420,11 @@ export function Navbar() {
       {/* Bottom Navigation Bar - Modern Design */}
       <BottomNav />
 
-      {/* Login Modal */}
-      {loginRequested && (
-        <LoginModal
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-          onSwitchToSignup={() => {
-            setShowLoginModal(false);
-            setShowSignupModal(true);
-          }}
-        />
-      )}
-
-      {/* Signup Modal */}
+      {/* Unified Signup / Login Modal */}
       {signupRequested && (
         <SignupModal
           isOpen={showSignupModal}
           onClose={() => setShowSignupModal(false)}
-          onSwitchToLogin={() => {
-            setShowSignupModal(false);
-            setShowLoginModal(true);
-          }}
         />
       )}
 

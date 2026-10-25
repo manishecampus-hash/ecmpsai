@@ -62,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             coursesInterested: data.user.coursesInterested || existing.coursesInterested,
             advisorProfile: data.user.advisorProfile || existing.advisorProfile,
             spinReward: data.user.spinReward || existing.spinReward,
+            spinSkipped: typeof data.user.spinSkipped === "boolean" ? data.user.spinSkipped : existing.spinSkipped,
             status: data.user.status,
           };
           localStorage.setItem("ecampus_student", JSON.stringify(merged));

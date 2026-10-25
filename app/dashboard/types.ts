@@ -1,9 +1,11 @@
 import type { SpinWheelReward } from "./components/spin-wheel/data";
 
 export type StudentProfile = {
+  id?: string;
   name?: string;
   email?: string;
   phone?: string;
+  course?: string;
   coursesInterested?: string[];
   state?: string;
   referralCode?: string;
@@ -25,4 +27,6 @@ export type StudentProfile = {
   };
   // Set once the student has used their single Spin & Win spin
   spinReward?: SpinWheelReward;
+  // Set if the student skipped the spin wheel
+  spinSkipped?: boolean;
 };

@@ -22,7 +22,7 @@ import {
   MessageSquare,
   Gift,
   GraduationCap,
-  MapPin,
+  CheckCircle2,
   Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -261,7 +261,7 @@ export function SignupModal({
 
       // CRITICAL REQUIREMENT:
       // If user account is already made and already has answers to questions, do not ask them again!
-      if (data.isExistingUser && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
+      if ((data.isExistingUser || data.hasProfileDetails) && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
         localStorage.setItem("ecampus_student", JSON.stringify(data.student));
         window.dispatchEvent(new Event("ecampus-auth-change"));
         onClose();
@@ -459,16 +459,22 @@ export function SignupModal({
 
     setLoading(true);
 
+    const rawPrev = localStorage.getItem("ecampus_student");
+    const prevData = rawPrev ? JSON.parse(rawPrev) : {};
+
     const student = {
+      ...prevData,
       name: name.trim(),
       email: email.trim(),
       phone: fullPhone,
-      coursesInterested: course ? [course] : [],
-      course: course || undefined,
-      state: state || undefined,
-      referralCode: referralCode.trim() || undefined,
+      coursesInterested: course ? [course] : (prevData.coursesInterested || []),
+      course: course || prevData.course || undefined,
+      state: state || prevData.state || undefined,
+      referralCode: referralCode.trim() || prevData.referralCode || undefined,
       whatsappOptIn,
-      joinedAt: new Date().toISOString(),
+      joinedAt: prevData.joinedAt || new Date().toISOString(),
+      ...(prevData.spinReward ? { spinReward: prevData.spinReward } : {}),
+      ...(prevData.spinSkipped ? { spinSkipped: true } : {}),
     };
 
     try {
@@ -557,8 +563,8 @@ export function SignupModal({
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top decorative vibrant gradient accent */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-red-600 via-rose-500 to-amber-500" />
+            {/* Top decorative vibrant gradient accent with emerald touch */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-red-600 via-rose-500 to-emerald-500" />
 
             {/* Top Close Button */}
             <button
@@ -592,9 +598,19 @@ export function SignupModal({
                   className="h-7 w-auto object-contain"
                 />
 
-                {/* Eyebrow badge */}
-                <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-600 border border-rose-100/80">
-                  <Sparkles className="h-3 w-3" />
+                {/* Eyebrow badge with green assured tick */}
+                <div
+                  className={`mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold border shadow-2xs transition-colors ${
+                    step === "phone"
+                      ? "bg-emerald-50 text-emerald-800 border-emerald-200/90"
+                      : "bg-rose-50 text-rose-600 border-rose-100/80"
+                  }`}
+                >
+                  {step === "phone" ? (
+                    <BadgeCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                  ) : (
+                    <Sparkles className="h-3 w-3" />
+                  )}
                   <span>
                     {step === "details"
                       ? "Almost Done!"
@@ -610,9 +626,7 @@ export function SignupModal({
                     ? "Complete Your Profile"
                     : step === "otp"
                     ? "Enter Verification Code"
-                    : mode === "email"
-                    ? "Sign up with Email"
-                    : "Welcome to eCampus"}
+                    : "Signup / Login"}
                 </h2>
 
                 {/* Subtitle */}
@@ -635,7 +649,7 @@ export function SignupModal({
                       </button>
                     </span>
                   ) : (
-                    "Explore top UGC & AICTE approved online programs with verified comparisons."
+                    "Enter your mobile number to continue."
                   )}
                 </p>
               </div>
@@ -656,49 +670,49 @@ export function SignupModal({
               {step === "phone" && (
                 <div className="mt-5">
                   {/* Segmented Mode Selector */}
-                  <div className="flex items-center rounded-2xl bg-slate-100/90 p-1 border border-slate-200/60 shadow-xs">
+                  <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 border border-slate-200/70 shadow-2xs mb-4">
                     <button
                       type="button"
                       onClick={() => handleModeChange("mobile")}
-                      className={`relative flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all ${
+                      className={`relative flex h-9.5 items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         mode === "mobile"
-                          ? "bg-white text-slate-900 shadow-sm"
+                          ? "bg-white text-slate-900 shadow-xs"
                           : "text-slate-500 hover:text-slate-800"
                       }`}
                     >
-                      <Smartphone className={`h-3.5 w-3.5 ${mode === "mobile" ? "text-red-600" : "text-slate-400"}`} />
+                      <Smartphone className={`h-3.5 w-3.5 ${mode === "mobile" ? "text-emerald-600" : "text-slate-400"}`} />
                       <span>Mobile Number</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleModeChange("email")}
-                      className={`relative flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all ${
+                      className={`relative flex h-9.5 items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         mode === "email"
-                          ? "bg-white text-slate-900 shadow-sm"
+                          ? "bg-white text-slate-900 shadow-xs"
                           : "text-slate-500 hover:text-slate-800"
                       }`}
                     >
-                      <Mail className={`h-3.5 w-3.5 ${mode === "email" ? "text-red-600" : "text-slate-400"}`} />
+                      <Mail className={`h-3.5 w-3.5 ${mode === "email" ? "text-emerald-600" : "text-slate-400"}`} />
                       <span>Email</span>
                     </button>
                   </div>
 
                   {/* Form Container */}
-                  <div className="mt-4">
+                  <div>
                     {mode === "mobile" ? (
                       <form onSubmit={handlePhoneContinue} className="flex flex-col gap-3.5">
                         <div>
                           <label className="mb-1.5 block text-xs font-semibold text-slate-700">
                             Mobile Number
                           </label>
-                          <div className="group flex h-12 items-center rounded-2xl border border-slate-200 bg-white shadow-xs transition-all focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10 hover:border-slate-300">
+                          <div className="group relative flex h-12 sm:h-12.5 items-center rounded-2xl border border-slate-200 bg-slate-50/60 shadow-2xs transition-all focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white hover:border-slate-300">
                             {/* Country Picker */}
-                            <div className="relative flex shrink-0 items-center gap-1.5 border-r border-slate-200 px-3 text-slate-700">
+                            <div className="relative flex shrink-0 items-center gap-1.5 border-r border-slate-200 px-3.5 h-full bg-slate-100/70 rounded-l-2xl text-slate-700 select-none">
                               <span className="text-base leading-none">
                                 {selectedCountry.flag}
                               </span>
-                              <span className="text-xs sm:text-sm font-semibold text-slate-900">
+                              <span className="text-xs font-bold text-slate-900 tracking-wide">
                                 {selectedCountry.code}
                               </span>
                               <ChevronDown className="h-3 w-3 text-slate-400" />
@@ -731,16 +745,16 @@ export function SignupModal({
                               }
                               maxLength={10}
                               required
-                              className="min-w-0 flex-1 bg-transparent px-3 text-sm font-medium tracking-wide text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:tracking-normal"
+                              className="min-w-0 flex-1 bg-transparent px-3.5 text-sm font-semibold tracking-wider text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:tracking-normal"
                             />
 
                             {phone.length > 0 && (
                               <button
                                 type="button"
                                 onClick={() => setPhone("")}
-                                className="mr-3 text-slate-400 hover:text-slate-600 text-xs"
+                                className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/70 text-slate-500 hover:bg-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
                               >
-                                <X className="h-3.5 w-3.5" />
+                                <X className="h-3 w-3" />
                               </button>
                             )}
                           </div>
@@ -750,12 +764,12 @@ export function SignupModal({
                         <Button
                           type="submit"
                           disabled={loading || phone.length < 10}
-                          className="group mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-semibold text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/30 hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
+                          className="relative group mt-1.5 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                         >
                           {loading ? (
                             <>
                               <Loader2 className="h-4 w-4 animate-spin" />
-                              <span>Sending OTP...</span>
+                              <span>Sending OTP…</span>
                             </>
                           ) : (
                             <>
@@ -764,6 +778,12 @@ export function SignupModal({
                             </>
                           )}
                         </Button>
+
+                        {/* Verified Gateway Reassurance */}
+                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700 mt-0.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span>Instant 6-digit OTP · Verified Access</span>
+                        </div>
                       </form>
                     ) : (
                       <form onSubmit={handleEmailStepContinue} className="flex flex-col gap-3.5">
@@ -771,8 +791,10 @@ export function SignupModal({
                           <label className="mb-1.5 block text-xs font-semibold text-slate-700">
                             Email Address
                           </label>
-                          <div className="relative flex h-12 items-center rounded-2xl border border-slate-200 bg-white shadow-xs transition-all focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10 hover:border-slate-300">
-                            <Mail className="absolute left-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                          <div className="group relative flex h-12 sm:h-12.5 items-center rounded-2xl border border-slate-200 bg-slate-50/60 shadow-2xs transition-all focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white hover:border-slate-300">
+                            <div className="flex h-full items-center pl-3.5 pr-2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                              <Mail className="h-4 w-4" />
+                            </div>
                             <input
                               type="email"
                               inputMode="email"
@@ -782,15 +804,15 @@ export function SignupModal({
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
-                              className="h-full w-full rounded-2xl bg-transparent pl-10 pr-3.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                              className="min-w-0 flex-1 bg-transparent px-2.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
                             />
                             {email.length > 0 && (
                               <button
                                 type="button"
                                 onClick={() => setEmail("")}
-                                className="mr-3 text-slate-400 hover:text-slate-600 text-xs"
+                                className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/70 text-slate-500 hover:bg-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
                               >
-                                <X className="h-3.5 w-3.5" />
+                                <X className="h-3 w-3" />
                               </button>
                             )}
                           </div>
@@ -800,12 +822,12 @@ export function SignupModal({
                         <Button
                           type="submit"
                           disabled={loading || !email}
-                          className="group mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-semibold text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/30 hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
+                          className="relative group mt-1.5 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                         >
                           {loading ? (
                             <>
                               <Loader2 className="h-4 w-4 animate-spin" />
-                              <span>Sending Code...</span>
+                              <span>Sending Code…</span>
                             </>
                           ) : (
                             <>
@@ -814,26 +836,14 @@ export function SignupModal({
                             </>
                           )}
                         </Button>
+
+                        {/* Verified Gateway Reassurance */}
+                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700 mt-0.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                          <span>Instant Verification · Verified Access</span>
+                        </div>
                       </form>
                     )}
-                  </div>
-
-                  {/* Trust Highlights Strip */}
-                  <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-around text-center">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>100% Free & Safe</span>
-                    </div>
-                    <span className="h-3 w-px bg-slate-200" />
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-                      <GraduationCap className="h-3.5 w-3.5 text-red-600" />
-                      <span>UGC Recognized</span>
-                    </div>
-                    <span className="h-3 w-px bg-slate-200" />
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-                      <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                      <span>Instant Advice</span>
-                    </div>
                   </div>
                 </div>
               )}
@@ -1336,7 +1346,7 @@ export function SignupModal({
                   <Button
                     type="submit"
                     disabled={loading || phoneLoading}
-                    className="group mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-semibold text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/30 hover:brightness-105 active:scale-[0.99] disabled:opacity-50"
+                    className="group mt-1 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
                   >
                     {loading ? (
                       <>
@@ -1372,27 +1382,9 @@ export function SignupModal({
                 </form>
               )}
 
-              {/* Bottom Footer: Login Switcher & Legal */}
-              <div className="mt-5 pt-3 text-center">
-                <p className="text-xs text-slate-500">
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onSwitchToLogin) {
-                        onSwitchToLogin();
-                      } else {
-                        onClose();
-                        router.push("/login");
-                      }
-                    }}
-                    className="font-semibold text-red-600 hover:text-red-700 hover:underline"
-                  >
-                    Log In
-                  </button>
-                </p>
-
-                <p className="mt-2 text-[11px] text-slate-400 leading-relaxed">
+              {/* Bottom Footer: Legal */}
+              <div className="mt-4 text-center">
+                <p className="text-[11px] text-slate-400 leading-relaxed">
                   By continuing, you agree to our{" "}
                   <a
                     href="/terms"

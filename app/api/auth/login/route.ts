@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
           {
             success: false,
             not_found: true,
-            message: `No account found with this ${isEmail ? "email" : "mobile number"}. Please sign up.`,
+            code: "ACCOUNT_NOT_FOUND",
+            message: `You haven't signed up with this ${isEmail ? "email" : "mobile number"} yet. Please sign up first.`,
           },
           { status: 404 }
         );
@@ -122,6 +123,20 @@ export async function POST(req: NextRequest) {
       }
 
       const user = await users.findOne({ email: normalizedEmail });
+      const webUser = await webUsers.findOne({ email: normalizedEmail });
+
+      if (!user && !webUser) {
+        return NextResponse.json(
+          {
+            success: false,
+            not_found: true,
+            code: "ACCOUNT_NOT_FOUND",
+            message: "You haven't signed up with this email yet. Please sign up first.",
+          },
+          { status: 404 }
+        );
+      }
+
       if (!user || !user.password_hash) {
         await verifyPassword(password, "$2a$12$e80MvQ0a3j82hZ1V6iVzK.R1Oqf0hC1k3Ue3vV9y3d7k5X1w2q3e4");
         return jsonError("INVALID_CREDENTIALS", "Invalid email or password.", 401);
@@ -131,8 +146,6 @@ export async function POST(req: NextRequest) {
       if (!passwordMatch) {
         return jsonError("INVALID_CREDENTIALS", "Invalid email or password.", 401);
       }
-
-      const webUser = await webUsers.findOne({ email: normalizedEmail });
 
       const mergedName = user.full_name?.trim() || webUser?.name?.trim() || "";
       const mergedCourses =
@@ -144,6 +157,7 @@ export async function POST(req: NextRequest) {
       const mergedState = user.state || webUser?.state || "";
       const mergedAdvisorProfile = user.advisorProfile || webUser?.advisorProfile || null;
       const mergedSpinReward = user.spinReward || webUser?.spinReward || null;
+      const mergedSpinSkipped = Boolean(user.spinSkipped || webUser?.spinSkipped);
 
       const ip =
         req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
@@ -198,6 +212,7 @@ export async function POST(req: NextRequest) {
         coursesInterested: mergedCourses,
         advisorProfile: mergedAdvisorProfile || undefined,
         spinReward: mergedSpinReward || undefined,
+        spinSkipped: mergedSpinSkipped || undefined,
         status: user.status,
       };
 
@@ -260,6 +275,18 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      if (!user && !webUser) {
+        return NextResponse.json(
+          {
+            success: false,
+            not_found: true,
+            code: "ACCOUNT_NOT_FOUND",
+            message: `You haven't signed up with this ${isEmail ? "email" : "mobile number"} yet. Please sign up first.`,
+          },
+          { status: 404 }
+        );
+      }
+
       let activeUser: UserRecord;
 
       const isTargetPhoneVerified = Boolean(
@@ -291,6 +318,7 @@ export async function POST(req: NextRequest) {
           course: webUser?.course || "",
           advisorProfile: webUser?.advisorProfile || undefined,
           spinReward: webUser?.spinReward || undefined,
+          spinSkipped: Boolean(webUser?.spinSkipped) || undefined,
         };
         await users.insertOne(newUser as any);
         activeUser = newUser;
@@ -329,6 +357,7 @@ export async function POST(req: NextRequest) {
       const mergedCourse = activeUser.course || webUser?.course || mergedCourses[0] || "";
       const mergedAdvisorProfile = activeUser.advisorProfile || webUser?.advisorProfile || null;
       const mergedSpinReward = activeUser.spinReward || webUser?.spinReward || null;
+      const mergedSpinSkipped = Boolean(activeUser.spinSkipped || webUser?.spinSkipped);
 
       // Ensure updated fields are saved in users collection
       if (mergedName || mergedAdvisorProfile || mergedState) {
@@ -342,6 +371,7 @@ export async function POST(req: NextRequest) {
               coursesInterested: mergedCourses,
               ...(mergedAdvisorProfile ? { advisorProfile: mergedAdvisorProfile } : {}),
               ...(mergedSpinReward ? { spinReward: mergedSpinReward } : {}),
+              ...(mergedSpinSkipped ? { spinSkipped: true } : {}),
               updated_at: now,
             },
           }
@@ -396,6 +426,7 @@ export async function POST(req: NextRequest) {
         coursesInterested: mergedCourses,
         advisorProfile: mergedAdvisorProfile || undefined,
         spinReward: mergedSpinReward || undefined,
+        spinSkipped: mergedSpinSkipped || undefined,
         status: activeUser.status,
       };
 

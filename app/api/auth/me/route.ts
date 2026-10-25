@@ -1,7 +1,7 @@
 // app/api/auth/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthContext } from "@/lib/auth/guards";
-import { getSessionsCollection } from "@/lib/auth/db";
+import { getSessionsCollection, getUsersCollection } from "@/lib/auth/db";
 import { getDb } from "@/lib/mongodb";
 
 export async function GET(req: NextRequest) {
@@ -29,14 +29,43 @@ export async function GET(req: NextRequest) {
 
     // Merge from web_users if fields are missing in users record
     let webUser: any = null;
-    if (!user.advisorProfile || !user.full_name) {
+    if (!user.advisorProfile || !user.full_name || !user.spinReward) {
       try {
         const db = await getDb();
         const webUsers = db.collection("web_users");
+        const orClauses: any[] = [];
         if (user.phone_e164) {
-          webUser = await webUsers.findOne({ phone: user.phone_e164 });
-        } else if (user.email) {
-          webUser = await webUsers.findOne({ email: user.email });
+          const cleaned = user.phone_e164.replace(/[^\d+]/g, "").trim();
+          const digits = cleaned.replace(/\D/g, "");
+          const last10 = digits.slice(-10);
+          if (cleaned) orClauses.push({ phone: cleaned });
+          if (digits) orClauses.push({ phone: digits });
+          if (last10) {
+            orClauses.push({ phone: last10 });
+            orClauses.push({ phone: `+91${last10}` });
+            orClauses.push({ phone: `91${last10}` });
+          }
+        }
+        if (user.email) {
+          orClauses.push({ email: user.email.toLowerCase().trim() });
+        }
+        if (orClauses.length > 0) {
+          webUser = await webUsers.findOne({ $or: orClauses });
+        }
+
+        // If web_users has spinReward/spinSkipped and users does not, backfill users
+        if (webUser && (webUser.spinReward || webUser.spinSkipped)) {
+          const usersCol = await getUsersCollection();
+          await usersCol.updateOne(
+            { id: user.id },
+            {
+              $set: {
+                ...(webUser.spinReward && !user.spinReward ? { spinReward: webUser.spinReward } : {}),
+                ...(webUser.spinSkipped && !user.spinSkipped ? { spinSkipped: true } : {}),
+                updated_at: new Date(),
+              },
+            }
+          );
         }
       } catch {}
     }
@@ -51,6 +80,7 @@ export async function GET(req: NextRequest) {
     const state = user.state || webUser?.state || "";
     const advisorProfile = user.advisorProfile || webUser?.advisorProfile || null;
     const spinReward = user.spinReward || webUser?.spinReward || null;
+    const spinSkipped = Boolean(user.spinSkipped || webUser?.spinSkipped);
 
     return NextResponse.json({
       authenticated: true,
@@ -68,6 +98,7 @@ export async function GET(req: NextRequest) {
         coursesInterested: courses,
         advisorProfile,
         spinReward,
+        spinSkipped,
         created_at: user.created_at,
       },
       permissions: {

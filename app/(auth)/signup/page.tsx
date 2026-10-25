@@ -161,7 +161,7 @@ export default function SignupPage() {
       }
 
       // CRITICAL CHECK: If account was already made and questions already answered, do NOT ask again!
-      if (data.isExistingUser && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
+      if ((data.isExistingUser || data.hasProfileDetails) && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
         localStorage.setItem("ecampus_student", JSON.stringify(data.student));
         window.dispatchEvent(new Event("ecampus-auth-change"));
         router.push("/dashboard");
@@ -213,16 +213,22 @@ export default function SignupPage() {
 
     setLoading(true);
 
+    const rawPrev = localStorage.getItem("ecampus_student");
+    const prevData = rawPrev ? JSON.parse(rawPrev) : {};
+
     const studentPayload = {
+      ...prevData,
       name: name.trim(),
       email: email.trim().toLowerCase(),
       phone: fullPhone,
-      coursesInterested: course ? [course] : [],
-      course: course || undefined,
-      state: state || undefined,
-      referralCode: referralCode.trim() || undefined,
+      coursesInterested: course ? [course] : (prevData.coursesInterested || []),
+      course: course || prevData.course || undefined,
+      state: state || prevData.state || undefined,
+      referralCode: referralCode.trim() || prevData.referralCode || undefined,
       whatsappOptIn,
-      joinedAt: new Date().toISOString(),
+      joinedAt: prevData.joinedAt || new Date().toISOString(),
+      ...(prevData.spinReward ? { spinReward: prevData.spinReward } : {}),
+      ...(prevData.spinSkipped ? { spinSkipped: true } : {}),
     };
 
     try {
@@ -626,18 +632,7 @@ export default function SignupPage() {
               </form>
             )}
 
-            {/* Link to Log In */}
-            <div className="mt-6 pt-4 border-t border-slate-100 text-center">
-              <p className="text-xs text-slate-500">
-                Already have an eCampus account?{" "}
-                <Link
-                  href="/login"
-                  className="font-bold text-red-600 hover:text-red-700 hover:underline transition-colors ml-0.5"
-                >
-                  Log in here
-                </Link>
-              </p>
-            </div>
+
           </div>
         </div>
 

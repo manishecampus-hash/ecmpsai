@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { Sparkles, UploadCloud, FileEdit } from "lucide-react";
 import type { StudentProfile } from "../types";
 import ProfileProgress, { getProfileCompletion } from "./profile-progress";
@@ -68,13 +69,13 @@ export default function WelcomeBanner({
             <UploadCloud className="h-4 w-4" />
             Upload Resume & Scan With AI
           </button>
-          <button
-            type="button"
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+          <Link
+            href="/dashboard/profile"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
           >
-            <FileEdit className="h-4 w-4" />
+            <FileEdit className="h-4 w-4 text-red-600" />
             Complete Profile (2 mins)
-          </button>
+          </Link>
         </div>
       </div>
     </div>

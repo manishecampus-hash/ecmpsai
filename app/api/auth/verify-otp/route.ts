@@ -50,8 +50,10 @@ export async function POST(req: NextRequest) {
     const now = new Date();
 
     let user: UserRecord | null = null;
+    let userAlreadyExisted = false;
     if (isEmail) {
       user = await users.findOne({ email: target });
+      if (user) userAlreadyExisted = true;
       if (!user) {
         // Created in PENDING_PHONE_VERIFICATION state
         const newUser: UserRecord = {
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
     } else {
       // Phone verification -> ACTIVE
       user = await users.findOne({ phone_e164: target });
+      if (user) userAlreadyExisted = true;
 
       if (!user) {
         // Check if user already exists under the email saved in web_users
@@ -88,6 +91,7 @@ export async function POST(req: NextRequest) {
         const webUser = await db.collection("web_users").findOne({ phone: target });
         if (webUser?.email) {
           user = await users.findOne({ email: webUser.email.trim().toLowerCase() });
+          if (user) userAlreadyExisted = true;
         }
       }
 
@@ -161,6 +165,7 @@ export async function POST(req: NextRequest) {
     const mergedAdvisorProfile =
       user.advisorProfile || webUser?.advisorProfile || null;
     const mergedSpinReward = user.spinReward || webUser?.spinReward || null;
+    const mergedSpinSkipped = Boolean(user.spinSkipped || webUser?.spinSkipped);
 
     // Sync any merged fields back into users collection
     if (mergedName || mergedAdvisorProfile || mergedState || mergedCourses.length) {
@@ -175,6 +180,7 @@ export async function POST(req: NextRequest) {
             course_interested: mergedCourses,
             ...(mergedAdvisorProfile ? { advisorProfile: mergedAdvisorProfile } : {}),
             ...(mergedSpinReward ? { spinReward: mergedSpinReward } : {}),
+            ...(mergedSpinSkipped ? { spinSkipped: true } : {}),
             updated_at: now,
           },
         }
@@ -193,7 +199,7 @@ export async function POST(req: NextRequest) {
           mergedAdvisorProfile.goal ||
           mergedAdvisorProfile.budget)
     );
-    const isExistingUser = Boolean(user.full_name || webUser?.name);
+    const isExistingUser = Boolean(userAlreadyExisted || webUser || mergedName.trim());
 
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
@@ -223,6 +229,7 @@ export async function POST(req: NextRequest) {
       coursesInterested: mergedCourses,
       advisorProfile: mergedAdvisorProfile || undefined,
       spinReward: mergedSpinReward || undefined,
+      spinSkipped: mergedSpinSkipped || undefined,
       status: user.status,
     };
 

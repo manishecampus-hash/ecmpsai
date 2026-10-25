@@ -40,6 +40,7 @@ export interface UserRecord {
   whatsapp_opt_in?: boolean;
   advisorProfile?: Record<string, any>;
   spinReward?: Record<string, any>;
+  spinSkipped?: boolean;
 }
 
 export interface OtpChallengeRecord {

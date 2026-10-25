@@ -19,6 +19,7 @@ import {
   Sparkles,
   ShieldAlert,
   User,
+  UserPlus,
   GraduationCap,
   MapPin,
 } from "lucide-react";
@@ -224,7 +225,7 @@ export function LoginModal({
       if (!res.ok || !data.success) {
         if (data.not_found || res.status === 404) {
           setAccountNotFound(true);
-          setError("No account found with this mobile number. Would you like to sign up?");
+          setError(data.message || "You haven't signed up with this mobile number yet. Please sign up first.");
           return;
         }
         throw new Error(data.message || data.error?.message || "Failed to send verification code.");
@@ -267,6 +268,11 @@ export function LoginModal({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this mobile number yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.message || data.error?.message || "Invalid OTP code. Please check and try again.");
       }
 
@@ -307,7 +313,7 @@ export function LoginModal({
       if (!res.ok || !data.success) {
         if (data.not_found || res.status === 404) {
           setAccountNotFound(true);
-          setError("No account found with this email. Would you like to sign up?");
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
           return;
         }
         throw new Error(data.message || data.error?.message || "Failed to send login code.");
@@ -350,6 +356,11 @@ export function LoginModal({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.message || data.error?.message || "Invalid code. Please try again.");
       }
 
@@ -389,6 +400,11 @@ export function LoginModal({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.error?.message || data.message || "Invalid email or password.");
       }
 
@@ -691,30 +707,65 @@ export function LoginModal({
                         </div>
                       )}
 
-                      {/* Error / Account not found banner */}
-                      {error && (
-                        <div
-                          className={`mb-4 flex items-start gap-2.5 rounded-2xl p-3 text-xs leading-relaxed ${
-                            accountNotFound
-                              ? "bg-amber-50 border border-amber-200 text-amber-900"
-                              : "bg-red-50 border border-red-200 text-red-700"
-                          }`}
-                        >
+                      {/* Prompt when user has not signed up */}
+                      {accountNotFound && (
+                        <div className="mb-5 rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 via-amber-50/90 to-orange-50/70 p-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                          <div className="flex items-start gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-xs">
+                              <UserPlus className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-bold text-amber-950">
+                                  Account Not Found
+                                </h3>
+                                <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider">
+                                  Signup First
+                                </span>
+                              </div>
+                              <p className="mt-1 text-xs text-amber-900 leading-relaxed font-medium">
+                                {error || "You haven't signed up with this number or email yet. Please sign up first to access eCampus."}
+                              </p>
+                              <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    if (onSwitchToSignup) {
+                                      onClose();
+                                      onSwitchToSignup();
+                                    } else {
+                                      onClose();
+                                      router.push("/signup");
+                                    }
+                                  }}
+                                  className="h-9 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-md shadow-red-500/20 flex items-center gap-1.5 transition-all cursor-pointer"
+                                >
+                                  <UserPlus className="h-3.5 w-3.5" />
+                                  <span>Sign Up First</span>
+                                  <ArrowRight className="h-3.5 w-3.5 ml-0.5" />
+                                </Button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAccountNotFound(false);
+                                    setError("");
+                                  }}
+                                  className="h-9 px-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-amber-100/70 transition-colors"
+                                >
+                                  Change Number / Email
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Standard Error banner (only shown if not an unregistered account prompt) */}
+                      {error && !accountNotFound && (
+                        <div className="mb-4 flex items-start gap-2.5 rounded-2xl p-3 text-xs leading-relaxed bg-red-50 border border-red-200 text-red-700">
                           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-inherit" />
                           <div className="flex-1">
                             <span>{error}</span>
-                            {accountNotFound && onSwitchToSignup && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  onClose();
-                                  onSwitchToSignup();
-                                }}
-                                className="mt-1 block font-bold text-red-600 underline hover:text-red-700"
-                              >
-                                Create an account now →
-                              </button>
-                            )}
                           </div>
                         </div>
                       )}

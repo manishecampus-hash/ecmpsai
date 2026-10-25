@@ -22,6 +22,7 @@ import {
   GraduationCap,
   MapPin,
   User,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -225,7 +226,7 @@ function LoginContent() {
       if (!res.ok || !data.success) {
         if (data.not_found || res.status === 404) {
           setAccountNotFound(true);
-          setError("No account found with this mobile number. Would you like to sign up?");
+          setError(data.message || "You haven't signed up with this mobile number yet. Please sign up first.");
           return;
         }
         throw new Error(data.message || data.error?.message || "Failed to send verification code.");
@@ -268,6 +269,11 @@ function LoginContent() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this mobile number yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.message || data.error?.message || "Invalid OTP code. Please try again.");
       }
 
@@ -308,7 +314,7 @@ function LoginContent() {
       if (!res.ok || !data.success) {
         if (data.not_found || res.status === 404) {
           setAccountNotFound(true);
-          setError("No account found with this email. Would you like to sign up?");
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
           return;
         }
         throw new Error(data.message || data.error?.message || "Failed to send login code.");
@@ -351,6 +357,11 @@ function LoginContent() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.message || data.error?.message || "Invalid code. Please try again.");
       }
 
@@ -390,6 +401,11 @@ function LoginContent() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        if (data.not_found || res.status === 404) {
+          setAccountNotFound(true);
+          setError(data.message || "You haven't signed up with this email yet. Please sign up first.");
+          return;
+        }
         throw new Error(data.error?.message || data.message || "Invalid email or password.");
       }
 
@@ -661,26 +677,56 @@ function LoginContent() {
                       </div>
                     )}
 
-                    {/* Error Banner */}
-                    {error && (
-                      <div
-                        className={`mb-5 flex items-start gap-2.5 rounded-2xl p-3.5 text-xs leading-relaxed ${
-                          accountNotFound
-                            ? "bg-amber-50 border border-amber-200 text-amber-900"
-                            : "bg-red-50 border border-red-200 text-red-700"
-                        }`}
-                      >
+                    {/* Prompt when user has not signed up */}
+                    {accountNotFound && (
+                      <div className="mb-5 rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 via-amber-50/90 to-orange-50/70 p-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-xs">
+                            <UserPlus className="h-5 w-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold text-amber-950">
+                                Account Not Found
+                              </h3>
+                              <span className="text-[10px] font-semibold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider">
+                                Signup First
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-amber-900 leading-relaxed font-medium">
+                              {error || "You haven't signed up with this number or email yet. Please sign up first to access eCampus."}
+                            </p>
+                            <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                              <Link
+                                href={`/signup${mode === "mobile" && phone ? `?phone=${encodeURIComponent(fullPhone)}` : mode === "email" && email ? `?email=${encodeURIComponent(email.trim().toLowerCase())}` : ""}`}
+                                className="h-9 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-md shadow-red-500/20 inline-flex items-center gap-1.5 transition-all cursor-pointer"
+                              >
+                                <UserPlus className="h-3.5 w-3.5" />
+                                <span>Sign Up First</span>
+                                <ArrowRight className="h-3.5 w-3.5 ml-0.5" />
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAccountNotFound(false);
+                                  setError("");
+                                }}
+                                className="h-9 px-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-amber-100/70 transition-colors"
+                              >
+                                Change Number / Email
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Standard Error Banner */}
+                    {error && !accountNotFound && (
+                      <div className="mb-5 flex items-start gap-2.5 rounded-2xl p-3.5 text-xs leading-relaxed bg-red-50 border border-red-200 text-red-700">
                         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-inherit" />
                         <div className="flex-1">
                           <span>{error}</span>
-                          {accountNotFound && (
-                            <Link
-                              href="/signup"
-                              className="mt-1.5 block font-bold text-red-600 underline hover:text-red-700"
-                            >
-                              Sign Up for a free account →
-                            </Link>
-                          )}
                         </div>
                       </div>
                     )}

@@ -615,6 +615,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AnimatedDrawer from "@/components/AnimatedDrawer";
 import BottomNav from "../BottomNav";
+import { performLogout } from "@/components/auth/auth-context";
 
 // The auth modal is dynamically imported so initial bundle remains lightweight.
 const SignupModal = dynamic(() => import("@/components/layout/signup-modal").then((m) => m.SignupModal), { ssr: false });
@@ -1151,10 +1152,9 @@ export function Navbar() {
     };
   }, [profileMenuOpen]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("ecampus_student");
-    window.dispatchEvent(new Event("ecampus-auth-change"));
+  const handleLogout = async () => {
     setStudent(null);
+    await performLogout("/");
   };
 
   const requestLogout = () => {
@@ -1162,9 +1162,9 @@ export function Navbar() {
     setShowLogoutConfirm(true);
   };
 
-  const confirmLogout = () => {
-    handleLogout();
+  const confirmLogout = async () => {
     setShowLogoutConfirm(false);
+    await handleLogout();
   };
 
   const isActive = (href: string) => {

@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
   try {
     const auth = await getAuthContext(req);
     if (!auth) {
-      return jsonError("UNAUTHORIZED", "Authentication required.", 401);
+      const res = jsonError("UNAUTHORIZED", "Authentication required.", 401);
+      clearAuthCookies(res);
+      return res;
     }
 
     await revokeAllUserSessions(auth.user.id);
@@ -27,6 +29,8 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (err: any) {
     console.error("Error in /auth/logout-all:", err);
-    return jsonError("INTERNAL_ERROR", "Failed to logout of all sessions.", 500);
+    const res = jsonError("INTERNAL_ERROR", "Failed to logout of all sessions.", 500);
+    clearAuthCookies(res);
+    return res;
   }
 }

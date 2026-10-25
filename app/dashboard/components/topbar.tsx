@@ -11,11 +11,13 @@ import {
   Phone,
   UserCircle,
   Settings,
+  LogOut,
   Gift,
   Copy,
   Check,
   type LucideIcon,
 } from "lucide-react";
+import { performLogout } from "@/components/auth/auth-context";
 import type { StudentProfile } from "../types";
 import type { SpinWheelReward } from "./spin-wheel/data";
 
@@ -333,6 +335,18 @@ export default function Topbar({
                   <Settings className="h-4 w-4 text-gray-400" />
                   Settings
                 </Link>
+                <div className="my-1 border-t border-gray-100" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileMenuOpen(false);
+                    performLogout("/");
+                  }}
+                  className="flex w-full items-center gap-2 px-3.5 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                >
+                  <LogOut className="h-4 w-4 text-red-500" />
+                  Log Out
+                </button>
               </div>
             )}
           </div>

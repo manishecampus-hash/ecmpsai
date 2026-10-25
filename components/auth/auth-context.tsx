@@ -93,31 +93,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refreshUser]);
 
   const logout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      setUser(null);
-      setStatus("UNAUTHENTICATED");
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("ecampus_student");
-        window.dispatchEvent(new Event("ecampus-auth-change"));
-      }
-      router.push("/");
-    }
+    await performLogout("/");
   };
 
   const logoutAll = async () => {
-    try {
-      await fetch("/api/auth/logout-all", { method: "POST" });
-    } finally {
-      setUser(null);
-      setStatus("UNAUTHENTICATED");
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("ecampus_student");
-        window.dispatchEvent(new Event("ecampus-auth-change"));
-      }
-      router.push("/");
-    }
+    await performLogoutAll("/login");
   };
 
   const isPhoneVerified = Boolean(
@@ -144,4 +124,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   return useContext(AuthContext);
+}
+
+/**
+ * Universal logout helper:
+ * 1. Calls /api/auth/logout to revoke server session & purge httpOnly cookies.
+ * 2. Clears client-side localStorage ("ecampus_student").
+ * 3. Dispatches "ecampus-auth-change" event so active tabs / components react.
+ * 4. Navigates cleanly via window.location.href to flush Next.js client router cache.
+ */
+export async function performLogout(redirectTo: string = "/") {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { "Cache-Control": "no-cache" },
+    });
+  } catch (err) {
+    console.error("Logout request failed:", err);
+  } finally {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("ecampus_student");
+      window.dispatchEvent(new Event("ecampus-auth-change"));
+      window.location.href = redirectTo;
+    }
+  }
+}
+
+/**
+ * Universal logout-all helper:
+ * Revokes all sessions across all devices and clears cookies and local storage.
+ */
+export async function performLogoutAll(redirectTo: string = "/login") {
+  try {
+    await fetch("/api/auth/logout-all", {
+      method: "POST",
+      headers: { "Cache-Control": "no-cache" },
+    });
+  } catch (err) {
+    console.error("Logout all request failed:", err);
+  } finally {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("ecampus_student");
+      window.dispatchEvent(new Event("ecampus-auth-change"));
+      window.location.href = redirectTo;
+    }
+  }
 }

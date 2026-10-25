@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { performLogout } from "@/components/auth/auth-context";
 
 const navLinks = [
   { href: "/search?q=degrees", label: "Degrees" },
@@ -72,11 +73,10 @@ export function Navbar() {
     return () => document.removeEventListener("click", handler);
   }, [dropdownOpen]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("ecampus_student");
-    setStudent(null);
+  const handleLogout = async () => {
     setDropdownOpen(false);
-    window.dispatchEvent(new Event("ecampus-auth-change"));
+    setStudent(null);
+    await performLogout("/");
   };
 
   const firstName = capitalize(student?.name?.split(" ")[0]);

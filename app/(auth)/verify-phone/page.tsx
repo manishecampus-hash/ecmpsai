@@ -22,6 +22,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { courseOptions } from "@/data/course-options";
 import { indianStates } from "@/data/indian-states";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
+import { performLogout } from "@/components/auth/auth-context";
 
 const countryCodes = [
   { code: "+91", flag: "🇮🇳", name: "India" },
@@ -259,8 +260,7 @@ function VerifyPhoneContent() {
   };
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.replace("/login");
+    await performLogout("/login");
   };
 
   if (showAdvisor) {

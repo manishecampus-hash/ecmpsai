@@ -20,6 +20,7 @@ import {
   Gift,
   LifeBuoy,
   LogOut,
+  Loader2,
   Copy,
   Check,
   Mail,
@@ -29,6 +30,7 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
+import { performLogout } from "@/components/auth/auth-context";
 
 type TabId = "notifications" | "security" | "preferences" | "rewards" | "support";
 
@@ -162,9 +164,11 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("ecampus_student");
-    router.push("/");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await performLogout("/");
   };
 
   return (
@@ -603,17 +607,29 @@ export default function SettingsPage() {
             <div className="mt-5 flex gap-2.5">
               <button
                 type="button"
+                disabled={isLoggingOut}
                 onClick={() => setLogoutConfirmOpen(false)}
-                className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]"
+                className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 active:scale-[0.98] disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="button"
+                disabled={isLoggingOut}
                 onClick={handleLogout}
-                className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98]"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-[0.98] disabled:opacity-60"
               >
-                Log Out
+                {isLoggingOut ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Logging out...</span>
+                  </>
+                ) : (
+                  <>
+                    <LogOut className="h-4 w-4" />
+                    <span>Log Out</span>
+                  </>
+                )}
               </button>
             </div>
           </motion.div>

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   REFRESH_TOKEN_COOKIE,
   revokeSessionByToken,
+  revokeAllUserSessions,
   clearAuthCookies,
 } from "@/lib/auth/tokens";
 import { getAuthContext } from "@/lib/auth/guards";
@@ -15,9 +16,12 @@ export async function POST(req: NextRequest) {
 
     if (refreshToken) {
       await revokeSessionByToken(refreshToken);
+    } else if (auth?.user?.id) {
+      // If refresh token cookie is absent/partitioned, revoke active sessions for this user
+      await revokeAllUserSessions(auth.user.id);
     }
 
-    if (auth?.user.id) {
+    if (auth?.user?.id) {
       await logAuthEvent("LOGOUT", {
         userId: auth.user.id,
         req,
@@ -33,7 +37,10 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (err: any) {
     console.error("Error in /auth/logout:", err);
-    const res = NextResponse.json({ success: true });
+    const res = NextResponse.json({
+      success: true,
+      message: "Logged out.",
+    });
     clearAuthCookies(res);
     return res;
   }

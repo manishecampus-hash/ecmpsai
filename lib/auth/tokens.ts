@@ -258,23 +258,32 @@ export function setAuthCookies(
  * Clears authentication cookies upon logout.
  */
 export function clearAuthCookies(response: NextResponse): void {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // Explicitly delete cookies
+  response.cookies.delete(ACCESS_TOKEN_COOKIE);
+  response.cookies.delete(REFRESH_TOKEN_COOKIE);
+
+  // Set expired cookies as a robust fallback for all browser engines
   response.cookies.set({
     name: ACCESS_TOKEN_COOKIE,
     value: "",
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax",
     path: "/",
     maxAge: 0,
+    expires: new Date(0),
   });
 
   response.cookies.set({
     name: REFRESH_TOKEN_COOKIE,
     value: "",
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax",
     path: "/",
     maxAge: 0,
+    expires: new Date(0),
   });
 }

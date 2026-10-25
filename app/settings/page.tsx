@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { performLogoutAll } from "@/components/auth/auth-context";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -196,12 +197,7 @@ export default function SettingsPage() {
       return;
     }
 
-    try {
-      await fetch("/api/auth/logout-all", { method: "POST" });
-      router.push("/login");
-    } catch {
-      router.push("/login");
-    }
+    await performLogoutAll("/login");
   };
 
   if (loading) {

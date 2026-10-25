@@ -7,11 +7,17 @@ import {
   SessionRecord,
   OAuthAccountRecord,
   AuthEventRecord,
+  LeadRecord,
 } from "./types";
 
 export async function getUsersCollection(): Promise<Collection<UserRecord>> {
   const db: Db = await getDb();
   return db.collection<UserRecord>("users");
+}
+
+export async function getLeadsCollection(): Promise<Collection<LeadRecord>> {
+  const db: Db = await getDb();
+  return db.collection<LeadRecord>("leads");
 }
 
 export async function getOtpChallengesCollection(): Promise<
@@ -112,8 +118,16 @@ export async function ensureAuthIndexes(): Promise<void> {
     await events.createIndex({ user_id: 1, created_at: -1 });
     await events.createIndex({ event_type: 1, created_at: -1 });
 
+    // 6. Leads Collection Indexes
+    const leads = db.collection("leads");
+    await leads.createIndex({ id: 1 }, { unique: true });
+    await leads.createIndex({ phone: 1 });
+    await leads.createIndex({ email: 1 });
+    await leads.createIndex({ source: 1, created_at: -1 });
+    await leads.createIndex({ created_at: -1 });
+
     indexesEnsured = true;
-    console.log("✓ Auth database indexes ensured successfully.");
+    console.log("✓ Auth and Leads database indexes ensured successfully.");
   } catch (err) {
     console.error("Warning: Failed to ensure auth database indexes:", err);
   }

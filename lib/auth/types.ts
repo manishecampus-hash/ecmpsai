@@ -124,3 +124,23 @@ export interface AuthErrorResponse {
     retry_after?: number | null;
   };
 }
+
+export interface LeadRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  course?: string;
+  coursesInterested?: string[];
+  state?: string;
+  source: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  referralCode?: string;
+  whatsappOptIn?: boolean;
+  advisorProfile?: Record<string, any>;
+  status?: "new" | "contacted" | "enrolled" | "closed";
+  created_at: Date;
+  updated_at: Date;
+}

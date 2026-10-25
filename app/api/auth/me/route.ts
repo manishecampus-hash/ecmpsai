@@ -1,8 +1,7 @@
 // app/api/auth/me/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthContext } from "@/lib/auth/guards";
-import { getSessionsCollection, getUsersCollection } from "@/lib/auth/db";
-import { getDb } from "@/lib/mongodb";
+import { getSessionsCollection } from "@/lib/auth/db";
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,60 +26,16 @@ export async function GET(req: NextRequest) {
       expires_at: { $gt: new Date() },
     });
 
-    // Merge from web_users if fields are missing in users record
-    let webUser: any = null;
-    if (!user.advisorProfile || !user.full_name || !user.spinReward) {
-      try {
-        const db = await getDb();
-        const webUsers = db.collection("web_users");
-        const orClauses: any[] = [];
-        if (user.phone_e164) {
-          const cleaned = user.phone_e164.replace(/[^\d+]/g, "").trim();
-          const digits = cleaned.replace(/\D/g, "");
-          const last10 = digits.slice(-10);
-          if (cleaned) orClauses.push({ phone: cleaned });
-          if (digits) orClauses.push({ phone: digits });
-          if (last10) {
-            orClauses.push({ phone: last10 });
-            orClauses.push({ phone: `+91${last10}` });
-            orClauses.push({ phone: `91${last10}` });
-          }
-        }
-        if (user.email) {
-          orClauses.push({ email: user.email.toLowerCase().trim() });
-        }
-        if (orClauses.length > 0) {
-          webUser = await webUsers.findOne({ $or: orClauses });
-        }
-
-        // If web_users has spinReward/spinSkipped and users does not, backfill users
-        if (webUser && (webUser.spinReward || webUser.spinSkipped)) {
-          const usersCol = await getUsersCollection();
-          await usersCol.updateOne(
-            { id: user.id },
-            {
-              $set: {
-                ...(webUser.spinReward && !user.spinReward ? { spinReward: webUser.spinReward } : {}),
-                ...(webUser.spinSkipped && !user.spinSkipped ? { spinSkipped: true } : {}),
-                updated_at: new Date(),
-              },
-            }
-          );
-        }
-      } catch {}
-    }
-
-    const fullName = user.full_name || webUser?.name || "";
+    const fullName = user.full_name || "";
     const courses =
       user.coursesInterested ||
-      webUser?.coursesInterested ||
       user.course_interested ||
-      (webUser?.course ? [webUser.course] : []);
-    const course = user.course || webUser?.course || courses[0] || "";
-    const state = user.state || webUser?.state || "";
-    const advisorProfile = user.advisorProfile || webUser?.advisorProfile || null;
-    const spinReward = user.spinReward || webUser?.spinReward || null;
-    const spinSkipped = Boolean(user.spinSkipped || webUser?.spinSkipped);
+      (user.course ? [user.course] : []);
+    const course = user.course || courses[0] || "";
+    const state = user.state || "";
+    const advisorProfile = user.advisorProfile || null;
+    const spinReward = user.spinReward || null;
+    const spinSkipped = Boolean(user.spinSkipped);
 
     return NextResponse.json({
       authenticated: true,

@@ -484,7 +484,7 @@ export function SignupModal({
         body: JSON.stringify(student),
       });
     } catch (saveErr) {
-      console.error("Failed saving to web_users database:", saveErr);
+      console.error("Failed saving registration details:", saveErr);
     } finally {
       setLoading(false);
     }

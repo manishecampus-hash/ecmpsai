@@ -16,6 +16,31 @@ export async function POST(req: Request) {
     } = body;
     const campaign = utm_campaign || campaign_name;
 
+    // Persist lead directly into MongoDB 'leads' collection
+    try {
+      const { getLeadsCollection } = await import("@/lib/auth/db");
+      const leads = await getLeadsCollection();
+      const { randomUUID } = await import("crypto");
+      const now = new Date();
+      await leads.insertOne({
+        id: randomUUID(),
+        name: name?.trim() || "",
+        email: email?.trim().toLowerCase() || "",
+        phone: phone?.trim() || "",
+        course: course || "",
+        state: state || "",
+        source: utm_source ? `Inquiry (${utm_source})` : "Website Application Form",
+        utm_source,
+        utm_medium,
+        utm_campaign: campaign,
+        status: "new",
+        created_at: now,
+        updated_at: now,
+      });
+    } catch (dbErr) {
+      console.error("Failed to save lead to MongoDB 'leads' collection:", dbErr);
+    }
+
     // Pulling from .env.local
     const token = process.env.ZEPTO_TOKEN;
     const adminEmail = process.env.ADMIN_EMAIL;

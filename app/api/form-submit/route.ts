@@ -12,6 +12,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Persist lead directly into MongoDB 'leads' collection
+    try {
+      const { getLeadsCollection } = await import("@/lib/auth/db");
+      const leads = await getLeadsCollection();
+      const { randomUUID } = await import("crypto");
+      const now = new Date();
+      await leads.insertOne({
+        id: randomUUID(),
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        course,
+        state,
+        source: "eCampus Lead Form",
+        status: "new",
+        created_at: now,
+        updated_at: now,
+      });
+    } catch (dbErr) {
+      console.error("Failed to save lead to MongoDB 'leads' collection:", dbErr);
+    }
+
     // Try to reach old project - with error handling
     let oldProjectData = null;
     let oldProjectSuccess = false;

@@ -113,30 +113,14 @@ export async function POST(req: NextRequest) {
       metadata: { phone_e164: normalized.e164 },
     });
 
-    // Also update web_users if matching record exists
-    let webUser: any = null;
-    try {
-      const db = await (await import("@/lib/mongodb")).getDb();
-      const webUsers = db.collection("web_users");
-      if (user.email) {
-        await webUsers.updateOne(
-          { email: user.email },
-          { $set: { phone: normalized.e164, phoneVerified: true, updatedAt: now } }
-        );
-        webUser = await webUsers.findOne({ email: user.email });
-      }
-    } catch {}
-
-    const mergedName = updatedUser.full_name?.trim() || webUser?.name?.trim() || "";
-    const mergedState = updatedUser.state || webUser?.state || "";
+    const mergedName = updatedUser.full_name?.trim() || "";
+    const mergedState = updatedUser.state || "";
     const mergedCourses =
       updatedUser.coursesInterested ||
-      webUser?.coursesInterested ||
       updatedUser.course_interested ||
-      (webUser?.course ? [webUser.course] : []);
-    const mergedCourse = updatedUser.course || webUser?.course || mergedCourses[0] || "";
-    const mergedAdvisorProfile =
-      updatedUser.advisorProfile || webUser?.advisorProfile || null;
+      (updatedUser.course ? [updatedUser.course] : []);
+    const mergedCourse = updatedUser.course || mergedCourses[0] || "";
+    const mergedAdvisorProfile = updatedUser.advisorProfile || null;
 
     const hasProfileDetails = Boolean(
       mergedName.trim() &&
@@ -154,7 +138,7 @@ export async function POST(req: NextRequest) {
     const studentData = {
       id: updatedUser.id,
       name: mergedName,
-      email: updatedUser.email || webUser?.email || "",
+      email: updatedUser.email || "",
       phone: normalized.e164,
       state: mergedState,
       course: mergedCourse,

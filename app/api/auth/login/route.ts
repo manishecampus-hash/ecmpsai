@@ -3,13 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { normalizePhone } from "@/lib/auth/phone";
 import { createAndSendOtpChallenge, verifyOtpChallenge } from "@/lib/auth/otp";
 import { getUsersCollection } from "@/lib/auth/db";
-import { getDb } from "@/lib/mongodb";
 import { verifyPassword } from "@/lib/auth/password";
 import { createAccessToken, createSession, setAuthCookies } from "@/lib/auth/tokens";
 import { jsonError } from "@/lib/auth/guards";
 import { logAuthEvent } from "@/lib/auth/audit";
 import { UserRecord } from "@/lib/auth/types";
-import { randomUUID } from "crypto";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,8 +18,6 @@ export async function POST(req: NextRequest) {
     const isEmail = rawId.includes("@") || (!rawId && Boolean(email));
 
     const users = await getUsersCollection();
-    const db = await getDb();
-    const webUsers = db.collection("web_users");
     const now = new Date();
 
     // ─────────────────────────────────────────────────────────────
@@ -41,11 +37,8 @@ export async function POST(req: NextRequest) {
       const existingInUsers = await users.findOne(
         targetEmail ? { email: targetEmail } : { phone_e164: targetPhone }
       );
-      const existingInWebUsers = await webUsers.findOne(
-        targetEmail ? { email: targetEmail } : { phone: targetPhone }
-      );
 
-      const exists = Boolean(existingInUsers || existingInWebUsers);
+      const exists = Boolean(existingInUsers);
       return NextResponse.json({ success: true, exists });
     }
 
@@ -71,11 +64,10 @@ export async function POST(req: NextRequest) {
         channel = "SMS";
       }
 
-      // Check if user account exists
+      // Check if user account exists in users collection (single source of truth)
       const userInUsers = await users.findOne(isEmail ? { email: target } : { phone_e164: target });
-      const userInWebUsers = await webUsers.findOne(isEmail ? { email: target } : { phone: target });
 
-      if (!userInUsers && !userInWebUsers) {
+      if (!userInUsers) {
         return NextResponse.json(
           {
             success: false,
@@ -93,7 +85,7 @@ export async function POST(req: NextRequest) {
         undefined;
       const userAgent = req.headers.get("user-agent") || undefined;
 
-      const userName = userInUsers?.full_name || userInWebUsers?.name || undefined;
+      const userName = userInUsers?.full_name || undefined;
 
       const { challengeId, resendCooldown } = await createAndSendOtpChallenge({
         target,
@@ -123,9 +115,8 @@ export async function POST(req: NextRequest) {
       }
 
       const user = await users.findOne({ email: normalizedEmail });
-      const webUser = await webUsers.findOne({ email: normalizedEmail });
 
-      if (!user && !webUser) {
+      if (!user) {
         return NextResponse.json(
           {
             success: false,
@@ -137,7 +128,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      if (!user || !user.password_hash) {
+      if (!user.password_hash) {
         await verifyPassword(password, "$2a$12$e80MvQ0a3j82hZ1V6iVzK.R1Oqf0hC1k3Ue3vV9y3d7k5X1w2q3e4");
         return jsonError("INVALID_CREDENTIALS", "Invalid email or password.", 401);
       }
@@ -147,27 +138,23 @@ export async function POST(req: NextRequest) {
         return jsonError("INVALID_CREDENTIALS", "Invalid email or password.", 401);
       }
 
-      const mergedName = user.full_name?.trim() || webUser?.name?.trim() || "";
+      const mergedName = user.full_name?.trim() || "";
       const mergedCourses =
         user.coursesInterested ||
-        webUser?.coursesInterested ||
         user.course_interested ||
-        (webUser?.course ? [webUser.course] : []);
-      const mergedCourse = user.course || webUser?.course || mergedCourses[0] || "";
-      const mergedState = user.state || webUser?.state || "";
-      const mergedAdvisorProfile = user.advisorProfile || webUser?.advisorProfile || null;
-      const mergedSpinReward = user.spinReward || webUser?.spinReward || null;
-      const mergedSpinSkipped = Boolean(user.spinSkipped || webUser?.spinSkipped);
+        (user.course ? [user.course] : []);
+      const mergedCourse = user.course || mergedCourses[0] || "";
+      const mergedState = user.state || "";
+      const mergedAdvisorProfile = user.advisorProfile || null;
+      const mergedSpinReward = user.spinReward || null;
+      const mergedSpinSkipped = Boolean(user.spinSkipped);
 
       const ip =
         req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
         req.headers.get("x-real-ip") ||
         undefined;
 
-      const isPhoneVerified = Boolean(
-        (user.phone_e164 && user.phone_verified_at) ||
-        (webUser?.phone && webUser?.phoneVerified)
-      );
+      const isPhoneVerified = Boolean(user.phone_e164 && user.phone_verified_at);
       const requiresPhoneVerification =
         !isPhoneVerified || user.status === "PENDING_PHONE_VERIFICATION";
 
@@ -206,7 +193,7 @@ export async function POST(req: NextRequest) {
         id: user.id,
         name: mergedName,
         email: user.email || normalizedEmail,
-        phone: user.phone_e164 || webUser?.phone || "",
+        phone: user.phone_e164 || "",
         state: mergedState,
         course: mergedCourse,
         coursesInterested: mergedCourses,
@@ -262,20 +249,10 @@ export async function POST(req: NextRequest) {
         return jsonError("OTP_INVALID", verification.error || "Invalid verification code.", 400);
       }
 
-      // Find user in users or web_users
-      let user = await users.findOne(isEmail ? { email: target } : { phone_e164: target });
-      const webUser = await webUsers.findOne(isEmail ? { email: target } : { phone: target });
+      // Find user in users collection (single source of truth)
+      const user = await users.findOne(isEmail ? { email: target } : { phone_e164: target });
 
-      // If user not found by primary target, check if account exists by associated email/phone
-      if (!user && webUser) {
-        if (!isEmail && webUser.email) {
-          user = await users.findOne({ email: webUser.email.trim().toLowerCase() });
-        } else if (isEmail && webUser.phone) {
-          user = await users.findOne({ phone_e164: webUser.phone });
-        }
-      }
-
-      if (!user && !webUser) {
+      if (!user) {
         return NextResponse.json(
           {
             success: false,
@@ -287,77 +264,45 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      let activeUser: UserRecord;
-
       const isTargetPhoneVerified = Boolean(
-        (!isEmail) ||
-        (user?.phone_e164 && user?.phone_verified_at) ||
-        (webUser?.phone && webUser?.phoneVerified)
+        (!isEmail) || (user.phone_e164 && user.phone_verified_at)
       );
       const targetStatus = isTargetPhoneVerified ? "ACTIVE" : "PENDING_PHONE_VERIFICATION";
 
-      if (!user) {
-        // If user was in web_users but not users collection, create active user record
-        const newId = randomUUID();
-        const newUser: UserRecord = {
-          id: newId,
-          phone_e164: isEmail ? (webUser?.phone || null) : target,
-          phone_verified_at: isEmail ? (webUser?.phoneVerified ? now : null) : now,
-          email: isEmail ? target : (webUser?.email ? webUser.email.trim().toLowerCase() : null),
-          email_verified_at: isEmail ? now : null,
-          password_hash: null,
-          full_name: webUser?.name || "",
-          status: targetStatus,
-          failed_login_attempts: 0,
-          locked_until: null,
-          last_login_at: now,
-          created_at: now,
-          updated_at: now,
-          state: webUser?.state || "",
-          coursesInterested: webUser?.coursesInterested || (webUser?.course ? [webUser.course] : []),
-          course: webUser?.course || "",
-          advisorProfile: webUser?.advisorProfile || undefined,
-          spinReward: webUser?.spinReward || undefined,
-          spinSkipped: Boolean(webUser?.spinSkipped) || undefined,
-        };
-        await users.insertOne(newUser as any);
-        activeUser = newUser;
-      } else {
-        await users.updateOne(
-          { id: user.id },
-          {
-            $set: {
-              ...(isEmail
-                ? { email_verified_at: now }
-                : { phone_e164: target, phone_verified_at: now }),
-              status: targetStatus,
-              last_login_at: now,
-              updated_at: now,
-            },
-          }
-        );
-        activeUser = {
-          ...user,
-          phone_e164: isEmail ? user.phone_e164 : target,
-          phone_verified_at: isEmail ? user.phone_verified_at : now,
-          status: targetStatus,
-          last_login_at: now,
-        };
-      }
+      await users.updateOne(
+        { id: user.id },
+        {
+          $set: {
+            ...(isEmail
+              ? { email_verified_at: now }
+              : { phone_e164: target, phone_verified_at: now }),
+            status: targetStatus,
+            last_login_at: now,
+            updated_at: now,
+          },
+        }
+      );
 
-      const mergedName = activeUser.full_name?.trim() || webUser?.name?.trim() || "";
-      const mergedEmail = activeUser.email || (webUser?.email ? webUser.email.trim().toLowerCase() : "");
-      const mergedPhone = activeUser.phone_e164 || webUser?.phone || "";
-      const mergedState = activeUser.state || webUser?.state || "";
+      const activeUser: UserRecord = {
+        ...user,
+        phone_e164: isEmail ? user.phone_e164 : target,
+        phone_verified_at: isEmail ? user.phone_verified_at : now,
+        status: targetStatus,
+        last_login_at: now,
+      };
+
+      const mergedName = activeUser.full_name?.trim() || "";
+      const mergedEmail = activeUser.email || "";
+      const mergedPhone = activeUser.phone_e164 || "";
+      const mergedState = activeUser.state || "";
       const mergedCourses =
         activeUser.coursesInterested ||
-        webUser?.coursesInterested ||
         activeUser.course_interested ||
-        (webUser?.course ? [webUser.course] : []);
-      const mergedCourse = activeUser.course || webUser?.course || mergedCourses[0] || "";
-      const mergedAdvisorProfile = activeUser.advisorProfile || webUser?.advisorProfile || null;
-      const mergedSpinReward = activeUser.spinReward || webUser?.spinReward || null;
-      const mergedSpinSkipped = Boolean(activeUser.spinSkipped || webUser?.spinSkipped);
+        (activeUser.course ? [activeUser.course] : []);
+      const mergedCourse = activeUser.course || mergedCourses[0] || "";
+      const mergedAdvisorProfile = activeUser.advisorProfile || null;
+      const mergedSpinReward = activeUser.spinReward || null;
+      const mergedSpinSkipped = Boolean(activeUser.spinSkipped);
 
       // Ensure updated fields are saved in users collection
       if (mergedName || mergedAdvisorProfile || mergedState) {
@@ -397,8 +342,7 @@ export async function POST(req: NextRequest) {
       });
 
       const isPhoneVerified = Boolean(
-        (activeUser.phone_e164 && activeUser.phone_verified_at) ||
-        (webUser?.phone && webUser?.phoneVerified)
+        activeUser.phone_e164 && activeUser.phone_verified_at
       );
       const requiresPhoneVerification =
         isEmail && (!isPhoneVerified || activeUser.status === "PENDING_PHONE_VERIFICATION");

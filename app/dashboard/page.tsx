@@ -170,7 +170,7 @@ export default function DashboardPage() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Save the win immediately to localStorage and persist to database collections (users and web_users)
+  // Save the win immediately to localStorage and persist to database (users collection)
   const handleRewardWon = async (reward: SpinWheelReward) => {
     setWonReward(reward);
     const raw = localStorage.getItem("ecampus_student");

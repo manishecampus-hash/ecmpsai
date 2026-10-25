@@ -74,19 +74,11 @@ export async function POST(req: NextRequest) {
       webUserUpdate.spinSkipped = false;
     }
 
-    // 1. Update users collection
+    // Update users collection (sole source of truth for user auth & rewards)
     if (userFilters.length > 0) {
       await db.collection("users").updateMany(
         { $or: userFilters },
         { $set: userUpdate }
-      );
-    }
-
-    // 2. Update web_users collection
-    if (webUserFilters.length > 0) {
-      await db.collection("web_users").updateMany(
-        { $or: webUserFilters },
-        { $set: webUserUpdate }
       );
     }
 
@@ -144,22 +136,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Check web_users collection
-    if (!spinReward && (phone || email)) {
-      const webFilters: any[] = [];
-      if (phone) {
-        const variants = getPhoneVariants(phone);
-        variants.forEach((p) => webFilters.push({ phone: p }));
-      }
-      if (email) webFilters.push({ email: email.toLowerCase().trim() });
-      if (webFilters.length > 0) {
-        const webUser = await db.collection("web_users").findOne({ $or: webFilters });
-        if (webUser) {
-          if (webUser.spinReward) spinReward = webUser.spinReward;
-          if (webUser.spinSkipped) spinSkipped = true;
-        }
-      }
-    }
 
     return NextResponse.json({
       success: true,

@@ -653,7 +653,24 @@ export default function AIDegreeMatcherPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem("ecampus_student");
-    if (saved) setStudent(JSON.parse(saved));
+    if (saved) {
+      try {
+        const s: StudentProfile = JSON.parse(saved);
+        setStudent(s);
+        const courseStr = (
+          s.advisorProfile?.coursePreference ||
+          s.course ||
+          s.coursesInterested?.[0] ||
+          ""
+        ).toUpperCase();
+        for (const deg of DEGREES) {
+          if (courseStr.includes(deg)) {
+            setDegrees([deg]);
+            break;
+          }
+        }
+      } catch {}
+    }
   }, []);
 
   // Course picked in the AI Advisor questionnaire, e.g. "MBA" — personalises the AI card

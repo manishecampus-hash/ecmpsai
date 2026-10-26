@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUsersCollection, getLeadsCollection, ensureAuthIndexes } from "@/lib/auth/db";
 import { randomUUID } from "crypto";
+import { getAuthContext } from "@/lib/auth/guards";
 
 export async function POST(req: NextRequest) {
   try {
     await ensureAuthIndexes();
+    const auth = await getAuthContext(req);
 
     const body = await req.json();
     const {
@@ -60,34 +62,27 @@ export async function POST(req: NextRequest) {
     if (cleanEmail) userUpdateDoc.email = cleanEmail;
     if (advisorProfile) userUpdateDoc.advisorProfile = advisorProfile;
 
-    const userFilter =
-      cleanPhone && cleanEmail
-        ? {
-            $or: [
-              { phone_e164: cleanPhone },
-              { phone_e164: cleanPhone.replace(/[^\d+]/g, "") },
-              { email: cleanEmail },
-            ],
-          }
-        : cleanPhone
-        ? {
-            $or: [
-              { phone_e164: cleanPhone },
-              { phone_e164: cleanPhone.replace(/[^\d+]/g, "") },
-            ],
-          }
-        : { email: cleanEmail };
+    let userFilter: Record<string, any>;
+    if (auth?.user?.id) {
+      userFilter = { id: auth.user.id };
+    } else if (cleanPhone) {
+      userFilter = {
+        $or: [
+          { phone_e164: cleanPhone },
+          { phone_e164: cleanPhone.replace(/[^\d+]/g, "") },
+        ],
+      };
+    } else {
+      userFilter = { email: cleanEmail };
+    }
 
     await users.updateOne(userFilter, { $set: userUpdateDoc });
 
     // 2. LOG / UPSERT INTO 'leads' COLLECTION (Single Source of Truth for Lead Generation)
     const leads = await getLeadsCollection();
-    const leadFilter =
-      cleanPhone && cleanEmail
-        ? { $or: [{ phone: cleanPhone }, { email: cleanEmail }] }
-        : cleanPhone
-        ? { phone: cleanPhone }
-        : { email: cleanEmail };
+    const leadFilter = cleanPhone
+      ? { phone: cleanPhone }
+      : { email: cleanEmail };
 
     const leadData = {
       name: trimmedName,

@@ -70,14 +70,23 @@ export async function ensureAuthIndexes(): Promise<void> {
         name: "idx_users_phone_e164_unique",
       }
     );
+    try {
+      await users.dropIndex("idx_users_email_unique");
+    } catch {
+      // index might already be dropped
+    }
     await users.createIndex(
       { email: 1 },
       {
         unique: true,
-        partialFilterExpression: { email: { $type: "string" } },
-        name: "idx_users_email_unique",
+        partialFilterExpression: {
+          email: { $type: "string" },
+          email_verified_at: { $type: "date" },
+        },
+        name: "idx_users_email_verified_unique",
       }
     );
+    await users.createIndex({ email: 1 }, { name: "idx_users_email" });
     await users.createIndex({ status: 1 });
 
     // 2. OTP Challenges Indexes (with TTL auto-expiry)

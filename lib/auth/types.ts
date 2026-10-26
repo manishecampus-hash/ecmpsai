@@ -15,6 +15,7 @@ export type OtpPurpose =
   | "phone_change_old"
   | "phone_change_new"
   | "email_verify"
+  | "email_change"
   | "password_reset";
 
 export interface UserRecord {
@@ -103,6 +104,9 @@ export interface AuthEventRecord {
     | "PHONE_CHANGE_COMPLETED"
     | "EMAIL_VERIFY_SENT"
     | "EMAIL_VERIFIED"
+    | "EMAIL_CHANGE_INITIATED"
+    | "EMAIL_CONFLICT_RESOLVED_UNLINKED"
+    | "EMAIL_CONFLICT_RESOLVED_DELETED"
     | "PASSWORD_RESET_REQUESTED"
     | "PASSWORD_RESET_COMPLETED"
     | "SESSION_REFRESHED"

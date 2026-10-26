@@ -4,7 +4,9 @@ export type StudentProfile = {
   id?: string;
   name?: string;
   email?: string;
+  email_verified_at?: string | Date | null;
   phone?: string;
+  phone_verified_at?: string | Date | null;
   course?: string;
   coursesInterested?: string[];
   state?: string;

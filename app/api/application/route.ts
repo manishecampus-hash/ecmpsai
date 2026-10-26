@@ -41,16 +41,17 @@ export async function POST(req: Request) {
       console.error("Failed to save lead to MongoDB 'leads' collection:", dbErr);
     }
 
-    // Pulling from .env.local
+    // Pulling from env
     const token = process.env.ZEPTO_TOKEN;
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const endpoint = process.env.ZEPTO_ENDPOINT;
+    const adminEmail = process.env.ADMIN_EMAIL || "tausifshahbaz@gmail.com";
+    const endpoint = process.env.ZEPTO_ENDPOINT || "https://api.zeptomail.in/v1.1/email";
 
-    // Safety check: ensure env variables are loaded
-    if (!token || !adminEmail || !endpoint) {
+    // Safety check: ensure token is present
+    if (!token) {
+      console.warn("ZEPTO_TOKEN missing, lead saved to MongoDB but email notification skipped.");
       return NextResponse.json(
-        { success: false, message: "Server configuration missing" },
-        { status: 500 },
+        { success: true, message: "Application submitted successfully" },
+        { status: 200 }
       );
     }
 

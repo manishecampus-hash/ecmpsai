@@ -7,7 +7,7 @@ import ProgramsSection from "@/components/home/online-courses";
 import { Footer } from "@/components/layout/footer";
 import FAQ from "@/components/home/faq";
 import { GraduatesMarquee } from "@/components/home/graduates-marquee";
-import { MediaSection } from "@/components/home/media";
+import { StudentStoriesSection } from "@/components/home/student-stories";
 import { CarouselBanner } from "@/components/home/carousel-banner";
 import type { GraduateTestimonialT } from "@/data/graduates";
 
@@ -140,7 +140,6 @@ export default async function HomePage() {
 
   const banners = data?.banner;
   const trendingCourses = data?.trendingCourses;
-  const mediaArticles = data?.media;
   const mappedGraduates = mapSuccessStories(data?.successStories);
   const faqs = data?.faqs;
   const jobRoles = data?.jobRoles;
@@ -155,7 +154,7 @@ export default async function HomePage() {
       <PopularCoursesSection courses={trendingCourses} />
       <CareerExplorer jobRoles={jobRoles} title={jobRoleTitle} />
       <ProgramsSection programData={data?.program} />
-      <MediaSection articles={mediaArticles} />
+      <StudentStoriesSection />
       <GraduatesMarquee graduates={mappedGraduates} />
       <FAQ items={faqs} />
       <Footer />

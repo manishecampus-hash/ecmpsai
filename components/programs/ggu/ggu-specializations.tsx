@@ -164,6 +164,19 @@ export default function GguTopSpecializations() {
   const currentRows = filteredRows.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleDownload = (specialization: string) => {
+    let isAuth = false;
+    try {
+      const raw = localStorage.getItem("ecampus_student");
+      if (raw) {
+        const u = JSON.parse(raw);
+        isAuth = Boolean(u && (u.id || u.phone || u.email));
+      }
+    } catch {}
+
+    if (!isAuth) {
+      window.dispatchEvent(new CustomEvent("open-signup"));
+      return;
+    }
     alert(`Downloading Brochure for: ${specialization}`);
   };
 

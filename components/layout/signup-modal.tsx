@@ -541,7 +541,7 @@ export function SignupModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain">
+        <div data-auth-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain">
           {/* Backdrop with smooth blur */}
           <motion.div
             initial={{ opacity: 0 }}

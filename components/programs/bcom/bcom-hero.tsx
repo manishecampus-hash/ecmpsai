@@ -100,7 +100,23 @@ export default function BComHero() {
 
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+                onClick={() => {
+                  let isAuth = false;
+                  try {
+                    const raw = localStorage.getItem("ecampus_student");
+                    if (raw) {
+                      const u = JSON.parse(raw);
+                      isAuth = Boolean(u && (u.id || u.phone || u.email));
+                    }
+                  } catch {}
+
+                  if (!isAuth) {
+                    window.dispatchEvent(new CustomEvent("open-signup"));
+                    return;
+                  }
+                  alert("Downloading B.Com Brochure");
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 cursor-pointer"
               >
                 <Download className="h-4 w-4" />
                 Brochure

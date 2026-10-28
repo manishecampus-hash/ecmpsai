@@ -15,6 +15,7 @@ const REGION_TABS = [
   "South India",
   "West India",
   "Central India",
+  "North-East India",
   "International",
 ];
 
@@ -36,49 +37,104 @@ const regionBgColor: Record<string, string> = {
 
 function getRegionFromLocation(loc: string): string {
   const l = (loc || "").toLowerCase();
+
+  // 1. South India
   if (
-    l.includes("bengaluru") ||
-    l.includes("bangalore") ||
-    l.includes("karnataka") ||
+    l.includes("tamil nadu") ||
+    l.includes("tamilnadu") ||
+    l.includes("chennai") ||
+    l.includes("chepauk") ||
+    l.includes("coimbatore") ||
+    l.includes("vellore") ||
+    l.includes("tiruchirappalli") ||
+    l.includes("kerala") ||
+    l.includes("malappuram") ||
+    l.includes("kochi") ||
+    l.includes("thiruvananthapuram") ||
+    l.includes("telangana") ||
+    l.includes("hyderabad") ||
     l.includes("andhra") ||
     l.includes("visakhapatnam") ||
+    l.includes("vadlamudi") ||
+    l.includes("karnataka") ||
+    l.includes("bengaluru") ||
+    l.includes("bangalore") ||
+    l.includes("manipal") ||
     l.includes("south")
   ) {
     return "South India";
   }
+
+  // 2. West India
   if (
     l.includes("pune") ||
+    l.includes("pimpri") ||
     l.includes("mumbai") ||
+    l.includes("nagpur") ||
     l.includes("maharashtra") ||
     l.includes("gujarat") ||
+    l.includes("ahmedabad") ||
+    l.includes("surat") ||
+    l.includes("goa") ||
     l.includes("west")
   ) {
     return "West India";
   }
+
+  // 3. Central India
   if (
     l.includes("raipur") ||
-    l.includes("central") ||
+    l.includes("bilaspur") ||
     l.includes("chhattisgarh") ||
-    l.includes("madhya pradesh")
+    l.includes("madhya pradesh") ||
+    l.includes("bhopal") ||
+    l.includes("indore") ||
+    l.includes("central")
   ) {
     return "Central India";
   }
+
+  // 4. International
+  // Use regex with word boundaries for short abbreviations like 'uk', 'usa' so words like 'Chepauk' or 'Kurukshetra' are never falsely matched
   if (
     l.includes("switzerland") ||
     l.includes("france") ||
-    l.includes("international") ||
+    l.includes("paris") ||
+    l.includes("geneva") ||
+    l.includes("lucerne") ||
+    l.includes("bahnhofplatz") ||
+    l.includes("united kingdom") ||
+    l.includes("london") ||
+    l.includes("united states") ||
     l.includes("california") ||
     l.includes("florida") ||
-    l.includes("uk") ||
-    l.includes("geneva") ||
     l.includes("orlando") ||
-    l.includes("london")
+    l.includes("jacksonville") ||
+    l.includes("wisconsin") ||
+    l.includes("madison") ||
+    l.includes("aliso viejo") ||
+    l.includes("malta") ||
+    l.includes("valletta") ||
+    l.includes("st. julian") ||
+    l.includes("international") ||
+    /\b(uk|u\.k\.|usa|u\.s\.a\.)\b/.test(l)
   ) {
     return "International";
   }
-  if (l.includes("sikkim") || l.includes("north-east")) {
+
+  if (
+    l.includes("sikkim") ||
+    l.includes("assam") ||
+    l.includes("tripura") ||
+    l.includes("guwahati") ||
+    l.includes("dibrugarh") ||
+    l.includes("gangtok") ||
+    l.includes("agartala") ||
+    l.includes("north-east")
+  ) {
     return "North-East India";
   }
+
   return "North India";
 }
 

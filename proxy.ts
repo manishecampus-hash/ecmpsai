@@ -7,6 +7,7 @@ const JWT_SECRET = new TextEncoder().encode(
 );
 
 const ACCESS_TOKEN_COOKIE = "ecampus_access_token";
+const REFRESH_TOKEN_COOKIE = "ecampus_refresh_token";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/settings", "/account"];
 
@@ -76,6 +77,50 @@ export async function proxy(request: NextRequest) {
   // 6. Gated Route Protection
   if (isProtectedPath) {
     if (!tokenPayload) {
+      // Check if a 30-day refresh token cookie exists to automatically renew the session
+      const rawRefreshToken = request.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
+      if (rawRefreshToken) {
+        try {
+          const refreshUrl = new URL("/api/auth/token/refresh", request.url);
+          const refreshRes = await fetch(refreshUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              cookie: `${REFRESH_TOKEN_COOKIE}=${rawRefreshToken}`,
+            },
+            body: JSON.stringify({ refresh_token: rawRefreshToken }),
+          });
+
+          if (refreshRes.ok) {
+            const setCookies = refreshRes.headers.getSetCookie?.() || [];
+            let renewedToken: string | null = null;
+            for (const c of setCookies) {
+              const match = c.match(/ecampus_access_token=([^;]+)/);
+              if (match) {
+                renewedToken = match[1];
+                break;
+              }
+            }
+
+            if (renewedToken) {
+              try {
+                const { payload } = await jwtVerify(renewedToken, JWT_SECRET);
+                tokenPayload = payload;
+                if (tokenPayload?.status === "ACTIVE") {
+                  const nextRes = NextResponse.next();
+                  for (const c of setCookies) {
+                    nextRes.headers.append("set-cookie", c);
+                  }
+                  return nextRes;
+                }
+              } catch {}
+            }
+          }
+        } catch {
+          // Ignore refresh network failure and proceed to login redirect
+        }
+      }
+
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("returnUrl", pathname);
       return NextResponse.redirect(loginUrl);

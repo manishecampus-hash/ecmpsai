@@ -13,7 +13,7 @@ const JWT_SECRET = new TextEncoder().encode(
 export const ACCESS_TOKEN_COOKIE = "ecampus_access_token";
 export const REFRESH_TOKEN_COOKIE = "ecampus_refresh_token";
 
-const ACCESS_TOKEN_TTL_SEC = 15 * 60; // 15 minutes
+const ACCESS_TOKEN_TTL_SEC = 30 * 24 * 60 * 60; // 30 days
 const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export interface AccessTokenPayload {

@@ -34,12 +34,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me", {
+      let res = await fetch("/api/auth/me", {
         headers: { "Cache-Control": "no-cache" },
       });
-      const data = await res.json();
+      let data = await res.json();
 
-      if (data.authenticated && data.user) {
+      // If access token is unauthenticated, attempt silent refresh with refresh token
+      if (!data?.authenticated) {
+        try {
+          const refreshRes = await fetch("/api/auth/token/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+          if (refreshRes.ok) {
+            const retryRes = await fetch("/api/auth/me", {
+              headers: { "Cache-Control": "no-cache" },
+            });
+            data = await retryRes.json();
+          }
+        } catch {
+          // ignore refresh error
+        }
+      }
+
+      if (data && data.authenticated && data.user) {
         setUser(data.user);
         setStatus(data.user.status);
 
@@ -70,6 +88,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
         setStatus("UNAUTHENTICATED");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("ecampus_student");
+        }
       }
     } catch {
       setUser(null);

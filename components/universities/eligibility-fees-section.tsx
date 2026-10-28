@@ -54,22 +54,23 @@ function formatFeeLabel(label: string = "", idx: number): string {
   return idx === 0 ? "UNDERGRADUATE RANGE" : "POSTGRADUATE RANGE";
 }
 
-function parseFeeRange(rawRange?: string) {
+function parseFeeRange(rawRange?: string, customSubtext?: string) {
+  // Only use customSubtext if provided from admin panel; no static fallback text
+  const subtext = customSubtext && customSubtext.trim() ? customSubtext.trim() : "";
+
   if (!rawRange || !rawRange.trim()) {
     return {
-      formattedRange: "₹10,383 – ₹15,133",
-      subtext: "Per semester installment",
+      formattedRange: "",
+      subtext,
     };
   }
 
   let cleaned = rawRange.trim();
-  let isTotal = false;
 
   if (
     cleaned.toLowerCase().includes("/total") ||
     cleaned.toLowerCase().includes("total")
   ) {
-    isTotal = true;
     cleaned = cleaned.replace(/\/total/gi, "").replace(/total/gi, "").trim();
   }
 
@@ -81,13 +82,13 @@ function parseFeeRange(rawRange?: string) {
     const p0 = parts[0].startsWith("₹") ? parts[0] : `₹${parts[0]}`;
     const p1 = parts[1].startsWith("₹") ? parts[1] : `₹${parts[1]}`;
     formattedRange = `${p0} – ${p1}`;
-  } else if (!formattedRange.startsWith("₹")) {
+  } else if (!formattedRange.startsWith("₹") && !formattedRange.startsWith("$") && !formattedRange.startsWith("€") && !formattedRange.startsWith("£")) {
     formattedRange = `₹${formattedRange}`;
   }
 
   return {
     formattedRange,
-    subtext: isTotal ? "Total course fee (approx)" : "Per semester installment",
+    subtext,
   };
 }
 
@@ -203,7 +204,10 @@ export default function EligibilityFeesSection({
               {displayRanges.slice(0, 2).map((rangeItem: any, idx: number) => {
                 const isFirst = idx === 0;
                 const formattedLabel = formatFeeLabel(rangeItem.label, idx);
-                const { formattedRange, subtext } = parseFeeRange(rangeItem.range);
+                const { formattedRange, subtext } = parseFeeRange(
+                  rangeItem.range,
+                  rangeItem.subtext
+                );
 
                 return (
                   <div
@@ -223,9 +227,11 @@ export default function EligibilityFeesSection({
                         {formattedRange}
                       </div>
                     </div>
-                    <span className="text-[11px] sm:text-xs text-slate-500 font-medium">
-                      {subtext}
-                    </span>
+                    {subtext ? (
+                      <span className="text-[11px] sm:text-xs text-slate-500 font-medium">
+                        {subtext}
+                      </span>
+                    ) : null}
                   </div>
                 );
               })}

@@ -29,6 +29,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import HighlightedText from "./HighlightedText";
+import { SignupModal } from "@/components/layout/signup-modal";
 
 interface LoanSectionProps {
   university?: any;
@@ -71,12 +72,7 @@ const ACCENT_COLORS = [
 ];
 
 export default function EducationLoanSection({ university }: LoanSectionProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [loanAmount, setLoanAmount] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
 
   const loanData = university?.details?.financialAssistance || {};
   const rawCards = loanData.cards || [];
@@ -92,34 +88,6 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
     tag: c.tag || c.feature || c.badge || "",
     colorClass: ACCENT_COLORS[idx % ACCENT_COLORS.length],
   }));
-
-  const openModal = () => {
-    setSubmitted(false);
-    setError("");
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim() || !phone.trim() || !loanAmount.trim()) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
-    const phoneDigits = phone.replace(/\D/g, "");
-    if (phoneDigits.length < 10) {
-      setError("Please enter a valid phone number.");
-      return;
-    }
-
-    setError("");
-    setSubmitted(true);
-  };
 
   const renderIcon = (iconName: string, colorClass: string) => {
     if (!iconName || !iconName.trim()) {
@@ -218,7 +186,7 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
         <div className="flex justify-center mt-2">
           <button
             type="button"
-            onClick={openModal}
+            onClick={() => setShowSignupModal(true)}
             className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] px-7 py-3 text-sm font-bold text-white shadow-md shadow-red-500/20 transition-all duration-200 cursor-pointer hover:shadow-lg active:scale-[0.98]"
           >
             <Calculator className="h-4 w-4" />
@@ -227,125 +195,11 @@ export default function EducationLoanSection({ university }: LoanSectionProps) {
         </div>
       </div>
 
-      {/* Eligibility Modal */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-xs px-4"
-          onClick={closeModal}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8 font-sans"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">
-                Check EMI Eligibility
-              </h3>
-              <button
-                type="button"
-                onClick={closeModal}
-                aria-label="Close"
-                className="text-2xl leading-none text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-1 block text-xs font-semibold text-slate-700"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="mb-1 block text-xs font-semibold text-slate-700"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                    placeholder="10-digit mobile number"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="loanAmount"
-                    className="mb-1 block text-xs font-semibold text-slate-700"
-                  >
-                    Loan Amount Needed (₹)
-                  </label>
-                  <input
-                    id="loanAmount"
-                    type="number"
-                    required
-                    min={1}
-                    value={loanAmount}
-                    onChange={(e) => setLoanAmount(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                    placeholder="e.g. 150000"
-                  />
-                </div>
-
-                {error && <p className="text-xs font-medium text-red-600">{error}</p>}
-
-                <button
-                  type="submit"
-                  className="w-full rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors cursor-pointer"
-                >
-                  Submit Enquiry
-                </button>
-
-                <p className="text-center text-xs text-slate-500">
-                  This isn&apos;t an automatic approval — a loan advisor will review your details and contact you.
-                </p>
-              </form>
-            ) : (
-              <div className="text-center py-4">
-                <div className="h-12 w-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle2 className="h-6 w-6" />
-                </div>
-                <h4 className="text-lg font-bold text-slate-900">
-                  Got it, {name}!
-                </h4>
-                <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Thanks for sharing your details. One of our loan advisors will call you on{" "}
-                  <strong className="text-slate-800">{phone}</strong> within 24 hours to guide you through EMI plans for your ₹
-                  {Number(loanAmount).toLocaleString("en-IN")} requirement.
-                </p>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="mt-6 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 cursor-pointer"
-                >
-                  Done
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => setShowSignupModal(false)}
+      />
     </section>
   );
 }

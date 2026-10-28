@@ -252,10 +252,11 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                 specData.title || "Explore Top Online Courses"
               )}
             </h2>
-            <p className="mt-2 text-xs sm:text-sm text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
-              {specData.subheading ||
-                "UGC-entitled, industry-aligned curricula designed for career acceleration"}
-            </p>
+            {specData.subheading && (
+              <p className="mt-2 text-xs sm:text-sm text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
+                {specData.subheading}
+              </p>
+            )}
           </div>
 
           {/* Main Card Container where table & filters are displayed */}

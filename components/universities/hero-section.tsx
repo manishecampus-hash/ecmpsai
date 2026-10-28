@@ -13,7 +13,6 @@ import {
   Globe,
   Users,
   Shield,
-  ShieldCheck,
   Download,
   MapPin,
   Send,
@@ -227,18 +226,6 @@ export default function UniversityHeroWithStats({
         {/* Soft cinematic dark gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-black/20" />
 
-        {/* Top bar on cover banner */}
-        <div className="absolute inset-x-4 top-4 sm:inset-x-8 sm:top-5 z-10 flex items-center justify-between">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/60 backdrop-blur-md px-3.5 py-1 text-xs font-medium text-slate-200 border border-white/10 shadow-sm">
-            <Building2 className="h-3.5 w-3.5 text-rose-400" />
-            Verified University Profile
-          </span>
-
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/60 backdrop-blur-md px-3.5 py-1 text-xs font-medium text-white shadow-sm border border-white/15">
-            <MapPin className="h-3.5 w-3.5 text-rose-400" />
-            {bannerLocation}
-          </span>
-        </div>
       </div>
 
       {/* ── 2. Floating Crisp & Executive Identity Card ── */}
@@ -411,13 +398,8 @@ export default function UniversityHeroWithStats({
                   </div>
                 </div>
 
-                {/* Right: Regulatory Validity & Trust Assurance Pill */}
+                {/* Right: All Approvals Link */}
                 <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 self-start lg:self-auto">
-                  <div className="inline-flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200/90 px-3.5 py-2 shadow-2xs">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-xs text-slate-700">Govt. Job &amp; Global Mobility Approved</span>
-                  </div>
-
                   <button
                     type="button"
                     onClick={scrollToApprovals}
@@ -452,13 +434,25 @@ export default function UniversityHeroWithStats({
                     .replace(/\s+%/g, "%")
                     .trim();
 
+                  // Determine if the mainText is a short numeric/stat (e.g. "100+", "75+", "95%", "4.8")
+                  // vs descriptive text labels (e.g. "Duration", "French Degree", "For Leaders", "Flexible")
+                  const isShortNumeric =
+                    cleanNumber.length <= 6 &&
+                    /^[\d.,%+\-kKmM\s]+$/.test(cleanNumber);
+
                   return (
                     <div
                       key={idx}
-                      className="group rounded-2xl border border-slate-200/90 bg-white p-4.5 sm:p-5 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
+                      className="group rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <div className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-none">
+                        <div
+                          className={
+                            isShortNumeric
+                              ? "font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-tight"
+                              : "font-heading text-sm sm:text-base font-semibold text-slate-900 leading-snug"
+                          }
+                        >
                           {cleanNumber}
                         </div>
                         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-[#ea384c] border border-slate-100 group-hover:bg-red-50 group-hover:scale-105 transition-all shrink-0">
@@ -466,12 +460,12 @@ export default function UniversityHeroWithStats({
                         </div>
                       </div>
 
-                      <div className="mt-3.5">
-                        <div className="text-xs sm:text-sm font-semibold text-slate-700 leading-snug">
+                      <div className="mt-3">
+                        <div className="text-xs sm:text-[13px] font-medium text-slate-600 leading-snug">
                           {item.heading}
                         </div>
                         {item.subheading ? (
-                          <div className="mt-1 text-xs text-slate-500 font-normal line-clamp-1">
+                          <div className="mt-0.5 text-xs text-slate-400 font-normal line-clamp-1">
                             {item.subheading}
                           </div>
                         ) : null}

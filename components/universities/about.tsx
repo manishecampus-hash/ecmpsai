@@ -48,7 +48,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
 
               {/* Floating Dark Badge */}
               {/* Floating Dark Location Ribbon */}
-              <div className="absolute -bottom-3 -right-2 sm:-bottom-4 sm:-right-3 z-10 bg-[#0c1322] border border-slate-800 shadow-xl rounded-2xl py-2.5 px-3.5 sm:py-3 sm:px-4.5 flex items-center gap-2.5 sm:gap-3 text-left max-w-[280px] sm:max-w-[320px]">
+              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 z-10 bg-[#0c1322] border border-slate-800 shadow-xl rounded-2xl py-2.5 px-3.5 sm:py-3 sm:px-4.5 flex items-center gap-2.5 sm:gap-3 text-left max-w-[280px] sm:max-w-[320px]">
                 <div className="h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
                   <MapPin className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-amber-500" />
                 </div>

@@ -466,7 +466,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "why", label: "Why Amity" },
+  { id: "why", label: "Why Us?" },
   { id: "courses", label: "Courses" },
   { id: "fee", label: "Fee & Scholarship" },
   { id: "loan", label: "Loan & EMI" },
@@ -485,10 +485,7 @@ interface SubHeaderProps {
 }
 
 export default function SubHeader({ university, universityName }: SubHeaderProps = {}) {
-  const dynamicName = universityName || university?.name || "Amity";
-  const navItems: NavItem[] = NAV_ITEMS.map((item) =>
-    item.id === "why" ? { ...item, label: `Why ${dynamicName}` } : item
-  );
+  const navItems: NavItem[] = NAV_ITEMS;
 
   const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);

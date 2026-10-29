@@ -85,10 +85,37 @@ const config: Config = {
             height: '0',
           },
         },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        // Light that sweeps across a progress bar
+        shine: {
+          '0%': { transform: 'translateX(0)' },
+          '60%, 100%': { transform: 'translateX(300%)' },
+        },
+        // Moves a short dash along an SVG path drawn with pathLength=1000 and dasharray summing to 1000
+        'dash-travel': {
+          from: { strokeDashoffset: '1000' },
+          to: { strokeDashoffset: '0' },
+        },
+        // Underline that draws in from the left
+        draw: {
+          from: { transform: 'scaleX(0)' },
+          to: { transform: 'scaleX(1)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        // Endless left scroll for logo strips — the track holds the list twice, so -50% loops seamlessly
+        marquee: 'marquee 32s linear infinite',
+        // Slow up-and-down drift for small decorative pieces
+        float: 'float 6s ease-in-out infinite',
       },
     },
   },

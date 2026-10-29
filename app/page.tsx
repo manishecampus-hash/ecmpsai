@@ -6,10 +6,9 @@ import CareerExplorer from "@/components/home/career-explorer";
 import ProgramsSection from "@/components/home/online-courses";
 import { Footer } from "@/components/layout/footer";
 import FAQ from "@/components/home/faq";
-import { GraduatesMarquee } from "@/components/home/graduates-marquee";
+import { MediaMarquee } from "@/components/home/media-marquee";
 import { StudentStoriesSection } from "@/components/home/student-stories";
 import { CarouselBanner } from "@/components/home/carousel-banner";
-import type { GraduateTestimonialT } from "@/data/graduates";
 
 export const revalidate = 60;
 
@@ -110,37 +109,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function mapSuccessStories(stories?: any[]): GraduateTestimonialT[] | undefined {
-  if (!stories || !Array.isArray(stories) || stories.length === 0) return undefined;
-
-  return stories.map((s, idx) => ({
-    initials: s.name
-      ? s.name
-          .split(" ")
-          .map((w: string) => w[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-      : "EC",
-    avatarColor: idx % 2 === 0 ? "#ef4444" : "#f97316",
-    avatarSrc: s.image,
-    altText: s.altText || s.name,
-    storySrc: s.storyImage,
-    name: s.name,
-    role: s.programName
-      ? `${s.programName}${s.graduationDate ? `, ${s.graduationDate}` : ""}`
-      : "Graduate",
-    rating: typeof s.rating === "number" ? s.rating : 5,
-    testimonial: s.mainQuote || s.shortDescription || "",
-  }));
-}
-
 export default async function HomePage() {
   const data = await fetchHomepageData();
 
   const banners = data?.banner;
   const trendingCourses = data?.trendingCourses;
-  const mappedGraduates = mapSuccessStories(data?.successStories);
   const faqs = data?.faqs;
   const jobRoles = data?.jobRoles;
   const jobRoleTitle = data?.jobRoleSettings?.title;
@@ -155,7 +128,7 @@ export default async function HomePage() {
       <CareerExplorer jobRoles={jobRoles} title={jobRoleTitle} />
       <ProgramsSection programData={data?.program} />
       <StudentStoriesSection />
-      <GraduatesMarquee graduates={mappedGraduates} />
+      <MediaMarquee articles={data?.media} />
       <FAQ items={faqs} />
       <Footer />
     </main>

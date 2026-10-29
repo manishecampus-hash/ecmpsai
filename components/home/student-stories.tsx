@@ -114,12 +114,39 @@ function StoryCard({ story, onOpen }: { story: StudentStoryT; onOpen: () => void
   );
 }
 
-function StoryModal({ story, onClose }: { story: StudentStoryT | null; onClose: () => void }) {
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41Z" />
+    </svg>
+  );
+}
+
+// Story player: a wide cinema-style video on top, the student's portrait overlapping it, their words set as a
+// classic serif quote, and a footer to step through the other stories without closing.
+function StoryModal({
+  stories,
+  index,
+  onChange,
+  onClose,
+}: {
+  stories: StudentStoryT[];
+  index: number | null;
+  onChange: (index: number) => void;
+  onClose: () => void;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const story = index === null ? null : stories[index];
+  const total = stories.length;
+  const go = useCallback((step: number) => index !== null && onChange((index + step + total) % total), [index, total, onChange]);
 
   useEffect(() => {
     if (!story) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
+    };
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -127,18 +154,21 @@ function StoryModal({ story, onClose }: { story: StudentStoryT | null; onClose: 
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [story, onClose]);
+  }, [story, onClose, go]);
 
-  // Start playing as soon as it opens; if the browser blocks sound, play muted instead
+  // Start playing as soon as a story opens; if the browser blocks sound, play muted instead
   useEffect(() => {
     const v = videoRef.current;
     if (!story || !v) return;
     v.play().catch((e: DOMException) => {
-      if (e.name !== "NotAllowedError") return; // e.g. interrupted while loading — autoPlay takes over
+      if (e.name !== "NotAllowedError") return;
       v.muted = true;
       v.play().catch(() => undefined);
     });
   }, [story]);
+
+  const prev = story ? stories[(index! - 1 + total) % total] : null;
+  const next = story ? stories[(index! + 1) % total] : null;
 
   return (
     <AnimatePresence>
@@ -150,97 +180,149 @@ function StoryModal({ story, onClose }: { story: StudentStoryT | null; onClose: 
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b0f17]/80 p-3 backdrop-blur-sm sm:p-6"
         >
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-label={`${story.name}'s story`}
-            initial={{ opacity: 0, scale: 0.94, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 360, damping: 30 } }}
-            exit={{ opacity: 0, scale: 0.96, y: 8, transition: { duration: 0.15 } }}
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 320, damping: 30 } }}
+            exit={{ opacity: 0, y: 12, scale: 0.98, transition: { duration: 0.15 } }}
             onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-white p-4 shadow-2xl sm:p-7"
+            className="relative flex max-h-[94vh] w-full max-w-[860px] flex-col overflow-hidden rounded-[26px] bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
           >
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close"
-              className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-100 hover:text-gray-900 sm:right-4 sm:top-4"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <div className="grid gap-5 md:grid-cols-[minmax(0,360px)_1fr] md:gap-7">
-              <div className="relative aspect-video overflow-hidden rounded-2xl bg-gradient-to-b from-[#e11d48] to-[#1B2230] shadow-lg md:aspect-[4/5]">
-                <video
-                  ref={videoRef}
-                  key={story.id}
-                  src={story.videoSrc}
-                  controls
-                  autoPlay
-                  playsInline
-                  preload="auto"
-                  style={{ objectPosition: story.videoPosition }}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-
-              <div className="flex flex-col md:pr-8">
-                <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600">
-                  <Video className="h-3.5 w-3.5" /> Student Story
+            <div className="overflow-y-auto">
+              {/* Cinema-style player */}
+              <div className="relative bg-[#1B2230] p-2 sm:p-3">
+                <div className="relative aspect-video overflow-hidden rounded-[18px] bg-black">
+                  <video
+                    ref={videoRef}
+                    key={story.id}
+                    src={story.videoSrc}
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <span className="pointer-events-none absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm sm:left-7 sm:top-7">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                  Student story · {String(index! + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 </span>
-                <h3 className="mt-3 text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">{story.name}</h3>
-                <p className="mt-1 text-base font-medium text-gray-600">{story.program}</p>
-                <div className="mt-2 flex items-center gap-1" aria-label={`Rated ${story.rating} out of 5`}>
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star
-                      key={n}
-                      className={`h-4 w-4 ${n <= Math.round(story.rating) ? "text-amber-400" : "text-gray-200"}`}
-                      fill="currentColor"
-                    />
-                  ))}
-                  <span className="ml-1 text-sm font-semibold text-gray-700">{story.rating.toFixed(1)}</span>
-                </div>
-
-                <div className="relative mt-4 rounded-2xl bg-gradient-to-br from-red-50/80 to-white p-4 ring-1 ring-red-100/70">
-                  <Quote className="absolute -top-3 left-3 h-6 w-6 rotate-180 text-red-300" fill="currentColor" />
-                  <p className="text-[15px] leading-relaxed text-gray-700">{story.quote}</p>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {story.tags.map((t) => (
-                    <span
-                      key={t.label}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-800 ring-1 ring-gray-200"
-                    >
-                      <span aria-hidden>{t.emoji}</span>
-                      {t.label}
-                    </span>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-900 shadow-lg transition hover:scale-105 hover:bg-gray-100 sm:right-7 sm:top-7"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={story.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }}
+                  exit={{ opacity: 0, transition: { duration: 0.12 } }}
+                  className="px-5 pb-7 sm:px-9"
+                >
+                  {/* Portrait overlapping the player, with name and rating */}
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-5">
+                    <span className="relative -mt-11 h-[88px] w-[88px] flex-shrink-0 overflow-hidden rounded-full bg-gradient-to-b from-rose-100 to-red-200 ring-4 ring-white shadow-lg sm:-mt-12 sm:h-24 sm:w-24">
+                      <Image src={story.photo} alt="" fill sizes="96px" className="object-cover object-top" />
+                    </span>
+                    <div className="min-w-0 flex-1 sm:pb-1">
+                      <h3 className="text-2xl font-bold tracking-tight text-gray-900">{story.name}</h3>
+                      <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium text-gray-600">
+                        <GraduationCap className="h-4 w-4 text-red-600" aria-hidden />
+                        {story.program}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 sm:pb-2" aria-label={`Rated ${story.rating} out of 5`}>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <Star
+                          key={n}
+                          className={`h-4 w-4 ${n <= Math.round(story.rating) ? "text-amber-400" : "text-gray-200"}`}
+                          fill="currentColor"
+                        />
+                      ))}
+                      <span className="ml-1.5 text-sm font-bold text-gray-900">{story.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+
+                  {/* The student's words, set as a classic quote */}
+                  <figure className="relative mt-7 border-t border-gray-200 pt-7">
+                    <span aria-hidden className="absolute -top-[18px] left-0 bg-white pr-3 font-serif text-[56px] leading-none text-red-600">
+                      &ldquo;
+                    </span>
+                    <blockquote className="font-serif text-[19px] italic leading-[1.65] text-gray-800 sm:text-[21px]">
+                      {story.quote}
+                    </blockquote>
+                    <figcaption className="mt-4 flex items-center gap-3 text-sm text-gray-500">
+                      <span aria-hidden className="h-px w-8 bg-red-600" />
+                      <span>
+                        <span className="font-semibold text-gray-900">{story.name}</span>, {story.program.split(" · ")[0]}
+                      </span>
+                    </figcaption>
+                  </figure>
+
+                  <ul className="mt-6 flex flex-wrap gap-2">
+                    {story.tags.map((t) => (
+                      <li
+                        key={t.label}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-[13px] font-medium text-gray-700"
+                      >
+                        <span aria-hidden>{t.emoji}</span>
+                        {t.label}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-              <a
-                href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hi! I watched a student story on eCampus and would like help choosing a program.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-6 py-3 text-sm font-bold text-emerald-700 transition hover:bg-emerald-100"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
-                  <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41Z" />
-                </svg>
-                WhatsApp
-              </a>
-              <a
-                href={`tel:${HELPLINE}`}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-red-500/25 transition hover:shadow-red-500/40 active:scale-[0.98]"
-              >
-                <Phone className="h-4 w-4" fill="currentColor" strokeWidth={1.5} />
-                Talk to an Expert
-              </a>
+            {/* Footer: step through stories, or talk to someone */}
+            <div className="flex flex-col gap-3 border-t border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-9">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => go(-1)}
+                  aria-label={`Previous story: ${prev?.name}`}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 transition hover:border-red-300 hover:text-red-600 active:scale-95"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  aria-label={`Next story: ${next?.name}`}
+                  className="group flex h-10 items-center gap-2 rounded-full border border-gray-300 bg-white pl-4 pr-2 text-sm font-medium text-gray-700 transition hover:border-red-300 hover:text-red-600 active:scale-95"
+                >
+                  <span className="max-w-[140px] truncate">Next: {next?.name}</span>
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:flex">
+                <a
+                  href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hi! I watched a student story on eCampus and would like help choosing a program.")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-emerald-300 bg-white px-3 py-2.5 text-[13px] sm:px-5 sm:text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+                >
+                  <WhatsAppIcon className="h-4 w-4" />
+                  WhatsApp
+                </a>
+                <a
+                  href={`tel:${HELPLINE}`}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-red-600 px-3 py-2.5 text-[13px] sm:px-5 sm:text-sm font-semibold text-white shadow-md shadow-red-600/25 transition hover:bg-red-700"
+                >
+                  <Phone className="h-4 w-4" fill="currentColor" strokeWidth={1.5} />
+                  Talk to an Expert
+                </a>
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -270,7 +352,7 @@ const cardVariants: Variants = {
 export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?: StudentStoryT[] }) {
   const perPage = useCardsPerPage();
   const [[page, dir], setPage] = useState<[number, number]>([0, 0]);
-  const [active, setActive] = useState<StudentStoryT | null>(null);
+  const [active, setActive] = useState<number | null>(null);
   // A swipe ends with a pointer-up on a card — don't treat that as a click
   const draggedRef = useRef(false);
 
@@ -353,7 +435,7 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
                   whileHover={{ rotate: 0, y: -12, scale: 1.04, zIndex: 10, transition: { type: "spring", stiffness: 300, damping: 18 } }}
                   className="relative"
                 >
-                  <StoryCard story={story} onOpen={() => !draggedRef.current && setActive(story)} />
+                  <StoryCard story={story} onOpen={() => !draggedRef.current && setActive(stories.indexOf(story))} />
                 </motion.div>
               ))}
             </motion.div>
@@ -416,7 +498,7 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
         </div>
       </div>
 
-      <StoryModal story={active} onClose={closeModal} />
+      <StoryModal stories={stories} index={active} onChange={setActive} onClose={closeModal} />
     </section>
   );
 }

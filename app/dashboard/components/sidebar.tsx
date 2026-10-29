@@ -14,6 +14,7 @@ import {
   Scale,
   ShieldCheck,
   Gift,
+  IndianRupee,
   MessageCircle,
   UserCircle,
   Settings,
@@ -28,6 +29,8 @@ const navItems = [
   { id: "applications", label: "My Applications", icon: ClipboardList, href: "/dashboard/applications" },
   { id: "mychat", label: "My Chat", icon: MessageCircle, href: "/dashboard/mychat", live: true },
   { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
+  { id: "invite", label: "Invite & Earn", icon: Gift, href: "/dashboard/invite-earn" },
+  { id: "emi", label: "EMI Calculator", icon: IndianRupee, href: "/dashboard/education-loan-emi-calculator" },
   { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];
 

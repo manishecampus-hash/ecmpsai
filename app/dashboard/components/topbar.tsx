@@ -37,10 +37,13 @@ export default function Topbar({
   student,
   onOpenMobileMenu,
   wonReward: wonRewardProp,
+  action,
 }: {
   student: StudentProfile;
   onOpenMobileMenu: () => void;
   wonReward?: SpinWheelReward | null;
+  // Optional page-specific button shown just before "Need Help?"
+  action?: React.ReactNode;
 }) {
   // Pages that don't track the spin themselves still show the saved reward
   const wonReward = wonRewardProp ?? student.spinReward ?? null;
@@ -179,6 +182,7 @@ export default function Topbar({
         )}
 
         <div className="ml-auto flex flex-shrink-0 items-center gap-2 sm:gap-3">
+          {action}
           {/* Toll-free helpline — dials on phones, opens the default calling app on desktop */}
           <a
             href="tel:18001216201"

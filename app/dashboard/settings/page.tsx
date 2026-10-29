@@ -38,7 +38,7 @@ const TABS: { id: TabId; label: string; icon: typeof Bell }[] = [
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "security", label: "Account & Security", icon: ShieldCheck },
   { id: "preferences", label: "Preferences", icon: SlidersHorizontal },
-  { id: "rewards", label: "Rewards & Referrals", icon: Gift },
+  { id: "rewards", label: "Rewards", icon: Gift },
   { id: "support", label: "Help & Support", icon: LifeBuoy },
 ];
 

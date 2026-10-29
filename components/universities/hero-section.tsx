@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { ApplicationForm } from "@/components/form/common-form";
 import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
 import { getApplicationFlow, toUniversitySlug } from "@/data/application-flows";
+import { useAuth } from "@/components/auth/auth-context";
+import { SignupModal } from "@/components/layout/signup-modal";
+import { LoginModal } from "@/components/layout/login-modal";
 import {
   Star,
   BookOpen,
@@ -111,7 +114,31 @@ export default function UniversityHeroWithStats({
   university,
 }: Props) {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+
+  const isUserLoggedIn = () => {
+    if (isAuthenticated || Boolean(user)) return true;
+    try {
+      const raw = localStorage.getItem("ecampus_student");
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      return Boolean(parsed && (parsed.id || parsed.phone || parsed.email));
+    } catch {
+      return false;
+    }
+  };
+
+  const handleKivoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isUserLoggedIn()) {
+      router.push("/dashboard");
+    } else {
+      setShowSignupModal(true);
+    }
+  };
 
   // Universities with the online application flow open it; the rest keep the quick form
   const universitySlug = toUniversitySlug(university?.slug);
@@ -134,7 +161,10 @@ export default function UniversityHeroWithStats({
 
   // Comparison section
   const compareData = banner.compareSection;
-  const compareHeading = compareData?.heading || "Compare Universities with AI";
+  const compareHeading =
+    compareData?.heading && compareData.heading !== "Compare Universities with AI"
+      ? compareData.heading
+      : "Compare with Kivo AI";
   const compareSubheading =
     compareData?.subheading || "Evaluate programs side-by-side with peer institutions.";
   const compareLogos = (compareData?.logos || []).filter(
@@ -361,66 +391,14 @@ export default function UniversityHeroWithStats({
               </div>
             </div>
 
-            {/* Accreditations Row - Unified Eyebrow & Sleek Trust Pill */}
-            {dynamicBadges.length > 0 && (
-              <div className="py-5 sm:py-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
-                {/* Left: Section Label + Logos */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 flex-wrap">
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-red-50 text-[#ea384c]">
-                      <Award className="h-3.5 w-3.5" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Recognitions &amp; Accreditations
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                    {dynamicBadges.map((badge, idx) => (
-                      <div
-                        key={idx}
-                        className="flex h-13 sm:h-14 min-w-[80px] sm:min-w-[96px] items-center justify-center rounded-xl bg-white border border-slate-200/90 px-3.5 py-1.5 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all"
-                        title={badge.alt}
-                      >
-                        {badge.src ? (
-                          <img
-                            src={badge.src}
-                            alt={badge.alt}
-                            className="h-9 sm:h-10 w-auto max-w-[120px] object-contain"
-                          />
-                        ) : (
-                          <span className="text-xs font-bold text-slate-700 px-1">
-                            {badge.label || "Approved"}
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right: All Approvals Link */}
-                <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 self-start lg:self-auto">
-                  <button
-                    type="button"
-                    onClick={scrollToApprovals}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#ea384c] hover:text-red-700 transition-colors cursor-pointer px-2 py-1"
-                    title="Jump to full approvals breakdown"
-                  >
-                    <span>All Approvals</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Bottom Row: Classic Stat Highlights & AI Compare Feature */}
-            <div className="pt-5 sm:pt-6">
+            <div className="pt-6 sm:pt-7 border-t border-slate-100">
               <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-red-50 text-[#ea384c]">
-                    <Sparkles className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-[#ea384c] border border-red-100/80 shadow-2xs">
+                    <Sparkles className="h-4 w-4 text-[#ea384c]" />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <span className="text-xs sm:text-[13px] font-black uppercase tracking-wider text-[#ea384c]">
                     {pointersTitle} Highlights
                   </span>
                 </div>
@@ -443,29 +421,29 @@ export default function UniversityHeroWithStats({
                   return (
                     <div
                       key={idx}
-                      className="group rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
+                      className="group rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div
                           className={
                             isShortNumeric
-                              ? "font-heading text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-tight"
-                              : "font-heading text-sm sm:text-base font-semibold text-slate-900 leading-snug"
+                              ? "font-heading text-lg sm:text-xl font-bold text-slate-950 tracking-tight leading-tight"
+                              : "font-heading text-sm sm:text-base font-bold text-slate-950 leading-snug"
                           }
                         >
                           {cleanNumber}
                         </div>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 text-[#ea384c] border border-slate-100 group-hover:bg-red-50 group-hover:scale-105 transition-all shrink-0">
+                        <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-red-50/70 text-[#ea384c] border border-red-100 group-hover:bg-red-100/80 group-hover:scale-105 transition-all shrink-0">
                           {renderPointerIcon(item.icon, item.heading)}
                         </div>
                       </div>
 
                       <div className="mt-3">
-                        <div className="text-xs sm:text-[13px] font-medium text-slate-600 leading-snug">
+                        <div className="text-xs sm:text-[13px] font-semibold text-slate-800 leading-snug">
                           {item.heading}
                         </div>
                         {item.subheading ? (
-                          <div className="mt-0.5 text-xs text-slate-400 font-normal line-clamp-1">
+                          <div className="mt-0.5 text-xs text-slate-600 font-medium line-clamp-1">
                             {item.subheading}
                           </div>
                         ) : null}
@@ -518,13 +496,14 @@ export default function UniversityHeroWithStats({
                       )}
                     </div>
 
-                    <a
-                      href="/compare"
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] px-4 py-2 text-xs font-bold text-white shadow-sm hover:shadow transition-all"
+                    <button
+                      type="button"
+                      onClick={handleKivoClick}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] px-4 py-2 text-xs font-bold text-white shadow-sm hover:shadow transition-all cursor-pointer"
                     >
-                      <span>Compare Now</span>
+                      <span>Kivo AI</span>
                       <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               )}
@@ -545,6 +524,30 @@ export default function UniversityHeroWithStats({
             }}
           />
         </LeadFormModalFrame>
+      )}
+
+      {/* ── 4. Signup Modal for Kivo AI CTA ── */}
+      {showSignupModal && (
+        <SignupModal
+          isOpen={showSignupModal}
+          onClose={() => setShowSignupModal(false)}
+          onSwitchToLogin={() => {
+            setShowSignupModal(false);
+            setShowLoginModal(true);
+          }}
+        />
+      )}
+
+      {/* ── 5. Login Modal ── */}
+      {showLoginModal && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onSwitchToSignup={() => {
+            setShowLoginModal(false);
+            setShowSignupModal(true);
+          }}
+        />
       )}
     </header>
   );

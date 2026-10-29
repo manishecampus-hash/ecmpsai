@@ -197,7 +197,7 @@ export function Footer() {
             
             {/* Inner Dark Body */}
             <span className="relative flex items-center justify-center gap-2 rounded-full bg-[#0F131E] px-7 py-2.5 text-[13px] font-bold uppercase tracking-wider text-slate-300 transition-colors duration-300 group-hover:bg-[#161B29] group-hover:text-white">
-              Sign Up / Register
+              SIGN UP / LOGIN
               <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </span>
           </Link>

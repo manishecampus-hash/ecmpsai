@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
       (user.course ? [user.course] : []);
     const course = user.course || courses[0] || "";
     const state = user.state || "";
+    const dob = user.dob || "";
     const advisorProfile = user.advisorProfile || null;
     const spinReward = user.spinReward || null;
     const spinSkipped = Boolean(user.spinSkipped);
@@ -48,6 +49,7 @@ export async function GET(req: NextRequest) {
         full_name: fullName,
         status: user.status,
         state,
+        dob,
         course,
         course_interested: courses,
         coursesInterested: courses,

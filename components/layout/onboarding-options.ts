@@ -2,7 +2,7 @@
 // Every option shown in the 5 steps lives here — the modal only renders it —
 // so programs, ranges and categories can be updated (or swapped for API data) in one place.
 
-export type QualificationId = "12th_pass" | "diploma" | "bachelors" | "masters" | "phd";
+export type QualificationId = string;
 export type EmploymentStatus = "working" | "non_working";
 
 export interface OnboardingOption {
@@ -20,7 +20,7 @@ export interface CourseOption {
 }
 
 export interface OnboardingData {
-  highestQualification: QualificationId | "";
+  highestQualification: string;
   coursePreference: string;
   budget: string;
   employmentStatus: EmploymentStatus | "";
@@ -105,13 +105,28 @@ const POST_DOCTORAL_PROGRAMS: CourseOption[] = [
   { id: "iim_k_ai", name: "IIM K – AI Professional Certificate", fullName: "Executive certification · 6 months" },
 ];
 
-export const COURSE_OPTIONS_BY_QUALIFICATION: Record<QualificationId, CourseOption[]> = {
+export const COURSE_OPTIONS_BY_QUALIFICATION: Record<string, CourseOption[]> = {
   "12th_pass": UG_PROGRAMS,
   diploma: UG_PROGRAMS,
   bachelors: PG_PROGRAMS,
   masters: DOCTORAL_PROGRAMS,
   phd: POST_DOCTORAL_PROGRAMS,
+  "12th Pass": UG_PROGRAMS,
+  Graduate: PG_PROGRAMS,
+  "10+3 Years Diploma": UG_PROGRAMS,
+  "Post-graduate": DOCTORAL_PROGRAMS,
 };
+
+export function cleanCourseDisplay(raw?: string): string {
+  if (!raw) return "";
+  return raw
+    .replace(/\s*–\s*Complete.*$/i, "")
+    .replace(/\/Bachelors Program/i, "")
+    .replace(/\/Doctorate Program.*$/i, "")
+    .replace(/\/Master Online Program/i, "")
+    .replace(/\s*\(2026\)/i, "")
+    .trim();
+}
 
 export function getCourseOptions(qualification: OnboardingData["highestQualification"]): CourseOption[] {
   return qualification ? COURSE_OPTIONS_BY_QUALIFICATION[qualification] ?? [] : [];
@@ -162,9 +177,9 @@ export function isStepComplete(step: number, data: OnboardingData): boolean {
     case 1:
       return !!data.highestQualification;
     case 2:
-      return getCourseOptions(data.highestQualification).some((c) => c.id === data.coursePreference);
+      return !!data.coursePreference;
     case 3:
-      return BUDGET_OPTIONS.some((o) => o.id === data.budget);
+      return !!data.budget;
     case 4:
       if (data.employmentStatus === "working") return !!data.currentSalary && !!data.targetSalary;
       if (data.employmentStatus === "non_working") return !!data.targetSalary;
@@ -187,17 +202,21 @@ const labelOf = (list: { id: string; label: string }[], id?: string) =>
 /** Human-readable rows for a saved answer set. Also understands the older 4-question shape. */
 export function describeAdvisorProfile(profile: Record<string, string | undefined> | undefined) {
   if (!profile) return [];
-  if (profile.highestQualification) {
-    const q = profile.highestQualification as QualificationId;
-    const course = getCourseOptions(q).find((c) => c.id === profile.coursePreference);
+  if (profile.highestQualification || profile.coursePreference) {
+    const qLabel =
+      labelOf(QUALIFICATION_OPTIONS, profile.highestQualification) ||
+      profile.highestQualification ||
+      "";
+    const courseTitle = cleanCourseDisplay(profile.coursePreference);
+    const budgetLabel = labelOf(BUDGET_OPTIONS, profile.budget) || profile.budget || "";
     const salary =
       profile.employmentStatus === "working"
         ? `${labelOf(CURRENT_SALARY_OPTIONS, profile.currentSalary)} → ${labelOf(TARGET_SALARY_OPTIONS, profile.targetSalary)}`
         : labelOf(TARGET_SALARY_OPTIONS, profile.targetSalary);
     return [
-      { key: "qualification", label: "Highest Qualification", value: labelOf(QUALIFICATION_OPTIONS, q) },
-      { key: "course", label: "Program Interest", value: course?.name ?? "" },
-      { key: "budget", label: "Budget Range", value: labelOf(BUDGET_OPTIONS, profile.budget) },
+      { key: "qualification", label: "Highest Qualification", value: qLabel },
+      { key: "course", label: "Program Interest", value: courseTitle },
+      { key: "budget", label: "Budget Range", value: budgetLabel },
       {
         key: "salary",
         label: profile.employmentStatus === "working" ? "Current → Target Salary" : "Target Salary",

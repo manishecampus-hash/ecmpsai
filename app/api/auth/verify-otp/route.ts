@@ -130,6 +130,7 @@ export async function POST(req: NextRequest) {
     const mergedEmail = user.email || null;
     const mergedPhone = user.phone_e164 || null;
     const mergedState = user.state || "";
+    const mergedDob = user.dob || "";
     const mergedCourses =
       user.coursesInterested ||
       user.course_interested ||
@@ -141,8 +142,7 @@ export async function POST(req: NextRequest) {
 
     const hasProfileDetails = Boolean(
       mergedName.trim() &&
-      mergedState.trim() &&
-      (mergedCourse.trim() || mergedCourses.length > 0)
+      mergedState.trim()
     );
     const hasAdvisorProfile = Boolean(
       mergedAdvisorProfile &&
@@ -177,6 +177,7 @@ export async function POST(req: NextRequest) {
       email: mergedEmail || "",
       phone: mergedPhone || "",
       state: mergedState,
+      dob: mergedDob,
       course: mergedCourse,
       coursesInterested: mergedCourses,
       advisorProfile: mergedAdvisorProfile || undefined,

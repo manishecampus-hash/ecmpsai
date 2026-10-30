@@ -10,6 +10,7 @@ export type StudentProfile = {
   course?: string;
   coursesInterested?: string[];
   state?: string;
+  dob?: string;
   referralCode?: string;
   whatsappOptIn?: boolean;
   joinedAt?: string;

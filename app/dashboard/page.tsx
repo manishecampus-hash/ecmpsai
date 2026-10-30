@@ -304,7 +304,7 @@ export default function DashboardPage() {
 
           <WelcomeBanner student={student} onResumeSelected={setResumeFile} />
           <StatsCards />
-          <Recommendations />
+          <Recommendations student={student} />
           <Milestones />
         </main>
       </div>

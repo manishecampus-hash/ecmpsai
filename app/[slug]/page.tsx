@@ -44,6 +44,7 @@ interface University {
   emiFacility?: boolean;
   studentsVisited?: string;
   startingFee?: number;
+  courseFee?: number;
   feeRange?: { start?: number; end?: number };
 }
 

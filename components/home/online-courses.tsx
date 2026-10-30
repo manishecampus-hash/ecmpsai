@@ -1227,6 +1227,20 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
   <button
     type="button"
     onClick={() => {
+      let isAuth = false;
+      try {
+        const raw = localStorage.getItem("ecampus_student");
+        if (raw) {
+          const u = JSON.parse(raw);
+          isAuth = Boolean(u && (u.id || u.phone || u.email));
+        }
+      } catch {}
+
+      if (!isAuth) {
+        window.dispatchEvent(new CustomEvent("open-signup"));
+        return;
+      }
+
       if (program.brochureUrl) {
         window.open(program.brochureUrl, "_blank");
       }

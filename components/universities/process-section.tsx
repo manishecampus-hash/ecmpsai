@@ -33,12 +33,16 @@ export default function AdmissionProcessSection({
     return null;
   }
 
-  const gridColsClass =
-    steps.length <= 4
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-      : steps.length === 5
-        ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
-        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6";
+  const cardWidthClass =
+    steps.length === 1
+      ? "w-full max-w-md"
+      : steps.length === 2
+        ? "w-full sm:w-[calc(50%-0.75rem)] max-w-sm"
+        : steps.length === 3
+          ? "w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] max-w-sm"
+          : steps.length === 4
+            ? "w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1rem)] max-w-sm"
+            : "w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(20%-1rem)] max-w-sm";
 
   const rawHeading = (processData.heading || "").trim();
   const headingText =
@@ -71,8 +75,8 @@ export default function AdmissionProcessSection({
           )}
         </div>
 
-        {/* Step Cards Grid */}
-        <div className={`grid ${gridColsClass} gap-4 sm:gap-5`}>
+        {/* Step Cards Grid - Centrally Aligned */}
+        <div className="flex flex-wrap justify-center items-stretch gap-4 sm:gap-5">
           {steps.map((step: any, index: number) => {
             const isFinal = index === steps.length - 1;
             const action = getStepAction(step, index, steps.length);
@@ -80,12 +84,12 @@ export default function AdmissionProcessSection({
             return (
               <div
                 key={step.title || index}
-                className="rounded-2xl sm:rounded-[22px] bg-white border border-slate-100/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] p-5 sm:p-5.5 flex flex-col justify-between transition-all duration-200 text-left group"
+                className={`${cardWidthClass} rounded-2xl sm:rounded-[22px] bg-white border border-slate-100/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] p-5 sm:p-5.5 flex flex-col justify-between items-center text-center transition-all duration-200 group`}
               >
-                <div>
+                <div className="w-full flex flex-col items-center">
                   {/* Step Number Badge */}
                   <div
-                    className={`h-9 w-9 rounded-xl flex items-center justify-center font-bold text-sm sm:text-base ${
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center font-bold text-sm sm:text-base mx-auto ${
                       isFinal
                         ? "bg-emerald-50 text-emerald-600"
                         : "bg-red-50 text-[#ea384c]"
@@ -95,17 +99,17 @@ export default function AdmissionProcessSection({
                   </div>
 
                   {/* Step Label */}
-                  <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-3.5 mb-1.5">
+                  <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-3.5 mb-1.5 text-center">
                     STEP {index + 1}
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-sm sm:text-[15px] font-bold text-slate-900 leading-snug mb-2">
+                  <h3 className="text-sm sm:text-[15px] font-bold text-slate-900 leading-snug mb-2 text-center">
                     {step.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed text-center">
                     {step.description}
                   </p>
                 </div>
@@ -113,7 +117,7 @@ export default function AdmissionProcessSection({
                 {/* Bottom Action Link (only if explicitly configured) */}
                 {action && (
                   <div
-                    className={`mt-4 pt-2 flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold ${
+                    className={`mt-4 pt-2 flex items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold ${
                       action.isFinal
                         ? "text-emerald-600"
                         : "text-[#ea384c] group-hover:translate-x-0.5 transition-transform"

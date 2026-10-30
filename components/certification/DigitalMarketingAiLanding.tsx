@@ -346,8 +346,23 @@ export default function DigitalMarketingAiLanding() {
 
                 <button
                   type="button"
-                  onClick={() => setShowBrochureModal(true)}
-                  className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold px-5 py-3.5 rounded-xl text-sm transition-colors flex items-center gap-2 shadow-2xs"
+                  onClick={() => {
+                    let isAuth = false;
+                    try {
+                      const raw = localStorage.getItem("ecampus_student");
+                      if (raw) {
+                        const u = JSON.parse(raw);
+                        isAuth = Boolean(u && (u.id || u.phone || u.email));
+                      }
+                    } catch {}
+
+                    if (!isAuth) {
+                      window.dispatchEvent(new CustomEvent("open-signup"));
+                      return;
+                    }
+                    setShowBrochureModal(true);
+                  }}
+                  className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold px-5 py-3.5 rounded-xl text-sm transition-colors flex items-center gap-2 shadow-2xs cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-slate-500" />
                   <span>Download Brochure</span>
@@ -1106,8 +1121,23 @@ export default function DigitalMarketingAiLanding() {
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                onClick={() => setShowBrochureModal(true)}
-                className="hidden md:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition-colors"
+                onClick={() => {
+                  let isAuth = false;
+                  try {
+                    const raw = localStorage.getItem("ecampus_student");
+                    if (raw) {
+                      const u = JSON.parse(raw);
+                      isAuth = Boolean(u && (u.id || u.phone || u.email));
+                    }
+                  } catch {}
+
+                  if (!isAuth) {
+                    window.dispatchEvent(new CustomEvent("open-signup"));
+                    return;
+                  }
+                  setShowBrochureModal(true);
+                }}
+                className="hidden md:flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Brochure</span>

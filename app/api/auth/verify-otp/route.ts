@@ -8,6 +8,7 @@ import { createAccessToken, createSession, setAuthCookies } from "@/lib/auth/tok
 import { jsonError } from "@/lib/auth/guards";
 import { logAuthEvent } from "@/lib/auth/audit";
 import { UserRecord } from "@/lib/auth/types";
+import { resolveEmailVerificationConflict } from "@/lib/auth/email-conflict";
 
 export async function POST(req: NextRequest) {
   try {
@@ -79,6 +80,7 @@ export async function POST(req: NextRequest) {
         );
         user.email_verified_at = now;
       }
+      await resolveEmailVerificationConflict(user.id, target);
     } else {
       // Phone verification -> ACTIVE
       user = await users.findOne({ phone_e164: target });

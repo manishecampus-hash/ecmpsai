@@ -175,8 +175,28 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentRows = specializationsData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleDownload = (specialization: string) => {
-    alert(`Downloading Brochure for: ${specialization}`);
+  const isUserAuthenticated = () => {
+    if (typeof window === "undefined") return false;
+    try {
+      const raw = localStorage.getItem("ecampus_student");
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      return Boolean(parsed && (parsed.id || parsed.phone || parsed.email));
+    } catch {
+      return false;
+    }
+  };
+
+  const handleDownload = (specialization: string, brochureUrl?: string) => {
+    if (!isUserAuthenticated()) {
+      setShowSignupModal(true);
+      return;
+    }
+    if (brochureUrl && brochureUrl !== "#") {
+      window.open(brochureUrl, "_blank");
+    } else {
+      alert(`Downloading Brochure for: ${specialization}`);
+    }
   };
 
   /* Render explore table using EXPLORE_LINKS (keeps TopSpecializations tidy) */
@@ -252,10 +272,11 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                 specData.title || "Explore Top Online Courses"
               )}
             </h2>
-            <p className="mt-2 text-xs sm:text-sm text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
-              {specData.subheading ||
-                "UGC-entitled, industry-aligned curricula designed for career acceleration"}
-            </p>
+            {specData.subheading && (
+              <p className="mt-2 text-xs sm:text-sm text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
+                {specData.subheading}
+              </p>
+            )}
           </div>
 
           {/* Main Card Container where table & filters are displayed */}
@@ -319,26 +340,14 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                               {row.emi}
                             </td>
                             <td className="px-4 py-3.5 sm:px-6 sm:py-4 text-center whitespace-nowrap">
-                              {row.brochure ? (
-                                <a
-                                  href={row.brochure}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#ea384c] hover:text-[#ea384c] transition-colors"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                  <span>Brochure</span>
-                                </a>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => handleDownload(row.specialization)}
-                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#ea384c] hover:text-[#ea384c] transition-colors cursor-pointer"
-                                >
-                                  <Download className="h-3.5 w-3.5" />
-                                  <span>Brochure</span>
-                                </button>
-                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleDownload(row.specialization, row.brochure)}
+                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#ea384c] hover:text-[#ea384c] transition-colors cursor-pointer"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                                <span>Brochure</span>
+                              </button>
                             </td>
                           </tr>
                         ))

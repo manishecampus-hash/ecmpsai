@@ -213,7 +213,22 @@ export default function ProgramsSection() {
 
                   <Link
                     href={program.slug}
-                    className="mt-4 flex w-full items-center justify-center rounded-xl bg-red-500 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600 sm:py-3 sm:text-base"
+                    onClick={(e) => {
+                      let isAuth = false;
+                      try {
+                        const raw = localStorage.getItem("ecampus_student");
+                        if (raw) {
+                          const u = JSON.parse(raw);
+                          isAuth = Boolean(u && (u.id || u.phone || u.email));
+                        }
+                      } catch {}
+
+                      if (!isAuth) {
+                        e.preventDefault();
+                        window.dispatchEvent(new CustomEvent("open-signup"));
+                      }
+                    }}
+                    className="mt-4 flex w-full items-center justify-center rounded-xl bg-red-500 px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-red-100 transition hover:bg-red-600 sm:py-3 sm:text-base cursor-pointer"
                   >
                     Get Brochure
                   </Link>

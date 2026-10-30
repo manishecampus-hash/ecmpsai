@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, Award, CheckCircle2 } from "lucide-react";
+import { GraduationCap, Award, CheckCircle2, MapPin } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
 interface AboutProgramProps {
@@ -13,46 +13,18 @@ export default function AboutProgram({ university }: AboutProgramProps) {
   const uniDisplayName = university?.name || "University Online";
   const uniImage = aboutData?.image || aboutData?.imageUrl || university?.image || "/image/hero1.png";
 
-  const naacItem = university?.details?.accreditation?.list?.find((item: any) =>
-    item.label?.toLowerCase().includes("naac") || item.description?.toLowerCase().includes("naac")
-  );
-  const nirfItem = university?.details?.accreditation?.list?.find((item: any) =>
-    item.label?.toLowerCase().includes("nirf") || item.description?.toLowerCase().includes("nirf")
-  );
+  const location = university?.location?.trim() || "Campus Location";
 
-  const badgeTitle = aboutData?.badgeTitle || "Recognized Excellence";
-  const badgeSubtext =
-    aboutData?.badgeSubtext ||
-    (naacItem
-      ? `${naacItem.label}${naacItem.ribbon ? ` (${naacItem.ribbon} Score)` : ""}`
-      : nirfItem
-        ? `${nirfItem.label}${nirfItem.ribbon ? ` (Rank ${nirfItem.ribbon})` : ""}`
-        : university?.nirfRanking
-          ? `NIRF Ranked #${university.nirfRanking}`
-          : "UGC Entitled & NAAC Accredited");
-
-  const defaultPills = [
-    {
-      label: "100% Online Delivery",
-      iconColor: "text-emerald-600",
-      borderColor: "border-emerald-200/90",
-      bgColor: "bg-emerald-50/60",
-    },
-    {
-      label: "Weekend Live Sessions",
-      iconColor: "text-[#ea384c]",
-      borderColor: "border-red-200/90",
-      bgColor: "bg-red-50/60",
-    },
-    {
-      label: "Dedicated Placement Desk",
-      iconColor: "text-indigo-600",
-      borderColor: "border-indigo-200/90",
-      bgColor: "bg-indigo-50/60",
-    },
-  ];
-
-  const pills = aboutData?.features && aboutData.features.length > 0 ? aboutData.features : defaultPills;
+  // Only dynamic features from database are rendered; hardcoded default pills are removed
+  const pills = (aboutData?.features || []).filter((pill: any) => {
+    const label = typeof pill === "object" ? pill?.label : pill;
+    return (
+      label &&
+      label !== "100% Online Delivery" &&
+      label !== "Weekend Live Sessions" &&
+      label !== "Dedicated Placement Desk"
+    );
+  });
 
   const headingText = aboutData?.heading || "Academic Prestige Built for the *Modern Learner*";
 
@@ -75,16 +47,14 @@ export default function AboutProgram({ university }: AboutProgramProps) {
               </div>
 
               {/* Floating Dark Badge */}
-              <div className="absolute -bottom-3 -right-2 sm:-bottom-4 sm:-right-3 z-10 bg-[#0c1322] border border-slate-800 shadow-xl rounded-2xl py-2.5 px-3.5 sm:py-3 sm:px-4.5 flex items-center gap-3 text-left max-w-[280px] sm:max-w-[320px]">
+              {/* Floating Dark Location Ribbon */}
+              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 z-10 bg-[#0c1322] border border-slate-800 shadow-xl rounded-2xl py-2.5 px-3.5 sm:py-3 sm:px-4.5 flex items-center gap-2.5 sm:gap-3 text-left max-w-[280px] sm:max-w-[320px]">
                 <div className="h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                  <Award className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-amber-500" />
+                  <MapPin className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-amber-500" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-snug truncate">
-                    {badgeTitle}
-                  </p>
-                  <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
-                    {badgeSubtext}
+                    {location}
                   </p>
                 </div>
               </div>
@@ -132,26 +102,28 @@ export default function AboutProgram({ university }: AboutProgramProps) {
               )}
             </div>
 
-            {/* Bottom 3 Feature Pills */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
-              {pills.map((pill: any, index: number) => {
-                const isObj = typeof pill === "object";
-                const label = isObj ? pill.label : pill;
-                const iconColor = isObj ? pill.iconColor || "text-emerald-600" : "text-emerald-600";
-                const borderColor = isObj ? pill.borderColor || "border-emerald-200/90" : "border-emerald-200/90";
-                const bgColor = isObj ? pill.bgColor || "bg-emerald-50/60" : "bg-emerald-50/60";
+            {/* Feature Pills (dynamic only) */}
+            {pills.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
+                {pills.map((pill: any, index: number) => {
+                  const isObj = typeof pill === "object";
+                  const label = isObj ? pill.label : pill;
+                  const iconColor = isObj ? pill.iconColor || "text-emerald-600" : "text-emerald-600";
+                  const borderColor = isObj ? pill.borderColor || "border-emerald-200/90" : "border-emerald-200/90";
+                  const bgColor = isObj ? pill.bgColor || "bg-emerald-50/60" : "bg-emerald-50/60";
 
-                return (
-                  <div
-                    key={index}
-                    className={`inline-flex items-center gap-1.5 rounded-full border ${borderColor} ${bgColor} px-3.5 py-1.5 text-xs font-semibold text-slate-800 transition-all hover:bg-white hover:shadow-2xs`}
-                  >
-                    <CheckCircle2 className={`h-4 w-4 ${iconColor} shrink-0`} />
-                    <span>{label}</span>
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div
+                      key={index}
+                      className={`inline-flex items-center gap-1.5 rounded-full border ${borderColor} ${bgColor} px-3.5 py-1.5 text-xs font-semibold text-slate-800 transition-all hover:bg-white hover:shadow-2xs`}
+                    >
+                      <CheckCircle2 className={`h-4 w-4 ${iconColor} shrink-0`} />
+                      <span>{label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

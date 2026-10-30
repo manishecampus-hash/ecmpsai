@@ -1,9 +1,9 @@
-// app/api/auth/email/verify/confirm/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthContext, jsonError } from "@/lib/auth/guards";
 import { verifyOtpChallenge } from "@/lib/auth/otp";
 import { getUsersCollection } from "@/lib/auth/db";
 import { logAuthEvent } from "@/lib/auth/audit";
+import { resolveEmailVerificationConflict } from "@/lib/auth/email-conflict";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,9 +30,20 @@ export async function POST(req: NextRequest) {
     const users = await getUsersCollection();
     const now = new Date();
 
-    const userId = auth?.user.id || verification.challenge?.user_id;
+    let userId = auth?.user.id || verification.challenge?.user_id;
+
+    if (!userId) {
+      // Find the user with this email
+      const candidate = await users.findOne({ email: targetEmail });
+      if (candidate) {
+        userId = candidate.id;
+      }
+    }
 
     if (userId) {
+      // Clean up conflicting documents with the same email
+      await resolveEmailVerificationConflict(userId, targetEmail);
+
       await users.updateOne(
         { id: userId },
         {
@@ -61,9 +72,22 @@ export async function POST(req: NextRequest) {
       metadata: { email: targetEmail },
     });
 
+    const updatedUser = userId ? await users.findOne({ id: userId }) : null;
+
     return NextResponse.json({
       success: true,
       message: "Email verified successfully.",
+      user: updatedUser
+        ? {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            email_verified_at: updatedUser.email_verified_at,
+            phone_e164: updatedUser.phone_e164,
+            phone_verified_at: updatedUser.phone_verified_at,
+            full_name: updatedUser.full_name,
+            status: updatedUser.status,
+          }
+        : null,
     });
   } catch (err: any) {
     console.error("Error in /auth/email/verify/confirm:", err);

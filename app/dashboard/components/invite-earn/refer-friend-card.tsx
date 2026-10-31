@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, CheckCircle2, Loader2, Mail, MapPin, Phone, Send, User, UserPlus, X } from "lucide-react";
+import { CalendarDays, CheckCircle2, Eye, EyeOff, Loader2, Mail, MapPin, Phone, Send, User, UserPlus, X } from "lucide-react";
 import SelectField from "@/components/application-flow/select-field";
 import { indianStates } from "@/data/indian-states";
 import CourseMultiSelect from "./course-multi-select";
@@ -39,7 +39,7 @@ export default function ReferFriendCard({
 }: {
   referrals: Referral[];
   selectedId: string | null;
-  onSelect: (id: string) => void;
+  onSelect: (id: string | null) => void;
   onSubmit: (draft: Draft) => void;
 }) {
   const [formOpen, setFormOpen] = useState(false);
@@ -185,7 +185,7 @@ export default function ReferFriendCard({
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row">
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               {referrals.length > 0 && (
                 <button
                   type="button"
@@ -202,9 +202,9 @@ export default function ReferFriendCard({
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.99] disabled:opacity-70"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-red-50 px-6 py-3 text-sm font-semibold text-red-600 ring-1 ring-red-200 transition-[background-color,color,box-shadow] duration-200 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-600/25 hover:ring-red-600 active:scale-[0.98] disabled:opacity-70 sm:min-w-[200px]"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" aria-hidden />}
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-12 group-hover:translate-x-0.5" aria-hidden />}
                 {submitting ? "Submitting…" : "Submit Referral"}
               </button>
             </div>
@@ -230,7 +230,7 @@ export default function ReferFriendCard({
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-emerald-800">{justInvited} has been invited!</p>
                       <p className="mt-0.5 text-xs text-emerald-700">
-                        Our counselor will reach out to them shortly. You can follow their progress on the right.
+                        Our counselor will reach out to them shortly. Tap their card to follow their progress.
                       </p>
                     </div>
                     <button
@@ -253,62 +253,103 @@ export default function ReferFriendCard({
                 return (
                   <motion.li
                     key={r.id}
-                    layout
+                    layout="position"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 5) * 0.05 } }}
+                    className={`group relative overflow-hidden rounded-xl border p-4 shadow-[inset_0_1px_0_rgba(255,255,255,1),0_8px_20px_-16px_rgba(17,24,39,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_16px_30px_-18px_rgba(17,24,39,0.4)] ${
+                      selected
+                        ? "border-red-200 bg-gradient-to-br from-red-50 via-white to-red-50/40"
+                        : "border-gray-200 bg-gradient-to-b from-white to-gray-50 hover:border-red-100"
+                    }`}
                   >
+                    {/* Gloss: a glassy highlight on the top half and a light that sweeps across on hover */}
+                    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/70 to-transparent" />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1/4 -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/70 to-transparent transition-transform duration-0 group-hover:translate-x-[500%] group-hover:duration-1000 motion-reduce:hidden"
+                    />
+                    {/* The whole card opens this friend's progress; the eye button sits above it */}
                     <button
                       type="button"
                       onClick={() => onSelect(r.id)}
                       aria-pressed={selected}
-                      className={`relative w-full overflow-hidden rounded-xl border p-4 text-left transition ${
-                        selected
-                          ? "border-red-200 bg-red-50/40 shadow-sm"
-                          : "border-gray-200 bg-white hover:border-red-100 hover:bg-gray-50/60"
-                      }`}
-                    >
-                      {selected && <span aria-hidden className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-red-600" />}
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-3">
-                          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white ring-4 ring-red-50">
-                            {initials(r.name)}
-                          </span>
-                          <div className="min-w-0">
+                      aria-label={`Show ${r.name}'s referral progress`}
+                      className="absolute inset-0 rounded-xl"
+                    />
+                    {selected && (
+                      <motion.span
+                        layoutId="friend-selected"
+                        aria-hidden
+                        className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-red-600"
+                      />
+                    )}
+
+                    <div className="pointer-events-none relative flex flex-wrap items-start justify-between gap-3">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
+                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white ring-4 ring-red-50">
+                          {initials(r.name)}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <p className="truncate text-[15px] font-bold text-gray-900">{r.name}</p>
-                            <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
-                              <CalendarDays className="h-3.5 w-3.5" aria-hidden />
-                              Invited on {formatDate(r.createdAt)}
-                            </p>
+                            {r.courses.map((c) => (
+                              <span key={c} className="rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-red-100">
+                                {c}
+                              </span>
+                            ))}
                           </div>
+                          <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                            <CalendarDays className="h-3.5 w-3.5" aria-hidden />
+                            Invited on {formatDate(r.createdAt)}
+                          </p>
                         </div>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.className}`}>
                           <span className="h-1.5 w-1.5 rounded-full bg-current" />
                           {badge.label}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => onSelect(selected ? null : r.id)}
+                          aria-label={selected ? `Hide ${r.name}'s progress` : `View ${r.name}'s progress`}
+                          title={selected ? "Hide progress" : "View progress"}
+                          className={`pointer-events-auto relative flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 ${
+                            selected
+                              ? "bg-red-600 text-white shadow-md shadow-red-600/30 hover:bg-red-700"
+                              : "bg-white text-gray-500 ring-1 ring-gray-200 hover:text-red-600 hover:ring-red-200"
+                          }`}
+                        >
+                          <AnimatePresence mode="wait" initial={false}>
+                            <motion.span
+                              key={selected ? "hide" : "show"}
+                              initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                              exit={{ opacity: 0, scale: 0.5, rotate: 30 }}
+                              transition={{ duration: 0.15 }}
+                              className="flex"
+                            >
+                              {selected ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+                            </motion.span>
+                          </AnimatePresence>
+                        </button>
                       </div>
+                    </div>
 
-                      <div className="mt-3.5 grid gap-x-5 gap-y-2 border-t border-dashed border-gray-200 pt-3.5 text-xs text-gray-700 sm:grid-cols-3">
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <Phone className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
-                          +91 {r.phone}
-                        </span>
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <Mail className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
-                          <span className="truncate">{r.email}</span>
-                        </span>
-                        <span className="flex min-w-0 items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
-                          <span className="truncate">{r.state}</span>
-                        </span>
-                      </div>
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {r.courses.map((c) => (
-                          <span key={c} className="rounded-md border border-gray-200 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-600">
-                            {c}
-                          </span>
-                        ))}
-                      </div>
-                    </button>
+                    <div className="pointer-events-none relative mt-3 grid gap-x-5 gap-y-2 border-t border-dashed border-gray-200 pt-3 text-xs text-gray-700 sm:grid-cols-3">
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <Phone className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                        +91 {r.phone}
+                      </span>
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                        <span className="truncate">{r.email}</span>
+                      </span>
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                        <span className="truncate">{r.state}</span>
+                      </span>
+                    </div>
                   </motion.li>
                 );
               })}

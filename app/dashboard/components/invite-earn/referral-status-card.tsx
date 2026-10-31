@@ -11,9 +11,10 @@ import {
   PhoneCall,
   Sparkles,
   Wallet,
+  X,
   type LucideIcon,
 } from "lucide-react";
-import { REFERRAL_STEPS, initials, type Referral } from "./referral-store";
+import { REFERRAL_STEPS, type Referral } from "./referral-store";
 
 type StepState = "done" | "active" | "pending";
 
@@ -64,13 +65,11 @@ function ProgressRing({ value }: { value: number }) {
 }
 
 export default function ReferralStatusCard({
-  referrals,
   selected,
-  onSelect,
+  onClose,
 }: {
-  referrals: Referral[];
   selected: Referral | null;
-  onSelect: (id: string) => void;
+  onClose?: () => void;
 }) {
   const total = REFERRAL_STEPS.length;
   const stage = selected?.stage ?? 0;
@@ -86,39 +85,22 @@ export default function ReferralStatusCard({
           </span>
           <h2 className="text-base font-bold text-gray-900">Referral Process &amp; Status</h2>
         </div>
-        <span className="flex-shrink-0 whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-600">
-          Step {Math.min(stage + (stage < total ? 1 : 0), total)} of {total}
-        </span>
-      </div>
-
-      {/* Whose progress is shown — one chip per invited friend */}
-      {referrals.length > 1 && (
-        <div className="mt-4 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {referrals.map((r) => {
-            const active = r.id === selected?.id;
-            return (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => onSelect(r.id)}
-                aria-pressed={active}
-                className={`inline-flex flex-shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-xs font-semibold transition ${
-                  active ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 text-gray-600 hover:border-gray-300"
-                }`}
-              >
-                <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${
-                    active ? "bg-red-600 text-white" : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {initials(r.name)}
-                </span>
-                {r.name.split(" ")[0]}
-              </button>
-            );
-          })}
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <span className="whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-600">
+            Step {Math.min(stage + (stage < total ? 1 : 0), total)} of {total}
+          </span>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Hide referral progress"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition hover:rotate-90 hover:bg-red-50 hover:text-red-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Summary of the selected friend */}
       <AnimatePresence mode="wait" initial={false}>

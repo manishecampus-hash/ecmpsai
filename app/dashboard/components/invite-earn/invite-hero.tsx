@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, CheckCircle2, Copy, Gift, Hourglass, IndianRupee, Landmark, Link2, Trophy, Users } from "lucide-react";
+import { Check, CheckCircle2, Copy, Gift, Hourglass, IndianRupee, Link2, Trophy, Users } from "lucide-react";
 import FlowingLines from "@/components/about/flowing-lines";
 import { fadeUp } from "../motion";
-import { REFERRAL_STEPS, maskAccount, type BankDetails, type Referral } from "./referral-store";
+import { REFERRAL_STEPS, type Referral } from "./referral-store";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -19,12 +19,10 @@ function WhatsAppIcon({ className }: { className?: string }) {
 // Rewards are confirmed by the backend; until it is connected nothing is marked as earned.
 export default function InviteHero({
   referrals,
-  bank,
   referralCode,
   rewardsEarned = 0,
 }: {
   referrals: Referral[];
-  bank: BankDetails | null;
   referralCode: string;
   rewardsEarned?: number;
 }) {
@@ -65,7 +63,7 @@ export default function InviteHero({
         <span className="absolute right-[-40px] top-[-10px] h-[280px] w-[280px] rounded-full border border-dashed border-red-300/60 motion-safe:animate-[spin_40s_linear_infinite]" />
       </div>
 
-      <div className="relative grid gap-6 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-center xl:gap-8">
+      <div className="relative grid gap-6 px-5 py-4 sm:px-7 sm:py-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-center xl:gap-8">
         {/* Earnings: total on top, the four counters below */}
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-4">
@@ -81,36 +79,24 @@ export default function InviteHero({
                 {rewardsEarned.toLocaleString("en-IN")}
               </p>
             </div>
-            <p
-              className={`inline-flex max-w-full items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold sm:ml-auto ${
-                bank ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100" : "bg-amber-50 text-amber-700 ring-1 ring-amber-100"
-              }`}
-            >
-              <Landmark className="h-3.5 w-3.5 flex-shrink-0" aria-hidden />
-              {bank ? (
-                <span className="truncate">
-                  Paid to {bank.bankName} <span className="font-mono">{maskAccount(bank.accountNumber)}</span>
-                </span>
-              ) : (
-                <span className="truncate">Add bank details to receive rewards</span>
-              )}
-            </p>
           </div>
 
-          <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <ul className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
             {stats.map(({ icon: Icon, label, value, tone }, i) => (
               <motion.li
                 key={label}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0, transition: { delay: 0.15 + i * 0.08, duration: 0.4 } }}
-                className="group relative overflow-hidden rounded-2xl border border-white bg-white/90 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md"
+                className="group relative flex items-center gap-2.5 overflow-hidden rounded-2xl border border-white bg-white/90 px-3 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md"
               >
                 <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-red-600 transition-transform duration-300 group-hover:scale-x-100" />
-                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone}`}>
+                <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${tone}`}>
                   <Icon className="h-[18px] w-[18px]" aria-hidden />
                 </span>
-                <p className="mt-3 text-2xl font-bold leading-none text-gray-900">{value}</p>
-                <p className="mt-1.5 text-xs font-medium text-gray-500">{label}</p>
+                <span className="min-w-0">
+                  <span className="block text-xl font-bold leading-none text-gray-900">{value}</span>
+                  <span className="mt-1 block whitespace-nowrap text-xs font-medium text-gray-500">{label}</span>
+                </span>
               </motion.li>
             ))}
           </ul>

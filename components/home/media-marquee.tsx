@@ -48,59 +48,81 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
   const loop = [...items, ...items];
 
   return (
-    <section aria-labelledby="in-the-news" className="w-full border-y border-gray-200 bg-[#f5f5f5] py-7 sm:py-9">
-      <h2 id="in-the-news" className="text-center text-xs font-bold uppercase tracking-[0.2em] text-gray-500">
-        As featured in
+    // A div with the region role (not <section>) so the home page's section-spacing rule doesn't reset its pull-up margin
+    <div role="region" aria-labelledby="in-the-news" className="relative -mt-11 w-full sm:-mt-14">
+      {/* Heading sits above the grey logo strip, sized like the other homepage section titles */}
+      {/* Very thin divider between Student Stories and this section */}
+      <span
+        aria-hidden
+        className="mx-auto block h-px w-[86%] max-w-[1100px] bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+      />
+      <h2
+        id="in-the-news"
+        className="mt-7 px-5 text-center text-[26px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl"
+      >
+        As <span className="text-red-500">featured</span> in
       </h2>
+      <span
+        aria-hidden
+        className="mx-auto mt-3 block h-1 w-14 rounded-full bg-red-500"
+      />
 
-      <div className="group relative mx-auto mt-6 max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:overflow-x-auto">
-        {/* Pauses on hover and for keyboard focus only — a clicked logo keeps focus after its article opens in a
+      <div className="mt-8 border-y border-gray-200 bg-[#f5f5f5] py-7 sm:mt-10 sm:py-9">
+        <div className="group relative mx-auto max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:overflow-x-auto">
+          {/* Pauses on hover and for keyboard focus only — a clicked logo keeps focus after its article opens in a
             new tab, so pausing on any focus left the strip stopped when the visitor came back */}
-        <ul className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused] motion-reduce:animate-none">
-          {loop.map((item, i) => {
-            const isCopy = i >= items.length;
-            const visual = item.logo ? (
-              <Image
-                src={item.logo.src}
-                alt={`${item.name} logo`}
-                width={item.logo.width}
-                height={LOGO_HEIGHT}
-                // Already small, pre-sized WebP files — served as-is so the repeated copy comes straight from cache
-                unoptimized
-                // Lazy-loading doesn't notice images that slide in via a CSS animation, so the repeated copy
-                // loads up front — at the lowest priority so it never competes with the page's main content
-                loading={isCopy ? "eager" : "lazy"}
-                fetchPriority={isCopy ? "low" : undefined}
-                className="h-7 w-auto opacity-60 grayscale transition duration-300 group-hover/logo:opacity-100 group-hover/logo:grayscale-0 sm:h-9"
-              />
-            ) : (
-              <span className="whitespace-nowrap text-xl font-extrabold tracking-tight text-gray-500 transition-colors group-hover/logo:text-gray-900 sm:text-2xl">
-                {item.name}
-              </span>
-            );
+          <ul className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused] motion-reduce:animate-none">
+            {loop.map((item, i) => {
+              const isCopy = i >= items.length;
+              const visual = item.logo ? (
+                <Image
+                  src={item.logo.src}
+                  alt={`${item.name} logo`}
+                  width={item.logo.width}
+                  height={LOGO_HEIGHT}
+                  // Already small, pre-sized WebP files — served as-is so the repeated copy comes straight from cache
+                  unoptimized
+                  // Lazy-loading doesn't notice images that slide in via a CSS animation, so the repeated copy
+                  // loads up front — at the lowest priority so it never competes with the page's main content
+                  loading={isCopy ? "eager" : "lazy"}
+                  fetchPriority={isCopy ? "low" : undefined}
+                  className="h-7 w-auto opacity-60 grayscale transition duration-300 group-hover/logo:opacity-100 group-hover/logo:grayscale-0 sm:h-9"
+                />
+              ) : (
+                <span className="whitespace-nowrap text-xl font-extrabold tracking-tight text-gray-500 transition-colors group-hover/logo:text-gray-900 sm:text-2xl">
+                  {item.name}
+                </span>
+              );
 
-            return (
-              <li key={`${item.name}-${i}`} aria-hidden={isCopy || undefined} className="flex-shrink-0 px-7 sm:px-12">
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    tabIndex={isCopy ? -1 : undefined}
-                    aria-label={`Read eCampus coverage in ${item.name} (opens in a new tab)`}
-                    title={`Read on ${item.name}`}
-                    className="group/logo flex items-center focus-visible:underline"
-                  >
-                    {visual}
-                  </a>
-                ) : (
-                  <span className="group/logo flex items-center">{visual}</span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li
+                  key={`${item.name}-${i}`}
+                  aria-hidden={isCopy || undefined}
+                  className="flex-shrink-0 px-7 sm:px-12"
+                >
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      tabIndex={isCopy ? -1 : undefined}
+                      aria-label={`Read eCampus coverage in ${item.name} (opens in a new tab)`}
+                      title={`Read on ${item.name}`}
+                      className="group/logo flex items-center focus-visible:underline"
+                    >
+                      {visual}
+                    </a>
+                  ) : (
+                    <span className="group/logo flex items-center">
+                      {visual}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

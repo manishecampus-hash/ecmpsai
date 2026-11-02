@@ -610,7 +610,7 @@ export function LoginModal({
             exit={{ opacity: 0, scale: 0.96, y: 12 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
             className={`relative z-10 w-full overflow-hidden rounded-3xl bg-white shadow-[0_25px_70px_rgba(0,0,0,0.22)] border border-slate-100 my-auto ${
-              step === "details" ? "max-w-[460px]" : "max-w-[420px]"
+              step === "details" ? "max-w-[500px]" : "max-w-[480px] sm:max-w-[500px]"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -673,21 +673,21 @@ export function LoginModal({
 
                       {/* Mode switcher tabs (Mobile is Primary) */}
                       {!mobileOtpSent && !emailOtpSent && (
-                        <div className="grid grid-cols-2 p-1 bg-slate-100/90 rounded-2xl mb-5">
+                        <div className="grid grid-cols-2 p-1.5 sm:p-2 bg-[#F0F4F8] rounded-2xl mb-6">
                           <button
                             type="button"
                             onClick={() => {
                               setMode("mobile");
                               setError("");
                             }}
-                            className={`flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-xl transition-all ${
+                            className={`flex h-12 sm:h-13 items-center justify-center gap-2 px-2.5 sm:px-3 text-xs sm:text-[13.5px] font-bold rounded-xl sm:rounded-[14px] transition-all cursor-pointer whitespace-nowrap ${
                               mode === "mobile"
-                                ? "bg-white text-slate-900 shadow-sm"
-                                : "text-slate-500 hover:text-slate-800"
+                                ? "bg-white text-[#0F172A] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                                : "text-slate-600 hover:text-slate-900"
                             }`}
                           >
-                            <Smartphone className="w-3.5 h-3.5 text-red-600" />
-                            <span>Mobile OTP (Primary)</span>
+                            <Smartphone className={`h-4.5 w-4.5 shrink-0 ${mode === "mobile" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                            <span className="whitespace-nowrap">Mobile OTP (Primary)</span>
                           </button>
                           <button
                             type="button"
@@ -695,14 +695,14 @@ export function LoginModal({
                               setMode("email");
                               setError("");
                             }}
-                            className={`flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-xl transition-all ${
+                            className={`flex h-12 sm:h-13 items-center justify-center gap-2 px-2.5 sm:px-3 text-xs sm:text-[13.5px] font-bold rounded-xl sm:rounded-[14px] transition-all cursor-pointer whitespace-nowrap ${
                               mode === "email"
-                                ? "bg-white text-slate-900 shadow-sm"
-                                : "text-slate-500 hover:text-slate-800"
+                                ? "bg-white text-[#0F172A] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                                : "text-slate-600 hover:text-slate-900"
                             }`}
                           >
-                            <Mail className="w-3.5 h-3.5" />
-                            Email
+                            <Mail className={`h-4.5 w-4.5 shrink-0 ${mode === "email" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                            <span className="whitespace-nowrap">Email</span>
                           </button>
                         </div>
                       )}
@@ -776,21 +776,33 @@ export function LoginModal({
                           {!mobileOtpSent ? (
                             <form onSubmit={handleSendMobileOtp} className="space-y-4">
                               <div>
-                                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                                <label className="block text-xs sm:text-[13px] font-semibold text-[#1E293B] mb-2">
                                   Registered Mobile Number
                                 </label>
-                                <div className="flex rounded-2xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/15 transition-all overflow-hidden">
-                                  <select
-                                    value={countryCode}
-                                    onChange={(e) => setCountryCode(e.target.value)}
-                                    className="bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-700 border-r border-slate-200 outline-none cursor-pointer"
-                                  >
-                                    {countryCodes.map((c) => (
-                                      <option key={c.code} value={c.code}>
-                                        {c.flag} {c.code}
-                                      </option>
-                                    ))}
-                                  </select>
+                                <div className="relative flex h-[54px] sm:h-[58px] items-center rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                                  {/* Country Picker (seamless left section with divider, NO inner box) */}
+                                  <div className="relative flex shrink-0 items-center gap-2 border-r border-slate-200 px-4 sm:px-4.5 h-full text-slate-800 select-none cursor-pointer hover:bg-slate-50/70 transition-colors">
+                                    <span className="text-xl sm:text-2xl leading-none">
+                                      {selectedCountry?.flag || "🇮🇳"}
+                                    </span>
+                                    <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                                      {selectedCountry?.code || "+91"}
+                                    </span>
+                                    <ChevronDown className="h-4 w-4 text-slate-400" />
+                                    <select
+                                      value={countryCode}
+                                      onChange={(e) => setCountryCode(e.target.value)}
+                                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                    >
+                                      {countryCodes.map((c) => (
+                                        <option key={c.code} value={c.code}>
+                                          {c.flag} {c.code} ({c.name})
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+
+                                  {/* Phone Input */}
                                   <input
                                     type="tel"
                                     inputMode="numeric"
@@ -799,25 +811,35 @@ export function LoginModal({
                                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                                     autoFocus
                                     required
-                                    className="flex-1 px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none"
+                                    className="h-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent px-4 sm:px-5 text-base sm:text-[17px] font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                                   />
+
+                                  {phone.length > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPhone("")}
+                                      className="mr-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
 
                               <Button
                                 type="submit"
                                 disabled={loading || phone.length !== 10}
-                                className="w-full h-11 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                className="relative group mt-1.5 flex h-12.5 sm:h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F87171] to-[#FB7185] hover:from-[#EF4444] hover:to-[#F43F5E] text-sm sm:text-base font-bold tracking-normal text-white shadow-[0_8px_20px_rgba(248,113,113,0.38)] hover:shadow-[0_10px_24px_rgba(248,113,113,0.48)] transition-all active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                               >
                                 {loading ? (
                                   <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Sending OTP…
+                                    <span>Sending OTP…</span>
                                   </>
                                 ) : (
                                   <>
-                                    Get Login OTP
-                                    <ArrowRight className="w-4 h-4" />
+                                    <span>Get Login OTP</span>
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                                   </>
                                 )}
                               </Button>

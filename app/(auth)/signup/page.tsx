@@ -18,6 +18,11 @@ import {
   GraduationCap,
   MapPin,
   Calendar,
+  Check,
+  MessageSquare,
+  ShieldCheck,
+  Gift,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -605,34 +610,46 @@ export default function SignupPage() {
                   </div>
                 </div>
 
-                <div className="pt-1">
-                  <label className="flex items-start gap-2.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={whatsappOptIn}
-                      onChange={(e) => setWhatsappOptIn(e.target.checked)}
-                      className="mt-0.5 rounded border-slate-300 text-red-600 focus:ring-red-500 cursor-pointer"
-                    />
-                    <span className="text-xs text-slate-600">
-                      Receive admission notifications and counselor updates on WhatsApp
-                    </span>
-                  </label>
+                {/* WhatsApp Opt-in Card */}
+                <div
+                  onClick={() => setWhatsappOptIn(!whatsappOptIn)}
+                  className="flex items-center gap-3.5 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] p-3.5 cursor-pointer select-none transition-colors hover:bg-[#EAFBF0]"
+                >
+                  <div
+                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-colors ${
+                      whatsappOptIn
+                        ? "bg-[#059669] text-white shadow-2xs"
+                        : "border-2 border-slate-300 bg-white"
+                    }`}
+                  >
+                    {whatsappOptIn && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F172A]">
+                      <MessageSquare className="h-4 w-4 text-[#059669] shrink-0" />
+                      <span>Get updates on WhatsApp</span>
+                    </div>
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-[#065F46]/80">
+                      Receive university brochures, EMI options & counseling alerts.
+                    </p>
+                  </div>
                 </div>
 
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-11 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  className="group mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#E11D48] hover:bg-[#BE123C] text-sm font-bold tracking-wide text-white shadow-[0_8px_20px_rgba(225,29,72,0.3)] transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving…
+                      <span>Saving Profile...</span>
                     </>
                   ) : (
                     <>
-                      Complete Setup & Continue
-                      <ArrowRight className="w-4 h-4" />
+                      <span>Complete & Explore Universities</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                     </>
                   )}
                 </Button>

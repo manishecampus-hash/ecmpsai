@@ -82,19 +82,51 @@ export function extractTargetDegree(student?: Partial<StudentProfile>): string {
 }
 
 export function parseBudgetRange(budget?: string): { min: number; max: number } {
+  if (!budget) return { min: 0, max: 2500000 };
+
+  const clean = budget.replace(/,/g, "").replace(/\s+/g, " ");
+
+  // Handle University Course Budget Range tab options
+  if (clean.includes("250000") && (clean.includes("Above") || clean.includes("above") || clean.includes("&"))) {
+    return { min: 250000, max: 2500000 };
+  }
+  if (clean.includes("200000") && clean.includes("250000")) {
+    return { min: 200000, max: 250000 };
+  }
+  if (clean.includes("150000") && clean.includes("200000")) {
+    return { min: 150000, max: 200000 };
+  }
+  if (clean.includes("100000") && clean.includes("150000")) {
+    return { min: 100000, max: 150000 };
+  }
+  if (clean.includes("50000") && clean.includes("100000")) {
+    return { min: 50000, max: 100000 };
+  }
+
+  // Generic extraction of numbers from strings
+  const numbers = clean.match(/\d+/g)?.map((n) => parseInt(n, 10)) || [];
+  if (numbers.length >= 2) {
+    return { min: Math.min(numbers[0], numbers[1]), max: Math.max(numbers[0], numbers[1]) };
+  } else if (numbers.length === 1) {
+    if (clean.includes("above") || clean.includes("+") || clean.includes("&")) {
+      return { min: numbers[0], max: 2500000 };
+    }
+    return { min: 0, max: numbers[0] };
+  }
+
   switch (budget) {
     case "50k":
       return { min: 0, max: 55000 };
     case "50k_1l":
-      return { min: 45000, max: 110000 };
+      return { min: 50000, max: 100000 };
     case "1l_3l":
-      return { min: 90000, max: 310000 };
+      return { min: 100000, max: 300000 };
     case "3l_5l":
-      return { min: 280000, max: 520000 };
+      return { min: 300000, max: 500000 };
     case "5l_plus":
-      return { min: 450000, max: 2000000 };
+      return { min: 500000, max: 2500000 };
     default:
-      return { min: 0, max: 1000000 };
+      return { min: 0, max: 2500000 };
   }
 }
 

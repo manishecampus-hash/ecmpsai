@@ -8,7 +8,7 @@ import AppliedBadge from "../components/applied-badge";
 import WhyEcampusCard from "../components/ai-assist/why-ecampus-card";
 import AiChatCard from "../components/ai-assist/ai-chat-card";
 import AiChatPanel from "../components/ai-assist/ai-chat-panel";
-import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
+import { describeAdvisorProfile, cleanCourseDisplay } from "@/components/layout/onboarding-options";
 import {
   AnimatePresence,
   MotionConfig,
@@ -40,15 +40,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-type Mode = "Online" | "Hybrid" | "Campus";
-type Degree = "MBA" | "MCA" | "BCA" | "BBA" | "M.Tech" | "M.Sc";
-type Specialization =
-  | "AI & ML"
-  | "Data Science"
-  | "Cloud & Cyber Security"
-  | "Full Stack";
-type Accreditation = "NAAC" | "UGC" | "AICTE" | "WES";
-type FeatureTag = "Scholarship" | "ZeroCostEMI" | "Placement";
+type Mode = "Online" | "Hybrid" | "Campus" | string;
+type Degree = string;
+type Specialization = string;
+type Accreditation = string;
+type FeatureTag = string;
 type SortKey = "match" | "rating" | "fee" | "popular";
 
 interface UniversityListing {
@@ -70,6 +66,7 @@ interface UniversityListing {
   durationNote: string;
   accreditations: Accreditation[];
   features: FeatureTag[];
+  slug?: string;
 }
 
 const UNIVERSITIES: UniversityListing[] = [
@@ -273,7 +270,21 @@ const UNIVERSITIES: UniversityListing[] = [
   },
 ];
 
-const DEGREES: Degree[] = ["MBA", "MCA", "BCA", "BBA", "M.Tech", "M.Sc"];
+const DEGREES: Degree[] = [
+  "MBA",
+  "MCA",
+  "BCA",
+  "BBA",
+  "B.Com",
+  "M.Com",
+  "B.Sc",
+  "M.Sc",
+  "BA",
+  "MA",
+  "DBA",
+  "B.Tech",
+  "M.Tech",
+];
 const SPECIALIZATIONS: { id: Specialization; label: string }[] = [
   { id: "AI & ML", label: "Artificial Intelligence & ML" },
   { id: "Data Science", label: "Data Science & Analytics" },
@@ -292,20 +303,20 @@ const FEATURES: { id: FeatureTag; label: string }[] = [
   { id: "ZeroCostEMI", label: "Zero Cost EMI Option" },
   { id: "Placement", label: "Job Placement Support" },
 ];
-const FEATURE_CHIP_LABEL: Record<FeatureTag, string> = {
+const FEATURE_CHIP_LABEL: Record<string, string> = {
   Scholarship: "Scholarship Eligible",
   ZeroCostEMI: "Zero Cost EMI",
   Placement: "Placement Support",
 };
-const ACCREDITATION_CHIP_LABEL: Record<Accreditation, string> = {
+const ACCREDITATION_CHIP_LABEL: Record<string, string> = {
   NAAC: "NAAC A+",
   UGC: "UGC Entitled",
   AICTE: "AICTE Approved",
   WES: "WES Recognized",
 };
 
-const MIN_FEE = 20000;
-const MAX_FEE = 150000;
+const MIN_FEE = 15000;
+const MAX_FEE = 1500000;
 const PAGE_SIZE = 6;
 
 // Page-to-page transition: a short cross-fade, then the new cards rise in one after another
@@ -635,6 +646,8 @@ function FilterSection({
 export default function AIDegreeMatcherPage() {
   const [student, setStudent] = useState<StudentProfile>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [universities, setUniversities] = useState<UniversityListing[]>(UNIVERSITIES);
+  const [loadingCourses, setLoadingCourses] = useState(false);
 
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("Any Location");
@@ -651,12 +664,53 @@ export default function AIDegreeMatcherPage() {
   const [whyMatchOpen, setWhyMatchOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
+  const fetchCourses = useCallback(async (currentStudent?: StudentProfile) => {
+    try {
+      setLoadingCourses(true);
+      const s = currentStudent || student;
+      const params = new URLSearchParams();
+      if (s?.advisorProfile?.highestQualification) {
+        params.set("highestQualification", s.advisorProfile.highestQualification);
+      }
+      if (s?.advisorProfile?.coursePreference || s?.course || s?.coursesInterested?.[0]) {
+        params.set(
+          "coursePreference",
+          s.advisorProfile?.coursePreference || s.course || s.coursesInterested?.[0] || ""
+        );
+      }
+      if (s?.advisorProfile?.budget) {
+        params.set("budget", s.advisorProfile.budget);
+      }
+      if (s?.advisorProfile?.category) {
+        params.set("category", s.advisorProfile.category);
+      }
+      if (s?.state) {
+        params.set("state", s.state);
+      }
+
+      const res = await fetch(`/api/matcher/courses?${params.toString()}`);
+      const data = await res.json();
+      if (data?.success && Array.isArray(data.courses) && data.courses.length > 0) {
+        setUniversities(data.courses);
+        const maxFound = Math.max(...data.courses.map((c: UniversityListing) => c.fee || 0));
+        if (maxFound > 0) {
+          setMaxFee(Math.max(maxFound, 150000));
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load matcher courses:", err);
+    } finally {
+      setLoadingCourses(false);
+    }
+  }, [student]);
+
   useEffect(() => {
     const saved = localStorage.getItem("ecampus_student");
     if (saved) {
       try {
         const s: StudentProfile = JSON.parse(saved);
         setStudent(s);
+        fetchCourses(s);
         const courseStr = (
           s.advisorProfile?.coursePreference ||
           s.course ||
@@ -669,7 +723,11 @@ export default function AIDegreeMatcherPage() {
             break;
           }
         }
-      } catch {}
+      } catch {
+        fetchCourses();
+      }
+    } else {
+      fetchCourses();
     }
   }, []);
 
@@ -681,8 +739,8 @@ export default function AIDegreeMatcherPage() {
   const closeAiChat = useCallback(() => setAiChatOpen(false), []);
 
   const locations = useMemo(
-    () => ["Any Location", ...Array.from(new Set(UNIVERSITIES.map((u) => u.location)))],
-    [],
+    () => ["Any Location", ...Array.from(new Set(universities.map((u) => u.location)))],
+    [universities],
   );
 
   const filterState: FilterState = useMemo(
@@ -691,14 +749,14 @@ export default function AIDegreeMatcherPage() {
   );
 
   const filtered = useMemo(
-    () => UNIVERSITIES.filter((u) => matchesFilters(u, filterState)),
-    [filterState],
+    () => universities.filter((u) => matchesFilters(u, filterState)),
+    [universities, filterState],
   );
 
   // How many results each option would give, given every *other* active filter
   const facets = useMemo(() => {
     const count = (skip: FacetKey, test: (u: UniversityListing) => boolean) =>
-      UNIVERSITIES.filter((u) => matchesFilters(u, filterState, skip) && test(u)).length;
+      universities.filter((u) => matchesFilters(u, filterState, skip) && test(u)).length;
     return {
       degree: Object.fromEntries(DEGREES.map((d) => [d, count("degree", (u) => u.degree === d)])),
       specialization: Object.fromEntries(
@@ -712,7 +770,7 @@ export default function AIDegreeMatcherPage() {
         FEATURES.map((x) => [x.id, count("feature", (u) => u.features.includes(x.id))]),
       ),
     } as Record<FacetKey, Record<string, number>>;
-  }, [filterState]);
+  }, [universities, filterState]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -1094,7 +1152,7 @@ export default function AIDegreeMatcherPage() {
                   </button>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  <span className="font-semibold text-gray-900">{sorted.length}</span> of {UNIVERSITIES.length}{" "}
+                  <span className="font-semibold text-gray-900">{sorted.length}</span> of {universities.length}{" "}
                   programs match your filters
                 </p>
               </div>
@@ -1188,6 +1246,46 @@ export default function AIDegreeMatcherPage() {
                 </div>
               </div>
 
+              {/* Active Preferences Banner from Onboarding */}
+              {student?.advisorProfile &&
+                (student.advisorProfile.highestQualification ||
+                  student.advisorProfile.coursePreference ||
+                  student.advisorProfile.budget) && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200/70 bg-gradient-to-r from-red-50/80 via-white to-red-50/40 p-3.5 sm:p-4 text-xs shadow-xs">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-xs">
+                        <Sparkles className="h-3 w-3" />
+                        3-Way Matched
+                      </span>
+                      {student.advisorProfile.highestQualification && (
+                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
+                          Qualification:{" "}
+                          <strong className="text-gray-900">{student.advisorProfile.highestQualification}</strong>
+                        </span>
+                      )}
+                      {student.advisorProfile.coursePreference && (
+                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
+                          Course:{" "}
+                          <strong className="text-gray-900">
+                            {cleanCourseDisplay(student.advisorProfile.coursePreference)}
+                          </strong>
+                        </span>
+                      )}
+                      {student.advisorProfile.budget && (
+                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
+                          Budget Range: <strong className="text-gray-900">{student.advisorProfile.budget}</strong>
+                        </span>
+                      )}
+                    </div>
+                    <a
+                      href="/dashboard/profile"
+                      className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
+                    >
+                      Edit questionnaire →
+                    </a>
+                  </div>
+                )}
+
               <AnimatePresence initial={false}>
                 {activeChips.length > 0 && (
                   <motion.div key="active-chips" {...collapse} className="overflow-hidden">
@@ -1224,7 +1322,23 @@ export default function AIDegreeMatcherPage() {
               </AnimatePresence>
 
               <AnimatePresence mode="wait">
-              {pageItems.length === 0 ? (
+              {loadingCourses ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm"
+                >
+                  <div className="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-red-600 border-t-transparent" />
+                  <p className="mt-4 text-sm font-semibold text-gray-800">
+                    Finding matching university programs...
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Checking course fees, eligibility requirements, and budget ranges
+                  </p>
+                </motion.div>
+              ) : pageItems.length === 0 ? (
                 <motion.div
                   key="empty"
                   initial={{ opacity: 0, scale: 0.98 }}

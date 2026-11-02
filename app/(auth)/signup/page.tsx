@@ -17,10 +17,10 @@ import {
   User,
   GraduationCap,
   MapPin,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { courseOptions } from "@/data/course-options";
 import { indianStates } from "@/data/indian-states";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 
@@ -57,6 +57,7 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [state, setState] = useState("");
+  const [dob, setDob] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
 
@@ -173,6 +174,7 @@ export default function SignupPage() {
         if (data.student.name) setName(data.student.name);
         if (data.student.email && !email) setEmail(data.student.email);
         if (data.student.state) setState(data.student.state);
+        if (data.student.dob) setDob(data.student.dob);
         if (data.student.course) setCourse(data.student.course);
         else if (data.student.coursesInterested?.length) setCourse(data.student.coursesInterested[0]);
 
@@ -224,6 +226,7 @@ export default function SignupPage() {
       coursesInterested: course ? [course] : (prevData.coursesInterested || []),
       course: course || prevData.course || undefined,
       state: state || prevData.state || undefined,
+      dob: dob || prevData.dob || undefined,
       referralCode: referralCode.trim() || prevData.referralCode || undefined,
       whatsappOptIn,
       joinedAt: prevData.joinedAt || new Date().toISOString(),
@@ -562,40 +565,44 @@ export default function SignupPage() {
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Interested Course
-                  </label>
-                  <select
-                    value={course}
-                    onChange={(e) => setCourse(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs cursor-pointer"
-                  >
-                    <option value="">Select a course (e.g. Online MBA)</option>
-                    {courseOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      State / Region
+                    </label>
+                    <select
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      className="w-full h-11 px-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs cursor-pointer"
+                    >
+                      <option value="">Select your state</option>
+                      {indianStates.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    State / Region
-                  </label>
-                  <select
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs cursor-pointer"
-                  >
-                    <option value="">Select your state</option>
-                    {indianStates.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
+                  <div>
+                    <div className="mb-1 flex items-center justify-between">
+                      <label className="block text-xs font-semibold text-slate-700">
+                        Date of Birth
+                      </label>
+                      <span className="text-[11px] font-normal text-slate-400">Optional</span>
+                    </div>
+                    <div className="relative flex h-11 w-full items-center rounded-2xl border border-slate-200 bg-white px-3.5 shadow-xs hover:border-slate-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/15">
+                      <Calendar className="mr-2 h-4 w-4 text-slate-400 shrink-0 pointer-events-none" />
+                      <input
+                        type="date"
+                        value={dob}
+                        onChange={(e) => setDob(e.target.value)}
+                        max={new Date().toISOString().split("T")[0]}
+                        min="1940-01-01"
+                        className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 cursor-pointer"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-1">

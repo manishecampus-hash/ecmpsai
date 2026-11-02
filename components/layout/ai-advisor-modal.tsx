@@ -1,13 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Sidebar from "@/app/dashboard/components/sidebar";
-import Topbar from "@/app/dashboard/components/topbar";
-import WelcomeBanner from "@/app/dashboard/components/welcome-banner";
-import StatsCards from "@/app/dashboard/components/stats-cards";
-import Recommendations from "@/app/dashboard/components/recommendations";
-import Milestones from "@/app/dashboard/components/milestones";
 import {
   X,
   ArrowLeft,
@@ -45,9 +39,12 @@ import {
 // The full answer set handed back to the signup flow when the questionnaire finishes
 export type AdvisorAnswers = OnboardingData;
 
-interface AIAdvisorModalProps {
+export interface AIAdvisorModalProps {
   onClose: () => void;
   onComplete: (answers: AdvisorAnswers) => void;
+  initialAnswers?: Partial<OnboardingData> | null;
+  initialStep?: 1 | 2 | 3 | 4 | 5;
+  isEditing?: boolean;
 }
 
 const analysisChecklist = [
@@ -187,7 +184,7 @@ function CourseStep({
             {g.items.map((c, i) => (
               <ChoiceCard
                 key={c.id}
-                selected={selected === c.id}
+                selected={selected === c.id || selected === c.name || selected === c.fullName}
                 onSelect={() => onSelect(c.id)}
                 title={c.name}
                 emphasis
@@ -303,26 +300,44 @@ function SalaryStep({
 }
 
 /* ─────────────── 5-step progress indicator ─────────────── */
-function StepProgress({ step }: { step: WizardStep }) {
+function StepProgress({
+  step,
+  onSelectStep,
+  data,
+  isEditing,
+}: {
+  step: WizardStep;
+  onSelectStep?: (s: WizardStep) => void;
+  data?: OnboardingData;
+  isEditing?: boolean;
+}) {
   return (
     <ol className="flex items-center gap-1.5 sm:gap-2">
       {ONBOARDING_STEPS.map((s, i) => {
-        const done = s.id < step;
+        const done = (data && isStepComplete(s.id, data)) || s.id < step;
         const current = s.id === step;
+        const canClick = Boolean(onSelectStep) && (isEditing || done);
         return (
           <li key={s.id} className="flex flex-1 items-center gap-1.5 sm:gap-2">
-            <span className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={!canClick}
+              onClick={() => onSelectStep?.(s.id as WizardStep)}
+              className={`flex items-center gap-2 group text-left transition-all ${
+                canClick ? "cursor-pointer hover:opacity-85" : "cursor-default"
+              }`}
+            >
               <span
-                className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-colors ${
-                  done
-                    ? "bg-red-600 text-white"
-                    : current
-                      ? "bg-white text-red-600 ring-2 ring-red-600"
+                className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
+                  current
+                    ? "bg-white text-red-600 ring-2 ring-red-600 shadow-xs"
+                    : done
+                      ? "bg-red-600 text-white group-hover:scale-105"
                       : "bg-gray-100 text-gray-400"
                 }`}
                 aria-current={current ? "step" : undefined}
               >
-                {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.id}
+                {done && !current ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.id}
               </span>
               <span
                 className={`hidden whitespace-nowrap text-xs font-semibold md:inline ${
@@ -331,7 +346,7 @@ function StepProgress({ step }: { step: WizardStep }) {
               >
                 {s.label}
               </span>
-            </span>
+            </button>
             {i < ONBOARDING_STEPS.length - 1 && (
               <span className={`h-0.5 flex-1 rounded-full ${done ? "bg-red-600" : "bg-gray-200"}`} />
             )}
@@ -342,13 +357,31 @@ function StepProgress({ step }: { step: WizardStep }) {
   );
 }
 
-export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
+export function AIAdvisorModal({
+  onClose,
+  onComplete,
+  initialAnswers,
+  initialStep = 1,
+  isEditing = false,
+}: AIAdvisorModalProps) {
   const [phase, setPhase] = useState<Phase>("wizard");
-  const [step, setStep] = useState<WizardStep>(1);
+  const [step, setStep] = useState<WizardStep>(() => {
+    if (initialStep && initialStep >= 1 && initialStep <= 5) return initialStep;
+    return 1;
+  });
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [data, setData] = useState<OnboardingData>(EMPTY_ONBOARDING);
+  const [data, setData] = useState<OnboardingData>(() => ({
+    ...EMPTY_ONBOARDING,
+    ...(initialAnswers || {}),
+  }));
 
   const [checklistDone, setChecklistDone] = useState<boolean[]>(analysisChecklist.map(() => false));
+
+  // Dynamic options loaded from Admin & Database
+  const [dynamicEligibilities, setDynamicEligibilities] = useState<{ id: string; label: string; title: string }[]>([]);
+  const [dynamicBudgetRanges, setDynamicBudgetRanges] = useState<{ id: string; name: string; label: string; min: number; max: number }[]>([]);
+  const [availableCourses, setAvailableCourses] = useState<CourseOption[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
 
   // Latest answers for the delayed "analysis finished" timer (avoids a stale closure)
   const dataRef = useRef<OnboardingData>(EMPTY_ONBOARDING);
@@ -377,6 +410,56 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
     };
   }, []);
 
+  // Fetch admin root course eligibilities & university course budget ranges
+  useEffect(() => {
+    let active = true;
+    fetch("/api/onboarding/options")
+      .then((r) => r.json())
+      .then((res) => {
+        if (!active || !res?.success) return;
+        if (Array.isArray(res.eligibilities) && res.eligibilities.length > 0) {
+          setDynamicEligibilities(res.eligibilities);
+        }
+        if (Array.isArray(res.budgetRanges) && res.budgetRanges.length > 0) {
+          setDynamicBudgetRanges(res.budgetRanges);
+        }
+      })
+      .catch((err) => console.error("Error loading onboarding options:", err));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Fetch root courses matching the selected qualification
+  const fetchCoursesForQualification = useCallback(async (qual: string) => {
+    if (!qual) {
+      setAvailableCourses([]);
+      return;
+    }
+    setLoadingCourses(true);
+    try {
+      const res = await fetch(`/api/onboarding/options?eligibility=${encodeURIComponent(qual)}`);
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.rootCourses) && json.rootCourses.length > 0) {
+        setAvailableCourses(json.rootCourses);
+      } else {
+        setAvailableCourses(getCourseOptions(qual));
+      }
+    } catch (err) {
+      console.error("Error fetching courses for qualification:", err);
+      setAvailableCourses(getCourseOptions(qual));
+    } finally {
+      setLoadingCourses(false);
+    }
+  }, []);
+
+  // Initial course list fetch if qualification is already selected (e.g. edit mode)
+  useEffect(() => {
+    if (data.highestQualification) {
+      fetchCoursesForQualification(data.highestQualification);
+    }
+  }, [data.highestQualification, fetchCoursesForQualification]);
+
   const goToStep = (next: WizardStep) => {
     clearAdvanceTimer();
     setDirection(next > step ? 1 : -1);
@@ -385,13 +468,14 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
   };
 
   /* ── field updates ── */
-  const setQualification = (q: QualificationId) => {
+  const setQualification = (q: string) => {
     advanceRequested.current = true;
-    setData((prev) => {
-      // Keep the course only if it's still offered for the new qualification
-      const stillValid = getCourseOptions(q).some((c) => c.id === prev.coursePreference);
-      return { ...prev, highestQualification: q, coursePreference: stillValid ? prev.coursePreference : "" };
-    });
+    setData((prev) => ({
+      ...prev,
+      highestQualification: q,
+      coursePreference: "", // reset course selection when qualification changes
+    }));
+    fetchCoursesForQualification(q);
   };
 
   const setEmployment = (s: EmploymentStatus) =>
@@ -459,7 +543,11 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
         if (firstIncomplete) goToStep(firstIncomplete);
         return;
       }
-      startAnalysis();
+      if (isEditing) {
+        onComplete({ ...dataRef.current });
+      } else {
+        startAnalysis();
+      }
     }, AUTO_ADVANCE_DELAY);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -473,44 +561,64 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
 
   const renderStep = () => {
     switch (step) {
-      case 1:
+      case 1: {
+        const options = dynamicEligibilities.length > 0 ? dynamicEligibilities : QUALIFICATION_OPTIONS;
         return (
           <OptionList>
-            {QUALIFICATION_OPTIONS.map((o, i) => (
+            {options.map((o, i) => (
               <ChoiceCard
                 key={o.id}
-                selected={data.highestQualification === o.id}
-                onSelect={() => setQualification(o.id)}
-                title={o.label}
+                selected={data.highestQualification === o.id || data.highestQualification === o.label}
+                onSelect={() => setQualification(o.id || o.label)}
+                title={o.label || (o as any).title}
                 emphasis
                 index={i}
               />
             ))}
           </OptionList>
         );
-      case 2:
+      }
+      case 2: {
+        if (loadingCourses) {
+          return (
+            <div className="flex flex-col items-center justify-center py-12 text-sm text-gray-500">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
+              <span className="mt-3 font-medium text-gray-600">Loading courses for {data.highestQualification}...</span>
+            </div>
+          );
+        }
+        const coursesToShow =
+          availableCourses.length > 0
+            ? availableCourses
+            : getCourseOptions(data.highestQualification);
         return (
           <CourseStep
-            courses={getCourseOptions(data.highestQualification)}
+            courses={coursesToShow}
             selected={data.coursePreference}
             onSelect={setField("coursePreference")}
           />
         );
-      case 3:
+      }
+      case 3: {
+        const options = dynamicBudgetRanges.length > 0 ? dynamicBudgetRanges : BUDGET_OPTIONS;
         return (
           <OptionList>
-            {BUDGET_OPTIONS.map((o, i) => (
-              <ChoiceCard
-                key={o.id}
-                selected={data.budget === o.id}
-                onSelect={() => setField("budget")(o.id)}
-                title={o.label}
-                emphasis
-                index={i}
-              />
-            ))}
+            {options.map((o, i) => {
+              const val = (o as any).name || o.label || o.id;
+              return (
+                <ChoiceCard
+                  key={o.id}
+                  selected={data.budget === o.id || data.budget === (o as any).name || data.budget === o.label}
+                  onSelect={() => setField("budget")(val)}
+                  title={o.label || (o as any).name}
+                  emphasis
+                  index={i}
+                />
+              );
+            })}
           </OptionList>
         );
+      }
       case 4:
         return (
           <SalaryStep
@@ -539,25 +647,11 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
 
   return (
     <>
-      {/* Backdrop — a blurred, non-interactive preview of the dashboard the
-          student is about to land on, instead of a flat dark overlay. */}
-      <div className="fixed inset-0 z-[75] overflow-hidden" onClick={onClose}>
-        <div aria-hidden className="pointer-events-none absolute inset-0 select-none blur-sm">
-          <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
-            <Sidebar mobileOpen={false} onClose={() => {}} />
-            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <Topbar student={{}} onOpenMobileMenu={() => {}} />
-              <main className="flex min-w-0 flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
-                <WelcomeBanner student={{}} onResumeSelected={() => {}} />
-                <StatsCards />
-                <Recommendations />
-                <Milestones />
-              </main>
-            </div>
-          </div>
-        </div>
-        <div className="absolute inset-0 bg-black/50" />
-      </div>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-[75] bg-[#0a1428]/70 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      />
 
       {/* Modal wrapper */}
       <div className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain">
@@ -577,11 +671,11 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <span className="truncate text-sm font-bold leading-tight text-gray-900 sm:text-base">
-                    eCampus AI Smart Advisor
+                    {isEditing ? "Edit Questionnaire Choices" : "eCampus AI Smart Advisor"}
                   </span>
                   <span className="hidden items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-600 sm:inline-flex">
                     <Sparkles className="h-3 w-3" />
-                    AI Degree Matcher
+                    {isEditing ? "Update Preferences" : "AI Degree Matcher"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -603,7 +697,12 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
 
               {phase === "wizard" && (
                 <div className="mt-4">
-                  <StepProgress step={step} />
+                  <StepProgress
+                    step={step}
+                    onSelectStep={goToStep}
+                    data={data}
+                    isEditing={isEditing}
+                  />
                 </div>
               )}
 
@@ -711,17 +810,47 @@ export function AIAdvisorModal({ onClose, onComplete }: AIAdvisorModalProps) {
               </AnimatePresence>
             </div>
 
-            {/* Footer navigation — Back only; options move forward on their own */}
-            {phase === "wizard" && step > 1 && (
-              <div className="flex flex-shrink-0 items-center border-t border-gray-100 bg-white px-5 py-3 sm:px-8">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-800"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back
-                </button>
+            {/* Footer navigation */}
+            {phase === "wizard" && (
+              <div className="flex flex-shrink-0 items-center justify-between border-t border-gray-100 bg-white px-5 py-3 sm:px-8">
+                <div>
+                  {step > 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 active:scale-95"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Back
+                    </button>
+                  ) : (
+                    <div />
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {isEditing && isOnboardingComplete(data) && (
+                    <button
+                      type="button"
+                      onClick={() => onComplete({ ...dataRef.current })}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-95"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                      <span>Save Changes</span>
+                    </button>
+                  )}
+
+                  {step < TOTAL_STEPS && isStepComplete(step, data) && (
+                    <button
+                      type="button"
+                      onClick={() => goToStep((step + 1) as WizardStep)}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-xs transition hover:bg-gray-50 hover:text-gray-900 active:scale-95"
+                    >
+                      <span>Next</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>

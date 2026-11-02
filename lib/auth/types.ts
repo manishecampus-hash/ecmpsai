@@ -34,6 +34,7 @@ export interface UserRecord {
   updated_at: Date;
   // Metadata & Profile
   state?: string;
+  dob?: string;
   course_interested?: string[];
   coursesInterested?: string[];
   course?: string;

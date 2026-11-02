@@ -6,7 +6,8 @@ import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import type { StudentProfile } from "../types";
 import ProfileProgress from "../components/profile-progress";
-import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
+import { describeAdvisorProfile, getCourseOptions, type QualificationId } from "@/components/layout/onboarding-options";
+import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
   EASE_OUT,
@@ -23,6 +24,7 @@ import {
   Mail,
   Phone,
   CalendarDays,
+  Calendar,
   BadgeCheck,
   MapPin,
   Target,
@@ -96,9 +98,15 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [formName, setFormName] = useState("");
   const [formState, setFormState] = useState("");
+  const [formDob, setFormDob] = useState("");
   const [savedFlash, setSavedFlash] = useState(false);
+  const [savedFlashMessage, setSavedFlashMessage] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Questionnaire / AI Advisor modal state
+  const [advisorModalOpen, setAdvisorModalOpen] = useState(false);
+  const [advisorModalStep, setAdvisorModalStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Email Change & Re-verification modal state
   const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -119,6 +127,7 @@ export default function ProfilePage() {
         setStudent(parsed);
         setFormName(parsed.name || "");
         setFormState(parsed.state || "");
+        setFormDob(parsed.dob || "");
       } catch (err) {
         console.error("Failed to parse saved student data:", err);
       }
@@ -138,13 +147,16 @@ export default function ProfilePage() {
               phone: data.user.phone_e164 || prev.phone,
               phone_verified_at: data.user.phone_verified_at,
               state: data.user.state || prev.state,
+              dob: data.user.dob || prev.dob,
               course: data.user.course || prev.course,
+              advisorProfile: data.user.advisorProfile || prev.advisorProfile,
             };
             localStorage.setItem("ecampus_student", JSON.stringify(updated));
             return updated;
           });
           if (data.user.full_name) setFormName(data.user.full_name);
           if (data.user.state) setFormState(data.user.state);
+          if (data.user.dob) setFormDob(data.user.dob);
         }
       })
       .catch(() => {});
@@ -173,6 +185,7 @@ export default function ProfilePage() {
       ...student,
       name: formName.trim(),
       state: formState.trim() || undefined,
+      dob: formDob.trim() || undefined,
     };
 
     try {
@@ -182,6 +195,7 @@ export default function ProfilePage() {
         body: JSON.stringify({
           name: formName.trim(),
           state: formState.trim() || "",
+          dob: formDob.trim() || "",
           phone: student.phone,
         }),
       });
@@ -195,13 +209,61 @@ export default function ProfilePage() {
     localStorage.setItem("ecampus_student", JSON.stringify(updatedStudent));
     window.dispatchEvent(new Event("ecampus-auth-change"));
     setEditing(false);
+    setSavedFlashMessage("Profile updated successfully.");
     setSavedFlash(true);
     setTimeout(() => setSavedFlash(false), 2500);
+  };
+
+  const openAdvisorModal = (targetStep: 1 | 2 | 3 | 4 | 5 = 1) => {
+    setAdvisorModalStep(targetStep);
+    setAdvisorModalOpen(true);
+  };
+
+  const handleUpdateAdvisorProfile = async (answers: AdvisorAnswers) => {
+    setAdvisorModalOpen(false);
+
+    const q = answers.highestQualification as QualificationId;
+    const course = getCourseOptions(q).find((c) => c.id === answers.coursePreference);
+    const courseName = course?.name || answers.coursePreference || student.course;
+
+    const updatedStudent: StudentProfile = {
+      ...student,
+      advisorProfile: answers,
+      course: courseName,
+      coursesInterested: courseName ? [courseName] : student.coursesInterested,
+    };
+
+    setStudent(updatedStudent);
+    localStorage.setItem("ecampus_student", JSON.stringify(updatedStudent));
+    window.dispatchEvent(new Event("ecampus-auth-change"));
+
+    try {
+      await fetch("/api/auth/register-details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: student.name?.trim() || "Student",
+          phone: student.phone,
+          email: student.email,
+          state: student.state,
+          advisorProfile: answers,
+          course: courseName,
+          coursesInterested: courseName ? [courseName] : student.coursesInterested,
+        }),
+      });
+    } catch (saveErr) {
+      console.error("Failed persisting updated advisor questions:", saveErr);
+    }
+
+    setSavedFlashMessage("Your questionnaire choices have been updated successfully.");
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 3000);
   };
 
   const handleCancelEdit = () => {
     setFormName(student.name || "");
     setFormState(student.state || "");
+    setFormDob(student.dob || "");
     setEditing(false);
   };
 
@@ -454,63 +516,113 @@ export default function ProfilePage() {
                           Your Choices
                         </h2>
                         <p className="mt-0.5 text-sm text-gray-500">
-                          Captured from your AI Advisor questionnaire — powers your course matches.
+                          Captured from your initial signup questionnaire — powers your course recommendations.
                         </p>
                       </div>
                     </div>
 
-                    {goalRows.length > 0 && (
-                      <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-                        <span className="relative flex h-2 w-2">
-                          <motion.span
-                            aria-hidden
-                            animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
-                            transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-                            className="absolute inset-0 rounded-full bg-red-500"
-                          />
-                          <span className="relative h-2 w-2 rounded-full bg-red-600" />
+                    <div className="flex flex-wrap items-center gap-2">
+                      {goalRows.length > 0 && (
+                        <span className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
+                          <span className="relative flex h-2 w-2">
+                            <motion.span
+                              aria-hidden
+                              animate={{ scale: [1, 2.2], opacity: [0.6, 0] }}
+                              transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                              className="absolute inset-0 rounded-full bg-red-500"
+                            />
+                            <span className="relative h-2 w-2 rounded-full bg-red-600" />
+                          </span>
+                          AI Advisor · {goalRows.length} answers
                         </span>
-                        AI Advisor · {goalRows.length} answers
-                      </span>
-                    )}
+                      )}
+
+                      <motion.button
+                        type="button"
+                        onClick={() => openAdvisorModal(1)}
+                        whileTap={{ scale: 0.97 }}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-1.5 text-xs font-semibold text-red-700 shadow-xs transition hover:bg-red-100 hover:border-red-300 active:scale-95"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span>{goalRows.length > 0 ? "Edit Choices" : "Answer Questions"}</span>
+                      </motion.button>
+                    </div>
                   </div>
+
+                  <AnimatePresence initial={false}>
+                    {savedFlash && savedFlashMessage && (
+                      <motion.div key="saved-choices" {...collapse} className="mt-4 overflow-hidden">
+                        <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs font-semibold text-emerald-700 border border-emerald-100">
+                          <Check className="h-4 w-4 flex-shrink-0" />
+                          <span>{savedFlashMessage}</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {goalRows.length > 0 ? (
                     <motion.div
                       variants={staggerContainer(0.07, 0.25)}
                       className={`relative mt-5 grid grid-cols-1 gap-3 ${GOAL_GRID_COLS[goalRows.length] ?? "sm:grid-cols-2 lg:grid-cols-3"}`}
                     >
-                      {goalRows.map((row, i) => (
-                        <motion.div key={row.label} variants={staggerItem}>
-                          <div className="group relative h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:shadow-[0_14px_30px_-18px_rgba(238,44,60,0.45)]">
-                            <span
-                              aria-hidden
-                              className="pointer-events-none absolute -bottom-4 -right-1 select-none text-[72px] font-black leading-none tabular-nums text-red-100/60 transition-colors duration-300 group-hover:text-red-100"
+                      {goalRows.map((row, i) => {
+                        const stepForKey: Record<string, 1 | 2 | 3 | 4 | 5> = {
+                          qualification: 1,
+                          course: 2,
+                          budget: 3,
+                          salary: 4,
+                          category: 5,
+                        };
+                        const targetStep = stepForKey[row.key] || 1;
+                        return (
+                          <motion.div key={row.label} variants={staggerItem}>
+                            <button
+                              type="button"
+                              onClick={() => openAdvisorModal(targetStep)}
+                              className="group relative h-full w-full text-left overflow-hidden rounded-xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-300 hover:shadow-[0_14px_30px_-18px_rgba(238,44,60,0.45)] focus:outline-none focus:ring-2 focus:ring-red-500/20"
                             >
-                              {String(i + 1).padStart(2, "0")}
-                            </span>
-                            <div className="relative flex items-center">
-                              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors duration-300 group-hover:bg-red-600 group-hover:text-white">
-                                <row.icon className="h-4 w-4" strokeWidth={1.9} />
+                              <span
+                                aria-hidden
+                                className="pointer-events-none absolute -bottom-4 -right-1 select-none text-[72px] font-black leading-none tabular-nums text-red-100/60 transition-colors duration-300 group-hover:text-red-100"
+                              >
+                                {String(i + 1).padStart(2, "0")}
                               </span>
-                            </div>
-                            <p className="relative mt-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                              {row.label}
-                            </p>
-                            <p className="relative mt-1 break-words text-sm font-bold leading-snug text-gray-900">
-                              {row.value}
-                            </p>
-                          </div>
-                        </motion.div>
-                      ))}
+                              <div className="relative flex items-center justify-between">
+                                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors duration-300 group-hover:bg-red-600 group-hover:text-white">
+                                  <row.icon className="h-4 w-4" strokeWidth={1.9} />
+                                </span>
+                                <span className="flex items-center gap-1 rounded-md bg-red-50/70 px-2 py-0.5 text-[11px] font-semibold text-red-600 opacity-80 group-hover:opacity-100 group-hover:bg-red-100 transition-all">
+                                  <Pencil className="h-2.5 w-2.5" />
+                                  Edit
+                                </span>
+                              </div>
+                              <p className="relative mt-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                                {row.label}
+                              </p>
+                              <p className="relative mt-1 break-words text-sm font-bold leading-snug text-gray-900">
+                                {row.value}
+                              </p>
+                            </button>
+                          </motion.div>
+                        );
+                      })}
                     </motion.div>
                   ) : (
-                    <div className="relative mt-5 flex items-center gap-3 rounded-xl border border-dashed border-red-200 bg-red-50/40 px-4 py-3.5">
-                      <Sparkles className="h-5 w-5 flex-shrink-0 text-red-500" />
-                      <p className="text-sm text-gray-600">
-                        Complete the AI Advisor questionnaire from your dashboard
-                        to personalize this section with your goals.
-                      </p>
+                    <div className="relative mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-dashed border-red-200 bg-red-50/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <Sparkles className="h-5 w-5 flex-shrink-0 text-red-500" />
+                        <p className="text-sm text-gray-600">
+                          Complete the initial questions from the signup questionnaire to personalize your matches with your qualification, course interest, budget, and salary goals.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openAdvisorModal(1)}
+                        className="flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 active:scale-95"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span>Answer Questions</span>
+                      </button>
                     </div>
                   )}
                 </motion.div>
@@ -606,6 +718,23 @@ export default function ProfilePage() {
                             onChange={(e) => setFormState(e.target.value)}
                             placeholder="e.g. Maharashtra"
                             className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                          />
+                        </div>
+
+                        <div>
+                          <div className="mb-1.5 flex items-center justify-between">
+                            <label className="block text-xs font-semibold text-gray-500">
+                              Date of Birth
+                            </label>
+                            <span className="text-[11px] font-normal text-gray-400">Optional</span>
+                          </div>
+                          <input
+                            type="date"
+                            value={formDob}
+                            onChange={(e) => setFormDob(e.target.value)}
+                            max={new Date().toISOString().split("T")[0]}
+                            min="1940-01-01"
+                            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 cursor-pointer"
                           />
                         </div>
 
@@ -724,6 +853,15 @@ export default function ProfilePage() {
                           <span className="text-gray-500">Location</span>
                           <span className="ml-auto font-medium text-gray-900">
                             {student.state || "Not added yet"}
+                          </span>
+                        </div>
+
+                        {/* Date of Birth */}
+                        <div className="flex items-center gap-3 px-1 text-sm">
+                          <Calendar className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                          <span className="text-gray-500">Date of Birth</span>
+                          <span className="ml-auto font-medium text-gray-900">
+                            {student.dob || "Not added yet"}
                           </span>
                         </div>
 
@@ -1029,6 +1167,19 @@ export default function ProfilePage() {
                 )}
               </motion.div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Edit AI Advisor Questionnaire Modal */}
+        <AnimatePresence>
+          {advisorModalOpen && (
+            <AIAdvisorModal
+              onClose={() => setAdvisorModalOpen(false)}
+              onComplete={handleUpdateAdvisorProfile}
+              initialAnswers={student.advisorProfile as any}
+              initialStep={advisorModalStep}
+              isEditing={true}
+            />
           )}
         </AnimatePresence>
       </div>

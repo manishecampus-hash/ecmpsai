@@ -24,10 +24,10 @@ import {
   GraduationCap,
   CheckCircle2,
   Lock,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { courseOptions } from "@/data/course-options";
 import { indianStates } from "@/data/indian-states";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 
@@ -82,8 +82,7 @@ export function SignupModal({
 
   // ── Details step state ──
   const [course, setCourse] = useState("");
-  const [courseSearch, setCourseSearch] = useState("");
-  const [coursesOpen, setCoursesOpen] = useState(false);
+  const [dob, setDob] = useState("");
 
   const [state, setState] = useState("");
   const [stateSearch, setStateSearch] = useState("");
@@ -94,20 +93,13 @@ export function SignupModal({
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [showAdvisor, setShowAdvisor] = useState(false);
 
-  const coursesRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
+  // Close dropdown on outside click
   useEffect(() => {
-    if (!coursesOpen && !stateOpen) return;
+    if (!stateOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        coursesRef.current &&
-        !coursesRef.current.contains(event.target as Node)
-      ) {
-        setCoursesOpen(false);
-      }
       if (
         stateRef.current &&
         !stateRef.current.contains(event.target as Node)
@@ -119,7 +111,7 @@ export function SignupModal({
     document.addEventListener("mousedown", handleClickOutside);
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
-  }, [coursesOpen, stateOpen]);
+  }, [stateOpen]);
 
   // Resend OTP countdown timer
   useEffect(() => {
@@ -274,6 +266,7 @@ export function SignupModal({
         if (data.student.name) setName(data.student.name);
         if (data.student.email && !email) setEmail(data.student.email);
         if (data.student.state) setState(data.student.state);
+        if (data.student.dob) setDob(data.student.dob);
         if (data.student.course) setCourse(data.student.course);
         else if (data.student.coursesInterested?.length) setCourse(data.student.coursesInterested[0]);
 
@@ -470,6 +463,7 @@ export function SignupModal({
       coursesInterested: course ? [course] : (prevData.coursesInterested || []),
       course: course || prevData.course || undefined,
       state: state || prevData.state || undefined,
+      dob: dob || prevData.dob || undefined,
       referralCode: referralCode.trim() || prevData.referralCode || undefined,
       whatsappOptIn,
       joinedAt: prevData.joinedAt || new Date().toISOString(),
@@ -527,10 +521,6 @@ export function SignupModal({
       />
     );
   }
-
-  const filteredCourses = courseOptions.filter((c) =>
-    c.toLowerCase().includes(courseSearch.toLowerCase().trim()),
-  );
 
   const filteredStates = indianStates.filter((s) =>
     s.toLowerCase().includes(stateSearch.toLowerCase().trim()),
@@ -1173,67 +1163,7 @@ export function SignupModal({
                   )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Course Selection */}
-                    <div ref={coursesRef} className="relative">
-                      <label className="mb-1 block text-xs font-semibold text-slate-700">
-                        Course Interested
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setCoursesOpen((v) => !v)}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 text-left text-sm font-medium shadow-xs focus:border-red-500 focus:ring-4 focus:ring-red-500/10 hover:border-slate-300"
-                      >
-                        <span className={course ? "truncate text-slate-900" : "text-slate-400 font-normal"}>
-                          {course || "Select degree/course"}
-                        </span>
-                        <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${coursesOpen ? "rotate-180" : ""}`} />
-                      </button>
-
-                      {coursesOpen && (
-                        <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl flex flex-col p-1.5">
-                          <div className="relative p-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                            <input
-                              type="text"
-                              placeholder="Search course..."
-                              value={courseSearch}
-                              onChange={(e) => setCourseSearch(e.target.value)}
-                              className="h-8 w-full rounded-lg bg-slate-50 pl-8 pr-2 text-xs font-medium text-slate-900 outline-none border border-slate-200 focus:border-red-500 focus:bg-white"
-                            />
-                          </div>
-                          <div className="overflow-y-auto max-h-40 mt-1">
-                            {filteredCourses.length > 0 ? (
-                              filteredCourses.map((opt) => {
-                                const selected = course === opt;
-                                return (
-                                  <button
-                                    key={opt}
-                                    type="button"
-                                    onClick={() => {
-                                      setCourse(opt);
-                                      setCoursesOpen(false);
-                                      setCourseSearch("");
-                                    }}
-                                    className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors ${
-                                      selected
-                                        ? "bg-red-50 text-red-600 font-semibold"
-                                        : "text-slate-700 hover:bg-slate-50"
-                                    }`}
-                                  >
-                                    <span>{opt}</span>
-                                    {selected && <Check className="h-3.5 w-3.5 text-red-600" />}
-                                  </button>
-                                );
-                              })
-                            ) : (
-                              <p className="p-2 text-center text-xs text-slate-400">No courses match</p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* State Selection */}
+                    {/* State Selection (Left column in place of Course Interested) */}
                     <div ref={stateRef} className="relative">
                       <label className="mb-1 block text-xs font-semibold text-slate-700">
                         Your State
@@ -1291,6 +1221,27 @@ export function SignupModal({
                           </div>
                         </div>
                       )}
+                    </div>
+
+                    {/* Date of Birth Calendar (Right column in place of Your State) */}
+                    <div>
+                      <div className="mb-1 flex items-center justify-between">
+                        <label className="text-xs font-semibold text-slate-700">
+                          Date of Birth
+                        </label>
+                        <span className="text-[11px] font-normal text-slate-400">Optional</span>
+                      </div>
+                      <div className="relative flex h-11 w-full items-center rounded-xl border border-slate-200 bg-white px-3 shadow-xs hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                        <Calendar className="mr-2 h-4 w-4 text-slate-400 shrink-0 pointer-events-none" />
+                        <input
+                          type="date"
+                          value={dob}
+                          onChange={(e) => setDob(e.target.value)}
+                          max={new Date().toISOString().split("T")[0]}
+                          min="1940-01-01"
+                          className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
 

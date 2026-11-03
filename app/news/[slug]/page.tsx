@@ -4,7 +4,6 @@ import { Poppins } from "next/font/google";
 import { notFound } from "next/navigation";
 import {
   ChevronRight,
-  Sparkles,
   Clock,
   Eye,
   Calendar,
@@ -25,6 +24,8 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+const pageMaxWidth = "1264px";
 
 function parseHtmlContent(html: string) {
   const headings: { id: string; text: string; level: number }[] = [];
@@ -63,7 +64,7 @@ function mapDbEventToEvent(dbEvent: any) {
     sanitizeAutoLinks(dbEvent.content || ""),
   );
 
-  let formattedDate = "Coming Soon";
+  let formattedDate = "Recent";
   if (dbEvent.createdAt) {
     try {
       formattedDate = new Date(dbEvent.createdAt).toLocaleDateString("en-US", {
@@ -81,7 +82,7 @@ function mapDbEventToEvent(dbEvent: any) {
   const readTimeVal = Math.max(1, Math.ceil(wordCount / 200));
   const readTime = `${readTimeVal} min read`;
 
-  const imageSrc = dbEvent.imageUrl || "";
+  const imageSrc = dbEvent.imageUrl || "/blogs/top-career.png";
   const authorName = dbEvent.publisher || "eCampus Team";
   const rawSlug = (dbEvent.url || dbEvent.slug || "").replace(/^\/+|\/+$/g, "");
   const cleanSlug = rawSlug.replace(/^(events|news)\//i, "");
@@ -97,7 +98,7 @@ function mapDbEventToEvent(dbEvent: any) {
     author: authorName,
     authorInitial: authorName.charAt(0).toUpperCase(),
     authorBio:
-      "eCampus events bring together top university representatives, admission advisors, and industry educators for distance and online learning.",
+      "The eCampus editorial team curates verified guidance and announcements on higher education, university news, and learning opportunities.",
     authorImage: dbEvent.publisherImage || "",
     date: formattedDate,
     readTime,
@@ -113,8 +114,11 @@ function mapDbEventToEvent(dbEvent: any) {
 const getEventBySlug = cache(async (slug: string) => {
   const apiUrl =
     process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  const backendUrl =
+    process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "").replace(/^(events|news)\//i, "").toLowerCase().trim();
 
+  // Try frontend API
   try {
     const res = await fetch(
       `${apiUrl}/events/by-slug/${encodeURIComponent(cleanSlug)}`,
@@ -130,7 +134,30 @@ const getEventBySlug = cache(async (slug: string) => {
       }
     }
   } catch (err) {
-    console.error("Error fetching single event from API:", err);
+    console.warn("Error fetching single news from frontend API:", err);
+  }
+
+  // Fallback to backend API
+  try {
+    const res = await fetch(
+      `${backendUrl}/api/events`,
+      {
+        next: { revalidate: 30 },
+      },
+    );
+    if (res.ok) {
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data.events || [];
+      const found = list.find((item: any) => {
+        const itemSlug = (item.url || item.slug || "").replace(/^\/+|\/+$/g, "").replace(/^(events|news)\//i, "").toLowerCase().trim();
+        return itemSlug === cleanSlug;
+      });
+      if (found && found.status !== "inactive") {
+        return found;
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching single news from backend API:", err);
   }
 
   return null;
@@ -139,6 +166,9 @@ const getEventBySlug = cache(async (slug: string) => {
 const getRelatedEvents = cache(async () => {
   const apiUrl =
     process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL || "http://localhost:5000";
+  const backendUrl =
+    process.env.NEXT_PUBLIC_ECAMPUS_BACKEND_API_URL || "http://localhost:4000";
+
   try {
     const res = await fetch(`${apiUrl}/events/related/posts`, {
       next: { revalidate: 30 },
@@ -153,8 +183,23 @@ const getRelatedEvents = cache(async () => {
       }
     }
   } catch (err) {
-    console.error("Error fetching related events:", err);
+    console.warn("Error fetching related news from frontend API:", err);
   }
+
+  try {
+    const res = await fetch(`${backendUrl}/api/events`, {
+      next: { revalidate: 30 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data.events || [];
+      const active = list.filter((e: any) => e.status !== "inactive");
+      return active.slice(0, 4).map(mapDbEventToEvent);
+    }
+  } catch (err) {
+    console.error("Error fetching related news from backend API:", err);
+  }
+
   return [];
 });
 
@@ -167,14 +212,14 @@ export async function generateMetadata({
   const rawEvent = await getEventBySlug(slug);
   if (!rawEvent) {
     return {
-      title: "Event Not Found | eCampus",
+      title: "News Not Found",
     };
   }
 
   const event = mapDbEventToEvent(rawEvent);
   const seo = rawEvent.seoSettings || {};
 
-  const title = seo.title || `${event.title} | eCampus News`;
+  const title = seo.title || event.title;
   const description = seo.description || event.excerpt || event.description;
   const keywords = seo.tags || (event.tags ? event.tags.join(", ") : "");
 
@@ -190,7 +235,11 @@ export async function generateMetadata({
       follow: crawl,
     },
     alternates: {
-      canonical: seo.rewriteUrl || `/news/${slug}`,
+      canonical: seo.rewriteUrl
+        ? (seo.rewriteUrl.startsWith("http")
+            ? seo.rewriteUrl.replace(/\/events\//, "/news/")
+            : seo.rewriteUrl.replace(/^\/events\//, "/news/"))
+        : `/news/${slug}`,
     },
     openGraph: {
       title,
@@ -198,7 +247,11 @@ export async function generateMetadata({
       type: "article",
       publishedTime: rawEvent.createdAt,
       modifiedTime: rawEvent.updatedAt,
-      images: event.imageSrc ? [{ url: event.imageSrc }] : [],
+      images: [
+        {
+          url: event.imageSrc,
+        },
+      ],
     },
   };
 }
@@ -221,7 +274,7 @@ export default async function NewsDetailPage({
       <EventViewCounter eventId={event.id} />
 
       {/* ========================================================= */}
-      {/* DESKTOP / TABLET LAYOUT (lg:block)                        */}
+      {/* DESKTOP / TABLET LAYOUT (hidden lg:block)                 */}
       {/* ========================================================= */}
       <div className="hidden lg:block blog-container">
         {/* Breadcrumb */}
@@ -239,29 +292,23 @@ export default async function NewsDetailPage({
         <section className="blog-two-column-layout">
           {/* LEFT COLUMN: SIDEBAR */}
           <aside className="blog-sidebar-col">
-            {/* 1. Table of Contents Card */}
-            {event.headings.length > 0 && (
-              <TableOfContents headings={event.headings} collapsible={false} />
-            )}
+            {/* 1. Table of Contents Card (Non-collapsible / Full) */}
+            <TableOfContents headings={event.headings} collapsible={false} />
 
-            {/* 2. Registration / Inquiry Form Card */}
+            {/* 2. Apply Now Form Card */}
             <div className="sidebar-apply-card">
               <ApplicationForm />
             </div>
           </aside>
 
-          {/* RIGHT COLUMN: EVENT DETAILS */}
+          {/* RIGHT COLUMN: NEWS DETAILS */}
           <article className="blog-content-col">
-            {/* 1. Event Main Title */}
+            {/* 1. Main Title (Above Featured Image) */}
             <header className="blog-header-area">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold mb-3">
-                <Sparkles size={13} />
-                <span>{event.category || "Event"}</span>
-              </div>
               <h1 className="blog-header-title">{event.title}</h1>
             </header>
 
-            {/* 2. Featured Image */}
+            {/* 2. Featured Image (Full Uncropped Display in Standard 16:9 Framing) */}
             {event.imageSrc ? (
               <figure className="blog-feature-image">
                 <Image
@@ -283,12 +330,12 @@ export default async function NewsDetailPage({
               </figure>
             ) : null}
 
-            {/* 3. Metadata Bar */}
+            {/* 3. Sleek Minimalist Desktop Metadata Bar */}
             <div className="blog-metadata-bar">
               <div className="meta-left-group">
                 <div className="author-avatar">{event.authorInitial}</div>
                 <span className="author-name inline-flex items-center gap-1">
-                  <span>Organized by {event.author}</span>
+                  <span>By {event.author}</span>
                   <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 fill-blue-50 shrink-0 stroke-[2.5]" />
                 </span>
                 <span className="meta-dot">•</span>
@@ -304,33 +351,32 @@ export default async function NewsDetailPage({
                 <span className="meta-dot">•</span>
                 <span className="meta-item">
                   <Calendar className="meta-icon" />
-                  <span>{event.date}</span>
+                  <span>Updated {event.date}</span>
                 </span>
               </div>
 
               <ShareSaveButtons />
             </div>
 
-            {/* 4. Event Lead / Excerpt */}
+            {/* 4. News Excerpt */}
             {event.excerpt && (
               <p className="blog-lead">{event.excerpt}</p>
             )}
 
-            {/* 5. Complete Event Body */}
+            {/* 5. Complete News Body */}
             <BlogContent blog={event as any} />
           </article>
         </section>
 
-        {/* 6. Related Events */}
-        {relatedEvents.length > 0 && (
-          <div className="related-wrap">
-            <RelatedEvents events={relatedEvents} currentEventId={event.id} />
-          </div>
-        )}
+        {/* 6. Related News (Full Width Container Alignment with Sidebar) */}
+        <div className="related-wrap">
+          <RelatedEvents events={relatedEvents} currentEventId={event.id} />
+        </div>
       </div>
 
       {/* ========================================================= */}
-      {/* MOBILE LAYOUT (< lg)                                      */}
+      {/* MOBILE LAYOUT (< lg / lg:hidden) - ULTRA COMPACT & CLEAN  */}
+      {/* Sequence: Featured Image -> Metadata Bar -> Title -> TOC -> Content */}
       {/* ========================================================= */}
       <div className="block lg:hidden blog-container">
         {/* Mobile Breadcrumb */}
@@ -343,7 +389,7 @@ export default async function NewsDetailPage({
         </nav>
 
         <article className="mobile-blog-wrapper">
-          {/* 1. Featured Image Banner */}
+          {/* 1. Featured Image Banner (Full Uncropped Display) */}
           {event.imageSrc ? (
             <figure className="mobile-featured-image">
               <picture className="block w-full">
@@ -360,56 +406,395 @@ export default async function NewsDetailPage({
             </figure>
           ) : null}
 
-          {/* 2. Metadata Bar */}
+          {/* 2. Ultra-Compact Single-Line Mobile Author & Share Bar */}
           <div className="mobile-single-line-bar">
-            <div className="author-avatar">{event.authorInitial}</div>
-            <span className="author-name truncate">{event.author}</span>
-            <span className="meta-dot">•</span>
-            <span className="meta-item whitespace-nowrap">{event.date}</span>
-            <div className="ml-auto">
-              <ShareSaveButtons />
+            <div className="mobile-single-left">
+              <div className="author-avatar-xs">{event.authorInitial}</div>
+              <span className="mobile-author-name inline-flex items-center gap-1 truncate">
+                <span className="truncate">By {event.author}</span>
+                <CheckCircle2 className="h-3 w-3 text-blue-500 fill-blue-50 shrink-0 stroke-[2.5]" />
+              </span>
+              <span className="dot-sep">•</span>
+              <span className="mobile-meta-badge shrink-0">
+                <Clock className="w-3 h-3 text-slate-400" />
+                <span>{event.readTime}</span>
+              </span>
+              <span className="dot-sep">•</span>
+              <span className="mobile-meta-badge shrink-0">
+                <Eye className="w-3 h-3 text-slate-400" />
+                <span>{event.view}</span>
+              </span>
             </div>
+            <ShareSaveButtons className="mobile-share-pill" />
           </div>
 
-          {/* 3. Title */}
-          <header className="mobile-blog-header">
-            <span className="inline-block text-xs font-semibold text-blue-600 mb-1">
-              {event.category || "Event"}
-            </span>
+          {/* 3. News Title Header */}
+          <div className="mobile-title-block">
             <h1 className="mobile-blog-title">{event.title}</h1>
-          </header>
+          </div>
 
-          {/* 4. Table of Contents */}
+          {/* 4. Table of Contents (Collapsible on Mobile) */}
           {event.headings.length > 0 && (
             <div className="mobile-toc-wrapper">
               <TableOfContents headings={event.headings} collapsible={true} />
             </div>
           )}
 
-          {/* 5. Excerpt */}
+          {/* 5. News Excerpt & Main Content */}
           {event.excerpt && (
-            <p className="blog-lead text-sm">{event.excerpt}</p>
-          )}
-
-          {/* 6. Content */}
-          <BlogContent blog={event as any} />
-
-          {/* 7. Registration Form */}
-          <div className="mt-8 mb-6">
-            <ApplicationForm />
-          </div>
-
-          {/* 8. Related Events */}
-          {relatedEvents.length > 0 && (
-            <div className="mt-8">
-              <RelatedEvents events={relatedEvents} currentEventId={event.id} />
+            <div className="mobile-lead-box font-medium text-slate-700 leading-relaxed text-sm bg-red-50/40 p-3.5 rounded-xl border-l-3 border-red-500 my-1">
+              {event.excerpt}
             </div>
           )}
+
+          <BlogContent blog={event as any} />
+
+          {/* 6. Related News */}
+          <div className="related-wrap">
+            <RelatedEvents events={relatedEvents} currentEventId={event.id} />
+          </div>
         </article>
       </div>
 
       <ScrollToTopButton />
       <Footer />
+
+      <style>{`
+        .upgrad-blog-page {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #111827;
+        }
+
+        .blog-container {
+          width: min(${pageMaxWidth}, calc(100% - 24px));
+          margin: 0 auto;
+        }
+
+        .breadcrumb {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          min-width: 0;
+          padding: 16px 0 20px;
+          font-size: 11.5px;
+          line-height: 1.4;
+          color: #6b7280;
+        }
+
+        .breadcrumb a {
+          color: #4b5563;
+          text-decoration: none;
+          flex-shrink: 0;
+          transition: color 0.15s;
+        }
+
+        .breadcrumb a:hover {
+          color: #ef233c;
+        }
+
+        .breadcrumb strong {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-weight: 600;
+          color: #111827;
+        }
+
+        .breadcrumb-icon {
+          width: 12px;
+          height: 12px;
+          color: #9ca3af;
+          flex: 0 0 auto;
+        }
+
+        .blog-header-area {
+          margin: 0 0 14px;
+        }
+
+        .blog-header-title {
+          max-width: 100%;
+          margin: 0;
+          color: #0f172a;
+          font-size: clamp(24px, 2.5vw, 30px);
+          line-height: 1.25;
+          font-weight: 800;
+          letter-spacing: -0.015em;
+        }
+
+        /* Desktop Two Column Layout */
+        .blog-two-column-layout {
+          display: grid;
+          grid-template-columns: 360px minmax(0, 1fr);
+          gap: 40px;
+          align-items: start;
+          padding-bottom: 80px;
+        }
+
+        /* Left Sidebar Column */
+        .blog-sidebar-col {
+          position: sticky;
+          top: 96px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          z-index: 20;
+        }
+
+        .sidebar-apply-card {
+          background: #ffffff;
+          border: 1.5px solid #cbd5e1;
+          border-radius: 16px;
+          box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+          overflow: hidden;
+          transition: all 0.2s ease;
+        }
+
+        .sidebar-apply-card:hover {
+          border-color: #94a3b8;
+          box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.1);
+        }
+
+        /* Right Content Column */
+        .blog-content-col {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .blog-feature-image {
+          width: 100%;
+          margin: 0 0 20px;
+          overflow: hidden;
+          border-radius: 16px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+          background: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .blog-feature-image img {
+          width: 100%;
+          height: auto;
+          max-height: 520px;
+          object-fit: contain;
+          display: block;
+          border-radius: 16px;
+        }
+
+        /* Desktop Minimalist Metadata Bar */
+        .blog-metadata-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 12px 0;
+          border-top: 1px solid #f1f5f9;
+          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 24px;
+        }
+
+        .meta-left-group {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 10px;
+          font-size: 13px;
+          color: #475569;
+        }
+
+        .author-avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 11.5px;
+          flex-shrink: 0;
+          box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+        }
+
+        .author-name {
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .meta-dot {
+          color: #cbd5e1;
+          font-size: 12px;
+        }
+
+        .meta-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          color: #64748b;
+          font-weight: 500;
+        }
+
+        .meta-icon {
+          width: 13px;
+          height: 13px;
+          color: #94a3b8;
+        }
+
+        .blog-lead {
+          margin: 0 0 24px;
+          color: #334155;
+          font-size: 17px;
+          line-height: 1.7;
+          font-weight: 400;
+          white-space: pre-line;
+        }
+
+        .related-wrap {
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        /* ========================================================= */
+        /* ULTRA COMPACT & ELEGANT MOBILE STYLING (< 1024px)         */
+        /* ========================================================= */
+        .mobile-blog-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          padding-bottom: 50px;
+        }
+
+        .mobile-featured-image {
+          width: 100%;
+          margin: 0 0 10px;
+          overflow: hidden;
+          border-radius: 14px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+          background: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .mobile-img-element {
+          width: 100%;
+          height: auto;
+          max-height: 420px;
+          object-fit: contain;
+          display: block;
+          border-radius: 14px;
+        }
+
+        /* Ultra-Compact Single-Line Mobile Author & Share Bar */
+        .mobile-single-line-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          padding: 6px 0;
+          border-top: 1px solid #f1f5f9;
+          border-bottom: 1px solid #f1f5f9;
+          margin: 2px 0 4px;
+          min-height: 32px;
+        }
+
+        .mobile-single-left {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+          overflow: hidden;
+          font-size: 11.5px;
+          color: #475569;
+        }
+
+        .author-avatar-xs {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 10px;
+          flex-shrink: 0;
+        }
+
+        .mobile-author-name {
+          font-weight: 700;
+          color: #0f172a;
+          white-space: nowrap;
+        }
+
+        .dot-sep {
+          color: #cbd5e1;
+          font-size: 10px;
+          flex-shrink: 0;
+        }
+
+        .mobile-meta-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          color: #64748b;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .mobile-share-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          border-radius: 9999px;
+          border: 1px solid #e2e8f0;
+          background-color: #ffffff;
+          padding: 2.5px 8px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: all 0.15s ease;
+        }
+
+        .mobile-share-pill:hover {
+          border-color: #fca5a5;
+          background-color: #fef2f2;
+          color: #dc2626;
+        }
+
+        .mobile-title-block {
+          margin: 2px 0 4px;
+        }
+
+        .mobile-blog-title {
+          margin: 0;
+          color: #0f172a;
+          font-size: clamp(18px, 5vw, 22px);
+          line-height: 1.26;
+          font-weight: 800;
+          letter-spacing: -0.015em;
+        }
+
+        .mobile-toc-wrapper {
+          margin: 2px 0 4px;
+        }
+
+        @media (max-width: 480px) {
+          .mobile-blog-title {
+            font-size: 19px;
+          }
+        }
+      `}</style>
     </main>
   );
 }

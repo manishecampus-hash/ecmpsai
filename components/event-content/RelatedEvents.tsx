@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Clock3, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 
 interface RelatedEventsProps {
@@ -20,44 +20,39 @@ export function RelatedEvents({ events, currentEventId }: RelatedEventsProps) {
 
   const scrollLeft = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -360, behavior: "smooth" });
+      sliderRef.current.scrollBy({ left: -380, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: 360, behavior: "smooth" });
+      sliderRef.current.scrollBy({ left: 380, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="mt-8 w-full border-t border-gray-100 pt-8">
+    <section className="mt-4 w-full">
       {/* ── Section Header with Navigation ── */}
       <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-            Related Events & Webinars
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
-            Explore more live masterclasses, panel sessions, and admissions guidance.
-          </p>
-        </div>
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+          Related News & Articles
+        </h2>
 
-        {displayEvents.length > 2 && (
+        {displayEvents.length > 3 && (
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={scrollLeft}
-              aria-label="Previous events"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95 cursor-pointer"
+              aria-label="Previous articles"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-95 cursor-pointer"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               type="button"
               onClick={scrollRight}
-              aria-label="Next events"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95 cursor-pointer"
+              aria-label="Next articles"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-95 cursor-pointer"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -65,73 +60,88 @@ export function RelatedEvents({ events, currentEventId }: RelatedEventsProps) {
         )}
       </div>
 
-      {/* ── Slider Container ── */}
+      {/* ── Carousel Slider ── */}
       <div
         ref={sliderRef}
-        className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
+        className="flex gap-5 sm:gap-6 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory no-scrollbar"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {displayEvents.map((item) => {
           const rawSlug = (item.url || item.slug || "").replace(/^\/+|\/+$/g, "");
           const cleanSlug = rawSlug.replace(/^(events|news)\//i, "");
-          const eventUrl = `/news/${cleanSlug}`;
+          const newsUrl = `/news/${cleanSlug}`;
+          const imageSrc = item.imageUrl || item.imageSrc || "/blogs/top-career.png";
 
           return (
-            <article
+            <Link
               key={item.id}
-              className="group flex-shrink-0 w-[290px] sm:w-[320px] snap-start flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+              href={newsUrl}
+              className="group flex-shrink-0 w-[290px] sm:w-[340px] md:w-[360px] snap-start block overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-slate-300"
             >
-              <Link href={eventUrl} className="relative aspect-[16/9] w-full bg-gray-100 block overflow-hidden">
-                {item.imageUrl || item.imageSrc ? (
+              {/* Card Thumbnail - Harmonized 16:9 Aspect Ratio */}
+              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100">
+                <Image
+                  src={imageSrc}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 640px) 290px, 360px"
+                  className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
+                    item.mobileImageUrl ? "hidden sm:block" : ""
+                  }`}
+                />
+                {item.mobileImageUrl && (
                   <Image
-                    src={item.imageUrl || item.imageSrc}
+                    src={item.mobileImageUrl}
                     alt={item.title}
                     fill
-                    sizes="320px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="290px"
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105 block sm:hidden"
                   />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center text-blue-500">
-                    <Calendar size={28} />
-                  </div>
                 )}
-                <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-blue-700 shadow-xs">
-                  {item.category || "Event"}
-                </span>
-              </Link>
+              </div>
 
-              <div className="flex flex-col flex-1 p-4">
-                <div className="flex items-center justify-between text-[11px] text-gray-500 mb-2">
-                  <span className="font-medium truncate max-w-[150px]">
-                    {item.publisher || item.author || "eCampus"}
-                  </span>
-                  <span>{item.date || "Upcoming"}</span>
+              {/* Card Body */}
+              <div className="p-4 sm:p-5 flex flex-col justify-between">
+                <div>
+                  {/* Fixed 2-Line Height for Uniform Alignment */}
+                  <h3 className="line-clamp-2 h-[2.75rem] min-h-[2.75rem] font-bold text-slate-900 text-sm sm:text-base leading-snug group-hover:text-red-600 transition-colors">
+                    {item.title}
+                  </h3>
+
+                  {/* Fixed 2-Line Excerpt Height */}
+                  <p className="mt-2 line-clamp-2 h-[2.25rem] min-h-[2.25rem] text-xs text-slate-500 leading-relaxed">
+                    {item.excerpt || item.description || ""}
+                  </p>
                 </div>
 
-                <h3 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug mb-2">
-                  <Link href={eventUrl}>{item.title}</Link>
-                </h3>
-
-                {item.excerpt && (
-                  <p className="text-xs text-gray-600 line-clamp-2 mb-3 flex-1">
-                    {item.excerpt}
-                  </p>
-                )}
-
-                <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs mt-auto">
-                  <span className="text-gray-400 flex items-center gap-1">
-                    <Eye size={12} />
-                    {item.view || "0"}
+                {/* Bottom Metadata Section */}
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-slate-400" />
+                    <span>{item.date || "Recent"}</span>
                   </span>
-
-                  <Link href={eventUrl} className="font-semibold text-blue-600 hover:text-blue-700">
-                    View Details &rarr;
-                  </Link>
+                  <span className="flex items-center gap-1">
+                    <Clock3 className="h-3 w-3 text-slate-400" />
+                    <span>{item.readTime || "3 min read"}</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="h-3 w-3 text-slate-400" />
+                    <span>{item.reads || (typeof item.view === "number" ? `${item.view} Views` : `${item.view || 0} Views`)}</span>
+                  </span>
                 </div>
               </div>
-            </article>
+            </Link>
           );
         })}
       </div>
+
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 }
+
+export default RelatedEvents;

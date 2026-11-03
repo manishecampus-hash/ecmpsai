@@ -72,8 +72,8 @@ export function RelatedEvents({ events, currentEventId }: RelatedEventsProps) {
       >
         {displayEvents.map((item) => {
           const rawSlug = (item.url || item.slug || "").replace(/^\/+|\/+$/g, "");
-          const cleanSlug = rawSlug.replace(/^events\//i, "");
-          const eventUrl = `/events/${cleanSlug}`;
+          const cleanSlug = rawSlug.replace(/^(events|news)\//i, "");
+          const eventUrl = `/news/${cleanSlug}`;
 
           return (
             <article

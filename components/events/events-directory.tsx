@@ -120,8 +120,8 @@ export default function EventsDirectory({ events }: { events: EventItem[] }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedEvents.map((event) => {
-            const cleanSlug = (event.slug || "").replace(/^\/+|\/+$/g, "").replace(/^events\//i, "");
-            const eventUrl = `/events/${cleanSlug}`;
+            const cleanSlug = (event.slug || "").replace(/^\/+|\/+$/g, "").replace(/^(events|news)\//i, "");
+            const eventUrl = `/news/${cleanSlug}`;
 
             return (
               <article

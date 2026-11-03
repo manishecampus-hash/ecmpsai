@@ -82,19 +82,12 @@ export default function ReferFriendCard({
 
   return (
     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5 sm:px-6">
-        <div className="flex items-start gap-3">
+     <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6">
+        <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
             <UserPlus className="h-5 w-5" aria-hidden />
           </span>
-          <div>
-            <h2 className="text-base font-bold text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
-            <p className="mt-0.5 text-[13px] text-gray-500">
-              {showForm
-                ? "Fill in the details of your friend who is interested in higher education."
-                : "Track each friend you've invited, or invite someone new."}
-            </p>
-          </div>
+          <h2 className="text-base font-bold text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
         </div>
         {!showForm && (
           <button
@@ -103,10 +96,12 @@ export default function ReferFriendCard({
               setJustInvited(null);
               setFormOpen(true);
             }}
-            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98]"
+            aria-label="Invite another friend"
+            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98] sm:px-4"
           >
             <UserPlus className="h-4 w-4" aria-hidden />
-            Invite another friend
+            <span className="sm:hidden">Invite</span>
+            <span className="hidden sm:inline">Invite another friend</span>
           </button>
         )}
       </div>
@@ -120,7 +115,7 @@ export default function ReferFriendCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="p-5 sm:p-6"
+            className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
@@ -215,7 +210,7 @@ export default function ReferFriendCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="p-5 sm:p-6"
+            className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
           >
             <AnimatePresence initial={false}>
               {justInvited && (
@@ -230,7 +225,7 @@ export default function ReferFriendCard({
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-emerald-800">{justInvited} has been invited!</p>
                       <p className="mt-0.5 text-xs text-emerald-700">
-                        Our counselor will reach out to them shortly. Tap their card to follow their progress.
+                        Our counselor will reach out to them shortly. Tap “View progress” on their card to follow it.
                       </p>
                     </div>
                     <button
@@ -284,12 +279,12 @@ export default function ReferFriendCard({
                       />
                     )}
 
-                    <div className="pointer-events-none relative flex flex-wrap items-start justify-between gap-3">
+                    <div className="pointer-events-none relative flex items-start justify-between gap-3">
                       <div className="flex min-w-0 flex-1 items-center gap-3">
                         <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white ring-4 ring-red-50">
                           {initials(r.name)}
                         </span>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <p className="truncate text-[15px] font-bold text-gray-900">{r.name}</p>
                             {r.courses.map((c) => (
@@ -297,42 +292,58 @@ export default function ReferFriendCard({
                                 {c}
                               </span>
                             ))}
+                            {/* Labelled so it's clear this opens the friend's referral progress */}
+                            <button
+                              type="button"
+                              onClick={() => onSelect(selected ? null : r.id)}
+                              aria-pressed={selected}
+                              aria-label={selected ? `Hide progress for ${r.name}` : `View progress for ${r.name}`}
+                              className={`group/eye pointer-events-auto relative inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3.5 text-xs font-bold transition-all duration-300 active:scale-95 ${
+                                selected
+                                  ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-md shadow-red-600/30 hover:from-red-700 hover:to-red-600"
+                                  : "bg-gradient-to-r from-red-50 to-white text-red-600 shadow-sm ring-1 ring-red-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-red-600/20 hover:ring-red-300"
+                              }`}
+                            >
+                              <span
+                                className={`relative flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 ${
+                                  selected ? "bg-white text-red-600" : "bg-red-600 text-white"
+                                }`}
+                              >
+                                {/* A soft ping on the first card until a friend is opened, as a hint */}
+                                {!selectedId && i === 0 && (
+                                  <span aria-hidden className="absolute inset-0 rounded-full bg-red-500/40 motion-safe:animate-ping" />
+                                )}
+                                <AnimatePresence mode="wait" initial={false}>
+                                  <motion.span
+                                    key={selected ? "hide" : "show"}
+                                    initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                    exit={{ opacity: 0, scale: 0.5, rotate: 30 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="relative flex"
+                                  >
+                                    {selected ? <EyeOff className="h-[18px] w-[18px]" aria-hidden /> : <Eye className="h-[18px] w-[18px]" aria-hidden />}
+                                  </motion.span>
+                                </AnimatePresence>
+                              </span>
+                              {selected ? "Hide progress" : "View progress"}
+                            </button>
                           </div>
                           <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
-                            <CalendarDays className="h-3.5 w-3.5" aria-hidden />
+                            <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" aria-hidden />
                             Invited on {formatDate(r.createdAt)}
                           </p>
+                          <span className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold sm:hidden ${badge.className}`}>
+                            <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                            {badge.label}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.className}`}>
+                      <div className="flex flex-shrink-0 items-center gap-2">
+                        <span className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold sm:inline-flex ${badge.className}`}>
                           <span className="h-1.5 w-1.5 rounded-full bg-current" />
                           {badge.label}
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => onSelect(selected ? null : r.id)}
-                          aria-label={selected ? `Hide ${r.name}'s progress` : `View ${r.name}'s progress`}
-                          title={selected ? "Hide progress" : "View progress"}
-                          className={`pointer-events-auto relative flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 ${
-                            selected
-                              ? "bg-red-600 text-white shadow-md shadow-red-600/30 hover:bg-red-700"
-                              : "bg-white text-gray-500 ring-1 ring-gray-200 hover:text-red-600 hover:ring-red-200"
-                          }`}
-                        >
-                          <AnimatePresence mode="wait" initial={false}>
-                            <motion.span
-                              key={selected ? "hide" : "show"}
-                              initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
-                              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                              exit={{ opacity: 0, scale: 0.5, rotate: 30 }}
-                              transition={{ duration: 0.15 }}
-                              className="flex"
-                            >
-                              {selected ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
-                            </motion.span>
-                          </AnimatePresence>
-                        </button>
                       </div>
                     </div>
 

@@ -26,8 +26,15 @@ export function compareHref(a: string, b: string, course?: string, signedIn = is
   return signedIn ? path : loginPath(path);
 }
 
-// For links rendered on the server: starts with the login URL and switches once we know the student is signed in
-export function useCompareHref() {
+// The AI Agent on /about-us opens My Chat the same way; with no question it just opens the chat
+export function chatHref(question = "", signedIn = isSignedIn()) {
+  const q = question.trim();
+  const path = q ? chatPath(q) : "/dashboard/mychat";
+  return signedIn ? path : loginPath(path);
+}
+
+// Starts signed out (matching the server render) and updates once we can read the stored student
+export function useSignedIn() {
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
@@ -41,6 +48,12 @@ export function useCompareHref() {
     };
   }, []);
 
+  return signedIn;
+}
+
+// For links rendered on the server: starts with the login URL and switches once we know the student is signed in
+export function useCompareHref() {
+  const signedIn = useSignedIn();
   return (a: string, b: string, course?: string) => compareHref(a, b, course, signedIn);
 }
 

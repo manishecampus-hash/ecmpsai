@@ -23,6 +23,12 @@ import {
   MapPin,
   User,
   UserPlus,
+  Check,
+  Gift,
+  Calendar,
+  MessageSquare,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -86,7 +92,9 @@ function LoginContent() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [state, setState] = useState("");
+  const [dob, setDob] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [showReferral, setShowReferral] = useState(false);
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
 
   // Advisor questionnaire
@@ -530,6 +538,7 @@ function LoginContent() {
       coursesInterested: course ? [course] : (currentStudent?.coursesInterested || []),
       course: course || currentStudent?.course || undefined,
       state: state || currentStudent?.state || undefined,
+      dob: dob || currentStudent?.dob || undefined,
       referralCode: referralCode.trim() || undefined,
       whatsappOptIn,
       joinedAt: currentStudent?.joinedAt || new Date().toISOString(),
@@ -740,18 +749,27 @@ function LoginContent() {
                               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                                 Registered Mobile Number
                               </label>
-                              <div className="flex rounded-2xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/15 transition-all overflow-hidden">
-                                <select
-                                  value={countryCode}
-                                  onChange={(e) => setCountryCode(e.target.value)}
-                                  className="bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-700 border-r border-slate-200 outline-none cursor-pointer"
-                                >
-                                  {countryCodes.map((c) => (
-                                    <option key={c.code} value={c.code}>
-                                      {c.flag} {c.code}
-                                    </option>
-                                  ))}
-                                </select>
+                              <div className="relative flex h-[54px] sm:h-[58px] items-center rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                                <div className="relative flex shrink-0 items-center gap-2 border-r border-slate-200 px-4 sm:px-4.5 h-full text-slate-800 select-none cursor-pointer hover:bg-slate-50/70 transition-colors">
+                                  <span className="text-xl sm:text-2xl leading-none">
+                                    {selectedCountry?.flag || "🇮🇳"}
+                                  </span>
+                                  <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                                    {selectedCountry?.code || "+91"}
+                                  </span>
+                                  <ChevronDown className="h-4 w-4 text-slate-400" />
+                                  <select
+                                    value={countryCode}
+                                    onChange={(e) => setCountryCode(e.target.value)}
+                                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                  >
+                                    {countryCodes.map((c) => (
+                                      <option key={c.code} value={c.code}>
+                                        {c.flag} {c.code} ({c.name})
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
                                 <input
                                   type="tel"
                                   inputMode="numeric"
@@ -760,8 +778,17 @@ function LoginContent() {
                                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                                   autoFocus
                                   required
-                                  className="flex-1 px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none"
+                                  className="h-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent px-4 sm:px-5 text-base sm:text-[17px] font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                                 />
+                                {phone.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setPhone("")}
+                                    className="mr-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </button>
+                                )}
                               </div>
                             </div>
 
@@ -1242,117 +1269,210 @@ function LoginContent() {
                 {/* STEP 3: MISSING PROFILE DETAILS QUESTIONS        */}
                 {/* ══════════════════════════════════════════════════ */}
                 {step === "details" && (
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase mb-2">
-                        <GraduationCap className="w-3.5 h-3.5" />
-                        Complete Profile
+                  <div className="flex flex-col">
+                    {/* Eyebrow badge */}
+                    <div className="flex justify-center">
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF1F2] px-3.5 py-1 text-xs font-bold text-[#E11D48] tracking-wide">
+                        <Sparkles className="h-3.5 w-3.5 text-[#E11D48] fill-[#E11D48]/25" />
+                        <span>Almost Done!</span>
                       </div>
-                      <h2 className="text-xl font-bold text-slate-900 tracking-tight">Almost there!</h2>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Please provide your name, course, and state to personalize your degree recommendations.
-                      </p>
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="mt-2 text-2xl sm:text-[28px] font-bold tracking-tight text-[#0F172A] text-center">
+                      Complete Your Profile
+                    </h2>
+
+                    {/* Status Banner */}
+                    <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#065F46] shadow-2xs">
+                      <ShieldCheck className="h-4.5 w-4.5 text-[#059669] shrink-0" />
+                      <span>Mobile verified successfully!</span>
                     </div>
 
                     {error && (
-                      <div className="flex items-start gap-2.5 rounded-2xl p-3 text-xs bg-red-50 border border-red-200 text-red-700">
+                      <div className="mt-3.5 flex items-start gap-2.5 rounded-xl p-3 text-xs bg-red-50 border border-red-200 text-red-700">
                         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                         <span>{error}</span>
                       </div>
                     )}
 
-                    <form onSubmit={handleDetailsSubmit} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                          Full Name *
-                        </label>
-                        <div className="relative">
-                          <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                          <input
-                            type="text"
-                            placeholder="e.g. Rahul Sharma"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            autoFocus
-                            className="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs transition-all"
-                          />
+                    <form onSubmit={handleDetailsSubmit} className="mt-4 flex flex-col gap-3.5 sm:gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                        {/* Full Name */}
+                        <div>
+                          <label className="mb-1.5 block text-xs font-bold text-slate-800">
+                            Full Name <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative flex h-11 sm:h-12 w-full items-center rounded-xl border border-slate-200 bg-white px-3.5 shadow-2xs transition-all hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                            <User className="h-4 w-4 text-slate-400 shrink-0 mr-2.5 pointer-events-none" />
+                            <input
+                              type="text"
+                              placeholder="Your full name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              required
+                              className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Email Address */}
+                        <div>
+                          <label className="mb-1.5 block text-xs font-bold text-slate-800">
+                            Email Address <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative flex h-11 sm:h-12 w-full items-center rounded-xl border border-slate-200 bg-white px-3.5 shadow-2xs transition-all hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                            <Mail className="h-4 w-4 text-slate-400 shrink-0 mr-2.5 pointer-events-none" />
+                            <input
+                              type="email"
+                              placeholder="you@example.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              required
+                              className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                            />
+                          </div>
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                          Course Interested
-                        </label>
-                        <div className="relative">
-                          <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                          <select
-                            value={course}
-                            onChange={(e) => setCourse(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs transition-all appearance-none cursor-pointer"
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                        {/* Your State (Left Column in place of Course Interested) */}
+                        <div>
+                          <label className="mb-1.5 block text-xs font-bold text-slate-800">
+                            Your State
+                          </label>
+                          <div className="relative flex h-11 sm:h-12 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3.5 shadow-2xs transition-all hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                            <select
+                              value={state}
+                              onChange={(e) => setState(e.target.value)}
+                              className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none cursor-pointer appearance-none"
+                            >
+                              <option value="">Select your state</option>
+                              {indianStates.map((s) => (
+                                <option key={s} value={s}>
+                                  {s}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="h-4 w-4 text-slate-400 shrink-0 pointer-events-none" />
+                          </div>
+                        </div>
+
+                        {/* Date of Birth Calendar (Right Column in place of Your State) */}
+                        <div>
+                          <label className="mb-1.5 block text-xs font-bold text-slate-800">
+                            Date of Birth
+                          </label>
+                          <div className="relative flex h-11 sm:h-12 w-full items-center rounded-xl border border-slate-200 bg-white px-3.5 shadow-2xs transition-all hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10 cursor-pointer">
+                            <input
+                              type="date"
+                              value={dob}
+                              onChange={(e) => setDob(e.target.value)}
+                              max={new Date().toISOString().split("T")[0]}
+                              min="1940-01-01"
+                              placeholder="dd/mm/yyyy"
+                              className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Referral Code Accordion */}
+                      <div className="pt-0.5">
+                        {!showReferral ? (
+                          <button
+                            type="button"
+                            onClick={() => setShowReferral(true)}
+                            className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-semibold text-[#DC2626] hover:text-[#B91C1C] hover:underline cursor-pointer transition-colors"
                           >
-                            <option value="">Select your preferred course</option>
-                            {courseOptions.map((c) => (
-                              <option key={c} value={c}>
-                                {c}
-                              </option>
-                            ))}
-                          </select>
+                            <Gift className="h-4 w-4 text-[#DC2626] shrink-0" />
+                            <span>Have a referral or coupon code?</span>
+                          </button>
+                        ) : (
+                          <div>
+                            <label className="mb-1.5 block text-xs font-bold text-slate-800">
+                              Referral Code
+                            </label>
+                            <div className="flex h-11 sm:h-12 items-center rounded-xl border border-slate-200 bg-white px-3.5 shadow-2xs focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                              <input
+                                type="text"
+                                placeholder="Enter code (optional)"
+                                value={referralCode}
+                                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                                className="h-full w-full bg-transparent text-sm font-semibold tracking-wider uppercase text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:normal-case"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* WhatsApp Opt-in Card */}
+                      <div
+                        onClick={() => setWhatsappOptIn(!whatsappOptIn)}
+                        className="flex items-center gap-3.5 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] p-3.5 sm:p-4 cursor-pointer select-none transition-colors hover:bg-[#EAFBF0]"
+                      >
+                        {/* Custom Green Checkbox */}
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] transition-colors ${
+                            whatsappOptIn
+                              ? "bg-[#059669] text-white shadow-2xs"
+                              : "border-2 border-slate-300 bg-white"
+                          }`}
+                        >
+                          {whatsappOptIn && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-[#0F172A]">
+                            <MessageSquare className="h-4 w-4 text-[#059669] shrink-0" />
+                            <span>Get updates on WhatsApp</span>
+                          </div>
+                          <p className="mt-0.5 text-[11px] sm:text-xs leading-relaxed text-[#065F46]/80">
+                            Receive university brochures, EMI options & counseling alerts.
+                          </p>
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                          State of Residence
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                          <select
-                            value={state}
-                            onChange={(e) => setState(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs transition-all appearance-none cursor-pointer"
-                          >
-                            <option value="">Select your state</option>
-                            {indianStates.map((s) => (
-                              <option key={s} value={s}>
-                                {s}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-1">
-                        <input
-                          type="checkbox"
-                          id="whatsapp-optin-page"
-                          checked={whatsappOptIn}
-                          onChange={(e) => setWhatsappOptIn(e.target.checked)}
-                          className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300 cursor-pointer"
-                        />
-                        <label htmlFor="whatsapp-optin-page" className="text-xs text-slate-600 cursor-pointer">
-                          Receive updates and admission guides on WhatsApp
-                        </label>
-                      </div>
-
+                      {/* Finish Profile CTA */}
                       <Button
                         type="submit"
                         disabled={loading || !name.trim()}
-                        className="w-full h-11 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        className="group mt-1 flex h-12 sm:h-[50px] w-full items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-[#E11D48] hover:bg-[#BE123C] text-sm sm:text-[15px] font-bold tracking-wide text-white shadow-[0_8px_20px_rgba(225,29,72,0.35)] hover:shadow-[0_10px_24px_rgba(225,29,72,0.45)] transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Saving…
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Saving Profile...</span>
                           </>
                         ) : (
                           <>
-                            Continue to Dashboard
-                            <ArrowRight className="w-4 h-4" />
+                            <span>Complete & Explore Universities</span>
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                           </>
                         )}
                       </Button>
                     </form>
+
+                    {/* Bottom Footer: Legal */}
+                    <div className="mt-4 sm:mt-5 text-center">
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        By continuing, you agree to our{" "}
+                        <a
+                          href="/terms"
+                          className="underline hover:text-slate-800 transition-colors"
+                        >
+                          Terms
+                        </a>{" "}
+                        &{" "}
+                        <a
+                          href="/privacy"
+                          className="underline hover:text-slate-800 transition-colors"
+                        >
+                          Privacy Policy
+                        </a>
+                        .
+                      </p>
+                    </div>
                   </div>
                 )}
               </>

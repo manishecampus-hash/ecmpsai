@@ -25,10 +25,12 @@ import {
   CheckCircle2,
   Lock,
   Calendar,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { indianStates } from "@/data/indian-states";
+import { courseOptions } from "@/data/course-options";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 
 interface SignupModalProps {
@@ -82,22 +84,24 @@ export function SignupModal({
 
   // ── Details step state ──
   const [course, setCourse] = useState("");
+  const [courseSearch, setCourseSearch] = useState("");
+  const [courseOpen, setCourseOpen] = useState(false);
+  const courseRef = useRef<HTMLDivElement>(null);
   const [dob, setDob] = useState("");
 
   const [state, setState] = useState("");
   const [stateSearch, setStateSearch] = useState("");
   const [stateOpen, setStateOpen] = useState(false);
+  const stateRef = useRef<HTMLDivElement>(null);
 
   const [referralCode, setReferralCode] = useState("");
   const [showReferral, setShowReferral] = useState(false);
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [showAdvisor, setShowAdvisor] = useState(false);
 
-  const stateRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
-    if (!stateOpen) return;
+    if (!stateOpen && !courseOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -106,12 +110,18 @@ export function SignupModal({
       ) {
         setStateOpen(false);
       }
+      if (
+        courseRef.current &&
+        !courseRef.current.contains(event.target as Node)
+      ) {
+        setCourseOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
-  }, [stateOpen]);
+  }, [stateOpen, courseOpen]);
 
   // Resend OTP countdown timer
   useEffect(() => {
@@ -126,6 +136,14 @@ export function SignupModal({
     const t = setTimeout(() => setPhoneCooldown((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [phoneCooldown]);
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setStep("phone");
+      setError("");
+    }
+  }, [isOpen]);
 
   // Reset errors when step changes
   useEffect(() => {
@@ -526,6 +544,10 @@ export function SignupModal({
     s.toLowerCase().includes(stateSearch.toLowerCase().trim()),
   );
 
+  const filteredCourses = courseOptions.filter((c) =>
+    c.toLowerCase().includes(courseSearch.toLowerCase().trim()),
+  );
+
   const activeIdentifier = mode === "email" ? email : fullPhone;
 
   return (
@@ -548,22 +570,21 @@ export function SignupModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 12 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className={`relative z-10 w-full overflow-hidden rounded-3xl bg-white shadow-[0_25px_70px_rgba(0,0,0,0.22)] border border-slate-100 my-auto ${
-              step === "details" ? "max-w-[480px]" : "max-w-[410px]"
-            }`}
+            className={`relative z-10 w-full overflow-hidden rounded-[28px] sm:rounded-[32px] bg-white shadow-[0_25px_70px_rgba(0,0,0,0.28)] border border-slate-100 my-auto ${step === "details" ? "max-w-[530px]" : "max-w-[480px] sm:max-w-[500px]"
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top decorative vibrant gradient accent with emerald touch */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-red-600 via-rose-500 to-emerald-500" />
+            {/* Top decorative gradient accent bar */}
+            <div className="h-2 w-full bg-gradient-to-r from-[#DC2626] via-[#EA580C] to-[#FB923C] shrink-0" />
 
             {/* Top Close Button */}
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-3.5 top-4.5 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
+              className="absolute right-4 sm:right-5 top-4 sm:top-5 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-[#F1F5F9] text-[#64748B] transition-colors hover:bg-slate-200 hover:text-slate-800 cursor-pointer"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 stroke-[2.2]" />
             </button>
 
             {/* Top Back Button (Only on OTP step) */}
@@ -572,58 +593,48 @@ export function SignupModal({
                 type="button"
                 onClick={handleBack}
                 aria-label="Back"
-                className="absolute left-3.5 top-4.5 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
+                className="absolute left-4 sm:left-5 top-4 sm:top-5 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-[#F1F5F9] text-[#64748B] transition-colors hover:bg-slate-200 hover:text-slate-800 cursor-pointer"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4 stroke-[2.2]" />
               </button>
             )}
 
             {/* Modal Content */}
-            <div className="px-6 py-6 sm:px-7 sm:py-7">
+            <div className="px-6 py-6 sm:px-8 sm:py-8">
               {/* Header Branding */}
               <div className="flex flex-col items-center text-center">
                 <img
                   src="/image/logo.png"
                   alt="eCampus"
-                  className="h-7 w-auto object-contain"
+                  className="h-8 sm:h-9 w-auto object-contain mx-auto"
                 />
 
-                {/* Eyebrow badge with green assured tick */}
-                <div
-                  className={`mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold border shadow-2xs transition-colors ${
-                    step === "phone"
-                      ? "bg-emerald-50 text-emerald-800 border-emerald-200/90"
-                      : "bg-rose-50 text-rose-600 border-rose-100/80"
-                  }`}
-                >
-                  {step === "phone" ? (
-                    <BadgeCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                  ) : (
-                    <Sparkles className="h-3 w-3" />
-                  )}
-                  <span>
-                    {step === "details"
-                      ? "Almost Done!"
-                      : step === "otp"
-                      ? "Security Verification"
-                      : "India's Leading Higher Ed Platform"}
-                  </span>
-                </div>
+                {/* Eyebrow badge (Only on details & otp steps) */}
+                {step === "details" && (
+                  <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold bg-[#FFF1F2] text-[#E11D48]">
+                    <Sparkles className="h-3.5 w-3.5 text-[#E11D48] fill-[#E11D48]/25" />
+                    <span>Almost Done!</span>
+                  </div>
+                )}
+                {step === "otp" && (
+                  <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100/80 shadow-2xs">
+                    <Sparkles className="h-3.5 w-3.5 text-rose-600 fill-rose-600/25" />
+                    <span>Security Verification</span>
+                  </div>
+                )}
 
                 {/* Title */}
-                <h2 className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+                <h2 className={`font-bold tracking-tight text-[#0D1527] ${step === "phone" ? "mt-3.5 mb-1 text-[26px] sm:text-[30px]" : "mt-2 text-2xl sm:text-[26px]"}`}>
                   {step === "details"
                     ? "Complete Your Profile"
                     : step === "otp"
-                    ? "Enter Verification Code"
-                    : "Signup / Login"}
+                      ? "Enter Verification Code"
+                      : "Login/ Sign Up"}
                 </h2>
 
-                {/* Subtitle */}
-                <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-[320px] leading-relaxed">
-                  {step === "details" ? (
-                    "Tell us about your learning goals to get personalized university & scholarship matches."
-                  ) : step === "otp" ? (
+                {/* Subtitle (Shown on OTP step) */}
+                {step === "otp" && (
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-[320px] leading-relaxed">
                     <span className="inline-flex items-center justify-center gap-1 flex-wrap">
                       <span>Code sent to</span>
                       <span className="font-semibold text-slate-800">
@@ -638,10 +649,8 @@ export function SignupModal({
                         Edit
                       </button>
                     </span>
-                  ) : (
-                    "Enter your mobile number to continue."
-                  )}
-                </p>
+                  </p>
+                )}
               </div>
 
               {/* Error Banner */}
@@ -660,52 +669,50 @@ export function SignupModal({
               {step === "phone" && (
                 <div className="mt-5">
                   {/* Segmented Mode Selector */}
-                  <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 border border-slate-200/70 shadow-2xs mb-4">
+                  <div className="grid grid-cols-2 p-1.5 sm:p-2 rounded-2xl bg-[#F0F4F8] mb-6">
                     <button
                       type="button"
                       onClick={() => handleModeChange("mobile")}
-                      className={`relative flex h-9.5 items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                        mode === "mobile"
-                          ? "bg-white text-slate-900 shadow-xs"
-                          : "text-slate-500 hover:text-slate-800"
-                      }`}
+                      className={`relative flex h-12 sm:h-13 items-center justify-center gap-2 rounded-xl sm:rounded-[14px] px-2.5 sm:px-3 text-xs sm:text-[13.5px] font-bold transition-all cursor-pointer whitespace-nowrap ${mode === "mobile"
+                          ? "bg-white text-[#0F172A] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                          : "text-slate-600 hover:text-slate-900"
+                        }`}
                     >
-                      <Smartphone className={`h-3.5 w-3.5 ${mode === "mobile" ? "text-emerald-600" : "text-slate-400"}`} />
-                      <span>Mobile Number</span>
+                      <Smartphone className={`h-4.5 w-4.5 shrink-0 ${mode === "mobile" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                      <span className="whitespace-nowrap">Mobile OTP (Primary)</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleModeChange("email")}
-                      className={`relative flex h-9.5 items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                        mode === "email"
-                          ? "bg-white text-slate-900 shadow-xs"
-                          : "text-slate-500 hover:text-slate-800"
-                      }`}
+                      className={`relative flex h-12 sm:h-13 items-center justify-center gap-2 rounded-xl sm:rounded-[14px] px-2.5 sm:px-3 text-xs sm:text-[13.5px] font-bold transition-all cursor-pointer whitespace-nowrap ${mode === "email"
+                          ? "bg-white text-[#0F172A] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                          : "text-slate-600 hover:text-slate-900"
+                        }`}
                     >
-                      <Mail className={`h-3.5 w-3.5 ${mode === "email" ? "text-emerald-600" : "text-slate-400"}`} />
-                      <span>Email</span>
+                      <Mail className={`h-4.5 w-4.5 shrink-0 ${mode === "email" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                      <span className="whitespace-nowrap">Email</span>
                     </button>
                   </div>
 
                   {/* Form Container */}
                   <div>
                     {mode === "mobile" ? (
-                      <form onSubmit={handlePhoneContinue} className="flex flex-col gap-3.5">
+                      <form onSubmit={handlePhoneContinue} className="flex flex-col gap-4">
                         <div>
-                          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
-                            Mobile Number
+                          <label className="mb-2 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
+                            Registered Mobile Number
                           </label>
-                          <div className="group relative flex h-12 sm:h-12.5 items-center rounded-2xl border border-slate-200 bg-slate-50/60 shadow-2xs transition-all focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white hover:border-slate-300">
-                            {/* Country Picker */}
-                            <div className="relative flex shrink-0 items-center gap-1.5 border-r border-slate-200 px-3.5 h-full bg-slate-100/70 rounded-l-2xl text-slate-700 select-none">
-                              <span className="text-base leading-none">
+                          <div className="relative flex h-[54px] sm:h-[58px] items-center rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                            {/* Country Picker (seamless left section with divider, NO inner box) */}
+                            <div className="relative flex shrink-0 items-center gap-2 border-r border-slate-200 px-4 sm:px-4.5 h-full text-slate-800 select-none cursor-pointer hover:bg-slate-50/70 transition-colors">
+                              <span className="text-xl sm:text-2xl leading-none">
                                 {selectedCountry.flag}
                               </span>
-                              <span className="text-xs font-bold text-slate-900 tracking-wide">
+                              <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                                 {selectedCountry.code}
                               </span>
-                              <ChevronDown className="h-3 w-3 text-slate-400" />
+                              <ChevronDown className="h-4 w-4 text-slate-400" />
                               <select
                                 value={countryCode}
                                 onChange={(e) => setCountryCode(e.target.value)}
@@ -724,7 +731,7 @@ export function SignupModal({
                               type="tel"
                               inputMode="numeric"
                               autoFocus
-                              placeholder="10-digit mobile number"
+                              placeholder="Enter 10-digit number"
                               value={phone}
                               onChange={(e) =>
                                 setPhone(
@@ -735,16 +742,16 @@ export function SignupModal({
                               }
                               maxLength={10}
                               required
-                              className="min-w-0 flex-1 bg-transparent px-3.5 text-sm font-semibold tracking-wider text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:tracking-normal"
+                              className="h-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent px-4 sm:px-5 text-base sm:text-[16px] font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                             />
 
                             {phone.length > 0 && (
                               <button
                                 type="button"
                                 onClick={() => setPhone("")}
-                                className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/70 text-slate-500 hover:bg-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
+                                className="mr-3.5 flex h-5.5 w-5.5 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
                               >
-                                <X className="h-3 w-3" />
+                                <X className="h-3.5 w-3.5" />
                               </button>
                             )}
                           </div>
@@ -754,7 +761,7 @@ export function SignupModal({
                         <Button
                           type="submit"
                           disabled={loading || phone.length < 10}
-                          className="relative group mt-1.5 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+                          className="relative group mt-1.5 flex h-12.5 sm:h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F87171] to-[#FB7185] hover:from-[#EF4444] hover:to-[#F43F5E] text-sm sm:text-base font-bold tracking-normal text-white shadow-[0_8px_20px_rgba(248,113,113,0.38)] hover:shadow-[0_10px_24px_rgba(248,113,113,0.48)] transition-all active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                         >
                           {loading ? (
                             <>
@@ -763,46 +770,41 @@ export function SignupModal({
                             </>
                           ) : (
                             <>
-                              <span>Get OTP</span>
+                              <span>Get Login OTP</span>
                               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                             </>
                           )}
                         </Button>
-
-                        {/* Verified Gateway Reassurance */}
-                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700 mt-0.5">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                          <span>Instant 6-digit OTP · Verified Access</span>
-                        </div>
                       </form>
                     ) : (
-                      <form onSubmit={handleEmailStepContinue} className="flex flex-col gap-3.5">
+                      <form onSubmit={handleEmailStepContinue} className="flex flex-col gap-4">
                         <div>
-                          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
-                            Email Address
+                          <label className="mb-2 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
+                            Registered Email Address
                           </label>
-                          <div className="group relative flex h-12 sm:h-12.5 items-center rounded-2xl border border-slate-200 bg-slate-50/60 shadow-2xs transition-all focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white hover:border-slate-300">
-                            <div className="flex h-full items-center pl-3.5 pr-2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                              <Mail className="h-4 w-4" />
+                          <div className="relative flex h-14 sm:h-[58px] items-center rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                            <div className="flex shrink-0 items-center justify-center border-r border-slate-200 px-4 h-full text-slate-400">
+                              <Mail className="h-5 w-5" />
                             </div>
+
                             <input
                               type="email"
                               inputMode="email"
                               autoFocus
                               autoComplete="email"
-                              placeholder="name@example.com"
+                              placeholder="Enter your email address"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
-                              className="min-w-0 flex-1 bg-transparent px-2.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                              className="h-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent px-4 text-base sm:text-[16px] font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                             />
                             {email.length > 0 && (
                               <button
                                 type="button"
                                 onClick={() => setEmail("")}
-                                className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/70 text-slate-500 hover:bg-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
+                                className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
                               >
-                                <X className="h-3 w-3" />
+                                <X className="h-3.5 w-3.5" />
                               </button>
                             )}
                           </div>
@@ -812,7 +814,7 @@ export function SignupModal({
                         <Button
                           type="submit"
                           disabled={loading || !email}
-                          className="relative group mt-1.5 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
+                          className="relative group mt-1.5 flex h-12.5 sm:h-13 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F87171] to-[#FB7185] hover:from-[#EF4444] hover:to-[#F43F5E] text-sm sm:text-base font-bold tracking-normal text-white shadow-[0_8px_20px_rgba(248,113,113,0.38)] hover:shadow-[0_10px_24px_rgba(248,113,113,0.48)] transition-all active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                         >
                           {loading ? (
                             <>
@@ -821,17 +823,11 @@ export function SignupModal({
                             </>
                           ) : (
                             <>
-                              <span>Continue with Email</span>
+                              <span>Get Login OTP</span>
                               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                             </>
                           )}
                         </Button>
-
-                        {/* Verified Gateway Reassurance */}
-                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-emerald-700 mt-0.5">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                          <span>Instant Verification · Verified Access</span>
-                        </div>
                       </form>
                     )}
                   </div>
@@ -917,41 +913,38 @@ export function SignupModal({
 
               {/* STEP 3: Details Onboarding */}
               {step === "details" && (
-                <form onSubmit={handleDetailsSubmit} className="mt-4 flex flex-col gap-3.5">
+                <form onSubmit={handleDetailsSubmit} className="mt-4 flex flex-col gap-3.5 sm:gap-4">
                   {/* Verified Banner */}
-                  <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200/80 px-3 py-2 text-xs font-semibold text-emerald-800">
-                    <BadgeCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span>
-                      {mode === "mobile" ? "Mobile" : "Email"} verified successfully! Complete your profile.
-                    </span>
+                  <div className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-emerald-800 shadow-2xs">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 stroke-[2.2]" />
+                    <span>Mobile verified successfully!</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                     {/* Full Name */}
                     <div>
-                      <label className="mb-1 block text-xs font-semibold text-slate-700">
-                        Full Name <span className="text-red-500">*</span>
+                      <label className="mb-1.5 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
+                        Full Name <span className="text-[#DC2626] font-medium">*</span>
                       </label>
-                      <div className="relative flex h-11 items-center rounded-xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
-                        <User className="absolute left-3 h-4 w-4 text-slate-400" />
+                      <div className="relative flex h-[50px] sm:h-[54px] w-full items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                        <User className="h-5 w-5 text-slate-400 shrink-0 mr-2.5 pointer-events-none stroke-[1.8]" />
                         <input
                           type="text"
-                          autoFocus
                           placeholder="Your full name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           required
-                          className="h-full w-full rounded-xl bg-transparent pl-9 pr-3 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                          className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                         />
                       </div>
                     </div>
 
                     {/* Secondary Contact (Email if registered by mobile, or Phone if registered by email) */}
                     <div>
-                      <div className="mb-1 flex items-center justify-between">
-                        <label className="block text-xs font-semibold text-slate-700">
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <label className="block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
                           {mode === "mobile" ? "Email Address" : "Mobile Number"}{" "}
-                          <span className="text-red-500">*</span>
+                          <span className="text-[#DC2626] font-medium">*</span>
                         </label>
                         {mode === "email" && phoneVerified && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -968,8 +961,8 @@ export function SignupModal({
                       </div>
 
                       {mode === "mobile" ? (
-                        <div className="relative flex h-11 items-center rounded-xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
-                          <Mail className="absolute left-3 h-4 w-4 text-slate-400" />
+                        <div className="relative flex h-[50px] sm:h-[54px] w-full items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
+                          <Mail className="h-5 w-5 text-slate-400 shrink-0 mr-2.5 pointer-events-none stroke-[1.8]" />
                           <input
                             type="email"
                             inputMode="email"
@@ -977,16 +970,16 @@ export function SignupModal({
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="h-full w-full rounded-xl bg-transparent pl-9 pr-3 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal"
+                            className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal"
                           />
                         </div>
                       ) : (
-                        <div className="relative flex h-11 items-center rounded-xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                        <div className="relative flex h-[50px] sm:h-[54px] items-center rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
                           {/* Country Code Dropdown */}
-                          <div className="relative flex shrink-0 items-center gap-1 border-r border-slate-200 px-2.5 text-slate-700">
-                            <span className="text-sm leading-none">{selectedCountry.flag}</span>
-                            <span className="text-xs font-semibold text-slate-800">{selectedCountry.code}</span>
-                            <ChevronDown className="h-3 w-3 text-slate-400" />
+                          <div className="relative flex shrink-0 items-center gap-1.5 border-r border-slate-200 px-3 h-full text-slate-800 select-none cursor-pointer hover:bg-slate-50/70 transition-colors">
+                            <span className="text-base leading-none">{selectedCountry.flag}</span>
+                            <span className="text-xs sm:text-sm font-bold text-slate-900">{selectedCountry.code}</span>
+                            <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
                             <select
                               value={countryCode}
                               disabled={phoneVerified}
@@ -1024,7 +1017,7 @@ export function SignupModal({
                               }
                             }}
                             required
-                            className="h-full min-w-0 flex-1 bg-transparent px-2.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal disabled:text-slate-500"
+                            className="h-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent px-3 text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal disabled:text-slate-500"
                           />
 
                           {/* Action inside input: Verify button or Change link */}
@@ -1036,17 +1029,17 @@ export function SignupModal({
                                 setPhoneOtpSent(false);
                                 setPhoneOtp("");
                               }}
-                              className="mr-2 inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-red-600 underline shrink-0"
+                              className="mr-3 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-red-600 underline shrink-0 cursor-pointer"
                             >
                               Change
                             </button>
                           ) : phone.length === 10 ? (
-                            <div className="mr-1.5 shrink-0">
+                            <div className="mr-2 shrink-0">
                               <button
                                 type="button"
                                 disabled={phoneLoading}
                                 onClick={() => handleSendPhoneVerification()}
-                                className="inline-flex h-8 items-center justify-center gap-1 rounded-lg bg-red-600 hover:bg-red-700 px-2.5 text-xs font-semibold text-white shadow-xs transition-colors disabled:opacity-50"
+                                className="inline-flex h-8 items-center justify-center gap-1 rounded-xl bg-gradient-to-r from-[#F87171] to-[#FB7185] hover:from-[#EF4444] hover:to-[#F43F5E] px-3 text-xs font-bold text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
                               >
                                 {phoneLoading ? (
                                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1162,21 +1155,23 @@ export function SignupModal({
                     </motion.div>
                   )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* State Selection (Left column in place of Course Interested) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
+                    {/* Your State (Left column) */}
                     <div ref={stateRef} className="relative">
-                      <label className="mb-1 block text-xs font-semibold text-slate-700">
+                      <label className="mb-1.5 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
                         Your State
                       </label>
                       <button
                         type="button"
-                        onClick={() => setStateOpen((v) => !v)}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 text-left text-sm font-medium shadow-xs focus:border-red-500 focus:ring-4 focus:ring-red-500/10 hover:border-slate-300"
+                        onClick={() => {
+                          setStateOpen((v) => !v);
+                        }}
+                        className="flex h-[50px] sm:h-[54px] w-full items-center justify-between rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 text-left text-sm sm:text-base font-medium shadow-2xs transition-all hover:border-slate-400 focus:border-[#818CF8] focus:ring-4 focus:ring-indigo-500/10 cursor-pointer"
                       >
-                        <span className={state ? "truncate text-slate-900" : "text-slate-400 font-normal"}>
+                        <span className={state ? "truncate text-slate-900 font-medium" : "text-slate-400 font-normal"}>
                           {state || "Select your state"}
                         </span>
-                        <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${stateOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`h-4.5 w-4.5 text-slate-400 transition-transform shrink-0 ${stateOpen ? "rotate-180" : ""}`} />
                       </button>
 
                       {stateOpen && (
@@ -1188,7 +1183,7 @@ export function SignupModal({
                               placeholder="Search state..."
                               value={stateSearch}
                               onChange={(e) => setStateSearch(e.target.value)}
-                              className="h-8 w-full rounded-lg bg-slate-50 pl-8 pr-2 text-xs font-medium text-slate-900 outline-none border border-slate-200 focus:border-red-500 focus:bg-white"
+                              className="h-9 w-full !rounded-xl !bg-slate-50 pl-8 pr-3 text-xs font-medium text-slate-900 !outline-none !border !border-slate-200 focus:!border-[#818CF8] focus:!bg-white focus:!ring-2 focus:!ring-indigo-500/20"
                             />
                           </div>
                           <div className="overflow-y-auto max-h-40 mt-1">
@@ -1204,11 +1199,10 @@ export function SignupModal({
                                       setStateOpen(false);
                                       setStateSearch("");
                                     }}
-                                    className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors ${
-                                      selected
+                                    className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${selected
                                         ? "bg-red-50 text-red-600 font-semibold"
                                         : "text-slate-700 hover:bg-slate-50"
-                                    }`}
+                                      }`}
                                   >
                                     <span>{opt}</span>
                                     {selected && <Check className="h-3.5 w-3.5 text-red-600" />}
@@ -1223,51 +1217,52 @@ export function SignupModal({
                       )}
                     </div>
 
-                    {/* Date of Birth Calendar (Right column in place of Your State) */}
+                    {/* Date of Birth Calendar (Right column) */}
                     <div>
-                      <div className="mb-1 flex items-center justify-between">
-                        <label className="text-xs font-semibold text-slate-700">
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <label className="text-xs sm:text-[13px] font-semibold text-[#1E293B]">
                           Date of Birth
                         </label>
                         <span className="text-[11px] font-normal text-slate-400">Optional</span>
                       </div>
-                      <div className="relative flex h-11 w-full items-center rounded-xl border border-slate-200 bg-white px-3 shadow-xs hover:border-slate-300 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
-                        <Calendar className="mr-2 h-4 w-4 text-slate-400 shrink-0 pointer-events-none" />
+                      <div className="relative flex h-[50px] sm:h-[54px] w-full items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 cursor-pointer overflow-hidden">
+                        <Calendar className="mr-2.5 h-5 w-5 text-slate-400 shrink-0 pointer-events-none stroke-[1.8]" />
                         <input
                           type="date"
                           value={dob}
                           onChange={(e) => setDob(e.target.value)}
                           max={new Date().toISOString().split("T")[0]}
                           min="1940-01-01"
-                          className="h-full w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 cursor-pointer"
+                          placeholder="dd/mm/yyyy"
+                          className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none cursor-pointer"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Referral Code Accordion */}
-                  <div>
+                  <div className="pt-0.5">
                     {!showReferral ? (
                       <button
                         type="button"
                         onClick={() => setShowReferral(true)}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:underline"
+                        className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-semibold text-[#DC2626] hover:text-[#B91C1C] hover:underline cursor-pointer transition-colors"
                       >
-                        <Gift className="h-3.5 w-3.5" />
+                        <Gift className="h-4 w-4 text-[#DC2626]" />
                         <span>Have a referral or coupon code?</span>
                       </button>
                     ) : (
                       <div>
-                        <label className="mb-1 block text-xs font-semibold text-slate-700">
+                        <label className="mb-1.5 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
                           Referral Code
                         </label>
-                        <div className="flex h-11 items-center rounded-xl border border-slate-200 bg-white px-3 shadow-xs focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                        <div className="flex h-[50px] sm:h-[54px] items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 overflow-hidden">
                           <input
                             type="text"
                             placeholder="Enter code (optional)"
                             value={referralCode}
                             onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                            className="h-full w-full bg-transparent text-sm font-semibold tracking-wider uppercase text-slate-900 outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:normal-case"
+                            className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-semibold tracking-wider uppercase text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none placeholder:text-slate-400 placeholder:font-normal placeholder:normal-case"
                           />
                         </div>
                       </div>
@@ -1275,29 +1270,36 @@ export function SignupModal({
                   </div>
 
                   {/* WhatsApp Opt-in Card */}
-                  <label className="flex items-center gap-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 p-3 cursor-pointer transition-colors hover:bg-emerald-50">
-                    <input
-                      type="checkbox"
-                      checked={whatsappOptIn}
-                      onChange={(e) => setWhatsappOptIn(e.target.checked)}
-                      className="h-4 w-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                    />
-                    <div className="flex-1 text-xs">
-                      <span className="font-semibold text-emerald-950 flex items-center gap-1">
-                        <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
-                        Get updates on WhatsApp
-                      </span>
-                      <p className="text-[11px] text-emerald-700/80 mt-0.5">
+                  <div
+                    onClick={() => setWhatsappOptIn(!whatsappOptIn)}
+                    className="flex items-center gap-3.5 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] p-3.5 sm:p-4 cursor-pointer select-none transition-colors hover:bg-[#EAFBF0]"
+                  >
+                    {/* Custom Green Checkbox */}
+                    <div
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-colors ${whatsappOptIn
+                          ? "bg-[#059669] text-white shadow-2xs"
+                          : "border-2 border-slate-300 bg-white"
+                        }`}
+                    >
+                      {whatsappOptIn && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-[#0F172A]">
+                        <MessageSquare className="h-4 w-4 text-[#059669] shrink-0" />
+                        <span>Get updates on WhatsApp</span>
+                      </div>
+                      <p className="mt-0.5 text-[11px] sm:text-xs leading-relaxed text-[#065F46]/80">
                         Receive university brochures, EMI options & counseling alerts.
                       </p>
                     </div>
-                  </label>
+                  </div>
 
                   {/* Finish Profile CTA */}
                   <Button
                     type="submit"
                     disabled={loading || phoneLoading}
-                    className="group mt-1 flex h-12 sm:h-12.5 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-bold tracking-wide text-white shadow-[0_4px_16px_rgba(238,44,60,0.28)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.4)] transition-all hover:brightness-105 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                    className="group mt-2 flex h-13 sm:h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F87171] to-[#FB7185] hover:from-[#EF4444] hover:to-[#F43F5E] text-sm sm:text-base font-bold tracking-normal text-white shadow-[0_8px_20px_rgba(248,113,113,0.38)] hover:shadow-[0_10px_24px_rgba(248,113,113,0.48)] transition-all active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
                   >
                     {loading ? (
                       <>
@@ -1334,19 +1336,19 @@ export function SignupModal({
               )}
 
               {/* Bottom Footer: Legal */}
-              <div className="mt-4 text-center">
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+              <div className="mt-4 sm:mt-5 text-center">
+                <p className="text-xs text-slate-500 leading-relaxed">
                   By continuing, you agree to our{" "}
                   <a
                     href="/terms"
-                    className="underline hover:text-slate-600 transition-colors"
+                    className="underline hover:text-slate-800 transition-colors"
                   >
                     Terms
                   </a>{" "}
                   &{" "}
                   <a
                     href="/privacy"
-                    className="underline hover:text-slate-600 transition-colors"
+                    className="underline hover:text-slate-800 transition-colors"
                   >
                     Privacy Policy
                   </a>

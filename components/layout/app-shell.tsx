@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
+import { FestiveDiwaliOverlay } from "@/components/layout/festive-diwali-overlay";
 
 // Dashboard has its own sidebar/topbar shell — skip the marketing navbar there.
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -68,6 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <FestiveDiwaliOverlay />
       <Navbar />
       <main className="flex-1 pt-16">{children}</main>
     </>

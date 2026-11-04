@@ -62,18 +62,13 @@ export default function EducationLoanEmiCalculatorPage() {
                   <p className="mt-0.5 text-sm text-gray-500">Plan your course fee in easy monthly instalments before you apply.</p>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                Free · Instant · No sign-up needed
-              </span>
-            </motion.div>
+                          </motion.div>
 
             {/* Calculator */}
             <motion.section
               {...fadeUp(0.05)}
-              className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_16px_40px_-28px_rgba(15,23,42,0.35)]"
+              className="relative overflow-hidden rounded-2xl border-2 border-red-300 bg-white shadow-[0_16px_40px_-28px_rgba(15,23,42,0.35)]"
             >
-              <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(to_right,#dc2626,#f87171_40%,transparent)]" />
               <div className="grid lg:grid-cols-[minmax(0,1fr)_380px]">
                 {/* Inputs + results */}
                 <div className="p-5 sm:p-7">
@@ -122,9 +117,8 @@ export default function EducationLoanEmiCalculatorPage() {
                   {/* Results */}
                   <div className="mt-8 grid gap-3 sm:grid-cols-[1.2fr_repeat(3,minmax(0,1fr))]">
                     {/* Highlighted result: light blush card with a red accent and the same flowing lines used across the site */}
-                    <div className="relative overflow-hidden rounded-xl border border-red-200 bg-[#fff5f5] p-4 shadow-[0_14px_30px_-20px_rgba(220,38,38,0.45)]">
+                    <div className="relative overflow-hidden rounded-xl border border-red-300 bg-[#fff5f5] p-4 shadow-[0_14px_30px_-20px_rgba(220,38,38,0.45)]">
                       <FlowingLines />
-                      <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-red-600" />
                       <span aria-hidden className="absolute -right-8 -top-8 h-24 w-24 rounded-full border border-dashed border-red-200 motion-safe:animate-[spin_30s_linear_infinite]" />
                       <p className="relative flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-gray-600">
                         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-red-600 text-white">

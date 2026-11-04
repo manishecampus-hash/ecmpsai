@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import RevealObserver from "@/components/about/reveal-observer";
 import { REVEAL_UP } from "@/components/about/reveal";
 import EarnersChart from "@/components/invite-and-earn/earners-chart";
+import HeroNetwork from "@/components/invite-and-earn/hero-network";
 import HowItWorks from "@/components/invite-and-earn/how-it-works";
 import ProgramRewards, { REFER_HREF } from "@/components/invite-and-earn/program-rewards";
 import { MAX_REFERRAL_REWARD, REFERRAL_UNIVERSITIES, TOP_EARNERS, formatINR } from "@/data/referral-programs";
@@ -65,13 +66,6 @@ function Eyebrow({ children, light = false }: { children: React.ReactNode; light
   return <p className={`text-sm font-semibold uppercase tracking-[0.14em] ${light ? "text-red-300" : "text-red-600"}`}>{children}</p>;
 }
 
-// Gentle curves drawn across the hero background (viewBox 1440 × 640)
-const HERO_LINES = [
-  "M-40 520 C 300 420, 520 640, 820 500 S 1250 260, 1480 300",
-  "M-40 600 C 360 520, 640 700, 940 560 S 1300 380, 1480 430",
-  "M560 -40 C 740 110, 900 60, 1060 200 S 1340 430, 1480 380",
-];
-
 // Gold, silver and bronze for the top-three list
 const MEDALS = ["bg-amber-400", "bg-gray-300", "bg-orange-300"];
 
@@ -80,37 +74,8 @@ export default function InviteAndEarnPage() {
     <>
       <article className="overflow-hidden bg-white text-gray-900">
         {/* 1. Hero */}
-        <section aria-labelledby="refer-heading" className="relative overflow-hidden border-b border-red-100 bg-[#fff5f5]">
-          {/* Blush backdrop: thin flowing lines with a red streak travelling along each, and rings behind the card.
-              SVG + CSS only; the motion stops for people who prefer reduced motion. */}
-          <div aria-hidden className="pointer-events-none absolute inset-0">
-            <svg
-              viewBox="0 0 1440 640"
-              preserveAspectRatio="xMidYMid slice"
-              className="absolute inset-0 h-full w-full [mask-image:linear-gradient(to_right,transparent_38%,black_68%)]"
-              fill="none"
-            >
-              {HERO_LINES.map((d, i) => (
-                <g key={d}>
-                  <path d={d} stroke="#fecaca" strokeWidth="1.25" />
-                  <path
-                    d={d}
-                    pathLength={1000}
-                    stroke="#ef4444"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeDasharray="90 910"
-                    strokeDashoffset="1000"
-                    className="opacity-0 motion-safe:animate-[dash-travel_9s_linear_infinite] motion-safe:opacity-70"
-                    style={{ animationDelay: `${i * -3}s` }}
-                  />
-                </g>
-              ))}
-            </svg>
-            <span className="absolute right-[-120px] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full border border-red-200/70" />
-            <span className="absolute right-[-40px] top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full border border-red-200/70" />
-            <span className="absolute right-[40px] top-1/2 hidden h-[240px] w-[240px] -translate-y-1/2 rounded-full border border-dashed border-red-300/60 motion-safe:animate-[spin_40s_linear_infinite] lg:block" />
-          </div>
+        <section aria-labelledby="refer-heading" className="relative isolate overflow-hidden bg-white">
+          <HeroNetwork />
           <div className={`${CONTAINER} relative grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-14 sm:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16 lg:py-20`}>
             <div>
               <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -129,7 +94,7 @@ export default function InviteAndEarnPage() {
                 id="refer-heading"
                 className="mt-3 max-w-xl text-[36px] font-bold leading-[1.12] tracking-tight text-gray-900 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:fill-mode-both motion-safe:delay-100 motion-safe:duration-700 sm:text-[46px] lg:text-[52px]"
               >
-                Invite a friend. Earn up to <span className="whitespace-nowrap text-red-600">{MAX}</span> when they enrol.
+                Invite a friend. Earn up to <span className="whitespace-nowrap bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-transparent">{MAX}</span> when they enrol.
               </h1>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-gray-600 motion-safe:animate-in motion-safe:fade-in motion-safe:fill-mode-both motion-safe:delay-200 motion-safe:duration-700 sm:text-lg">
                 Help someone you know find the right online degree. When they enrol through your referral, you get rewarded.
@@ -137,14 +102,14 @@ export default function InviteAndEarnPage() {
               <div className="mt-8 flex flex-col gap-3 motion-safe:animate-in motion-safe:fade-in motion-safe:fill-mode-both motion-safe:delay-300 motion-safe:duration-700 sm:flex-row">
                 <Link
                   href={REFER_HREF}
-                  className={`group inline-flex items-center justify-center gap-2 rounded-[10px] bg-red-600 px-7 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-red-700 ${FOCUS}`}
+                  className={`group inline-flex items-center justify-center gap-2 rounded-[10px] bg-red-600 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-red-600/30 transition-colors hover:bg-red-700 ${FOCUS}`}
                 >
                   Refer Now
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
                 </Link>
                 <a
                   href="#program-rewards"
-                  className={`inline-flex items-center justify-center gap-2 rounded-[10px] border border-gray-300 bg-white px-7 py-3.5 text-[15px] font-semibold text-gray-900 transition-colors hover:border-gray-900 ${FOCUS}`}
+                  className={`inline-flex items-center justify-center gap-2 rounded-[10px] border border-red-200 bg-white/80 px-7 py-3.5 text-[15px] font-semibold text-gray-900 shadow-sm backdrop-blur-sm transition-colors hover:border-red-400 hover:text-red-700 ${FOCUS}`}
                 >
                   See program rewards
                 </a>
@@ -160,8 +125,9 @@ export default function InviteAndEarnPage() {
             </div>
 
             {/* Reward summary card */}
-            <div className="mx-auto w-full max-w-[460px] motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-6 motion-safe:fill-mode-both motion-safe:delay-200 motion-safe:duration-700 lg:mr-0">
-              <div className="overflow-hidden rounded-2xl border border-gray-200 border-t-red-600 bg-white shadow-[0_24px_60px_-32px_rgba(17,24,39,0.35)] [border-top-width:4px]">
+            <div className="relative mx-auto w-full max-w-[460px] motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-6 motion-safe:fill-mode-both motion-safe:delay-200 motion-safe:duration-700 lg:mr-0">
+              <span aria-hidden className="pointer-events-none absolute -inset-6 rounded-[32px] bg-red-300/30 blur-3xl" />
+              <div className="relative overflow-hidden rounded-2xl border border-red-100 border-t-red-600 bg-white shadow-[0_30px_70px_-30px_rgba(190,18,60,0.45)] [border-top-width:4px]">
                 <div className="p-6 sm:p-7">
                   <div className="flex items-center gap-3">
                     <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-600 text-white shadow-md shadow-red-600/20">
@@ -245,7 +211,7 @@ export default function InviteAndEarnPage() {
         {/* 3. University & program-wise rewards */}
         <section id="program-rewards" aria-labelledby="rewards-heading" className="scroll-mt-20 border-y border-gray-100 bg-gray-50 py-20 lg:py-24">
           <div className={CONTAINER}>
-            <div data-reveal className={`${REVEAL_UP} flex flex-col gap-4 md:flex-row md:items-end md:justify-between`}>
+            <div data-reveal className={`${REVEAL_UP} flex flex-col items-center gap-4 text-center`}>
               <div className="max-w-2xl">
                 <Eyebrow>Rewards</Eyebrow>
                 <h2 id="rewards-heading" className={`mt-3 ${H2}`}>

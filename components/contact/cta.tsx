@@ -24,7 +24,7 @@ export default function CTA() {
             </span>
 
             <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              Let's Talk About Your<span className="text-red-500"> Goals</span>
+              Lets Talk About Your<span className="text-red-500"> Goals</span>
             </h2>
 
             <p className="mt-4 max-w-xl text-base md:text-lg text-gray-600">

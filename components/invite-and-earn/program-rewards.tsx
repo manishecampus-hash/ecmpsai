@@ -13,6 +13,11 @@ export const REFER_HREF = "/login?returnUrl=/dashboard/invite-earn";
 
 const FOCUS = "focus-visible:underline focus-visible:underline-offset-4";
 
+// Soft red tint in the corner of the light header band
+function HeaderGloss() {
+  return <span aria-hidden className="pointer-events-none absolute -right-10 -top-16 h-36 w-56 rounded-full bg-red-100/70 blur-3xl" />;
+}
+
 export default function ProgramRewards() {
   const [uniId, setUniId] = useState(REFERRAL_UNIVERSITIES[0].id);
   const [level, setLevel] = useState<Level>("All");
@@ -25,16 +30,19 @@ export default function ProgramRewards() {
   const best = Math.max(...uni.programs.map((p) => p.reward));
 
   return (
-    <div className="mt-10 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_20px_50px_-35px_rgba(17,24,39,0.35)] lg:grid lg:grid-cols-[300px_minmax(0,1fr)]">
+    <div className="mt-10 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_24px_60px_-35px_rgba(17,24,39,0.45)] lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+      {/* University list header (vertically centred against the taller program header beside it) */}
+      <div className="relative flex items-center overflow-hidden border-b border-red-100 bg-gradient-to-b from-[#fff5f5] to-white px-5 py-4 lg:col-start-1 lg:row-start-1 lg:border-r lg:border-r-gray-200">
+        <HeaderGloss />
+        <p className="relative text-lg font-bold text-gray-900">Choose a university</p>
+      </div>
+
       {/* 1. Choose a university */}
-      <div className="border-b border-gray-200 bg-gray-50/70 lg:border-b-0 lg:border-r">
-        <p className="px-5 pt-5 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
-          1. Choose a university
-        </p>
+      <div className="border-b border-gray-200 bg-gray-50/70 lg:col-start-1 lg:row-start-2 lg:border-b-0 lg:border-r">
         <div
           role="tablist"
           aria-label="Universities"
-          className="flex gap-2 overflow-x-auto p-4 [scrollbar-width:none] lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+          className="flex gap-2 overflow-x-auto p-3 [scrollbar-width:none] lg:flex-col lg:gap-1.5 lg:overflow-visible lg:px-3 lg:pb-3 lg:pt-2 [&::-webkit-scrollbar]:hidden"
         >
           {REFERRAL_UNIVERSITIES.map((u) => {
             const on = u.id === uniId;
@@ -46,9 +54,9 @@ export default function ProgramRewards() {
                 aria-selected={on}
                 aria-controls="referral-programs"
                 onClick={() => setUniId(u.id)}
-                className={`relative flex flex-shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors lg:w-full ${
+                className={`relative flex flex-shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors lg:h-14 lg:w-full lg:py-0 ${
                   on
-                    ? "border-red-200 bg-white shadow-sm"
+                    ? "border-red-200 bg-white shadow-[0_6px_16px_-10px_rgba(190,18,60,0.45)]"
                     : "border-transparent hover:bg-white"
                 }`}
               >
@@ -58,7 +66,7 @@ export default function ProgramRewards() {
                     className="absolute inset-y-2.5 left-0 hidden w-[3px] rounded-r-full bg-red-600 lg:block"
                   />
                 )}
-                <span className="flex h-10 w-[72px] flex-shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white px-1.5">
+                <span className="flex h-10 w-[76px] flex-shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white px-1.5">
                   <Image
                     src={u.logo}
                     alt=""
@@ -68,7 +76,7 @@ export default function ProgramRewards() {
                   />
                 </span>
                 <span
-                  className={`whitespace-nowrap text-sm lg:whitespace-normal ${on ? "font-semibold text-gray-900" : "text-gray-600"}`}
+                  className={`whitespace-nowrap text-sm lg:line-clamp-2 lg:whitespace-normal lg:leading-tight ${on ? "font-semibold text-gray-900" : "text-gray-600"}`}
                 >
                   {u.name}
                 </span>
@@ -78,62 +86,73 @@ export default function ProgramRewards() {
         </div>
       </div>
 
-      {/* 2. Programs and rewards */}
-      <div id="referral-programs" role="tabpanel" className="min-w-0">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 px-5 py-4 sm:px-6">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
-              2. Pick a program
-            </p>
-            <p className="mt-1 truncate text-base font-bold text-gray-900">
-              {uni.name}{" "}
-              <span className="font-medium text-gray-500">· earn up to</span>{" "}
-              <span className="text-red-600">{formatINR(best)}</span>
-            </p>
-          </div>
-          <div
-            role="radiogroup"
-            aria-label="Program level"
-            className="flex rounded-lg border border-gray-200 bg-gray-50 p-1"
-          >
-            {LEVELS.map((l) => (
-              <button
-                key={l}
-                type="button"
-                role="radio"
-                aria-checked={level === l}
-                onClick={() => setLevel(l)}
-                className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                  level === l
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-800"
-                }`}
-              >
-                {l === "All"
-                  ? "All programs"
-                  : l === "UG"
-                    ? "Undergraduate"
-                    : "Postgraduate"}
-              </button>
-            ))}
-          </div>
+      {/* Program header */}
+      <div className="relative flex flex-wrap items-center justify-between gap-4 overflow-hidden border-b border-red-100 bg-gradient-to-b from-[#fff5f5] to-white px-5 py-4 sm:px-6 lg:col-start-2 lg:row-start-1">
+        <HeaderGloss />
+        <div className="relative min-w-0">
+          <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-lg font-bold text-gray-900">
+            Pick a program
+            {/* Selected university: logo, name and its top reward; slides in when the choice changes */}
+            <span
+              key={uni.id}
+              className="inline-flex max-w-full items-center gap-2 rounded-full border border-red-100 bg-white py-1 pl-1 pr-3 text-xs font-normal shadow-[0_4px_14px_-6px_rgba(190,18,60,0.35)] motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-2 motion-safe:duration-300"
+            >
+              <span className="flex h-7 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 px-1.5 ring-1 ring-gray-100">
+                <Image src={uni.logo} alt="" width={40} height={18} className="h-[18px] w-auto max-w-full object-contain" />
+              </span>
+              <span className="truncate font-semibold text-gray-800">{uni.name}</span>
+              <span aria-hidden className="h-4 w-px flex-shrink-0 bg-gray-200" />
+              <span className="flex-shrink-0 whitespace-nowrap text-gray-500">
+                <span className="sm:hidden">Up to </span>
+                <span className="hidden sm:inline">Earn up to </span>
+                <span className="text-[13px] font-extrabold text-red-600">{formatINR(best)}</span>
+              </span>
+            </span>
+          </p>
         </div>
+        <div
+          role="radiogroup"
+          aria-label="Program level"
+          className="relative flex rounded-lg bg-white p-1 shadow-sm ring-1 ring-gray-200"
+        >
+          {LEVELS.map((l) => (
+            <button
+              key={l}
+              type="button"
+              role="radio"
+              aria-checked={level === l}
+              onClick={() => setLevel(l)}
+              className={`whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors sm:px-3.5 ${
+                level === l
+                  ? "bg-red-600 text-white shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {l === "All"
+                ? "All programs"
+                : l === "UG"
+                  ? "Undergraduate"
+                  : "Postgraduate"}
+            </button>
+          ))}
+        </div>
+      </div>
 
+      {/* 2. Programs and rewards */}
+      <div id="referral-programs" role="tabpanel" className="min-w-0 lg:col-start-2 lg:row-start-2">
         {/* Desktop table (the wrapper fades in on change — animating a <tbody> renders badly in Chrome) */}
         <div
           key={`${uni.id}-${level}`}
-          className="hidden md:block motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300"
+          className="hidden px-3 pt-2 md:block motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300"
         >
           <table className="w-full text-left text-sm">
-            <thead className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              <tr className="border-b border-gray-100">
-                <th className="px-6 py-3 font-semibold">Program</th>
-                <th className="px-4 py-3 font-semibold">Level</th>
-                <th className="px-4 py-3 font-semibold">Duration</th>
-                <th className="px-4 py-3 text-right font-semibold">
-                  You earn up to
-                </th>
-                <th className="px-6 py-3">
+            <thead className="text-xs font-semibold uppercase tracking-wide text-red-900/70">
+              <tr className="h-14 bg-red-50/70">
+                <th className="rounded-l-xl px-4 font-semibold">Program</th>
+                <th className="px-4 font-semibold">Level</th>
+                <th className="px-4 font-semibold">Duration</th>
+                <th className="px-4 text-right font-semibold">You earn up to</th>
+                <th className="rounded-r-xl px-4">
                   <span className="sr-only">Refer</span>
                 </th>
               </tr>
@@ -144,7 +163,7 @@ export default function ProgramRewards() {
                   key={p.name}
                   className="group transition-colors hover:bg-red-50/40"
                 >
-                  <td className="px-6 py-4 font-semibold text-gray-900">
+                  <td className="rounded-l-xl px-4 py-4 font-semibold text-gray-900">
                     {p.name}
                   </td>
                   <td className="px-4 py-4">
@@ -155,10 +174,10 @@ export default function ProgramRewards() {
                     </span>
                   </td>
                   <td className="px-4 py-4 text-gray-600">{p.duration}</td>
-                  <td className="px-4 py-4 text-right text-base font-bold tabular-nums text-gray-900">
+                  <td className="px-4 py-4 text-right text-base font-bold tabular-nums text-gray-900 group-hover:text-red-600">
                     {formatINR(p.reward)}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="rounded-r-xl px-4 py-4 text-right">
                     <Link
                       href={REFER_HREF}
                       aria-label={`Refer a friend to ${p.name} at ${uni.name}`}

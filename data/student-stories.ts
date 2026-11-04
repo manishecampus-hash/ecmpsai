@@ -1,7 +1,7 @@
 // Student video testimonials for the home page "What Our Students Say" section.
-// PLACEHOLDER CONTENT: names, quotes and ratings below are samples, and every card plays the same free stock
-// clip from Mixkit (mixkit.co, Mixkit License). Replace each entry with a
-// real student's details and their own video before launch.
+// The first three cards are eCampus counsellors with their own photos and videos (public/counselor, public/videos/stories).
+// PLACEHOLDER CONTENT: the other names, and all quotes and ratings, are samples, and the other cards play the same
+// free stock clip from Mixkit (mixkit.co, Mixkit License). Replace each entry with real details before launch.
 
 export type StudentStoryTag = { emoji: string; label: string };
 
@@ -10,12 +10,19 @@ export type StudentStoryT = {
   name: string;
   program: string;
   photo: string;
-  rating: number;
+  /** Not shown on counsellor cards */
+  rating?: number;
   tags: StudentStoryTag[];
   quote: string;
   videoSrc: string;
   /** CSS object-position that keeps the speaker in frame when the video is cropped to portrait */
   videoPosition?: string;
+  /** Still from the video: shown before it plays and, blurred, behind a portrait video in the wide player */
+  videoPoster?: string;
+  /** Counsellor cards get a counsellor seal and label instead of the student ones */
+  kind?: "student" | "counsellor";
+  /** Shown on counsellor cards in place of the programme, rating and tags */
+  experience?: string;
 };
 
 const SAMPLE_CLIPS = [{ videoSrc: "/videos/student-story-classroom.mp4", videoPosition: "50% 50%" }];
@@ -24,50 +31,46 @@ const PHOTOS = ["/graduates/priyanshu-mishra.png", "/graduates/priya.png", "/gra
 const photo = (i: number) => PHOTOS[i % PHOTOS.length];
 const clip = (i: number) => SAMPLE_CLIPS[i % SAMPLE_CLIPS.length];
 
+// TODO: the quotes on the three counsellor cards are placeholders — replace them with lines from their videos.
 export const STUDENT_STORIES: StudentStoryT[] = [
   {
-    id: "rohit-sharma",
-    name: "Rohit Sharma",
-    program: "Online MBA · Batch of 2025",
-    photo: photo(0),
-    rating: 4.9,
-    tags: [
-      { emoji: "🎯", label: "Clear guidance" },
-      { emoji: "💼", label: "Career growth" },
-      { emoji: "⏰", label: "Flexible classes" },
-    ],
+    id: "rohini-tripathi",
+    name: "Rohini Tripathi",
+    kind: "counsellor",
+    program: "Admission Counsellor",
+    experience: "2.5 years experience",
+    photo: "/counselor/cards/rohini.webp",
+    tags: [],
     quote:
-      "I was working full-time and didn't know which online MBA was actually worth it. My eCampus counsellor compared approvals, fees and placement support with me, and I enrolled the same week.",
-    ...clip(0),
+      "Tell me what you want from your career and I'll help you compare approvals, fees and support across universities before you decide.",
+    videoSrc: "/videos/stories/rohini.mp4",
+    videoPoster: "/videos/stories/rohini.jpg",
   },
   {
-    id: "ananya-gupta",
-    name: "Ananya Gupta",
-    program: "Online BBA · Batch of 2025",
-    photo: photo(1),
-    rating: 4.8,
-    tags: [
-      { emoji: "🤝", label: "Honest advice" },
-      { emoji: "💸", label: "Easy EMI" },
-    ],
+    id: "swati-pal",
+    name: "Swati Pal",
+    kind: "counsellor",
+    program: "Admission Counsellor",
+    experience: "2 years experience",
+    photo: "/counselor/cards/swati.webp",
+    tags: [],
     quote:
-      "Everyone told me different things about online degrees. eCampus showed me which universities are UGC-entitled and helped me pick a programme that fits my budget.",
-    ...clip(1),
+      "My job is to make the choice simple: which universities are UGC-entitled, what fits your budget, and how to apply without any stress.",
+    videoSrc: "/videos/stories/swati.mp4",
+    videoPoster: "/videos/stories/swati.jpg",
   },
   {
-    id: "arjun-mehta",
-    name: "Arjun Mehta",
-    program: "Online MCA · Batch of 2024",
-    photo: photo(2),
-    rating: 4.8,
-    tags: [
-      { emoji: "🚀", label: "Upskilling" },
-      { emoji: "🧭", label: "Right specialisation" },
-      { emoji: "✅", label: "Quick admission" },
-    ],
+    id: "abdul-umair-khan",
+    name: "Abdul Umair Khan",
+    kind: "counsellor",
+    program: "Admission Counsellor",
+    experience: "1 year experience",
+    photo: "/counselor/cards/umair.webp",
+    tags: [],
     quote:
-      "I wanted to move into AI roles. The AI Degree Finder narrowed it down to three MCA programmes and my advisor handled the whole admission process.",
-    ...clip(2),
+      "I stay with you from the first call to admission, answering every question about documents, exams and fees along the way.",
+    videoSrc: "/videos/stories/umair.mp4",
+    videoPoster: "/videos/stories/umair.jpg",
   },
   {
     id: "vikas-yadav",

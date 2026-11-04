@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight, GraduationCap, Phone, Play, Quote, Star, Video, X } from "lucide-react";
+import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap, Phone, Play, Quote, Star, Video, X } from "lucide-react";
 import { STUDENT_STORIES, type StudentStoryT } from "@/data/student-stories";
 
 const HELPLINE = "18001216201";
@@ -31,8 +31,8 @@ function useCardsPerPage() {
   return perPage;
 }
 
-// Slowly turning "Verified student" seal in the card corner
-function VerifiedSeal() {
+// Slowly turning "Verified student" (or counsellor) seal in the card corner
+function VerifiedSeal({ label }: { label: string }) {
   const pathId = `seal-${useId().replace(/:/g, "")}`;
   return (
     <span className="absolute right-3 top-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg shadow-black/20">
@@ -47,7 +47,7 @@ function VerifiedSeal() {
           <path id={pathId} d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
         </defs>
         <text fontSize="11.5" fontWeight="700" letterSpacing="1.6" fill="#e11d48">
-          <textPath href={`#${pathId}`}>VERIFIED • ECAMPUS STUDENT •</textPath>
+          <textPath href={`#${pathId}`}>{label}</textPath>
         </text>
       </motion.svg>
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-rose-600 text-white">
@@ -81,11 +81,13 @@ function StoryCard({ story, onOpen }: { story: StudentStoryT; onOpen: () => void
       {/* Darkens the lower half so the text reads on any photo */}
       <span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#120a12] via-[#120a12]/80 to-transparent" />
 
-      <span className="absolute left-3 top-3 z-20 inline-flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-xs font-bold text-gray-900 shadow-md">
-        <Star className="h-3.5 w-3.5 text-amber-400" fill="currentColor" />
-        {story.rating.toFixed(1)}
-      </span>
-      <VerifiedSeal />
+      {story.rating != null && (
+        <span className="absolute left-3 top-3 z-20 inline-flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-xs font-bold text-gray-900 shadow-md">
+          <Star className="h-3.5 w-3.5 text-amber-400" fill="currentColor" />
+          {story.rating.toFixed(1)}
+        </span>
+      )}
+      <VerifiedSeal label={story.kind === "counsellor" ? "ECAMPUS • ADMISSION COUNSELLOR •" : "VERIFIED • ECAMPUS STUDENT •"} />
 
       {/* Play button — small and see-through so the student stays visible */}
       <span className="absolute left-1/2 top-[50%] z-20 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center">
@@ -97,18 +99,27 @@ function StoryCard({ story, onOpen }: { story: StudentStoryT; onOpen: () => void
 
       <span className="absolute inset-x-0 bottom-0 z-20 p-4">
         <span className="block text-lg font-extrabold leading-tight text-white drop-shadow-sm">{story.name}</span>
-        <span className="mt-0.5 block text-xs font-medium text-white/75">{story.program}</span>
-        <span className="mt-3 flex flex-wrap gap-1.5">
-          {story.tags.map((t) => (
-            <span
-              key={t.label}
-              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white ring-1 ring-white/25 backdrop-blur-sm"
-            >
-              <span aria-hidden>{t.emoji}</span>
-              {t.label}
-            </span>
-          ))}
-        </span>
+        {story.experience ? (
+          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-white ring-1 ring-white/25 backdrop-blur-sm">
+            <Briefcase className="h-3.5 w-3.5" aria-hidden />
+            {story.experience}
+          </span>
+        ) : (
+          <span className="mt-0.5 block text-xs font-medium text-white/75">{story.program}</span>
+        )}
+        {story.tags.length > 0 && (
+          <span className="mt-3 flex flex-wrap gap-1.5">
+            {story.tags.map((t) => (
+              <span
+                key={t.label}
+                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white ring-1 ring-white/25 backdrop-blur-sm"
+              >
+                <span aria-hidden>{t.emoji}</span>
+                {t.label}
+              </span>
+            ))}
+          </span>
+        )}
       </span>
     </button>
   );
@@ -196,20 +207,33 @@ function StoryModal({
               {/* Cinema-style player */}
               <div className="relative bg-[#1B2230] p-2 sm:p-3">
                 <div className="relative aspect-video overflow-hidden rounded-[18px] bg-black">
+                  {/* Same wide frame for every video: a portrait one is centred, with a blurred still of it filling the sides */}
+                  {story.videoPoster && (
+                    <Image
+                      key={`${story.id}-backdrop`}
+                      src={story.videoPoster}
+                      alt=""
+                      fill
+                      sizes="860px"
+                      quality={55}
+                      className="scale-110 object-cover opacity-60 blur-2xl"
+                    />
+                  )}
                   <video
                     ref={videoRef}
                     key={story.id}
                     src={story.videoSrc}
+                    poster={story.videoPoster}
                     controls
                     autoPlay
                     playsInline
                     preload="auto"
-                    className="h-full w-full object-contain"
+                    className="relative h-full w-full object-contain"
                   />
                 </div>
                 <span className="pointer-events-none absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm sm:left-7 sm:top-7">
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                  Student story · {String(index! + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+                  {story.kind === "counsellor" ? "Counsellor" : "Student story"} · {String(index! + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 </span>
                 <button
                   type="button"
@@ -237,26 +261,32 @@ function StoryModal({
                     <div className="min-w-0 flex-1 sm:pb-1">
                       <h3 className="text-2xl font-bold tracking-tight text-gray-900">{story.name}</h3>
                       <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium text-gray-600">
-                        <GraduationCap className="h-4 w-4 text-red-600" aria-hidden />
-                        {story.program}
+                        {story.experience ? (
+                          <Briefcase className="h-4 w-4 text-red-600" aria-hidden />
+                        ) : (
+                          <GraduationCap className="h-4 w-4 text-red-600" aria-hidden />
+                        )}
+                        {story.experience ? `${story.program} · ${story.experience}` : story.program}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 sm:pb-2" aria-label={`Rated ${story.rating} out of 5`}>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <Star
-                          key={n}
-                          className={`h-4 w-4 ${n <= Math.round(story.rating) ? "text-amber-400" : "text-gray-200"}`}
-                          fill="currentColor"
-                        />
-                      ))}
-                      <span className="ml-1.5 text-sm font-bold text-gray-900">{story.rating.toFixed(1)}</span>
-                    </div>
+                    {story.rating != null && (
+                      <div className="flex items-center gap-1 sm:pb-2" aria-label={`Rated ${story.rating} out of 5`}>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star
+                            key={n}
+                            className={`h-4 w-4 ${n <= Math.round(story.rating!) ? "text-amber-400" : "text-gray-200"}`}
+                            fill="currentColor"
+                          />
+                        ))}
+                        <span className="ml-1.5 text-sm font-bold text-gray-900">{story.rating.toFixed(1)}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* The student's words, set as a classic quote */}
                   <figure className="relative mt-7 border-t border-gray-200 pt-7">
-                    <span aria-hidden className="absolute -top-[18px] left-0 bg-white pr-3 font-serif text-[56px] leading-none text-red-600">
-                      &ldquo;
+                    <span aria-hidden className="absolute -top-3.5 left-0 flex h-7 items-center bg-white pr-3 text-red-600">
+                      <Quote className="h-6 w-6 rotate-180" fill="currentColor" strokeWidth={0} />
                     </span>
                     <blockquote className="font-serif text-[19px] italic leading-[1.65] text-gray-800 sm:text-[21px]">
                       {story.quote}
@@ -269,17 +299,19 @@ function StoryModal({
                     </figcaption>
                   </figure>
 
-                  <ul className="mt-6 flex flex-wrap gap-2">
-                    {story.tags.map((t) => (
-                      <li
-                        key={t.label}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-[13px] font-medium text-gray-700"
-                      >
-                        <span aria-hidden>{t.emoji}</span>
-                        {t.label}
-                      </li>
-                    ))}
-                  </ul>
+                  {story.tags.length > 0 && (
+                    <ul className="mt-6 flex flex-wrap gap-2">
+                      {story.tags.map((t) => (
+                        <li
+                          key={t.label}
+                          className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-[13px] font-medium text-gray-700"
+                        >
+                          <span aria-hidden>{t.emoji}</span>
+                          {t.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </motion.div>
               </AnimatePresence>
             </div>

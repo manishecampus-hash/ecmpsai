@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Briefcase, ChevronRight, Lightbulb, TrendingUp } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Lightbulb, TrendingUp } from "lucide-react";
 import { careerExplorerData } from "@/data/career-explorer";
 
 export interface JobRoleItem {
@@ -60,6 +60,13 @@ const specificMap: Record<string, RoleColors> = {
 // How long each role stays in the showcase before the next one slides in
 const AUTO_ADVANCE_MS = 5000;
 
+// Red line under the selected role that fills from 0 to 100% over AUTO_ADVANCE_MS (keep the 5s in step with it)
+const COUNTDOWN_BAR =
+  "absolute inset-x-3 bottom-1 h-0.5 origin-left rounded-full bg-red-500/70 animate-[draw_5s_linear_forwards]";
+
+// Roles listed per page in the desktop list; the card is as tall as one full page
+const ROLES_PER_PAGE = 5;
+
 // Where the three orbiting role icons sit on the ring (top, lower right, lower left)
 const SATELLITE_SPOTS = ["left-1/2 top-0", "left-[93.3%] top-3/4", "left-[6.7%] top-3/4"];
 
@@ -74,6 +81,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
   const [cycle, setCycle] = useState(0);
   const [paused, setPaused] = useState(false);
   const [inView, setInView] = useState(false);
+  const [pageDir, setPageDir] = useState(1);
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
@@ -85,10 +93,15 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
     }
   };
 
+  // Roles from the admin panel: hidden ones (isActive false) are left out and the rest follow their display order
+  const adminRoles = (jobRoles ?? [])
+    .filter((r) => r && r.isActive !== false && (r.heading || r.title))
+    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
   // Normalize items from dynamic jobRoles prop, falling back to static dataset if empty
   const items =
-    jobRoles && jobRoles.length > 0
-      ? jobRoles.map((r, idx) => ({
+    adminRoles.length > 0
+      ? adminRoles.map((r, idx) => ({
           id: r.id || String(idx + 1),
           title: r.heading || r.title || "",
           description: r.description || "",
@@ -147,6 +160,22 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
     [total],
   );
 
+  // The desktop list shows the page holding the selected role, so auto-advance turns the pages too
+  const pageCount = Math.ceil(total / ROLES_PER_PAGE);
+  const page = Math.floor(Math.min(active, total - 1) / ROLES_PER_PAGE);
+  const pageStart = page * ROLES_PER_PAGE;
+  const pageItems = items.slice(pageStart, pageStart + ROLES_PER_PAGE);
+  const goToPage = (p: number) => {
+    setPageDir(p > page ? 1 : -1);
+    select(p * ROLES_PER_PAGE);
+  };
+  // Auto-advance wrapping from the last role back to the first slides the list back the other way
+  const prevPage = useRef(page);
+  useEffect(() => {
+    if (page !== prevPage.current) setPageDir(page > prevPage.current ? 1 : -1);
+    prevPage.current = page;
+  }, [page]);
+
   // Auto-advance while the section is on screen and nobody is interacting with it
   const autoplay = !reduceMotion && inView && !paused && total > 1;
   useEffect(() => {
@@ -179,40 +208,32 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/3 h-2/3 bg-gradient-to-b from-transparent via-red-50/50 to-transparent" />
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-16">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-600">
-              <Lightbulb className="h-3.5 w-3.5" />
-              Upskill
-            </span>
-            <h2 className="mt-3 text-[26px] font-bold leading-tight tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-              {renderTitle()}
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-gray-600 sm:text-base">
-              Pick the role you&apos;re aiming for and explore the skills and programs that lead there.
-            </p>
-          </div>
-          <p className="flex items-center gap-2 text-sm font-medium text-gray-500">
-            <Briefcase className="h-4 w-4 text-red-500" aria-hidden />
-            {total} career paths
+        {/* Header: centred, with the same label pill as the other home sections */}
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
+            <Lightbulb className="h-3.5 w-3.5 text-red-500" />
+            Upskill
+          </span>
+          <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">{renderTitle()}</h2>
+          <p className="mt-3 text-sm leading-relaxed text-gray-600 sm:text-base">
+            Pick the role you&apos;re aiming for and explore the skills and programs that lead there.
           </p>
         </div>
 
         <div
-          className="mt-8 overflow-hidden rounded-[28px] border border-gray-200 bg-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.25)] lg:grid lg:grid-cols-[340px_1fr]"
+          className="mt-8 overflow-hidden rounded-[28px] border border-red-100 bg-gradient-to-br from-[#fffafa] via-white to-[#fff2f3] shadow-[0_24px_60px_-30px_rgba(190,18,60,0.28)] lg:grid lg:grid-cols-[340px_1fr]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocus={() => setPaused(true)}
           onBlur={() => setPaused(false)}
         >
-          {/* Role list — vertical on desktop, a swipeable chip strip on phones/tablets */}
-          <div className="border-b border-gray-100 lg:border-b-0 lg:border-r lg:bg-gray-50/60">
+          {/* Role list: a swipeable chip strip on phones and tablets, a paged list of five on desktop */}
+          <div className="border-b border-red-100/70 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:bg-gradient-to-b lg:from-[#fff1f2] lg:to-[#fff8f8]">
             <div
               ref={stripRef}
               role="tablist"
               aria-label="Career paths"
-              className="flex gap-2 overflow-x-auto p-3 [scrollbar-width:none] lg:flex-col lg:gap-0.5 lg:overflow-visible lg:p-3 [&::-webkit-scrollbar]:hidden"
+              className="flex gap-2 overflow-x-auto p-3 [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden"
             >
               {items.map((item, index) => {
                 const selected = index === active;
@@ -226,49 +247,135 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                     aria-selected={selected}
                     aria-controls="career-path-panel"
                     onClick={() => select(index)}
-                    className={`relative flex flex-shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left lg:py-2 transition-colors lg:w-full ${
-                      selected ? "text-gray-900" : "text-gray-600 hover:bg-white hover:text-gray-900"
-                    } max-lg:border ${selected ? "max-lg:border-red-200" : "max-lg:border-gray-200"}`}
+                    className={`relative flex flex-shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                      selected ? "border-red-200 text-gray-900" : "border-gray-200 bg-white/70 text-gray-600 hover:text-gray-900"
+                    }`}
                   >
                     {selected && (
                       <motion.span
-                        layoutId="career-active"
+                        layoutId="career-active-strip"
                         transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                        className="absolute inset-0 rounded-xl bg-white shadow-sm ring-1 ring-red-100 max-lg:bg-red-50"
-                      >
-                        <span className="absolute inset-y-2 left-0 hidden w-1 rounded-r-full bg-red-600 lg:block" />
-                      </motion.span>
+                        className="absolute inset-0 rounded-xl bg-red-50"
+                      />
                     )}
                     <span className={`relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-lg border ${c.bg} ${c.border}`}>
                       <Image src={item.image} alt="" fill unoptimized className="object-contain p-1.5" />
                     </span>
-                    <span className="relative min-w-0 flex-1">
-                      <span className="block whitespace-nowrap text-sm font-semibold lg:truncate">{item.title}</span>
-                      {item.package && (
-                        <span className="mt-0.5 hidden text-[11px] font-semibold text-emerald-600 lg:block">{item.package}</span>
-                      )}
-                    </span>
-                    <ChevronRight
-                      className={`relative hidden h-4 w-4 flex-shrink-0 transition-all lg:block ${
-                        selected ? "translate-x-0 text-red-600 opacity-100" : "-translate-x-1 opacity-0"
-                      }`}
-                      aria-hidden
-                    />
-                    {/* Countdown to the next role while auto-advancing */}
-                    {selected && autoplay && (
-                      <motion.span
-                        key={cycle}
-                        aria-hidden
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: AUTO_ADVANCE_MS / 1000, ease: "linear" }}
-                        className="absolute inset-x-3 bottom-1 h-0.5 origin-left rounded-full bg-red-500/70"
-                      />
-                    )}
+                    <span className="relative whitespace-nowrap text-sm font-semibold">{item.title}</span>
+                    {selected && autoplay && <span key={cycle} aria-hidden className={COUNTDOWN_BAR} />}
                   </button>
                 );
               })}
             </div>
+
+            {/* Always five rows tall (5 × 54px rows, 4px gaps, 12px padding), so a short last page doesn't shrink the card */}
+            <div
+              role="tablist"
+              aria-label="Career paths"
+              aria-orientation="vertical"
+              className="relative hidden flex-1 overflow-hidden p-3 lg:block lg:min-h-[310px]"
+            >
+              <AnimatePresence mode="wait" initial={false} custom={pageDir}>
+                <motion.div
+                  key={page}
+                  initial={{ opacity: 0, x: pageDir * 18 }}
+                  animate={{ opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
+                  exit={{ opacity: 0, x: pageDir * -18, transition: { duration: 0.15 } }}
+                  className="flex flex-col gap-1"
+                >
+                  {pageItems.map((item, offset) => {
+                    const index = pageStart + offset;
+                    const selected = index === active;
+                    const c = getColors(item.title, index);
+                    return (
+                      <button
+                        key={item.id || index}
+                        type="button"
+                        role="tab"
+                        aria-selected={selected}
+                        aria-controls="career-path-panel"
+                        onClick={() => select(index)}
+                        className={`relative flex h-[54px] w-full items-center gap-3 rounded-xl px-3 text-left transition-colors ${
+                          selected ? "text-gray-900" : "text-gray-600 hover:bg-white/70 hover:text-gray-900"
+                        }`}
+                      >
+                        {selected && (
+                          <motion.span
+                            layoutId="career-active"
+                            transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                            className="absolute inset-0 rounded-xl bg-white shadow-[0_6px_18px_-10px_rgba(190,18,60,0.45)] ring-1 ring-red-100"
+                          >
+                            <span className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-red-600" />
+                          </motion.span>
+                        )}
+                        <span className={`relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-lg border ${c.bg} ${c.border}`}>
+                          <Image src={item.image} alt="" fill unoptimized className="object-contain p-1.5" />
+                        </span>
+                        <span className="relative min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold">{item.title}</span>
+                          {item.package && <span className="mt-0.5 block text-[11px] font-semibold text-emerald-600">{item.package}</span>}
+                        </span>
+                        <ChevronRight
+                          className={`relative h-4 w-4 flex-shrink-0 transition-all ${
+                            selected ? "translate-x-0 text-red-600 opacity-100" : "-translate-x-1 opacity-0"
+                          }`}
+                          aria-hidden
+                        />
+                        {/* Countdown to the next role while auto-advancing (a CSS animation, so the page
+                            transition around the list can't skip it); restarts on every selection */}
+                        {selected && autoplay && <span key={cycle} aria-hidden className={COUNTDOWN_BAR} />}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Small pagination under the list */}
+            {pageCount > 1 && (
+              <div className="hidden items-center justify-between gap-3 border-t border-red-100/70 px-4 py-3 lg:flex">
+                <span className="text-xs font-medium text-gray-500">
+                  <span className="font-semibold text-gray-900">{`${pageStart + 1}–${pageStart + pageItems.length}`}</span>
+                  {` of ${total} roles`}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => goToPage(page - 1)}
+                    disabled={page === 0}
+                    aria-label="Previous roles"
+                    className="flex h-7 w-7 items-center justify-center rounded-full border border-red-100 bg-white text-gray-600 transition hover:border-red-200 hover:text-red-600 disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </button>
+                  {Array.from({ length: pageCount }, (_, p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => goToPage(p)}
+                      aria-label={`Roles page ${p + 1} of ${pageCount}`}
+                      aria-current={p === page ? "page" : undefined}
+                      className="flex h-7 items-center px-0.5"
+                    >
+                      <span
+                        className={`block h-1.5 rounded-full transition-all duration-300 ${
+                          p === page ? "w-5 bg-red-600" : "w-1.5 bg-red-200 hover:bg-red-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => goToPage(page + 1)}
+                    disabled={page === pageCount - 1}
+                    aria-label="Next roles"
+                    className="flex h-7 w-7 items-center justify-center rounded-full border border-red-100 bg-white text-gray-600 transition hover:border-red-200 hover:text-red-600 disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Showcase of the selected role */}
@@ -280,7 +387,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
             />
 
             {/* Top bar: position + clickable progress segments */}
-            <div className="relative flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-4 sm:px-10">
+            <div className="relative flex items-center justify-between gap-4 border-b border-red-100/60 px-6 py-4 sm:px-10 lg:py-3">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">
                 Career path {String(active + 1).padStart(2, "0")}
                 <span className="text-gray-400"> / {String(total).padStart(2, "0")}</span>
@@ -302,7 +409,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
             </div>
 
             {/* Main showcase */}
-            <div className="relative grid flex-1 items-center gap-8 px-6 py-8 sm:px-10 md:grid-cols-[1fr_minmax(240px,300px)] md:gap-10 md:py-10">
+            <div className="relative grid flex-1 items-center gap-8 px-6 py-8 sm:px-10 md:grid-cols-[1fr_minmax(220px,260px)] md:gap-10 md:py-6 lg:grid-cols-1 lg:py-4 xl:grid-cols-[1fr_minmax(200px,230px)]">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={current.id}
@@ -317,7 +424,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                   )}
 
                   {current.package && (
-                    <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 py-2.5 pl-2.5 pr-5">
+                    <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 py-2.5 pl-2.5 pr-5 lg:mt-4 lg:py-2">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">
                         <TrendingUp className="h-5 w-5" aria-hidden />
                       </span>
@@ -328,7 +435,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                     </div>
                   )}
 
-                  <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <div className="mt-8 flex flex-wrap items-center gap-3 lg:mt-5">
                     <button
                       type="button"
                       onClick={handleOpenSignup}
@@ -355,8 +462,9 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
               </AnimatePresence>
 
               {/* Orbit artwork — CSS-only transforms, so it stays smooth and costs almost nothing.
-                  It lives outside the per-role animation so the orbit keeps turning when the role changes. */}
-              <div aria-hidden className="relative order-1 mx-auto my-5 aspect-square w-[220px] sm:w-[270px] md:order-2 md:my-0 md:w-full md:max-w-[300px]">
+                  It lives outside the per-role animation so the orbit keeps turning when the role changes.
+                  Hidden on small laptops, where the panel beside the list is too narrow for it and the text. */}
+              <div aria-hidden className="relative order-1 mx-auto my-5 aspect-square w-[220px] sm:w-[260px] md:order-2 md:my-0 md:w-full md:max-w-[260px] lg:hidden xl:block xl:max-w-[230px]">
                 {/* Soft glow in the role's colour */}
                 <span className={`absolute inset-[10%] rounded-full opacity-80 blur-2xl transition-colors duration-500 ${colors.bg}`} />
                 {/* Sweeping red arc */}
@@ -415,31 +523,6 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
               </div>
             </div>
 
-            {/* Bottom bar: what's coming next */}
-            {total > 1 && (
-              <div className="relative hidden items-center gap-3 border-t border-gray-100 bg-gray-50/70 px-6 py-3.5 sm:flex sm:px-10">
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-400">Up next</span>
-                <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-                  {[1, 2, 3].slice(0, Math.min(3, total - 1)).map((step) => {
-                    const i = (active + step) % total;
-                    const role = items[i];
-                    return (
-                      <button
-                        key={`${role.id}-${step}`}
-                        type="button"
-                        onClick={() => select(i)}
-                        className="group/next inline-flex min-w-0 items-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-1 pr-3 text-xs font-semibold text-gray-700 transition hover:border-red-200 hover:text-red-600"
-                      >
-                        <span className="relative h-6 w-6 flex-shrink-0 overflow-hidden rounded-full bg-gray-50">
-                          <Image src={role.image} alt="" width={24} height={24} unoptimized className="h-6 w-6 object-contain p-0.5" />
-                        </span>
-                        <span className="truncate">{role.title}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -422,11 +422,11 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
             Student Stories
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-            What Our <span className="text-red-500">Students Say</span>
+            Meet your <span className="text-red-500">Program Advisors</span>
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-gray-600 sm:text-base">
-            Real learners, real journeys. Hear how students found the right online degree, the right university and the
-            right career path with guidance from eCampus.
+            From selecting the right course to guiding your enrollment journey, they&apos;re here to support you every
+            step of the way.
           </p>
         </motion.div>
 

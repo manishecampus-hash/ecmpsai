@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Newspaper } from "lucide-react";
 
 // Media coverage from the homepage API, shown as a scrolling strip of publication logos.
 // Each logo opens the article it links to (same redirectUrl as before).
@@ -56,16 +57,18 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
         aria-hidden
         className="mx-auto block h-px w-[86%] max-w-[1100px] bg-gradient-to-r from-transparent via-gray-300 to-transparent"
       />
-      <h2
-        id="in-the-news"
-        className="mt-7 px-5 text-center text-[26px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl"
-      >
-        As <span className="text-red-500">featured</span> in
-      </h2>
-      <span
-        aria-hidden
-        className="mx-auto mt-3 block h-1 w-14 rounded-full bg-red-500"
-      />
+      <div className="mt-7 text-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
+          <Newspaper className="h-3.5 w-3.5 text-red-500" />
+          Media &amp; Press
+        </span>
+        <h2
+          id="in-the-news"
+          className="mt-2 px-5 text-center text-[26px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl"
+        >
+          Our Journey, Their <span className="text-red-500">Headlines</span>
+        </h2>
+      </div>
 
       <div className="mt-8 border-y border-gray-200 bg-[#f5f5f5] py-7 sm:mt-10 sm:py-9">
         <div className="group relative mx-auto max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:overflow-x-auto">

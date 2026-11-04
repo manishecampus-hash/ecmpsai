@@ -10,43 +10,6 @@ interface HangingDiyaOverlayProps {
   className?: string;
 }
 
-interface DiyaItemConfig {
-  id: number;
-  /** Horizontal position across top viewport (percentage) */
-  positionPercent: number;
-  /** Golden string length in pixels for desktop/tablet */
-  stringLength: number;
-  /** Golden string length in pixels for mobile */
-  mobileStringLength?: number;
-  /** Duration in seconds for gentle pendulum swing */
-  swingDuration: number;
-  /** Phase offset in seconds for swing */
-  swingDelay: number;
-  /** Phase offset in seconds for flame flicker */
-  flickerDelay: number;
-  /** Responsive visibility tier:
-   *  "mobile"  -> shown on Mobile, Tablet, and Desktop (only corner accents)
-   *  "tablet"  -> shown on Tablet and Desktop
-   *  "desktop" -> shown on Desktop only
-   */
-  tier: "mobile" | "tablet" | "desktop";
-}
-
-// 9 balanced diyas with staggered hanging lengths.
-// On Mobile: Only the right-side accent (#9) is shown with an ultra-short string
-// to keep the left side (hamburger & logo) and center completely clear.
-const DIYAS: DiyaItemConfig[] = [
-  { id: 1, positionPercent: 3.5, stringLength: 32, swingDuration: 4.6, swingDelay: -0.6, flickerDelay: -0.2, tier: "tablet" }, // Left side: tablet and desktop only (hidden on mobile)
-  { id: 2, positionPercent: 15.5, stringLength: 64, swingDuration: 5.3, swingDelay: -2.3, flickerDelay: -1.1, tier: "desktop" },
-  { id: 3, positionPercent: 27.0, stringLength: 44, swingDuration: 4.2, swingDelay: -1.5, flickerDelay: -0.7, tier: "tablet" },
-  { id: 4, positionPercent: 38.5, stringLength: 74, swingDuration: 5.8, swingDelay: -3.1, flickerDelay: -1.8, tier: "desktop" },
-  { id: 5, positionPercent: 50.0, stringLength: 52, swingDuration: 4.9, swingDelay: -0.9, flickerDelay: -0.4, tier: "tablet" },
-  { id: 6, positionPercent: 61.5, stringLength: 74, swingDuration: 5.6, swingDelay: -2.8, flickerDelay: -1.5, tier: "desktop" },
-  { id: 7, positionPercent: 73.0, stringLength: 44, swingDuration: 4.4, swingDelay: -1.2, flickerDelay: -0.9, tier: "tablet" },
-  { id: 8, positionPercent: 84.5, stringLength: 64, swingDuration: 5.2, swingDelay: -2.1, flickerDelay: -1.3, tier: "desktop" },
-  { id: 9, positionPercent: 96.5, stringLength: 32, mobileStringLength: 10, swingDuration: 4.7, swingDelay: -0.4, flickerDelay: -0.3, tier: "mobile" }, // Right side: mobile, tablet, and desktop
-];
-
 /**
  * Single Vector Brass Diya with dynamic string length and flame
  */
@@ -65,7 +28,7 @@ function DiyaSvg({
       viewBox={`0 0 64 ${totalHeight}`}
       width="64"
       height={totalHeight}
-      className="overflow-visible block filter drop-shadow-[0_2px_6px_rgba(217,119,6,0.3)]"
+      className="overflow-visible block filter drop-shadow-[0_2px_8px_rgba(217,119,6,0.35)]"
       aria-hidden="true"
     >
       {/* 1. Suspension golden chain & decorative beads */}
@@ -200,12 +163,12 @@ function DiyaSvg({
 
 /**
  * HangingDiyaOverlay Component
- * Renders an accessible, lightweight, high-performance festive hanging Diya overlay
- * across the top edge of the website.
  *
- * In Mobile View:
- * Features a clean, simplified presentation with a subtle golden top hairline and
- * two miniature corner accents, keeping the mobile header completely uncluttered.
+ * Design Configuration:
+ * - Desktop & Tablet: Exactly ONE Diya in each corner (top-left and top-right).
+ *   All intermediate/centre diyas are removed for a clean, premium, uncluttered header.
+ * - Mobile: A single elegant corner diya on the top-right side.
+ * - Entire overlay is pointer-events-none so all buttons and links work seamlessly.
  */
 export function HangingDiyaOverlay({
   config: userConfig,
@@ -252,15 +215,27 @@ export function HangingDiyaOverlay({
         /* ========================================================
            Diwali Hanging Diya Animations & Responsive Styles
            ======================================================== */
-        @keyframes diyaPendulumSwing {
+        @keyframes diyaPendulumSwingLeft {
           0% {
             transform: rotate(-2.2deg);
           }
           50% {
-            transform: rotate(2.2deg);
+            transform: rotate(2deg);
           }
           100% {
             transform: rotate(-2.2deg);
+          }
+        }
+
+        @keyframes diyaPendulumSwingRight {
+          0% {
+            transform: rotate(2.2deg);
+          }
+          50% {
+            transform: rotate(-2deg);
+          }
+          100% {
+            transform: rotate(2.2deg);
           }
         }
 
@@ -298,9 +273,15 @@ export function HangingDiyaOverlay({
           }
         }
 
-        .diya-item {
+        .diya-item-left {
           transform-origin: 32px 0px;
-          animation: diyaPendulumSwing ease-in-out infinite alternate;
+          animation: diyaPendulumSwingLeft 4.8s ease-in-out infinite alternate;
+          will-change: transform;
+        }
+
+        .diya-item-right {
+          transform-origin: 32px 0px;
+          animation: diyaPendulumSwingRight 5.2s ease-in-out infinite alternate;
           will-change: transform;
         }
 
@@ -316,7 +297,8 @@ export function HangingDiyaOverlay({
 
         /* prefers-reduced-motion: disable swinging and flickering for comfort */
         @media (prefers-reduced-motion: reduce) {
-          .diya-item,
+          .diya-item-left,
+          .diya-item-right,
           .diya-flame-wrapper,
           .diya-halo {
             animation: none !important;
@@ -386,44 +368,39 @@ export function HangingDiyaOverlay({
         {/* Subtle golden festive hairline along top edge on mobile */}
         <div className="sm:hidden absolute top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-transparent via-amber-400/90 to-amber-500 shadow-[0_1px_8px_rgba(251,191,36,0.6)]" />
 
-        {/* 1. Mobile-exclusive right-corner Diya (< 640px) */}
-        {/* Placed reliably in the top-right margin: completely clears hamburger & logo on the left */}
+        {/* ========================================================
+            1. TOP LEFT CORNER DIYA (Desktop & Tablet only)
+            Framed elegantly in the outer left margin.
+            Center remains 100% clean and free of decorations.
+           ======================================================== */}
         <div
-          className="sm:hidden absolute top-0 right-3 diya-item"
-          style={{
-            animationDuration: "4.7s",
-            animationDelay: "-0.4s",
-          }}
+          className="hidden sm:block absolute top-0 left-2 sm:left-4 lg:left-6 xl:left-10 2xl:left-14 diya-item-left"
+        >
+          <div className="transform sm:scale-85 lg:scale-100 origin-top">
+            <DiyaSvg stringLength={36} flickerDelay={-0.2} />
+          </div>
+        </div>
+
+        {/* ========================================================
+            2. TOP RIGHT CORNER DIYA (All screens, responsive)
+            Framed elegantly in the outer right margin.
+           ======================================================== */}
+        {/* Desktop & Tablet view */}
+        <div
+          className="hidden sm:block absolute top-0 right-2 sm:right-4 lg:right-6 xl:right-10 2xl:right-14 diya-item-right"
+        >
+          <div className="transform sm:scale-85 lg:scale-100 origin-top">
+            <DiyaSvg stringLength={36} flickerDelay={-0.6} />
+          </div>
+        </div>
+
+        {/* Mobile view: Micro right-corner Diya */}
+        <div
+          className="sm:hidden absolute top-0 right-3 diya-item-right"
         >
           <div className="transform scale-[0.72] origin-top">
             <DiyaSvg stringLength={18} flickerDelay={-0.3} />
           </div>
-        </div>
-
-        {/* 2. Tablet & Desktop Full Multi-Diya Toran (>= 640px) */}
-        <div className="hidden sm:block relative w-full max-w-[1920px] mx-auto h-[120px] lg:h-[160px]">
-          {DIYAS.map((item) => {
-            const tierClass = item.tier === "desktop" ? "hidden lg:block" : "block";
-
-            return (
-              <div
-                key={item.id}
-                className={`absolute top-0 -translate-x-1/2 diya-item ${tierClass}`}
-                style={{
-                  left: `${item.positionPercent}%`,
-                  animationDuration: `${item.swingDuration}s`,
-                  animationDelay: `${item.swingDelay}s`,
-                }}
-              >
-                <div className="transform sm:scale-80 lg:scale-100 origin-top">
-                  <DiyaSvg
-                    stringLength={item.stringLength}
-                    flickerDelay={item.flickerDelay}
-                  />
-                </div>
-              </div>
-            );
-          })}
         </div>
 
         {/* Small subtle dismiss button (hidden on mobile to prevent cluttering mobile action bar) */}

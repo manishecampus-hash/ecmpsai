@@ -36,20 +36,14 @@ function VerifiedSeal({ label }: { label: string }) {
   const pathId = `seal-${useId().replace(/:/g, "")}`;
   return (
     <span className="absolute right-3 top-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg shadow-black/20">
-      <motion.svg
-        viewBox="0 0 100 100"
-        className="absolute inset-0 h-full w-full"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-        aria-hidden
-      >
+      <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full motion-safe:animate-[spin_18s_linear_infinite]" aria-hidden>
         <defs>
           <path id={pathId} d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
         </defs>
         <text fontSize="11.5" fontWeight="700" letterSpacing="1.6" fill="#e11d48">
           <textPath href={`#${pathId}`}>{label}</textPath>
         </text>
-      </motion.svg>
+      </svg>
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-rose-600 text-white">
         <GraduationCap className="h-3.5 w-3.5" />
       </span>
@@ -184,6 +178,9 @@ function StoryModal({
   return (
     <AnimatePresence>
       {story && (
+        <style key="story-freeze">{`body *:not([role=dialog]):not([role=dialog] *){animation-play-state:paused!important}`}</style>
+      )}
+      {story && (
         <motion.div
           key="story-backdrop"
           initial={{ opacity: 0 }}
@@ -191,7 +188,7 @@ function StoryModal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b0f17]/80 p-3 backdrop-blur-sm sm:p-6"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b0f17]/90 p-3 sm:p-6"
         >
           <motion.div
             role="dialog"
@@ -206,17 +203,20 @@ function StoryModal({
             <div className="overflow-y-auto">
               {/* Cinema-style player */}
               <div className="relative bg-[#1B2230] p-2 sm:p-3">
-                <div className="relative aspect-video overflow-hidden rounded-[18px] bg-black">
-                  {/* Same wide frame for every video: a portrait one is centred, with a blurred still of it filling the sides */}
-                  {story.videoPoster && (
+                {/* On short laptop screens the frame gets shorter (never taller than the room left by the text below),
+                    so the whole story fits without the popup scrolling */}
+                <div className="relative aspect-video max-h-[calc(94vh-320px)] min-h-[180px] w-full overflow-hidden rounded-[18px] bg-black">
+                  {/* Same wide frame for every video: a portrait one is centred, with a blurred still of it filling the
+                      sides. The still is blurred in the file — a CSS blur next to a playing video made playback stutter. */}
+                  {story.videoBackdrop && (
                     <Image
                       key={`${story.id}-backdrop`}
-                      src={story.videoPoster}
+                      src={story.videoBackdrop}
                       alt=""
                       fill
                       sizes="860px"
-                      quality={55}
-                      className="scale-110 object-cover opacity-60 blur-2xl"
+                      unoptimized
+                      className="object-cover opacity-70"
                     />
                   )}
                   <video
@@ -231,7 +231,7 @@ function StoryModal({
                     className="relative h-full w-full object-contain"
                   />
                 </div>
-                <span className="pointer-events-none absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm sm:left-7 sm:top-7">
+                <span className="pointer-events-none absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white sm:left-7 sm:top-7">
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                   {story.kind === "counsellor" ? "Counsellor" : "Student story"} · {String(index! + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 </span>
@@ -284,14 +284,14 @@ function StoryModal({
                   </div>
 
                   {/* The student's words, set as a classic quote */}
-                  <figure className="relative mt-7 border-t border-gray-200 pt-7">
+                  <figure className="relative mt-5 border-t border-gray-200 pt-5">
                     <span aria-hidden className="absolute -top-3.5 left-0 flex h-7 items-center bg-white pr-3 text-red-600">
                       <Quote className="h-6 w-6 rotate-180" fill="currentColor" strokeWidth={0} />
                     </span>
-                    <blockquote className="font-serif text-[19px] italic leading-[1.65] text-gray-800 sm:text-[21px]">
+                    <blockquote className="font-serif text-[15px] italic leading-relaxed text-gray-800 sm:text-[17px]">
                       {story.quote}
                     </blockquote>
-                    <figcaption className="mt-4 flex items-center gap-3 text-sm text-gray-500">
+                    <figcaption className="mt-3 flex items-center gap-3 text-sm text-gray-500">
                       <span aria-hidden className="h-px w-8 bg-red-600" />
                       <span>
                         <span className="font-semibold text-gray-900">{story.name}</span>, {story.program.split(" · ")[0]}
@@ -474,50 +474,50 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
           </AnimatePresence>
         </div>
 
-        {/* Pagination */}
-        {pageCount > 1 && (
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => goTo(current - 1)}
-              aria-label="Previous stories"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <div className="flex items-center gap-2" role="tablist" aria-label="Story pages">
-              {Array.from({ length: pageCount }, (_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === current}
-                  aria-label={`Page ${i + 1}`}
-                  onClick={() => goTo(i)}
-                  className="relative h-2.5 rounded-full transition-[width] duration-300"
-                  style={{ width: i === current ? 28 : 10 }}
-                >
-                  <span className="absolute inset-0 rounded-full bg-gray-300 transition-colors hover:bg-gray-400" />
-                  {i === current && (
-                    <motion.span
-                      layoutId="story-page-dot"
-                      className="absolute inset-0 rounded-full bg-gradient-to-r from-red-600 to-rose-500"
-                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => goTo(current + 1)}
-              aria-label="Next stories"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+        {/* Pagination — always shown; with a single page the arrows are simply disabled */}
+        <div className="mt-10 flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => goTo(current - 1)}
+            disabled={pageCount < 2}
+            aria-label="Previous stories"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="flex items-center gap-2" role="tablist" aria-label="Story pages">
+            {Array.from({ length: pageCount }, (_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === current}
+                aria-label={`Page ${i + 1}`}
+                onClick={() => goTo(i)}
+                className="relative h-2.5 rounded-full transition-[width] duration-300"
+                style={{ width: i === current ? 28 : 10 }}
+              >
+                <span className="absolute inset-0 rounded-full bg-gray-300 transition-colors hover:bg-gray-400" />
+                {i === current && (
+                  <motion.span
+                    layoutId="story-page-dot"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-red-600 to-rose-500"
+                    transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => goTo(current + 1)}
+            disabled={pageCount < 2}
+            aria-label="Next stories"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
 
         <div className="mt-8 flex justify-center">
           <a

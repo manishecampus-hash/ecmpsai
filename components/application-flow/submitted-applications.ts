@@ -9,6 +9,8 @@ export interface SubmittedApplication {
   program: ApplicationProgram;
   details: ApplicantDetails;
   payment: PaymentRecord;
+  /** Offer letter PDF, set once the university issues it after document verification (no API for it yet) */
+  offerLetterUrl?: string;
 }
 
 export function readSubmittedApplications(): SubmittedApplication[] {

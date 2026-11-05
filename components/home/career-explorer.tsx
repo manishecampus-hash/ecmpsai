@@ -222,9 +222,11 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
 
         <div
           className="mt-8 overflow-hidden rounded-[28px] border border-red-100 bg-gradient-to-br from-[#fffafa] via-white to-[#fff2f3] shadow-[0_24px_60px_-30px_rgba(190,18,60,0.28)] lg:grid lg:grid-cols-[340px_1fr]"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
+          // Hold the autoplay for a mouse pointer or keyboard focus only — a tap on a phone would otherwise
+          // leave the card paused for good (touch never sends the matching "leave")
+          onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
+          onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
+          onFocus={(e) => (e.target as HTMLElement).matches(":focus-visible") && setPaused(true)}
           onBlur={() => setPaused(false)}
         >
           {/* Role list: a swipeable chip strip on phones and tablets, a paged list of five on desktop */}
@@ -247,7 +249,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                     aria-selected={selected}
                     aria-controls="career-path-panel"
                     onClick={() => select(index)}
-                    className={`relative flex flex-shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                    className={`relative flex max-w-[168px] flex-shrink-0 items-center gap-2 rounded-xl border px-2.5 py-2 text-left transition-colors sm:max-w-none sm:gap-3 sm:px-3 sm:py-2.5 ${
                       selected ? "border-red-200 text-gray-900" : "border-gray-200 bg-white/70 text-gray-600 hover:text-gray-900"
                     }`}
                   >
@@ -258,10 +260,10 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                         className="absolute inset-0 rounded-xl bg-red-50"
                       />
                     )}
-                    <span className={`relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-lg border ${c.bg} ${c.border}`}>
-                      <Image src={item.image} alt="" fill unoptimized className="object-contain p-1.5" />
+                    <span className={`relative h-7 w-7 flex-shrink-0 overflow-hidden rounded-lg border sm:h-9 sm:w-9 ${c.bg} ${c.border}`}>
+                      <Image src={item.image} alt="" fill unoptimized className="object-contain p-1 sm:p-1.5" />
                     </span>
-                    <span className="relative whitespace-nowrap text-sm font-semibold">{item.title}</span>
+                    <span className="relative min-w-0 truncate whitespace-nowrap text-[13px] font-semibold sm:text-sm">{item.title}</span>
                     {selected && autoplay && <span key={cycle} aria-hidden className={COUNTDOWN_BAR} />}
                   </button>
                 );
@@ -387,7 +389,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
             />
 
             {/* Top bar: position + clickable progress segments */}
-            <div className="relative flex items-center justify-between gap-4 border-b border-red-100/60 px-6 py-4 sm:px-10 lg:py-3">
+            <div className="relative flex items-center justify-between gap-4 border-b border-red-100/60 px-5 py-4 sm:px-10 lg:py-3">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">
                 Career path {String(active + 1).padStart(2, "0")}
                 <span className="text-gray-400"> / {String(total).padStart(2, "0")}</span>
@@ -409,7 +411,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
             </div>
 
             {/* Main showcase */}
-            <div className="relative grid flex-1 items-center gap-8 px-6 py-8 sm:px-10 md:grid-cols-[1fr_minmax(220px,260px)] md:gap-10 md:py-6 lg:grid-cols-1 lg:py-4 xl:grid-cols-[1fr_minmax(200px,230px)]">
+            <div className="relative grid flex-1 items-center gap-8 px-5 py-8 sm:px-10 md:grid-cols-[1fr_minmax(220px,260px)] md:gap-10 md:py-6 lg:grid-cols-1 lg:py-4 xl:grid-cols-[1fr_minmax(200px,230px)]">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={current.id}
@@ -418,42 +420,48 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                   exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }}
                   className="order-2 md:order-1"
                 >
-                  <h3 className="text-[28px] font-bold leading-tight tracking-tight text-gray-900 sm:text-[34px]">{current.title}</h3>
+                  <h3 className="text-[22px] font-bold leading-snug tracking-tight text-gray-900 sm:text-[34px] sm:leading-tight">{current.title}</h3>
+                  {/* Short brand accent under the role name on phones */}
+                  <span aria-hidden className="mt-2 block h-1 w-10 rounded-full bg-gradient-to-r from-red-600 to-rose-400 sm:hidden" />
                   {current.description && (
                     <p className="mt-3 max-w-md text-[15px] leading-relaxed text-gray-600 sm:text-base">{current.description}</p>
                   )}
 
-                  {current.package && (
-                    <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/70 py-2.5 pl-2.5 pr-5 lg:mt-4 lg:py-2">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">
-                        <TrendingUp className="h-5 w-5" aria-hidden />
-                      </span>
-                      <span>
-                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700/80">Salary range</span>
-                        <span className="block text-lg font-extrabold text-emerald-700">{current.package}</span>
-                      </span>
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-5 sm:justify-start sm:gap-y-8 lg:mt-4 lg:gap-y-5">
+                    {current.package && (
+                      <div className="order-1 inline-flex min-w-0 items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 py-2 pl-2 pr-3 sm:gap-3 sm:py-2.5 sm:pl-2.5 sm:pr-5 lg:py-2">
+                        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm sm:h-10 sm:w-10">
+                          <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-emerald-700/80 sm:text-[11px]">Salary range</span>
+                          <span className="block whitespace-nowrap text-base font-extrabold text-emerald-700 sm:text-lg">{current.package}</span>
+                        </span>
+                      </div>
+                    )}
+                    {/* Line break after the salary, from sm up */}
+                    {current.package && <span aria-hidden className="order-2 hidden h-0 basis-full sm:block" />}
+                    <div className="order-4 flex basis-full justify-center sm:order-3 sm:basis-auto sm:justify-start">
+                      <button
+                        type="button"
+                        onClick={handleOpenSignup}
+                        aria-label={`${current.ctaText || "Explore"} programs for ${current.title}`}
+                        className="group inline-flex items-center gap-2 rounded-full bg-red-600 py-3 pl-6 pr-2 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
+                      >
+                        {current.ctaText || "Explore"} programs
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:translate-x-0.5">
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
+                      </button>
                     </div>
-                  )}
-
-                  <div className="mt-8 flex flex-wrap items-center gap-3 lg:mt-5">
-                    <button
-                      type="button"
-                      onClick={handleOpenSignup}
-                      aria-label={`${current.ctaText || "Explore"} programs for ${current.title}`}
-                      className="group inline-flex items-center gap-2 rounded-full bg-red-600 py-3 pl-6 pr-2 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
-                    >
-                      {current.ctaText || "Explore"} programs
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:translate-x-0.5">
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </button>
                     {total > 1 && (
                       <button
                         type="button"
                         onClick={() => select(active + 1)}
-                        className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+                        className="order-3 inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap rounded-full border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 sm:order-4 sm:gap-1.5 sm:border-transparent sm:bg-transparent sm:px-4 sm:py-3 sm:shadow-none sm:hover:border-transparent sm:hover:bg-gray-100 sm:hover:text-gray-900"
                       >
-                        Next role
+                        {/* Very small phones (under 360px) show just the arrow so it stays beside the salary */}
+                        <span className="max-[359px]:sr-only">Next role</span>
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     )}

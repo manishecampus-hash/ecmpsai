@@ -13,6 +13,11 @@ export function buildApplicationProgram(slug: string, flow: ApplicationFlowConfi
     .map(clean)
     .filter(Boolean);
 
+  // First real brochure link among the university's specializations ("#" means none)
+  const brochureUrl = (details.specializations?.list ?? [])
+    .map((s: any) => clean(s?.brochure))
+    .find((url: string) => url && url !== "#");
+
   const documents = (details.processFlow?.steps ?? [])
     .map((s: any) => ({ title: clean(s?.title), description: clean(s?.description) || undefined }))
     .filter((s: { title: string }) => s.title);
@@ -29,5 +34,6 @@ export function buildApplicationProgram(slug: string, flow: ApplicationFlowConfi
     payment: flow.payment,
     eligibility,
     documents,
+    brochureUrl,
   };
 }

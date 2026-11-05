@@ -64,7 +64,7 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
         </span>
         <h2
           id="in-the-news"
-          className="mt-2 px-5 text-center text-[26px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl"
+          className="mt-2 px-5 text-center text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl"
         >
           Our Journey, Their <span className="text-red-500">Headlines</span>
         </h2>
@@ -72,9 +72,10 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
 
       <div className="mt-8 border-y border-gray-200 bg-[#f5f5f5] py-7 sm:mt-10 sm:py-9">
         <div className="group relative mx-auto max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:overflow-x-auto">
-          {/* Pauses on hover and for keyboard focus only — a clicked logo keeps focus after its article opens in a
-            new tab, so pausing on any focus left the strip stopped when the visitor came back */}
-          <ul className="flex w-max animate-marquee items-center group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused] motion-reduce:animate-none">
+          {/* Pauses on mouse hover (not on touch screens, where a tap leaves :hover stuck) and for keyboard focus
+            only — a clicked logo keeps focus after its article opens in a new tab, so pausing on any focus left the
+            strip stopped when the visitor came back */}
+          <ul className="flex w-max animate-marquee items-center [@media(hover:hover)]:group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused] motion-reduce:animate-none">
             {loop.map((item, i) => {
               const isCopy = i >= items.length;
               const visual = item.logo ? (

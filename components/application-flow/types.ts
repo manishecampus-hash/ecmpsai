@@ -20,6 +20,8 @@ export interface ApplicationProgram {
   eligibility: string[];
   /** Documents the university asks for after payment (from the API's process flow) */
   documents: { title: string; description?: string }[];
+  /** Program brochure PDF from the university API, offered in the dashboard's My Downloads */
+  brochureUrl?: string;
 }
 
 export interface ApplicantDetails {

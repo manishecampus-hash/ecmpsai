@@ -147,8 +147,8 @@ export default function AboutHero({ container }: { container: string }) {
           {/* Inside eCampus: one entry per photo, the open one counts down to the next */}
           <div
             className="group/panel relative w-full max-w-[440px] max-sm:max-w-none"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setHovering(true)}
+            onPointerLeave={(e) => e.pointerType === "mouse" && setHovering(false)}
           >
             <div className="relative overflow-hidden rounded-[26px] bg-gradient-to-b from-slate-900/50 via-slate-950/50 to-slate-950/60 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_0_0_1px_rgba(255,255,255,0.22),0_40px_80px_-30px_rgba(0,0,0,0.75)] backdrop-blur-2xl backdrop-saturate-150">
               {/* Glass gloss: a curved shine over the top, a bright top edge, a soft red glow low down, and a sweep on hover */}

@@ -169,7 +169,7 @@ export default function InviteAndEarnPage() {
                 <div className="border-t border-gray-100 bg-gray-50 py-4">
                   <p className="px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 sm:px-7">Programs from top universities</p>
                   <div className="group/logos mt-3 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-                    <ul className="flex w-max gap-3 motion-safe:animate-marquee group-hover/logos:[animation-play-state:paused]">
+                    <ul className="flex w-max gap-3 motion-safe:animate-marquee [@media(hover:hover)]:group-hover/logos:[animation-play-state:paused]">
                       {[...REFERRAL_UNIVERSITIES, ...REFERRAL_UNIVERSITIES].map((u, i) => (
                         <li
                           key={`${u.id}-${i}`}

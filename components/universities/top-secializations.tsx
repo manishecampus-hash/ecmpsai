@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
   Download,
   BookOpen,
@@ -32,20 +32,11 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   const [dbCourses, setDbCourses] = useState<any[]>([]);
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeCategory, setActiveCategory] = useState<string>("top");
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   const itemsPerPage = 8;
 
   const cardsScrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollCards = (direction: "left" | "right") => {
-    if (!cardsScrollRef.current) return;
-    const scrollAmount = 280; // approx one card width + gap
-    cardsScrollRef.current.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
 
   const uniLabel = university?.name ? `${university.name} Online` : "Amity Online";
 
@@ -100,44 +91,48 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
     return map;
   }, [categoriesList]);
 
-  const showOnlyTopTab = useMemo(() => {
-    if (isLoading) return false;
-    if (dbCourses.length === 0) return true;
-    const hasCourseWithoutCategory = dbCourses.some(
-      (course) => !course.category || !categoryMap[course.category]
-    );
-    return hasCourseWithoutCategory;
-  }, [dbCourses, categoryMap, isLoading]);
-
   const categoryTabs = useMemo(() => {
     if (isLoading) {
       return [{ key: "top", label: "Top Specializations" }];
     }
-    if (showOnlyTopTab) {
-      return [
-        { key: "top", label: "Top Specializations" },
-        { key: "explore", label: "Explore Online Courses" },
-      ];
-    }
 
     const uniqueCategoryIds = Array.from(
-      new Set(dbCourses.map((c) => c.category).filter(Boolean))
+      new Set(
+        dbCourses
+          .map((c) => c.category)
+          .filter((catId) => Boolean(catId) && Boolean(categoryMap[catId]))
+      )
     );
 
-    const dynamicTabs = uniqueCategoryIds.map((catId) => ({
-      key: catId,
-      label: categoryMap[catId] || "Category",
-    }));
+    const dynamicTabs = uniqueCategoryIds
+      .map((catId) => ({
+        key: catId,
+        label: categoryMap[catId] || "Category",
+      }))
+      .sort((a, b) => {
+        const aLower = a.label.toLowerCase();
+        const bLower = b.label.toLowerCase();
+        if (aLower.includes("ug") && !bLower.includes("ug")) return -1;
+        if (!aLower.includes("ug") && bLower.includes("ug")) return 1;
+        if (aLower.includes("pg") && !bLower.includes("pg")) return -1;
+        if (!aLower.includes("pg") && bLower.includes("pg")) return 1;
+        return a.label.localeCompare(b.label);
+      });
 
     return [
-      { key: "top", label: "Top Specializations" },
       ...dynamicTabs,
+      { key: "top", label: "Top Specializations" },
       { key: "explore", label: "Explore Online Courses" },
     ];
-  }, [dbCourses, categoryMap, showOnlyTopTab, isLoading]);
+  }, [dbCourses, categoryMap, isLoading]);
+
+  const currentActiveCategory =
+    activeCategory && categoryTabs.some((t) => t.key === activeCategory)
+      ? activeCategory
+      : categoryTabs[0]?.key || "top";
 
   useEffect(() => {
-    if (categoryTabs.length > 0) {
+    if (categoryTabs.length > 0 && activeCategory) {
       const exists = categoryTabs.some((t) => t.key === activeCategory);
       if (!exists) {
         setActiveCategory(categoryTabs[0].key);
@@ -146,12 +141,60 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   }, [categoryTabs, activeCategory]);
 
   const visibleCourses = useMemo(() => {
-    if (activeCategory === "top") return [];
-    if (activeCategory === "explore") {
+    if (currentActiveCategory === "top") return [];
+    if (currentActiveCategory === "explore") {
       return dbCourses.length > 0 ? dbCourses : [];
     }
-    return dbCourses.filter((c) => c.category === activeCategory);
-  }, [dbCourses, activeCategory]);
+    return dbCourses.filter((c) => c.category === currentActiveCategory);
+  }, [dbCourses, currentActiveCategory]);
+
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = cardsScrollRef.current;
+    if (!el) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    const hasOverflow = el.scrollWidth > el.clientWidth + 8;
+    if (!hasOverflow) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+  }, []);
+
+  const scrollCards = (direction: "left" | "right") => {
+    if (!cardsScrollRef.current) return;
+    const scrollAmount = Math.max(340, cardsScrollRef.current.clientWidth * 0.75);
+    cardsScrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const el = cardsScrollRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+
+    const t1 = setTimeout(checkScroll, 100);
+    const t2 = setTimeout(checkScroll, 350);
+
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [checkScroll, visibleCourses, currentActiveCategory]);
 
   const specData =
     university?.details?.specializations ||
@@ -284,7 +327,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
             {/* Main Category Filter inside the div where table is showing */}
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 pb-6 border-b border-slate-100">
               {categoryTabs.map((tab) => {
-                const isActive = activeCategory === tab.key;
+                const isActive = currentActiveCategory === tab.key;
                 return (
                   <button
                     key={tab.key}
@@ -306,7 +349,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
             </div>
 
             {/* View 1: Top Specializations Table */}
-            {activeCategory === "top" && (
+            {currentActiveCategory === "top" && (
               <div>
                 <div className="overflow-x-auto rounded-xl border border-slate-200/80 shadow-2xs">
                   <table className="w-full border-collapse text-left text-xs sm:text-sm">
@@ -391,41 +434,43 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
             )}
 
             {/* View 2: Explore Online Courses Table */}
-            {activeCategory === "explore" && (
+            {currentActiveCategory === "explore" && (
               <div className="w-full overflow-hidden">
                 {renderExploreTable()}
               </div>
             )}
 
             {/* View 3: Dynamic Category Course Slider */}
-            {activeCategory !== "top" && activeCategory !== "explore" && (
+            {currentActiveCategory !== "top" && currentActiveCategory !== "explore" && (
               <div className="w-full overflow-hidden">
                 <div className="relative">
-                  {visibleCourses.length > 0 && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => scrollCards("left")}
-                        className="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-md backdrop-blur-sm transition hover:bg-white hover:text-red-500 cursor-pointer"
-                        aria-label="Scroll left"
-                      >
-                        <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </button>
+                  {canScrollLeft && (
+                    <button
+                      type="button"
+                      onClick={() => scrollCards("left")}
+                      className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-lg backdrop-blur-sm transition-all hover:bg-[#ea384c] hover:text-white hover:border-[#ea384c] hover:scale-105 active:scale-95 cursor-pointer"
+                      aria-label="Scroll left"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                  )}
 
-                      <button
-                        type="button"
-                        onClick={() => scrollCards("right")}
-                        className="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-md backdrop-blur-sm transition hover:bg-white hover:text-red-500 cursor-pointer"
-                        aria-label="Scroll right"
-                      >
-                        <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </button>
-                    </>
+                  {canScrollRight && (
+                    <button
+                      type="button"
+                      onClick={() => scrollCards("right")}
+                      className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-lg backdrop-blur-sm transition-all hover:bg-[#ea384c] hover:text-white hover:border-[#ea384c] hover:scale-105 active:scale-95 cursor-pointer"
+                      aria-label="Scroll right"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
                   )}
 
                   <div
                     ref={cardsScrollRef}
-                    className="__cards-container flex flex-nowrap gap-3 sm:gap-4 w-full mx-auto pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-8 sm:px-10"
+                    className={`__cards-container flex flex-nowrap gap-4 sm:gap-5 w-full mx-auto pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-2 sm:px-4 ${
+                      !canScrollLeft && !canScrollRight ? "justify-center" : "justify-start"
+                    }`}
                   >
                     {visibleCourses.length > 0 ? (
                       visibleCourses.map((card, idx) => {
@@ -433,9 +478,9 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                         return (
                           <div
                             key={card.id || card.slug}
-                            className="__card-container snap-start flex flex-col h-full flex-shrink-0 w-[85%] sm:w-[260px] lg:w-[270px] overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:shadow-md"
+                            className="__card-container snap-start flex flex-col h-full flex-shrink-0 w-[85%] sm:w-[270px] lg:w-[280px] overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-200"
                           >
-                            <div className="__card-image-wrapper relative overflow-hidden h-24 sm:h-28 rounded-t-xl">
+                            <div className="__card-image-wrapper relative overflow-hidden aspect-[303/132] w-full rounded-t-xl bg-slate-50">
                               {card.thumbnail ? (
                                 <img
                                   src={card.thumbnail}
@@ -450,31 +495,31 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                                 />
                               )}
 
-                              <div className="__card-rating absolute right-2 top-2 flex items-center gap-1 rounded-full bg-white px-1.5 py-1 text-[10px] font-bold text-slate-900 shadow-md">
+                              <div className="__card-rating absolute right-2 top-2 flex items-center gap-1 rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-bold text-slate-900 shadow-md border border-slate-100">
                                 <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                                 {card.rating || 4.7}
                               </div>
                             </div>
 
-                            <div className="__card-content flex flex-col flex-grow p-3.5">
-                              <h3 className="text-sm font-bold text-slate-900 mb-2.5 line-clamp-2 leading-snug">
+                            <div className="__card-content flex flex-col flex-grow p-4">
+                              <h3 className="text-sm sm:text-base font-bold text-slate-950 mb-2.5 line-clamp-1 leading-snug">
                                 {card.name}
                               </h3>
 
-                              <ul className="space-y-2 text-xs mb-3.5 border-t border-slate-100 pt-2.5">
+                              <ul className="space-y-2 text-xs sm:text-[13px] mb-3.5 border-t border-slate-100 pt-2.5">
                                 <li className="flex items-center justify-between">
-                                  <span className="flex items-center gap-1.5 text-slate-500">
-                                    <Clock className="h-3.5 w-3.5 text-blue-700 flex-shrink-0" />
+                                  <span className="flex items-center gap-1.5 text-slate-700 font-semibold">
+                                    <Clock className="h-3.5 w-3.5 text-[#ea384c] flex-shrink-0" />
                                     Duration
                                   </span>
-                                  <span className="font-semibold text-slate-800">{card.duration}</span>
+                                  <span className="font-bold text-slate-950">{card.duration}</span>
                                 </li>
                                 <li className="flex items-center justify-between">
-                                  <span className="flex items-center gap-1.5 text-slate-500">
-                                    <IndianRupee className="h-3.5 w-3.5 text-blue-700 flex-shrink-0" />
+                                  <span className="flex items-center gap-1.5 text-slate-700 font-semibold">
+                                    <IndianRupee className="h-3.5 w-3.5 text-[#ea384c] flex-shrink-0" />
                                     Fees
                                   </span>
-                                  <span className="font-bold text-slate-900">
+                                  <span className="font-extrabold text-slate-950 text-sm">
                                     {formatINR(card.feeRange?.start || 0)}
                                   </span>
                                 </li>
@@ -483,7 +528,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                               <button
                                 type="button"
                                 onClick={() => setShowSignupModal(true)}
-                                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] py-2.5 px-3 text-xs font-bold text-white shadow-sm shadow-red-500/15 transition-all duration-200 cursor-pointer hover:shadow-md hover:shadow-red-500/25 active:scale-[0.98] mt-auto group"
+                                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] py-2.5 px-3 text-xs sm:text-sm font-bold text-white shadow-sm shadow-red-500/15 transition-all duration-200 cursor-pointer hover:shadow-md hover:shadow-red-500/25 active:scale-[0.98] mt-auto group"
                               >
                                 <span>Explore More</span>
                                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />

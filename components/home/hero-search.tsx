@@ -3,12 +3,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ArrowRight,
   ArrowUp,
+  Bot,
   Briefcase,
   BriefcaseBusiness,
   GraduationCap,
   Landmark,
-  Monitor,
   Search,
   Sparkles,
   Zap,
@@ -54,6 +55,15 @@ export default function HeroSearch() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     search(query);
+  };
+
+  // Logged in (student saved by the login flow) → dashboard agent; otherwise open the login popup
+  const openAgent = () => {
+    if (localStorage.getItem("ecampus_student")) {
+      router.push("/dashboard/agent");
+    } else {
+      window.dispatchEvent(new CustomEvent("open-signup"));
+    }
   };
 
   return (
@@ -132,23 +142,26 @@ export default function HeroSearch() {
             </div>
           </Link>
 
-          {/* Card 2 */}
-          <div className="bg-[#111827] px-4 py-3 rounded-2xl text-left flex-1 min-h-[84px] border border-slate-800">
+          {/* Card 2: AI agent — logged-in students go to their dashboard agent, others to login */}
+          <button
+            type="button"
+            onClick={openAgent}
+            className="group bg-[#111827] hover:bg-[#0b1220] px-4 py-3 rounded-2xl text-left flex-1 min-h-[84px] border border-slate-800 transition-colors"
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
-                <Monitor size={17} />
-                <h3 className="font-semibold text-sm">Get work done with AI</h3>
+                <Bot size={17} />
+                <h3 className="font-semibold text-sm text-white">Your AI Admission Agent</h3>
               </div>
 
-              <span className="bg-[#1f2937] text-white text-[9px] px-2 py-0.5 rounded-full font-medium">
-                NEW
-              </span>
+              
             </div>
 
-            <p className="text-gray-300 text-xs mt-1">
-              Hand off your projects to get polished.
+            <p className="flex items-center justify-between gap-2 text-gray-300 text-xs mt-1">
+              <span>Shortlists programs, compares fees and tracks your applications for you.</span>
+              <ArrowRight size={14} className="shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
             </p>
-          </div>
+          </button>
         </div>
       </div>
     </section>

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap, Phone, Play, Quote, Star, Video, X } from "lucide-react";
 import { STUDENT_STORIES, type StudentStoryT } from "@/data/student-stories";
+// Opens the Apply Now popup; its form code only loads when the popup is first opened
+import { ApplyNowButton } from "@/components/form/apply-now-modal";
 
 const HELPLINE = "18001216201";
 const WHATSAPP = "919873794789";
@@ -419,7 +421,7 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
         >
           <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-900">
             <Video className="h-3.5 w-3.5 text-red-500" />
-            Student Stories
+            Success Stories
           </span>
           <h2 className="mt-2 text-[23px] font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Meet your <span className="text-red-500">Program Advisors</span>
@@ -520,13 +522,10 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
         </div>
 
         <div className="mt-8 flex justify-center">
-          <a
-            href={`tel:${HELPLINE}`}
-            className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-500 px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-red-500/30 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-red-500/40 active:translate-y-0"
-          >
+          <ApplyNowButton className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-500 px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-red-500/30 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-red-500/40 active:translate-y-0">
             Talk to our experts
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </a>
+          </ApplyNowButton>
         </div>
       </div>
 

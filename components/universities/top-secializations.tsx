@@ -406,30 +406,36 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                 </div>
 
                 {/* Footer */}
-                <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
-                  <p className="text-xs text-slate-400 font-normal">
-                    *Examination and registration charges may apply per semester.
-                  </p>
+                {((specData.note || specData.footerNote)?.trim() || totalPages > 1) && (
+                  <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
+                    {(specData.note || specData.footerNote)?.trim() ? (
+                      <p className="text-xs text-slate-500 font-normal">
+                        {(specData.note || specData.footerNote).trim()}
+                      </p>
+                    ) : (
+                      <div />
+                    )}
 
-                  {totalPages > 1 && (
-                    <div className="flex items-center gap-1.5">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                          key={page}
-                          type="button"
-                          onClick={() => setCurrentPage(page)}
-                          className={`h-7 w-7 sm:h-8 sm:w-8 rounded-md text-xs sm:text-sm font-bold transition-all flex items-center justify-center cursor-pointer ${
-                            currentPage === page
-                              ? "bg-[#ea384c] text-white shadow-2xs"
-                              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                    {totalPages > 1 && (
+                      <div className="flex items-center gap-1.5 ml-auto">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => setCurrentPage(page)}
+                            className={`h-7 w-7 sm:h-8 sm:w-8 rounded-md text-xs sm:text-sm font-bold transition-all flex items-center justify-center cursor-pointer ${
+                              currentPage === page
+                                ? "bg-[#ea384c] text-white shadow-2xs"
+                                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

@@ -18,8 +18,8 @@ export interface FestiveThemeConfig {
 }
 
 export const FESTIVE_CONFIG: FestiveThemeConfig = {
-  enabled: true,
-  theme: "diwali",
+  enabled: false,
+  theme: "off",
   allowDismiss: true,
   storageKey: "ecampus_festive_diwali_dismissed",
   showGlow: true,

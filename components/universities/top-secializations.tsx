@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import {
   Download,
   BookOpen,
@@ -481,12 +482,24 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                     {visibleCourses.length > 0 ? (
                       visibleCourses.map((card, idx) => {
                         const cardImage = CARD_IMAGES[idx % CARD_IMAGES.length];
+                        const cleanUniSlug = (university?.slug || "")
+                          .replace(/^\/universit(y|ies)\//, "")
+                          .replace(/^\//, "");
+                        const courseSlugPart = card.slug
+                          ? card.slug.split("/").filter(Boolean).pop()
+                          : card.name
+                              .toLowerCase()
+                              .trim()
+                              .replace(/[^\w\s-]/g, "")
+                              .replace(/[\s_-]+/g, "-");
+                        const courseUrl = cleanUniSlug ? `/universities/${cleanUniSlug}/${courseSlugPart}` : `/${courseSlugPart}`;
+
                         return (
                           <div
                             key={card.id || card.slug}
                             className="__card-container snap-start flex flex-col h-full flex-shrink-0 w-[85%] sm:w-[270px] lg:w-[280px] overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-200"
                           >
-                            <div className="__card-image-wrapper relative overflow-hidden aspect-[303/132] w-full rounded-t-xl bg-slate-50">
+                            <Link href={courseUrl} className="__card-image-wrapper block relative overflow-hidden aspect-[303/132] w-full rounded-t-xl bg-slate-50">
                               {card.thumbnail ? (
                                 <img
                                   src={card.thumbnail}
@@ -505,12 +518,14 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                                 <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                                 {card.rating || 4.7}
                               </div>
-                            </div>
+                            </Link>
 
                             <div className="__card-content flex flex-col flex-grow p-4">
-                              <h3 className="text-sm sm:text-base font-bold text-slate-950 mb-2.5 line-clamp-1 leading-snug">
-                                {card.name}
-                              </h3>
+                              <Link href={courseUrl}>
+                                <h3 className="text-sm sm:text-base font-bold text-slate-950 mb-2.5 line-clamp-1 leading-snug hover:text-[#ea384c] transition-colors">
+                                  {card.name}
+                                </h3>
+                              </Link>
 
                               <ul className="space-y-2 text-xs sm:text-[13px] mb-3.5 border-t border-slate-100 pt-2.5">
                                 <li className="flex items-center justify-between">
@@ -531,14 +546,13 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                                 </li>
                               </ul>
 
-                              <button
-                                type="button"
-                                onClick={() => setShowSignupModal(true)}
+                              <Link
+                                href={courseUrl}
                                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d82a3e] py-2.5 px-3 text-xs sm:text-sm font-bold text-white shadow-sm shadow-red-500/15 transition-all duration-200 cursor-pointer hover:shadow-md hover:shadow-red-500/25 active:scale-[0.98] mt-auto group"
                               >
                                 <span>Explore More</span>
                                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-                              </button>
+                              </Link>
                             </div>
                           </div>
                         );

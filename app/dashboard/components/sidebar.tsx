@@ -5,8 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAgent } from "./agent/agent-shell";
 import {
   LayoutGrid,
+  Bot,
   Compass,
   GraduationCap,
   ClipboardList,
@@ -16,20 +18,23 @@ import {
   ShieldCheck,
   Gift,
   IndianRupee,
-  MessageCircle,
   UserCircle,
   Settings,
   X,
   ChevronsLeft,
   ChevronDown,
+  type LucideIcon,
 } from "lucide-react";
 
-const navItems = [
+type NavItem = { id: string; label: string; icon: LucideIcon; href: string; live?: boolean };
+
+// My Chat lives inside the eCampus Agent now (Chat mode), so it has no item of its own
+const navItems: NavItem[] = [
+  { id: "agent", label: "eCampus Agent", icon: Bot, href: "/dashboard/agent" },
   { id: "overview", label: "Overview", icon: LayoutGrid, href: "/dashboard" },
   { id: "matcher", label: "AI Degree Finder", icon: Compass, href: "/dashboard/matcher" },
   { id: "applications", label: "My Applications", icon: ClipboardList, href: "/dashboard/applications" },
   { id: "downloads", label: "My Downloads", icon: FolderDown, href: "/dashboard/downloads" },
-  { id: "mychat", label: "My Chat", icon: MessageCircle, href: "/dashboard/mychat", live: true },
   { id: "profile", label: "Profile", icon: UserCircle, href: "/dashboard/profile" },
   { id: "invite", label: "Invite & Earn", icon: Gift, href: "/dashboard/invite-earn" },
   { id: "emi", label: "EMI Calculator", icon: IndianRupee, href: "/dashboard/education-loan-emi-calculator" },
@@ -88,8 +93,10 @@ function CollapsedTooltip({ label }: { label: string }) {
   );
 }
 
-function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
+function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
+  // "eCampus Agent" opens the agent beside the dashboard (work mode) rather than going to a page
+  const agent = useAgent();
   const [applicationsOpen, setApplicationsOpen] = useState(
     () => pathname.startsWith("/dashboard/applications") || pathname === "/dashboard/receipts",
   );
@@ -167,7 +174,8 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
       >
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = item.href ? pathname === item.href || (item.id === "applications" && pathname.startsWith("/dashboard/applications/")) : false;
+          const opensAgent = item.id === "agent" && agent;
+          const active = opensAgent ? agent.open : item.href ? pathname === item.href || (item.id === "applications" && pathname.startsWith("/dashboard/applications/")) : false;
           const className = `relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-[17px] py-2.5 text-left text-sm font-medium transition-colors ${item.id === "applications" && !collapsed ? "pr-9" : ""} ${
             active
               ? "bg-red-50 text-red-600"
@@ -219,7 +227,20 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
           return (
             <Fragment key={item.id}>
               <div className="group/item relative">
-                {item.href ? (
+                {opensAgent ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      agent.toggle();
+                      onNavigate?.();
+                    }}
+                    aria-pressed={agent.open}
+                    aria-label={collapsed ? item.label : undefined}
+                    className={className}
+                  >
+                    {content}
+                  </button>
+                ) : item.href ? (
                   <Link
                     href={item.href}
                     aria-label={collapsed ? item.label : undefined}
@@ -283,7 +304,13 @@ export default function Sidebar({
   mobileOpen: boolean;
   onClose: () => void;
 }) {
-  const collapsed = useSyncExternalStore(subscribe, getCollapsed, () => false);
+  const savedCollapsed = useSyncExternalStore(subscribe, getCollapsed, () => false);
+  // With the eCampus Agent open beside the dashboard, the sidebar folds to icons to give the pages room
+  // (the student can still open it; their saved preference is left alone)
+  const agentOpen = Boolean(useAgent()?.open);
+  const [expandedWithAgent, setExpandedWithAgent] = useState(false);
+  const collapsed = agentOpen ? !expandedWithAgent : savedCollapsed;
+  const toggleCollapsed = () => (agentOpen ? setExpandedWithAgent((e) => !e) : setCollapsed(!savedCollapsed));
 
   // Apply a remembered state instantly on load; only animate the user's own toggles
   const [animateWidth, setAnimateWidth] = useState(false);
@@ -306,7 +333,7 @@ export default function Sidebar({
         {/* Collapse / expand toggle on the sidebar edge */}
         <motion.button
           type="button"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleCollapsed}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
           whileHover={{ scale: 1.08 }}
@@ -351,7 +378,7 @@ export default function Sidebar({
               >
                 <X className="h-4 w-4" />
               </button>
-              <SidebarContent />
+              <SidebarContent onNavigate={onClose} />
             </motion.div>
           </>
         )}

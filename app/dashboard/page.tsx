@@ -15,39 +15,14 @@ import type { SpinWheelReward } from "./components/spin-wheel/data";
 import type { StudentProfile } from "./types";
 
 export default function DashboardPage() {
-  // Synchronous initialization from localStorage so initial render immediately knows if user already spun
-  const [student, setStudent] = useState<StudentProfile>(() => {
-    if (typeof window === "undefined") return {};
-    try {
-      const saved = localStorage.getItem("ecampus_student");
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  const [wonReward, setWonReward] = useState<SpinWheelReward | null>(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      const saved = localStorage.getItem("ecampus_student");
-      const parsed = saved ? JSON.parse(saved) : null;
-      return parsed?.spinReward || null;
-    } catch {
-      return null;
-    }
-  });
-
+  // Start empty on both the server and the first browser render (reading localStorage here made the two differ —
+  // a hydration error on the avatar letter and the reward chip); the mount effect below fills these in.
+  const [student, setStudent] = useState<StudentProfile>({});
+  const [wonReward, setWonReward] = useState<SpinWheelReward | null>(null);
   // True if user already completed or skipped the spin before this session
-  const [hasCompletedSpinPrior, setHasCompletedSpinPrior] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const saved = localStorage.getItem("ecampus_student");
-      const parsed = saved ? JSON.parse(saved) : null;
-      return Boolean(parsed?.spinReward || parsed?.spinSkipped);
-    } catch {
-      return false;
-    }
-  });
+  const [hasCompletedSpinPrior, setHasCompletedSpinPrior] = useState(false);
+  // Set once the saved profile has been read, so the gift launcher doesn't flash for students who already spun
+  const [profileRead, setProfileRead] = useState(false);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [spinWheelOpen, setSpinWheelOpen] = useState(false);
@@ -72,6 +47,7 @@ export default function DashboardPage() {
     }
 
     const alreadySpunLocally = Boolean(parsed.spinReward || parsed.spinSkipped);
+    setProfileRead(true);
     if (alreadySpunLocally) {
       setHasCompletedSpinPrior(true);
       setSpinWheelOpen(false);
@@ -310,7 +286,7 @@ export default function DashboardPage() {
       </div>
 
       {/* The gift launcher is completely HIDDEN for users who have already spun or skipped */}
-      {!isUserCompletedSpin && (
+      {profileRead && !isUserCompletedSpin && (
         <GiftFab onClick={() => setSpinWheelOpen(true)} />
       )}
 

@@ -13,6 +13,7 @@ import AmortizationChart from "../components/emi/amortization-chart";
 import AnimatedNumber from "../components/emi/animated-number";
 import EmiGuide from "../components/emi/emi-guide";
 import { inr, monthlyEmi, yearlySchedule } from "../components/emi/emi-math";
+import { AGENT_FILL_EMI } from "../components/agent/agent-engine";
 import type { StudentProfile } from "../types";
 
 const formatAmount = (n: number) => Math.round(n).toLocaleString("en-IN");
@@ -29,6 +30,18 @@ export default function EducationLoanEmiCalculatorPage() {
   useEffect(() => {
     const saved = localStorage.getItem("ecampus_student");
     if (saved) setStudent(JSON.parse(saved));
+  }, []);
+
+  // eCampus Agent (work mode) fills the calculator in once the student approves it in the agent chat
+  useEffect(() => {
+    const fill = (e: Event) => {
+      const { amount: a, rate: r, years: y } = (e as CustomEvent<{ amount?: number; rate?: number; years?: number }>).detail ?? {};
+      if (a) setAmount(Math.min(5000000, Math.max(50000, a)));
+      if (r) setRate(Math.min(20, Math.max(1, r)));
+      if (y) setYears(Math.min(10, Math.max(1, Math.round(y))));
+    };
+    window.addEventListener(AGENT_FILL_EMI, fill);
+    return () => window.removeEventListener(AGENT_FILL_EMI, fill);
   }, []);
 
   const emi = useMemo(() => monthlyEmi(amount, rate, years * 12), [amount, rate, years]);

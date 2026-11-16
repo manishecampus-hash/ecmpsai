@@ -71,11 +71,11 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
       </div>
 
       <div className="mt-8 border-y border-gray-200 bg-[#f5f5f5] py-7 sm:mt-10 sm:py-9">
-        <div className="group relative mx-auto max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:overflow-x-auto">
+        <div className="group relative mx-auto max-w-[1400px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
           {/* Pauses on mouse hover (not on touch screens, where a tap leaves :hover stuck) and for keyboard focus
             only — a clicked logo keeps focus after its article opens in a new tab, so pausing on any focus left the
             strip stopped when the visitor came back */}
-          <ul className="flex w-max animate-marquee items-center [@media(hover:hover)]:group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused] motion-reduce:animate-none">
+          <ul className="flex w-max animate-marquee items-center [@media(hover:hover)]:group-hover:[animation-play-state:paused] [.group:has(a:focus-visible)_&]:[animation-play-state:paused]">
             {loop.map((item, i) => {
               const isCopy = i >= items.length;
               const visual = item.logo ? (

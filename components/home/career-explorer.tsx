@@ -2,7 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Lightbulb, TrendingUp } from "lucide-react";
 import { careerExplorerData } from "@/data/career-explorer";
 
@@ -82,15 +83,25 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
   const [paused, setPaused] = useState(false);
   const [inView, setInView] = useState(false);
   const [pageDir, setPageDir] = useState(1);
-  const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
 
   const handleOpenSignup = (e: React.MouseEvent) => {
     e.preventDefault();
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("open-signup"));
     }
+  };
+
+  // Logged-in students go to the program URL set in the admin panel; everyone else gets the login popup
+  const handleExplore = (e: React.MouseEvent, url: string) => {
+    const loggedIn = typeof window !== "undefined" && !!localStorage.getItem("ecampus_student");
+    if (!loggedIn || !url) return handleOpenSignup(e);
+    e.preventDefault();
+    if (/^https?:\/\//i.test(url)) window.location.href = url;
+    else router.push(url);
   };
 
   // Roles from the admin panel: hidden ones (isActive false) are left out and the rest follow their display order
@@ -177,7 +188,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
   }, [page]);
 
   // Auto-advance while the section is on screen and nobody is interacting with it
-  const autoplay = !reduceMotion && inView && !paused && total > 1;
+  const autoplay = inView && !paused && total > 1;
   useEffect(() => {
     if (!autoplay) return;
     const t = setTimeout(() => select(active + 1), AUTO_ADVANCE_MS);
@@ -444,7 +455,7 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                     <div className="order-4 flex basis-full justify-center sm:order-3 sm:basis-auto sm:justify-start">
                       <button
                         type="button"
-                        onClick={handleOpenSignup}
+                        onClick={(e) => handleExplore(e, current.ctaUrl)}
                         aria-label={`${current.ctaText || "Explore"} programs for ${current.title}`}
                         className="group inline-flex items-center gap-2 rounded-full bg-red-600 py-3 pl-6 pr-2 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
                       >
@@ -476,18 +487,18 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                 {/* Soft glow in the role's colour */}
                 <span className={`absolute inset-[10%] rounded-full opacity-80 blur-2xl transition-colors duration-500 ${colors.bg}`} />
                 {/* Sweeping red arc */}
-                <span className="absolute inset-[2%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(239,68,68,0.55)_70deg,transparent_140deg)] [mask-image:radial-gradient(farthest-side,transparent_calc(100%_-_2px),black_calc(100%_-_1.5px))] motion-safe:animate-[spin_6s_linear_infinite]" />
+                <span className="absolute inset-[2%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(239,68,68,0.55)_70deg,transparent_140deg)] [mask-image:radial-gradient(farthest-side,transparent_calc(100%_-_2px),black_calc(100%_-_1.5px))] animate-[spin_6s_linear_infinite]" />
                 <span className="absolute inset-[2%] rounded-full border border-red-100" />
                 <span className="absolute inset-[17%] rounded-full border border-dashed border-gray-300/80" />
 
                 {/* Neighbouring roles orbiting the selected one — each stays upright by spinning the other way */}
                 {total > 3 && (
-                  <span className="absolute inset-[2%] motion-safe:animate-[spin_36s_linear_infinite]">
+                  <span className="absolute inset-[2%] animate-[spin_36s_linear_infinite]">
                     {SATELLITE_SPOTS.map((spot, i) => {
                       const role = items[(active + i + 1) % total];
                       return (
                         <span key={spot} className={`absolute -translate-x-1/2 -translate-y-1/2 ${spot}`}>
-                          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md shadow-gray-900/10 ring-1 ring-gray-100 motion-safe:animate-[spin_36s_linear_infinite_reverse]">
+                          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-md shadow-gray-900/10 ring-1 ring-gray-100 animate-[spin_36s_linear_infinite_reverse]">
                             <Image src={role.image} alt="" width={26} height={26} unoptimized className="h-[26px] w-[26px] object-contain" />
                           </span>
                         </span>
@@ -497,13 +508,13 @@ const CareerExplorer: React.FC<CareerExplorerProps> = ({ jobRoles, title }) => {
                 )}
 
                 {/* Twinkling sparkles */}
-                <span className="absolute left-[14%] top-[18%] h-1.5 w-1.5 rounded-full bg-red-400 motion-safe:animate-pulse" />
-                <span className="absolute bottom-[16%] right-[12%] h-2 w-2 rounded-full bg-amber-300 motion-safe:animate-pulse [animation-delay:700ms]" />
-                <span className="absolute right-[20%] top-[12%] h-1 w-1 rounded-full bg-sky-400 motion-safe:animate-pulse [animation-delay:1400ms]" />
+                <span className="absolute left-[14%] top-[18%] h-1.5 w-1.5 rounded-full bg-red-400 animate-pulse" />
+                <span className="absolute bottom-[16%] right-[12%] h-2 w-2 rounded-full bg-amber-300 animate-pulse [animation-delay:700ms]" />
+                <span className="absolute right-[20%] top-[12%] h-1 w-1 rounded-full bg-sky-400 animate-pulse [animation-delay:1400ms]" />
 
                 {/* Selected role, floating in the centre */}
                 <motion.div
-                  animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+                  animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className={`absolute inset-[29%] overflow-hidden rounded-[32%] border-2 bg-white shadow-xl shadow-gray-900/10 transition-colors duration-500 ${colors.border}`}
                 >

@@ -37,6 +37,8 @@ interface SidebarProps {
   variant: "docked" | "drawer";
   collapsed?: boolean;
   onToggle: () => void;
+  /** What one item is called ("chat" by default — the agent uses "task") */
+  noun?: string;
 }
 
 function RailButton({ icon: Icon, label, onClick }: { icon: LucideIcon; label: string; onClick: () => void }) {
@@ -199,7 +201,10 @@ export default function ChatSidebar({
   variant,
   collapsed = false,
   onToggle,
+  noun = "chat",
 }: SidebarProps) {
+  const nouns = `${noun}s`;
+  const Noun = noun.charAt(0).toUpperCase() + noun.slice(1);
   const [query, setQuery] = useState("");
   const [focusSearch, setFocusSearch] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -223,10 +228,10 @@ export default function ChatSidebar({
     return (
       <div className="flex h-full w-full flex-col items-center gap-1 py-3">
         <RailButton icon={PanelLeftOpen} label="Open sidebar" onClick={onToggle} />
-        <RailButton icon={SquarePen} label="New chat" onClick={onNewChat} />
+        <RailButton icon={SquarePen} label={`New ${noun}`} onClick={onNewChat} />
         <RailButton
           icon={Search}
-          label="Search chats"
+          label={`Search ${nouns}`}
           onClick={() => {
             setFocusSearch(true);
             onToggle();
@@ -273,7 +278,7 @@ export default function ChatSidebar({
           onClick={onNewChat}
           className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-[#0d0d0d] transition-colors hover:bg-black/[0.04]"
         >
-          <SquarePen className="h-[18px] w-[18px]" /> New chat
+          <SquarePen className="h-[18px] w-[18px]" /> New {noun}
         </button>
         <label className="flex w-full cursor-text items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors focus-within:bg-black/[0.04] hover:bg-black/[0.04]">
           <Search className="h-[18px] w-[18px] flex-shrink-0 text-[#0d0d0d]" />
@@ -281,8 +286,8 @@ export default function ChatSidebar({
             ref={searchRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search chats"
-            aria-label="Search chats"
+            placeholder={`Search ${nouns}`}
+            aria-label={`Search ${nouns}`}
             className="min-w-0 flex-1 rounded-none border-0 bg-transparent p-0 text-sm text-[#0d0d0d] shadow-none outline-none placeholder:text-[#0d0d0d] focus:border-0 focus:bg-transparent focus:shadow-none focus:placeholder:text-[#8f8f8f]"
           />
           {query && (
@@ -297,9 +302,9 @@ export default function ChatSidebar({
         {groups.length === 0 ? (
           <div className="mx-2 mt-6 flex flex-col items-center rounded-xl border border-dashed border-black/10 px-4 py-6 text-center">
             <MessageSquare className="h-5 w-5 text-[#8f8f8f]" />
-            <p className="mt-2 text-[13px] font-medium text-[#0d0d0d]">{query ? "No matching chats" : "No chats yet"}</p>
+            <p className="mt-2 text-[13px] font-medium text-[#0d0d0d]">{query ? `No matching ${nouns}` : `No ${nouns} yet`}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-[#8f8f8f]">
-              {query ? `Nothing found for “${query}”.` : "Your conversations will show up here."}
+              {query ? `Nothing found for “${query}”.` : noun === "chat" ? "Your conversations will show up here." : `Your ${nouns} will show up here.`}
             </p>
           </div>
         ) : (

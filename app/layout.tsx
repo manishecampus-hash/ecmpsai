@@ -13,20 +13,21 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const quicksand = Quicksand({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-quicksand",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const nunito = Nunito({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunito",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {

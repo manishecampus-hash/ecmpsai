@@ -219,9 +219,10 @@ export default function UniversityHeroWithStats({
           },
         ];
 
-  // CTA button labels
-  const primaryCtaText = banner.ctas?.[0]?.buttonText || "Apply to University";
-  const secondaryCtaText = banner.ctas?.[1]?.buttonText || "Explore Courses";
+  // CTA button labels (no static fallback buttons when empty in admin)
+  const primaryCtaText = (banner.ctas?.[0]?.buttonText || "").trim();
+  const secondaryCtaText = (banner.ctas?.[1]?.buttonText || "").trim();
+  const hasAnyCta = Boolean(primaryCtaText || secondaryCtaText);
 
   const scrollToCourses = () => {
     const el =
@@ -367,28 +368,34 @@ export default function UniversityHeroWithStats({
                 </div>
               </div>
 
-              {/* Right Column: Clean, Focused Action Panel */}
-              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto lg:w-64">
-                {/* Primary Action: Apply to University */}
-                <button
-                  type="button"
-                  onClick={() => (applyHref ? router.push(applyHref) : setShowApplicationForm(true))}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] active:scale-[0.99] py-3.5 px-6 text-sm font-bold text-white shadow-sm hover:shadow transition-all cursor-pointer"
-                >
-                  <Send className="h-4 w-4" fill="currentColor" />
-                  <span>{primaryCtaText}</span>
-                </button>
+              {/* Right Column: Clean, Focused Action Panel (only rendered if CTAs exist in admin) */}
+              {hasAnyCta && (
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto lg:w-64">
+                  {/* Primary Action: rendered only if primary CTA is set in admin */}
+                  {primaryCtaText && (
+                    <button
+                      type="button"
+                      onClick={() => (applyHref ? router.push(applyHref) : setShowApplicationForm(true))}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] active:scale-[0.99] py-3.5 px-6 text-sm font-bold text-white shadow-sm hover:shadow transition-all cursor-pointer"
+                    >
+                      <Send className="h-4 w-4" fill="currentColor" />
+                      <span>{primaryCtaText}</span>
+                    </button>
+                  )}
 
-                {/* Secondary Action: Explore Courses */}
-                <button
-                  type="button"
-                  onClick={scrollToCourses}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:scale-[0.99] py-3 px-5 text-sm font-semibold text-slate-700 transition-colors shadow-2xs hover:border-slate-300 cursor-pointer"
-                >
-                  <Search className="h-4 w-4 text-slate-500" />
-                  <span>{secondaryCtaText}</span>
-                </button>
-              </div>
+                  {/* Secondary Action: rendered only if secondary CTA is set in admin */}
+                  {secondaryCtaText && (
+                    <button
+                      type="button"
+                      onClick={scrollToCourses}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:scale-[0.99] py-3 px-5 text-sm font-semibold text-slate-700 transition-colors shadow-2xs hover:border-slate-300 cursor-pointer"
+                    >
+                      <Search className="h-4 w-4 text-slate-500" />
+                      <span>{secondaryCtaText}</span>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Bottom Row: Classic Stat Highlights & AI Compare Feature */}

@@ -711,18 +711,6 @@ export default function AIDegreeMatcherPage() {
         const s: StudentProfile = JSON.parse(saved);
         setStudent(s);
         fetchCourses(s);
-        const courseStr = (
-          s.advisorProfile?.coursePreference ||
-          s.course ||
-          s.coursesInterested?.[0] ||
-          ""
-        ).toUpperCase();
-        for (const deg of DEGREES) {
-          if (courseStr.includes(deg)) {
-            setDegrees([deg]);
-            break;
-          }
-        }
       } catch {
         fetchCourses();
       }

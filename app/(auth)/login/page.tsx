@@ -149,6 +149,7 @@ function LoginContent() {
     setAccountNotFound(false);
   }, [mode, emailAuthType, step]);
 
+  const selectedCountry = countryCodes.find((c) => c.code === countryCode) || countryCodes[0];
   const fullPhone = `${countryCode}${phone.trim()}`;
   const fullVerifyPhone = `${verifyPhoneCountryCode}${verifyPhoneNumber.trim()}`;
 

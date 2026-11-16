@@ -139,6 +139,7 @@ export function calculateMatchScore(params: {
   courseDegree: string;
   courseName: string;
   annualFee: number;
+  totalFee?: number;
   budget?: string;
   highestQualification?: string;
   category?: string;
@@ -186,13 +187,23 @@ export function calculateMatchScore(params: {
   }
 
   // 3. Budget fit (up to +10)
+  // Rewards courses within the student's selected budget range first (+10), and courses below (+8)
   if (params.budget) {
     const { min, max } = parseBudgetRange(params.budget);
-    if (params.annualFee >= min && params.annualFee <= max) {
+    const feeToCheck =
+      typeof params.totalFee === "number" && params.totalFee > 0
+        ? params.totalFee
+        : params.annualFee * 2;
+    const inRange =
+      (feeToCheck >= min && feeToCheck <= max) ||
+      (params.annualFee >= min && params.annualFee <= max);
+    const belowRange = feeToCheck < min || params.annualFee < min;
+
+    if (inRange) {
       score += 10;
-    } else if (params.annualFee < min) {
+    } else if (belowRange) {
       score += 8;
-    } else if (params.annualFee <= max * 1.25) {
+    } else if (feeToCheck <= max * 1.25) {
       score += 5;
     } else {
       score += 2;

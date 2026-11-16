@@ -7,6 +7,7 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
   Smartphone,
   Mail,
   Lock,
@@ -67,6 +68,7 @@ export function LoginModal({
   // Mobile state (Primary login)
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
+  const selectedCountry = countryCodes.find((c) => c.code === countryCode) || countryCodes[0];
   const [mobileOtpSent, setMobileOtpSent] = useState(false);
   const [mobileOtp, setMobileOtp] = useState("");
   const [mobileChallengeId, setMobileChallengeId] = useState("");

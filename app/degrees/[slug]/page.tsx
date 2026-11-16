@@ -15,13 +15,14 @@ export async function generateStaticParams() {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function DegreePage({ params }: PageProps) {
-  const degree = getDegreeBySlug(params.slug);
+  const { slug } = await params;
+  const degree = getDegreeBySlug(slug);
 
   if (!degree) {
     notFound();

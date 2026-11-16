@@ -9,6 +9,7 @@ import WhyEcampusCard from "../components/ai-assist/why-ecampus-card";
 import AiChatCard from "../components/ai-assist/ai-chat-card";
 import AiChatPanel from "../components/ai-assist/ai-chat-panel";
 import { describeAdvisorProfile, cleanCourseDisplay } from "@/components/layout/onboarding-options";
+import { parseBudgetRange } from "@/lib/recommendations";
 import {
   AnimatePresence,
   MotionConfig,
@@ -62,10 +63,13 @@ interface UniversityListing {
   // Students who have applied — shown as social proof on the card
   applied: number;
   fee: number;
+  totalFee?: number;
+  tier?: number;
   scholarshipNote?: string;
   durationNote: string;
   accreditations: Accreditation[];
   features: FeatureTag[];
+  tags?: string[];
   slug?: string;
 }
 
@@ -762,6 +766,9 @@ export default function AIDegreeMatcherPage() {
 
   const sorted = useMemo(() => {
     const list = [...filtered];
+    const budget = student?.advisorProfile?.budget;
+    const { min: budgetMin, max: budgetMax } = parseBudgetRange(budget);
+
     list.sort((a, b) => {
       switch (sortBy) {
         case "rating":
@@ -770,12 +777,32 @@ export default function AIDegreeMatcherPage() {
           return a.fee - b.fee;
         case "popular":
           return b.reviews - a.reviews;
-        default:
-          return b.matchScore - a.matchScore;
+        default: {
+          if (budget) {
+            const getTier = (u: UniversityListing) => {
+              if (typeof u.tier === "number") return u.tier;
+              const tFee = u.totalFee || u.fee * 2;
+              if ((tFee >= budgetMin && tFee <= budgetMax) || (u.fee >= budgetMin && u.fee <= budgetMax)) return 1;
+              if (tFee < budgetMin || u.fee < budgetMin) return 2;
+              return 3;
+            };
+            const tierA = getTier(a);
+            const tierB = getTier(b);
+            if (tierA !== tierB) return tierA - tierB;
+
+            const feeA = a.totalFee || a.fee * 2;
+            const feeB = b.totalFee || b.fee * 2;
+            if (feeB !== feeA) return feeB - feeA;
+          }
+          if (b.matchScore !== a.matchScore) {
+            return b.matchScore - a.matchScore;
+          }
+          return b.rating - a.rating;
+        }
       }
     });
     return list;
-  }, [filtered, sortBy]);
+  }, [filtered, sortBy, student?.advisorProfile?.budget]);
 
   useEffect(() => {
     setPage(1);
@@ -1397,20 +1424,15 @@ export default function AIDegreeMatcherPage() {
                           <p className="mt-1.5 text-lg font-semibold text-gray-900">{u.program}</p>
 
                           <div className="mt-2.5 flex flex-wrap gap-2">
-                            {u.accreditations.map((a) => (
+                            {(u.tags && u.tags.length > 0 ? u.tags : [
+                              ...u.accreditations.map((a) => ACCREDITATION_CHIP_LABEL[a] || a),
+                              ...u.features.map((f) => FEATURE_CHIP_LABEL[f] || f),
+                            ]).map((badge) => (
                               <span
-                                key={a}
+                                key={badge}
                                 className="rounded-full bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
                               >
-                                {ACCREDITATION_CHIP_LABEL[a]}
-                              </span>
-                            ))}
-                            {u.features.map((f) => (
-                              <span
-                                key={f}
-                                className="rounded-full bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
-                              >
-                                {FEATURE_CHIP_LABEL[f]}
+                                {badge}
                               </span>
                             ))}
                           </div>

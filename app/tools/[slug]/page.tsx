@@ -6,7 +6,7 @@ import CalculatorDetailClient, {
 } from "./calculator-detail-client";
 
 interface PageProps {
-  params: Promise<{ slug: string }> | { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const API_BASE_URL =

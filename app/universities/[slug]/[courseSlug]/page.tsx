@@ -129,7 +129,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: seo.title || defaultTitle,
       description: defaultDescription,
       type: "website",
-      images: course.thumbnail || course.university?.logoUrl ? [{ url: course.thumbnail || course.university?.logoUrl }] : [],
+      images: (course.thumbnail || course.university?.logoUrl)
+        ? [{ url: (course.thumbnail || course.university?.logoUrl)! }]
+        : [],
     },
   };
 }

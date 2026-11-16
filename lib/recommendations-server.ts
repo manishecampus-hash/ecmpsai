@@ -25,11 +25,146 @@ export interface UniversityCourseListing {
   reviews: number;
   applied: number;
   fee: number;
+  totalFee?: number;
+  tier?: number;
   scholarshipNote?: string;
   durationNote: string;
   accreditations: string[];
   features: string[];
+  tags: string[];
   slug?: string;
+}
+
+export function extractDynamicTags(
+  uni: any,
+  doc?: any,
+  studentCategory?: string
+): string[] {
+  const tags: string[] = [];
+  const accList: any[] = uni?.details?.accreditation?.list || [];
+
+  // 1. Dynamic Accreditations & Approvals from uni.details.accreditation.list
+  for (const acc of accList) {
+    const rawLabel = (acc.label || acc.name || "").trim();
+    if (!rawLabel) continue;
+    const lower = rawLabel.toLowerCase();
+
+    let formatted = rawLabel;
+    if (lower.includes("naac")) {
+      if (lower.includes("a++") || acc.ribbon?.includes("A++")) formatted = "NAAC A++";
+      else if (lower.includes("a+") || acc.ribbon?.includes("A+")) formatted = "NAAC A+";
+      else formatted = "NAAC Accredited";
+    } else if (lower.includes("ugc")) {
+      formatted = "UGC Entitled";
+    } else if (lower.includes("aicte")) {
+      formatted = "AICTE Approved";
+    } else if (lower.includes("wes")) {
+      formatted = "WES Recognized";
+    } else if (lower.includes("nirf")) {
+      formatted = rawLabel.length <= 18 ? rawLabel : "NIRF Ranked";
+    } else if (lower.includes("qs")) {
+      formatted = "QS World Ranked";
+    } else if (lower.includes("ksurf")) {
+      formatted = "KSURF 5-Star";
+    } else if (lower.includes("aiu")) {
+      formatted = "AIU Member";
+    } else if (lower.includes("aacsb")) {
+      formatted = "AACSB";
+    } else if (lower.includes("acbsp")) {
+      formatted = "ACBSP";
+    } else if (lower.includes("wasc")) {
+      formatted = "WASC (USA)";
+    } else if (lower.includes("eduqua")) {
+      formatted = "EDUQUA";
+    } else if (lower.includes("hlc")) {
+      formatted = "HLC";
+    } else if (lower.includes("acca")) {
+      formatted = "ACCA";
+    } else if (rawLabel.length > 20) {
+      formatted = rawLabel.slice(0, 18) + "...";
+    }
+
+    if (!tags.includes(formatted)) {
+      tags.push(formatted);
+    }
+    if (tags.length >= 2) break;
+  }
+
+  // 2. Dynamic Financial Options (Zero-Cost EMI / Easy EMI / Flexible EMI / Education Loan)
+  const finCards: any[] = uni?.details?.financialAssistance?.cards || [];
+  const finHeading = (uni?.details?.financialAssistance?.heading || "").toLowerCase();
+  const finTexts = [
+    finHeading,
+    ...finCards.map((c: any) => `${c.value || ""} ${c.text || ""} ${c.tag || ""}`),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  let emiTag: string | null = null;
+  if (
+    finTexts.includes("no-cost emi") ||
+    finTexts.includes("zero cost emi") ||
+    finTexts.includes("no cost emi")
+  ) {
+    emiTag = "No-Cost EMI";
+  } else if (finTexts.includes("easy emi") || finHeading.includes("easy emi")) {
+    emiTag = "Easy EMI Options";
+  } else if (
+    finTexts.includes("flexible emi") ||
+    finHeading.includes("flexible emi") ||
+    finTexts.includes("instalment") ||
+    finTexts.includes("installment")
+  ) {
+    emiTag = "Flexible EMI";
+  } else if (finTexts.includes("0%")) {
+    emiTag = "0% Interest EMI";
+  } else if (finTexts.includes("/mo") || finTexts.includes("/month")) {
+    const cardWithMo = finCards.find(
+      (c: any) =>
+        (c.value || "").includes("/mo") || (c.value || "").includes("/month")
+    );
+    if (cardWithMo) emiTag = cardWithMo.value.replace("*", "").trim();
+  }
+
+  if (emiTag) {
+    tags.push(emiTag);
+  } else if (finTexts.includes("loan")) {
+    tags.push("Education Loan");
+  }
+
+  // 3. Dynamic Hiring & Placement Support (Actual recruiter network)
+  const hiringLogos: any[] = uni?.details?.hiringNetwork?.logos || [];
+  const validLogos = hiringLogos.filter((l: any) => l.name || l.logoUrl);
+  if (validLogos.length > 0) {
+    tags.push(`${validLogos.length}+ Hiring Partners`);
+  } else if (uni?.details?.banner?.pointers?.items?.length) {
+    const jobPointer = uni.details.banner.pointers.items.find(
+      (p: any) =>
+        (p.heading || "").toLowerCase().includes("job") ||
+        (p.heading || "").toLowerCase().includes("corporate")
+    );
+    if (jobPointer) {
+      tags.push(`${jobPointer.mainText} ${jobPointer.heading}`.trim());
+    }
+  }
+
+  // 4. Dynamic Scholarship (if slot remains)
+  if (tags.length < 4) {
+    if (studentCategory && studentCategory.includes("defence")) {
+      tags.push("Defence Waiver");
+    } else if (studentCategory && studentCategory.includes("merit")) {
+      tags.push("Merit Scholarship");
+    } else if (finTexts.includes("scholarship")) {
+      tags.push("Scholarship Available");
+    }
+  }
+
+  // Fallback only if the university CMS record had 0 accreditation/financial/hiring details
+  if (tags.length === 0) {
+    tags.push("UGC Entitled", "Flexible EMI");
+  }
+
+  return tags.slice(0, 4);
 }
 
 export function buildDegreeRegex(rawCourse?: string): RegExp {
@@ -121,13 +256,14 @@ async function queryUniversityCoursesWithFilters(params: {
   // 1. Course Name Match
   const matchFilter: any = { name: queryRegex };
 
-  // 2. Budget Range Fallback Match
-  // A university course fee falls in the budget range when its fee range overlaps [budgetMin, budgetMax]
+  // 2. Budget Range Match
+  // Include courses within or below the maximum budget range ceiling
   const budgetMatch = {
     $or: [
-      { "feeRange.start": { $lte: budgetMax }, "feeRange.end": { $gte: budgetMin } },
-      { "feeRange.start": { $gte: budgetMin, $lte: budgetMax } },
-      { "feeRange.end": { $gte: budgetMin, $lte: budgetMax } },
+      { "feeRange.start": { $lte: budgetMax } },
+      { "feeRange.end": { $lte: budgetMax } },
+      { feeRange: null },
+      { "feeRange.start": { $exists: false } },
     ],
   };
 
@@ -263,7 +399,9 @@ export async function getRecommendationsForStudent(
     });
 
     if (coursesWithUni && coursesWithUni.length > 0) {
-      const items: RecommendationItem[] = coursesWithUni.map((doc: any) => {
+      const { min: budgetMin, max: budgetMax } = parseBudgetRange(budget);
+
+      const items = coursesWithUni.map((doc: any) => {
         const uni = doc.uni || {};
         const uniName: string = (uni.name || doc.universityName || "eCampus Partner University").trim();
         const durationStr = doc.duration || "24 Months";
@@ -285,6 +423,29 @@ export async function getRecommendationsForStudent(
           }
         }
 
+        const courseTotalFee =
+          typeof doc.feeRange?.start === "number" && doc.feeRange.start > 0
+            ? doc.feeRange.start
+            : annualFeeNum * durationYears;
+
+        // Determine budget tier:
+        // Tier 1: In selected budget range [budgetMin, budgetMax]
+        // Tier 2: Below selected budget range (< budgetMin)
+        // Tier 3: Above selected budget range (> budgetMax)
+        let tier = 1;
+        if (budget) {
+          if (
+            (courseTotalFee >= budgetMin && courseTotalFee <= budgetMax) ||
+            (annualFeeNum >= budgetMin && annualFeeNum <= budgetMax)
+          ) {
+            tier = 1;
+          } else if (courseTotalFee < budgetMin || annualFeeNum < budgetMin) {
+            tier = 2;
+          } else {
+            tier = 3;
+          }
+        }
+
         let courseTitle: string = doc.name;
         const specList = uni.details?.specializations?.list || [];
         const matchingSpec = specList.find((s: any) => {
@@ -299,29 +460,8 @@ export async function getRecommendationsForStudent(
           }
         }
 
-        // Generate accreditations & features tags
-        const tags: string[] = [];
-        const accList = uni.details?.accreditation?.list || [];
-        if (accList.length > 0) {
-          const naac = accList.find((a: any) => a.label?.toLowerCase().includes("naac"));
-          if (naac) tags.push(naac.label.trim());
-          else tags.push("NAAC A+");
-
-          const ugc = accList.find((a: any) => a.label?.toLowerCase().includes("ugc"));
-          if (ugc) tags.push("UGC Entitled");
-          else tags.push("UGC Entitled");
-        } else {
-          tags.push("NAAC A+", "UGC Entitled");
-        }
-
-        tags.push("Zero Cost EMI");
-        if (category && category.includes("defence")) {
-          tags.push("Defence/Govt Waiver");
-        } else if (category && category.includes("merit")) {
-          tags.push("Merit Scholarship");
-        } else {
-          tags.push("Top Recruiter Network");
-        }
+        // Dynamically extract real accreditations, financial assistance, and placement tags
+        const tags = extractDynamicTags(uni, doc, category);
 
         const ratingNum = doc.rating || uni.details?.banner?.rating || 4.8;
         const reviewsNum = uni.details?.banner?.reviewsCount || 1200;
@@ -338,6 +478,7 @@ export async function getRecommendationsForStudent(
           courseDegree: doc.name,
           courseName: courseTitle,
           annualFee: annualFeeNum,
+          totalFee: courseTotalFee,
           budget,
           highestQualification: qualification,
           category,
@@ -347,33 +488,54 @@ export async function getRecommendationsForStudent(
         });
 
         return {
-          id: doc._id?.toString() || doc.id || seedStr,
-          image: getUniversityCampusImage(uniName, uni.details?.banner?.image || uni.image),
-          match: `${score}% Match`,
+          rec: {
+            id: doc._id?.toString() || doc.id || seedStr,
+            image: getUniversityCampusImage(uniName, uni.details?.banner?.image || uni.image),
+            match: `${score}% Match`,
+            matchScore: score,
+            university: uniName.toUpperCase(),
+            rating: Number(ratingNum).toFixed(1),
+            reviews: reviewsStr,
+            applied: appliedNum,
+            seed: seedStr,
+            title: courseTitle,
+            tags: tags.slice(0, 4),
+            fee: formatIndianRupees(annualFeeNum),
+            duration: `${durationYears} Years`,
+            slug: doc.slug,
+          },
+          tier,
+          totalFee: courseTotalFee,
           matchScore: score,
-          university: uniName.toUpperCase(),
-          rating: Number(ratingNum).toFixed(1),
-          reviews: reviewsStr,
-          applied: appliedNum,
-          seed: seedStr,
-          title: courseTitle,
-          tags: tags.slice(0, 4),
-          fee: formatIndianRupees(annualFeeNum),
-          duration: `${durationYears} Years`,
-          slug: doc.slug,
+          rating: Number(ratingNum),
         };
       });
 
-      // Sort by match score descending
-      items.sort((a, b) => b.matchScore - a.matchScore);
+      // Sort logic:
+      // When student selects a budget:
+      // 1. Courses in range come first (Tier 1), then courses below (Tier 2), then above (Tier 3)
+      // 2. Within each tier, order is descending by fee!
+      // 3. Tie-breaker: match score descending, then rating descending
+      items.sort((a, b) => {
+        if (budget && a.tier !== b.tier) {
+          return a.tier - b.tier;
+        }
+        if (budget && b.totalFee !== a.totalFee) {
+          return b.totalFee - a.totalFee;
+        }
+        if (b.matchScore !== a.matchScore) {
+          return b.matchScore - a.matchScore;
+        }
+        return b.rating - a.rating;
+      });
 
       // Return top distinct universities
       const seenUnis = new Set<string>();
       const topItems: RecommendationItem[] = [];
       for (const item of items) {
-        if (!seenUnis.has(item.university)) {
-          seenUnis.add(item.university);
-          topItems.push(item);
+        if (!seenUnis.has(item.rec.university)) {
+          seenUnis.add(item.rec.university);
+          topItems.push(item.rec);
         }
         if (topItems.length >= 3) break;
       }
@@ -436,6 +598,8 @@ export async function getUniversityListings(params: {
       } as any,
     });
 
+    const { min: budgetMin, max: budgetMax } = parseBudgetRange(params.budget);
+
     const listings: UniversityCourseListing[] = docs.map((doc: any) => {
       const uni = doc.uni || {};
       const uniName: string = (uni.name || doc.universityName || "eCampus Partner University").trim();
@@ -458,10 +622,33 @@ export async function getUniversityListings(params: {
         }
       }
 
+      const courseTotalFee =
+        typeof doc.feeRange?.start === "number" && doc.feeRange.start > 0
+          ? doc.feeRange.start
+          : annualFeeNum * durationYears;
+
+      // Determine budget tier:
+      // Tier 1: In selected budget range [budgetMin, budgetMax]
+      // Tier 2: Below selected budget range (< budgetMin)
+      // Tier 3: Above selected budget range (> budgetMax)
+      let tier = 1;
+      if (params.budget) {
+        if (
+          (courseTotalFee >= budgetMin && courseTotalFee <= budgetMax) ||
+          (annualFeeNum >= budgetMin && annualFeeNum <= budgetMax)
+        ) {
+          tier = 1;
+        } else if (courseTotalFee < budgetMin || annualFeeNum < budgetMin) {
+          tier = 2;
+        } else {
+          tier = 3;
+        }
+      }
+
       const degreeToken = extractDegreeToken(doc.name);
       const specToken = extractSpecializationToken(doc.name, uni.details?.specializations?.list);
 
-      // Accreditations
+      // Accreditations for filtering
       const accreditations: string[] = [];
       const accList = uni.details?.accreditation?.list || [];
       if (accList.length > 0) {
@@ -470,15 +657,42 @@ export async function getUniversityListings(params: {
         if (accList.some((a: any) => a.label?.toLowerCase().includes("aicte"))) accreditations.push("AICTE");
         if (accList.some((a: any) => a.label?.toLowerCase().includes("wes"))) accreditations.push("WES");
       }
-      if (accreditations.length === 0) {
-        accreditations.push("NAAC", "UGC");
-      }
 
-      // Features
-      const features: string[] = ["ZeroCostEMI", "Placement"];
-      if (annualFeeNum < 90000 || params.category?.includes("merit") || params.category?.includes("defence")) {
-        features.push("Scholarship");
-      }
+      // Dynamic Features based on real financialAssistance & hiringNetwork
+      const finCards: any[] = uni.details?.financialAssistance?.cards || [];
+      const finHeading = (uni.details?.financialAssistance?.heading || "").toLowerCase();
+      const finAllText = [
+        finHeading,
+        ...finCards.map((c: any) => `${c.value || ""} ${c.text || ""} ${c.tag || ""}`),
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const hasEmi =
+        finAllText.includes("no-cost emi") ||
+        finAllText.includes("zero cost emi") ||
+        finAllText.includes("no cost emi") ||
+        finAllText.includes("0%") ||
+        finAllText.includes("emi");
+
+      const hasScholarship =
+        finAllText.includes("scholarship") ||
+        finAllText.includes("waiver") ||
+        finAllText.includes("grant") ||
+        annualFeeNum < 90000 ||
+        Boolean(params.category?.includes("merit") || params.category?.includes("defence"));
+
+      const hiringCount = uni.details?.hiringNetwork?.logos?.length || 0;
+      const hiringHeading = (uni.details?.hiringNetwork?.heading || "").toLowerCase();
+      const hasPlacement = hiringCount > 0 || hiringHeading.includes("placement") || hiringHeading.includes("recruitment");
+
+      const features: string[] = [];
+      if (hasEmi) features.push("ZeroCostEMI");
+      if (hasPlacement) features.push("Placement");
+      if (hasScholarship) features.push("Scholarship");
+
+      // Extract truly dynamic card tags for Degree Finder cards
+      const dynamicTags = extractDynamicTags(uni, doc, params.category);
 
       const ratingNum = Number(doc.rating || uni.details?.banner?.rating || 4.8);
       const reviewsNum = Number(uni.details?.banner?.reviewsCount || 950);
@@ -489,6 +703,7 @@ export async function getUniversityListings(params: {
         courseDegree: doc.name,
         courseName: doc.name,
         annualFee: annualFeeNum,
+        totalFee: courseTotalFee,
         budget: params.budget,
         highestQualification: params.qualification,
         category: params.category,
@@ -513,16 +728,37 @@ export async function getUniversityListings(params: {
         reviews: reviewsNum,
         applied: appliedNum,
         fee: annualFeeNum,
+        totalFee: courseTotalFee,
+        tier,
         scholarshipNote: features.includes("Scholarship") ? "Scholarships up to ₹15,000" : undefined,
         durationNote: doc.duration ? `100% Online · ${doc.duration}` : `100% Online · ${durationYears} Years Duration`,
         accreditations,
         features,
+        tags: dynamicTags,
         slug: doc.slug,
       };
     });
 
-    // Sort by match score descending
-    listings.sort((a, b) => b.matchScore - a.matchScore);
+    // Sort:
+    // If student selected a budget:
+    // 1. Courses in that budget range come first (Tier 1), then courses below (Tier 2), then above (Tier 3).
+    // 2. Within each tier, order is DESCENDING by fee!
+    // 3. If fees are equal, sort by matchScore descending, then rating.
+    listings.sort((a, b) => {
+      if (params.budget && (a.tier ?? 1) !== (b.tier ?? 1)) {
+        return (a.tier ?? 1) - (b.tier ?? 1);
+      }
+      const feeA = a.totalFee || a.fee * 2;
+      const feeB = b.totalFee || b.fee * 2;
+      if (params.budget && feeB !== feeA) {
+        return feeB - feeA;
+      }
+      if (b.matchScore !== a.matchScore) {
+        return b.matchScore - a.matchScore;
+      }
+      return b.rating - a.rating;
+    });
+
     return listings;
   } catch (error) {
     console.error("Error in getUniversityListings:", error);

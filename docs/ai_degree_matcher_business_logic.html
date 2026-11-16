@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Degree Matcher & Course Recommendation Engine — Business & Product Logic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --primary-dark: #3730a3;
+      --accent: #dc2626;
+      --accent-light: #fef2f2;
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--slate-800);
+      background-color: #f8fafc;
+      line-height: 1.65;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 48px 56px;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid var(--slate-100);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    .print-btn {
+      background: var(--slate-900);
+      color: var(--white);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+      background: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-top: 36px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--slate-700);
+      font-size: 14.5px;
+      margin-bottom: 14px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 20px 0 28px;
+    }
+
+    .metric-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 16px 20px;
+      background: var(--slate-50);
+    }
+
+    .metric-card .label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-card .val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-top: 4px;
+    }
+
+    .metric-card .desc {
+      font-size: 12px;
+      color: var(--slate-600);
+      margin-top: 4px;
+      margin-bottom: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 18px 0 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+
+    th {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    td {
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: var(--slate-700);
+      border-bottom: 1px solid var(--slate-200);
+      background: var(--white);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: #fafbfd;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-emerald { background: var(--emerald-light); color: var(--emerald); }
+    .badge-accent { background: var(--accent-light); color: var(--accent); }
+
+    .formula-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 18px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      margin: 18px 0;
+      border-left: 4px solid var(--primary);
+    }
+
+    .diagram-container {
+      background: #fafbfd;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .step-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .step-item {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 14px 12px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .step-item .icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .step-item .title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--slate-800);
+      margin-bottom: 2px;
+    }
+
+    .step-item .desc {
+      font-size: 11.5px;
+      color: var(--slate-500);
+      margin-bottom: 0;
+    }
+
+    .step-arrow {
+      color: var(--slate-400);
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+      font-size: 13.5px;
+      color: #1e40af;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      border-top: 1px solid var(--slate-200);
+      padding-top: 20px;
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--slate-500);
+      font-size: 12px;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .container { border: none; box-shadow: none; padding: 0; }
+      .print-btn { display: none; }
+      .header-bar { border-bottom: 1.5px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-bar">
+    <div>
+      <span class="brand-tag">eCampus Product & Business Logic</span>
+      <h1>AI Degree Matcher & Recommendation Engine</h1>
+      <div class="subtitle">System architecture, intent-matching pillars, and scoring algorithms for executive stakeholders</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"></path></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="label">Dynamic Match Range</div>
+      <div class="val" style="color: var(--primary);">76% – 98%</div>
+      <p class="desc">Calibrated for high confidence without misleading guarantees</p>
+    </div>
+    <div class="metric-card">
+      <div class="label">Evaluation Dimensions</div>
+      <div class="val" style="color: var(--emerald);">3 Pillars</div>
+      <p class="desc">Degree Intent, Budget Tolerance, Academic Eligibility</p>
+    </div>
+    <div class="metric-card">
+      <div class="label">Drop-Off Defense</div>
+      <div class="val" style="color: #ea580c;">100% Zero-Loss</div>
+      <p class="desc">Automatic constraint relaxation & curated fallback catalog</p>
+    </div>
+  </div>
+
+  <h2><span class="num">1</span> Executive Summary & Business Intent</h2>
+  <p>
+    Instead of burdening prospective students with hundreds of unstructured online university listings, the <strong>eCampus AI Matching Engine</strong> analyzes individual student credentials in real-time to compute individualized compatibility metrics.
+  </p>
+  <p>
+    This automated matching system delivers value on two fronts:
+  </p>
+  <ul style="padding-left: 20px; font-size: 14px; color: var(--slate-700); margin-bottom: 18px;">
+    <li style="margin-bottom: 6px;"><strong>For Students:</strong> Minimizes cognitive friction and decision paralysis by highlighting degree programs that directly fit their budget and eligibility.</li>
+    <li><strong>For Partner Universities:</strong> Delivers pre-qualified, high-intent student inquiries that match statutory admission eligibility and tuition expectations.</li>
+  </ul>
+
+  <div class="diagram-container">
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="icon-circle">1</div>
+        <div class="title">Student Intake</div>
+        <div class="desc">Degree, Budget, Qualification, Category</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="icon-circle">2</div>
+        <div class="title">3-Pillar DB Query</div>
+        <div class="desc">Live MongoDB join across approved courses</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="icon-circle">3</div>
+        <div class="title">Scoring Engine</div>
+        <div class="desc">Multi-variable weighted calculation (52-98)</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="icon-circle">4</div>
+        <div class="title">Dual Funnel</div>
+        <div class="desc">Overview Top 3 & AI Matcher Catalog</div>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="num">2</span> The 3 Core Evaluation Dimensions</h2>
+  <p>The query pipeline executes against the central MongoDB course catalog using three mandatory student profile criteria:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>Input Attribute</th>
+        <th>Business Processing Logic</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Program Intent</strong></td>
+        <td><span class="badge badge-primary">coursePreference</span></td>
+        <td>Normalizes free-form preferences into canonical degree tokens (e.g. <code>MBA</code>, <code>MCA</code>, <code>BCA</code>, <code>BBA</code>, <code>DBA</code>, <code>B.Com</code>) to query matching university programs.</td>
+      </tr>
+      <tr>
+        <td><strong>2. Budget Tolerance</strong></td>
+        <td><span class="badge badge-emerald">budget</span></td>
+        <td>Translates stated budgets (e.g. ₹2.0L – ₹2.5L) into numerical fee ranges. Ensures student tuition expectations match university fee structures.</td>
+      </tr>
+      <tr>
+        <td><strong>3. Academic Eligibility</strong></td>
+        <td><span class="badge badge-accent">highestQualification</span></td>
+        <td>Audits student credentials (12th, Diploma, Bachelor's, Post-Graduate) against UGC/AICTE degree pre-requisites.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">3</span> Compatibility Scoring Algorithm</h2>
+  <p>Compatibility scores are computed on a normalized curve with a calibrated floor and ceiling:</p>
+
+  <div class="formula-box">
+    MatchScore = clamp(76, 98, Base(52) + DegreeFit + Eligibility + BudgetFit + CategoryWaiver + UniRating)
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Scoring Component</th>
+        <th>Max Weight</th>
+        <th>Allocation Rules</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Degree Fit</strong></td>
+        <td><strong>+25 pts</strong></td>
+        <td><strong>+25 pts</strong> for exact course match.<br><strong>+15 pts</strong> for feeder degrees (BCA → MCA, BBA → MBA).<br><strong>+5 pts</strong> for cross-disciplinary courses.</td>
+      </tr>
+      <tr>
+        <td><strong>Eligibility Match</strong></td>
+        <td><strong>+10 pts</strong></td>
+        <td><strong>+10 pts</strong> for completed pre-requisites (e.g. Bachelor's grad taking a Master's degree).<br><strong>+6 pts</strong> if bridge verification or non-standard review is required.</td>
+      </tr>
+      <tr>
+        <td><strong>Budget Alignment</strong></td>
+        <td><strong>+10 pts</strong></td>
+        <td><strong>+10 pts</strong> if fees fall within student budget.<br><strong>+8 pts</strong> if under budget (savings bonus).<br><strong>+5 pts</strong> if moderately above budget (bridgeable via Zero-Cost EMI).</td>
+      </tr>
+      <tr>
+        <td><strong>Category Advantage</strong></td>
+        <td><strong>+3 pts</strong></td>
+        <td><strong>+3 pts</strong> for Defence, Merit, or Reserved categories eligible for statutory scholarship quotas.</td>
+      </tr>
+      <tr>
+        <td><strong>University Quality</strong></td>
+        <td><strong>+2 pts</strong></td>
+        <td><strong>+2 pts</strong> institutional reputation boost for partner universities holding ratings ≥ 4.5.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">4</span> Dual Platform Touchpoints</h2>
+  <p>The recommendation data serves two distinct user journeys depending on where the student is in their consideration cycle:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Touchpoint</th>
+        <th>Overview Screen (<code>/dashboard</code>)</th>
+        <th>AI Degree Finder (<code>/dashboard/matcher</code>)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>User Role</strong></td>
+        <td><strong>High-Intent Teaser</strong></td>
+        <td><strong>In-Depth Comparison & Discovery</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Volume</strong></td>
+        <td>Top <strong>3 distinct universities</strong> with highest score</td>
+        <td>Up to <strong>60 matched programs</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Key Content</strong></td>
+        <td>University campus image, match badge (e.g. 98%), annual fee, NAAC A+ / UGC tags, 1-Click CTA</td>
+        <td>Faceted sidebar (Degrees, Modes, Tuition slider, Accreditations, Placement, Scholarships)</td>
+      </tr>
+      <tr>
+        <td><strong>Student Action</strong></td>
+        <td>Immediate interest expression & advisor discussion</td>
+        <td>Side-by-side comparison (up to 4 programs) & 1-Click Apply</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">5</span> Business Continuity & Fallback Logic</h2>
+  <div class="callout">
+    <div class="callout-title">Zero-Drop-Off Guarantee</div>
+    Student bounce rates spike if search queries produce "0 Results Found". The engine implements two automatic guardrails:
+  </div>
+
+  <ul style="padding-left: 20px; font-size: 14px; color: var(--slate-700); margin-bottom: 24px;">
+    <li style="margin-bottom: 8px;"><strong>Dynamic Budget Relaxation:</strong> If a student selects an unrealistically low budget for a premium specialized degree, the database query automatically relaxes the budget constraint and surfaces verified Zero-Cost EMI options.</li>
+    <li><strong>Curated Standby Catalog:</strong> If database network latency occurs, pre-verified partner university benchmarks (Chandigarh University, NMIMS, Amity, Manipal) are dynamically scored and served to ensure zero UI interruption.</li>
+  </ul>
+
+  <div class="footer">
+    <span>eCampus Learning Technologies Private Limited</span>
+    <span>Confidential — Internal Business & Technical Reference</span>
+  </div>
+</div>
+
+</body>
+</html>

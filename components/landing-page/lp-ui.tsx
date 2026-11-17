@@ -30,10 +30,13 @@ export function LpHeading({
   heading,
   description,
   eyebrow,
+  descriptionClassName = "text-[15px]",
 }: {
   heading: string;
   description?: React.ReactNode;
   eyebrow?: React.ReactNode;
+  /** Mobile-only sizing/wrapping for the description (sm and up always use text-base) */
+  descriptionClassName?: string;
 }) {
   return (
     <div className="mx-auto mb-6 max-w-3xl text-center sm:mb-8">
@@ -42,10 +45,14 @@ export function LpHeading({
           {eyebrow}
         </p>
       )}
-      <h2 className="text-[26px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+      <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
         <HighlightedTitle text={heading} fallbackLastWord highlightClassName="text-red-600" />
       </h2>
-      {description && <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-base">{description}</p>}
+      {description && (
+        <p className={`mx-auto mt-3 max-w-2xl leading-relaxed text-slate-600 sm:text-base ${descriptionClassName}`}>
+          {description}
+        </p>
+      )}
     </div>
   );
 }

@@ -101,7 +101,7 @@ export default function TestimonialsSection({ university }: TestimonialsProps) {
             {reviewsData.badge || "Student Reviews"}
           </span>
 
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
+          <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl lg:text-3xl ">
             {reviewsData.heading ? (
               <HighlightedText text={reviewsData.heading} />
             ) : (

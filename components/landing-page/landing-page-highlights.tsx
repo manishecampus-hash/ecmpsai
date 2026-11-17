@@ -125,34 +125,78 @@ export function LandingPageHighlights({ highlights, formCourses }: LandingPageHi
         </div>
       </LpReveal>
 
-      {/* Mobile: one card per feature, DBA answer highlighted */}
-      <div className="space-y-3 md:hidden">
-        {rows.map((row, r) => {
-          const Icon = ROW_ICONS[r % ROW_ICONS.length];
-          return (
-            <div key={row.id || row.title} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-              <div className="flex items-center gap-3 px-4 pt-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-red-50 text-red-600 ring-1 ring-red-100">
-                  <Icon className="h-4 w-4" strokeWidth={2} />
+      {/* Mobile: compact comparison table — every feature and column visible at once */}
+      <div className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] ring-1 ring-slate-200 md:hidden">
+        <table className="w-full table-fixed border-collapse text-left">
+          <colgroup>
+            <col className="w-[28%]" />
+            <col className={others.length > 0 ? "w-[38%]" : "w-[72%]"} />
+            {others.map((col) => (
+              <col key={col.id} style={{ width: `${34 / others.length}%` }} />
+            ))}
+          </colgroup>
+
+          {/* Header row — one colour across all columns */}
+          <thead>
+            <tr className="bg-gradient-to-r from-red-600 to-rose-500 text-white">
+              <th scope="col" className="px-3 py-3.5 align-middle text-[11px] font-bold uppercase tracking-wide">
+                Features
+              </th>
+              <th scope="col" className="px-3 py-3.5 align-middle">
+                <span className="flex items-center gap-1 text-[15px] font-extrabold leading-none">
+                  {lead.title}
+                  <Crown className="h-3.5 w-3.5 text-amber-200" />
                 </span>
-                <h3 className="text-[15px] font-bold text-slate-900">{row.title}</h3>
-              </div>
-              <div className="m-3 rounded-xl border border-red-200 bg-red-50/60 p-3">
-                <p className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-red-600">
-                  <Check className="h-3.5 w-3.5" strokeWidth={3} /> {lead.title}
-                  {r === 0 && <span className="ml-auto rounded-full bg-red-600 px-2 py-0.5 text-[9px] text-white">Recommended</span>}
-                </p>
-                <p className="text-sm font-medium leading-relaxed text-slate-800">{row.columnValues?.[lead.id] || "—"}</p>
-              </div>
+                <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-red-100">
+                  Recommended
+                </span>
+              </th>
               {others.map((col) => (
-                <div key={col.id} className="mx-3 mb-3 px-3">
-                  <p className="mb-0.5 text-[11px] font-bold uppercase tracking-wide text-slate-400">{col.title}</p>
-                  <p className="text-sm leading-relaxed text-slate-500">{row.columnValues?.[col.id] || "—"}</p>
-                </div>
+                <th key={col.id} scope="col" className="px-3 py-3.5 align-middle">
+                  <span className="block text-[15px] font-extrabold leading-none">{col.title}</span>
+                  <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-red-100">
+                    Research track
+                  </span>
+                </th>
               ))}
-            </div>
-          );
-        })}
+            </tr>
+          </thead>
+
+          <tbody>
+            {rows.map((row, r) => {
+              const Icon = ROW_ICONS[r % ROW_ICONS.length];
+              const zebra = r % 2 === 1 ? "bg-slate-50/70" : "bg-white";
+              return (
+                <tr key={row.id || row.title} className={`align-top ${r > 0 ? "border-t border-slate-100" : ""} ${zebra}`}>
+                  <th scope="row" className="px-3 py-3.5 font-normal">
+                    <span className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white text-red-600 shadow-sm ring-1 ring-red-100">
+                      <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+                    </span>
+                    <span className="block text-[12px] font-bold leading-snug text-slate-900">{row.title}</span>
+                  </th>
+                  <td className="border-x border-red-100 bg-red-50/50 px-3 py-3.5 leading-none">
+                    <span className="mb-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white">
+                      <Check className="h-2.5 w-2.5" strokeWidth={4} />
+                    </span>
+                    <span className="block text-[11.5px] font-medium leading-[1.45] text-slate-800">
+                      {row.columnValues?.[lead.id] || "—"}
+                    </span>
+                  </td>
+                  {others.map((col) => (
+                    <td key={col.id} className="px-3 py-3.5 leading-none">
+                      <span className="mb-2 flex h-4 w-4 items-center justify-center rounded-full bg-slate-200/70 text-slate-500">
+                        <Minus className="h-2.5 w-2.5" strokeWidth={4} />
+                      </span>
+                      <span className="block text-[11.5px] leading-[1.45] text-slate-500">
+                        {row.columnValues?.[col.id] || "—"}
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       {/* Lead prompt */}

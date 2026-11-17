@@ -51,6 +51,24 @@ export function isExternalUrl(url: string): boolean {
 }
 
 /**
+ * Normalises a university slug from the API (e.g. "/university/gla-university-online")
+ * into the bare slug used by the /study/[slug] LMS detail page.
+ */
+export function cleanUniversitySlug(slug?: string): string {
+  return (slug || "")
+    .trim()
+    .replace(/^\/?(university|universities)\//i, "")
+    .replace(/^\/+|\/+$/g, "")
+    .toLowerCase();
+}
+
+/** Route of the intermediate LMS detail page for a university. */
+export function buildStudyDetailUrl(slug?: string): string | null {
+  const clean = cleanUniversitySlug(slug);
+  return clean ? `/study/${clean}` : null;
+}
+
+/**
  * Formats a raw list of university documents into DynamicUniversity items,
  * filtering strictly for those with LMS enabled.
  */

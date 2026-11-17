@@ -18,8 +18,6 @@ import {
   Shield,
   Download,
   MapPin,
-  Send,
-  Search,
   Volume2,
   Sparkles,
   Award,
@@ -243,6 +241,43 @@ export default function UniversityHeroWithStats({
     }
   };
 
+  // Approval ribbon badges — rendered beside the logo
+  const ribbonBadges = (
+    <>
+          {/* UGC Approved Toggle Badge */}
+          {university?.ugcApproval !== false && (
+            <span className="inline-flex items-center gap-[3px] sm:gap-1.5 rounded-full bg-red-50 text-[#ea384c] border border-red-200/80 px-1.5 py-0.5 text-[clamp(9px,2.6vw,10px)] font-semibold tracking-normal sm:tracking-wide sm:px-3 sm:py-1 sm:text-xs">
+              <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#ea384c]" />
+              <span>UGC Approved</span>
+            </span>
+          )}
+
+          {/* NIRF Ranked Toggle Badge */}
+          {(university?.nirfRanked ?? (Boolean(university?.nirfRanking && university?.nirfRanking.trim() !== ""))) ? (
+            <span className="inline-flex items-center gap-[3px] sm:gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-1.5 py-0.5 text-[clamp(9px,2.6vw,10px)] font-semibold tracking-normal sm:tracking-wide sm:px-3 sm:py-1 sm:text-xs">
+              <Award className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-500" />
+              <span>NIRF Ranked {university?.nirfRanking ? `(#${university.nirfRanking.replace(/^#/, "")})` : ""}</span>
+            </span>
+          ) : null}
+
+          {/* WES Approved Toggle Badge */}
+          {university?.wesApproval && (
+            <span className="inline-flex items-center gap-[3px] sm:gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-1.5 py-0.5 text-[clamp(9px,2.6vw,10px)] font-semibold tracking-normal sm:tracking-wide sm:px-3 sm:py-1 sm:text-xs">
+              <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-500" />
+              <span>WES Recognized</span>
+            </span>
+          )}
+
+          {/* EMI Facility Toggle Badge */}
+          {university?.emiFacility && (
+            <span className="inline-flex items-center gap-[3px] sm:gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-1.5 py-0.5 text-[clamp(9px,2.6vw,10px)] font-semibold tracking-normal sm:tracking-wide sm:px-3 sm:py-1 sm:text-xs">
+              <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-500" />
+              <span>EMI Available</span>
+            </span>
+          )}
+    </>
+  );
+
   return (
     <header className="relative w-full bg-slate-50/50 pb-8 sm:pb-12 lg:pb-14">
       {/* ── 1. Hero Cover Banner ── */}
@@ -261,59 +296,32 @@ export default function UniversityHeroWithStats({
       {/* ── 2. Floating Crisp & Executive Identity Card ── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative -mt-20 sm:-mt-24 lg:-mt-28 z-20">
-          <div className="rounded-3xl bg-white p-6 sm:p-8 lg:p-9 shadow-[0_12px_40px_rgba(15,23,42,0.06)] border border-slate-200/90 transition-all">
+          <div className="rounded-3xl bg-white p-5 sm:p-8 lg:p-9 shadow-[0_12px_40px_rgba(15,23,42,0.06)] border border-slate-200/90 transition-all">
             
             {/* Top Row: Logo, Title, Badges & Primary Actions */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 pb-6 sm:pb-7 border-b border-slate-100">
               {/* Left Column: Logo + Main Headings */}
-              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 min-w-0 flex-1">
-                {/* University Logo Container */}
-                <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-2xl bg-white p-2.5 shadow-sm border border-slate-200/80">
-                  <img
-                    src={bannerLogo}
-                    alt={`${bannerHeading} Logo`}
-                    className="h-full w-full object-contain"
-                  />
+              <div className="flex flex-col items-start gap-4 min-w-0 flex-1">
+                {/* Logo row — logo sits half over the cover image with the badges beside it; title below */}
+                <div className="flex w-full items-start gap-2 sm:gap-3">
+                  {/* University Logo Container */}
+                  <div className="relative z-10 -mt-14 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-2.5 shadow-[0_10px_24px_-8px_rgba(15,23,42,0.25)] sm:-mt-20 sm:h-24 sm:w-24 lg:-mt-[84px]">
+                    <img
+                      src={bannerLogo}
+                      alt={`${bannerHeading} Logo`}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+
+                  {/* Ribbon badges beside the logo */}
+                  <div className="-mt-2 flex min-w-0 flex-1 flex-wrap items-center gap-[3px] sm:-mt-[22px] sm:gap-2 lg:-mt-[26px]">
+                    {ribbonBadges}
+                  </div>
                 </div>
 
                 {/* Title & Trust Metadata */}
                 <div className="min-w-0 flex-1 space-y-2">
-                  {/* Dynamic Ribbon Badges */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {/* UGC Approved Toggle Badge */}
-                    {university?.ugcApproval !== false && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 text-[#ea384c] border border-red-200/80 px-3 py-1 text-xs font-semibold tracking-wide">
-                        <Shield className="h-3.5 w-3.5 text-[#ea384c]" />
-                        <span>UGC Approved</span>
-                      </span>
-                    )}
-
-                    {/* NIRF Ranked Toggle Badge */}
-                    {(university?.nirfRanked ?? (Boolean(university?.nirfRanking && university?.nirfRanking.trim() !== ""))) ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-3 py-1 text-xs font-semibold tracking-wide">
-                        <Award className="h-3.5 w-3.5 text-slate-500" />
-                        <span>NIRF Ranked {university?.nirfRanking ? `(#${university.nirfRanking.replace(/^#/, "")})` : ""}</span>
-                      </span>
-                    ) : null}
-
-                    {/* WES Approved Toggle Badge */}
-                    {university?.wesApproval && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-3 py-1 text-xs font-semibold tracking-wide">
-                        <Globe className="h-3.5 w-3.5 text-slate-500" />
-                        <span>WES Recognized</span>
-                      </span>
-                    )}
-
-                    {/* EMI Facility Toggle Badge */}
-                    {university?.emiFacility && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200/80 px-3 py-1 text-xs font-semibold tracking-wide">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" />
-                        <span>EMI Available</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="pt-0.5">
+                  <div>
                     <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
                       {bannerHeading}
                     </h1>
@@ -325,14 +333,14 @@ export default function UniversityHeroWithStats({
                   </div>
 
                   {/* Rating & Social Proof */}
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs sm:text-sm pt-0.5">
+                  <div className="flex flex-nowrap items-center gap-x-2 gap-y-1.5 text-xs sm:flex-wrap sm:gap-x-4 sm:text-sm pt-0.5">
                     {/* Stars */}
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex items-center gap-0.5">
+                    <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+                      <div className="flex items-center gap-px sm:gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                            className={`h-3 w-3 sm:h-4 sm:w-4 ${
                               i < Math.floor(bannerRating)
                                 ? "fill-amber-400 text-amber-400"
                                 : "fill-slate-200 text-slate-200"
@@ -340,26 +348,26 @@ export default function UniversityHeroWithStats({
                           />
                         ))}
                       </div>
-                      <span className="font-bold text-slate-900 text-sm">
+                      <span className="font-bold text-slate-900 text-[13px] sm:text-sm">
                         {bannerRating.toFixed(1)}
                       </span>
-                      <span className="text-slate-500 font-normal text-xs">
-                        ({bannerReviews} verified reviews)
+                      <span className="whitespace-nowrap text-slate-500 font-normal text-[11px] sm:text-xs">
+                        ({bannerReviews} <span className="hidden sm:inline">verified </span>reviews)
                       </span>
                     </div>
 
-                    <span className="h-3.5 w-px bg-slate-200 hidden sm:inline-block" />
+                    <span className="inline-block h-3.5 w-px shrink-0 bg-slate-200" />
 
                     {/* Trusted Badge */}
-                    <div className="flex items-center gap-1.5 text-slate-600 font-medium text-xs sm:text-sm">
+                    <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-slate-600 font-medium text-[11px] sm:gap-1.5 sm:text-sm">
                       {bannerTrustedIcon ? (
                         <img
                           src={bannerTrustedIcon}
                           alt="Trust"
-                          className="h-4 w-4 shrink-0 object-contain"
+                          className="h-3.5 w-3.5 shrink-0 object-contain sm:h-4 sm:w-4"
                         />
                       ) : (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 sm:h-4 sm:w-4" />
                       )}
                       <span>{bannerTrustedText}</span>
                     </div>
@@ -367,28 +375,6 @@ export default function UniversityHeroWithStats({
                 </div>
               </div>
 
-              {/* Right Column: Clean, Focused Action Panel */}
-              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full sm:w-auto lg:w-64">
-                {/* Primary Action: Apply to University */}
-                <button
-                  type="button"
-                  onClick={() => (applyHref ? router.push(applyHref) : setShowApplicationForm(true))}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ea384c] hover:bg-[#d62d40] active:scale-[0.99] py-3.5 px-6 text-sm font-bold text-white shadow-sm hover:shadow transition-all cursor-pointer"
-                >
-                  <Send className="h-4 w-4" fill="currentColor" />
-                  <span>{primaryCtaText}</span>
-                </button>
-
-                {/* Secondary Action: Explore Courses */}
-                <button
-                  type="button"
-                  onClick={scrollToCourses}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:scale-[0.99] py-3 px-5 text-sm font-semibold text-slate-700 transition-colors shadow-2xs hover:border-slate-300 cursor-pointer"
-                >
-                  <Search className="h-4 w-4 text-slate-500" />
-                  <span>{secondaryCtaText}</span>
-                </button>
-              </div>
             </div>
 
             {/* Bottom Row: Classic Stat Highlights & AI Compare Feature */}

@@ -31,8 +31,10 @@ export function LandingPagePartners({ partners }: LandingPagePartnersProps) {
     return null;
   }
 
-  const sectionHeading =
-    partners?.sectionHeading || "Our Top *Global University Partners*";
+  // "Our Top Global University Partners" → "Top Global University Partners"
+  const sectionHeading = (
+    partners?.sectionHeading || "Top *Global University Partners*"
+  ).replace(/^\s*Our\s+/i, "");
   const sectionDescription = partners?.sectionDescription;
 
 

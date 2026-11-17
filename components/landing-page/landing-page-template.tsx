@@ -49,13 +49,25 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
   const experience = data.slug === "online-dba" && data.experience
     ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
     : data.experience;
-  const COUNSELLOR_NAMES = ["Harsh Sharma", "Vishal Kumar"];
+  // DBA counsellors (name, photo and experience); rating & students counselled still come from the CMS
+  const DBA_COUNSELLORS = [
+    {
+      name: "Priya Verma",
+      image: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/Priya.png",
+      experience: "7+ Yrs. Experience",
+    },
+    {
+      name: "Prithvi Kumar",
+      image: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/shivi.png",
+      experience: "2+ Yrs. Experience",
+    },
+  ];
   const counsellorsSection = data.counsellorsSection && isDba
     ? {
         ...data.counsellorsSection,
         counsellors: data.counsellorsSection.counsellors?.map((c, i) => ({
           ...c,
-          name: COUNSELLOR_NAMES[i] ?? c.name,
+          ...(DBA_COUNSELLORS[i] ?? {}),
         })),
       }
     : data.counsellorsSection;

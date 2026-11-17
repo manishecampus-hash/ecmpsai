@@ -491,6 +491,7 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
   const [isSticky, setIsSticky] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const mainHeaderHeight = 70; // must match your main header CSS height (px)
@@ -566,6 +567,18 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
     return () => window.removeEventListener("scroll", handleScroll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // As the page scrolls through sections, slide the link strip so the active link stays visible
+  useEffect(() => {
+    const strip = scrollRef.current;
+    const btn = itemRefs.current[activeId];
+    if (!strip || !btn) return;
+    const offsetInStrip =
+      btn.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+    const target = offsetInStrip - (strip.clientWidth - btn.offsetWidth) / 2;
+    const max = strip.scrollWidth - strip.clientWidth;
+    strip.scrollTo({ left: Math.max(0, Math.min(target, max)), behavior: "smooth" });
+  }, [activeId]);
 
   // Toggle main header hidden class when isSticky changes
   useEffect(() => {
@@ -643,7 +656,8 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
           border-color: #fecaca;
         }
         .subheader-arrow:disabled {
-          opacity: 0;
+          opacity: 0.4;
+          cursor: default;
           pointer-events: none;
         }
 
@@ -653,8 +667,9 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
           gap: 0.5rem;
         }
         .subheader-scroll {
-          gap: 0.75rem;
+          gap: 0.25rem;
           padding-right: 0.25rem;
+          scroll-padding-inline: 0.5rem;
         }
         .subheader-item {
           padding: 0.5rem 0.4rem;
@@ -667,7 +682,7 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
             gap: 0.35rem !important;
           }
           .subheader-scroll {
-            gap: 0.9rem !important;
+            gap: 0.25rem !important;
             padding: 0 0.25rem !important;
           }
           .subheader-item {
@@ -715,6 +730,9 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
             return (
               <button
                 key={item.id}
+                ref={(el) => {
+                  itemRefs.current[item.id] = el;
+                }}
                 onClick={() => handleClick(item.id)}
                 className="subheader-item"
                 style={{
@@ -726,9 +744,6 @@ export default function SubHeader({ university, universityName }: SubHeaderProps
                   color: isActive ? "#ef4444" : "#111827",
                   cursor: "pointer",
                   transition: "color 0.2s ease",
-                  borderBottom: isActive
-                    ? "3px solid #ef4444"
-                    : "3px solid transparent",
                 }}
               >
                 {item.label}

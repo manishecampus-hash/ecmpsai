@@ -11,6 +11,10 @@ import {
   ChevronRight,
   ChevronRight as ArrowRight,
   Star,
+  GraduationCap,
+  Award,
+  Sparkles,
+  Compass,
 } from "lucide-react";
 import HighlightedText from "./HighlightedText";
 
@@ -126,6 +130,16 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
       { key: "explore", label: "Explore Online Courses" },
     ];
   }, [dbCourses, categoryMap, isLoading]);
+
+  // Display-only icon for each filter tab (shown on mobile tiles)
+  const tabIcon = (tab: { key: string; label: string }) => {
+    const label = tab.label.toLowerCase();
+    if (tab.key === "top") return Sparkles;
+    if (tab.key === "explore") return Compass;
+    if (/\bug\b|under ?grad/.test(label)) return GraduationCap;
+    if (/\bpg\b|post ?grad/.test(label)) return Award;
+    return BookOpen;
+  };
 
   const currentActiveCategory =
     activeCategory && categoryTabs.some((t) => t.key === activeCategory)
@@ -296,7 +310,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   };
 
   return (
-    <section id="courses" className="mx-auto max-w-7xl px-3 pt-1 pb-4 sm:px-6 sm:pt-3 sm:pb-6 lg:px-8 lg:pt-5 lg:pb-6">
+    <section id="courses" className="mx-auto max-w-7xl px-3 pt-1 pb-4 sm:px-6 sm:pt-2 sm:pb-6 lg:px-8 lg:pt-3 lg:pb-6">
       {isLoading ? (
         <div className="flex justify-center items-center py-20 w-full">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-red-500 border-t-transparent"></div>
@@ -326,9 +340,12 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
           {/* Main Card Container where table & filters are displayed */}
           <div className="mx-auto w-full max-w-7xl rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-8 lg:p-10 shadow-xs">
             {/* Main Category Filter inside the div where table is showing */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 pb-6 border-b border-slate-100">
-              {categoryTabs.map((tab) => {
+            {/* Mobile: 2-column tile grid in a soft tray. sm and up: the original pill row */}
+            <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-50 p-2 ring-1 ring-slate-200/70 mb-6 sm:mb-8 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 sm:rounded-none sm:bg-transparent sm:p-0 sm:pb-6 sm:ring-0 sm:border-b sm:border-slate-100">
+              {categoryTabs.map((tab, tabIndex) => {
                 const isActive = currentActiveCategory === tab.key;
+                const TabIcon = tabIcon(tab);
+                const spanFull = categoryTabs.length % 2 === 1 && tabIndex === categoryTabs.length - 1;
                 return (
                   <button
                     key={tab.key}
@@ -337,13 +354,22 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                       setActiveCategory(tab.key);
                       setCurrentPage(1);
                     }}
-                    className={`rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap text-center ${
+                    className={`group flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-2.5 text-[11.5px] leading-tight font-semibold transition-all duration-200 cursor-pointer text-center active:scale-[0.98] sm:min-h-0 sm:flex-row sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm sm:leading-normal sm:whitespace-nowrap sm:active:scale-100 ${
+                      spanFull ? "col-span-2" : ""
+                    } ${
                       isActive
-                        ? "bg-[#ea384c] text-white shadow-sm shadow-red-200/60"
-                        : "bg-slate-50 border border-slate-200/80 text-slate-600 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-300"
+                        ? "border-transparent bg-[#ea384c] text-white shadow-md shadow-red-500/25 sm:shadow-sm sm:shadow-red-200/60"
+                        : "border-slate-200/80 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 sm:bg-slate-50 sm:hover:bg-slate-100"
                     }`}
                   >
-                    {tab.label}
+                    <span
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors sm:hidden ${
+                        isActive ? "bg-white/20 text-white" : "bg-red-50 text-[#ea384c] ring-1 ring-red-100"
+                      }`}
+                    >
+                      <TabIcon className="h-4 w-4" />
+                    </span>
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}

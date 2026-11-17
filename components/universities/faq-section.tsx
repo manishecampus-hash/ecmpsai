@@ -79,12 +79,12 @@ export default function FAQSection({ university }: FAQSectionProps) {
       {/* FAQ Grid Wrapper layout split */}
       <div className="grid gap-12 lg:grid-cols-12 lg:items-start">
         {/* LEFT COLUMN: Structural Visual Prompt Header (Span 4) */}
-        <div className="lg:col-span-4 lg:sticky lg:top-8">
+        <div className="text-center lg:col-span-4 lg:sticky lg:top-8 lg:text-left">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
             <CircleHelp className="h-3.5 w-3.5 text-red-500" />
             {sdData.badge || "Support Desk"}
           </span>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl text-left lg:text-3xl">
+          <h2 className="mt-3 whitespace-nowrap text-[clamp(20px,6vw,24px)] font-bold text-gray-900 sm:whitespace-normal sm:text-4xl lg:text-3xl">
             {sdData.heading ? (
               <HighlightedText text={sdData.heading} />
             ) : (

@@ -73,12 +73,12 @@ export function LandingPageFaq({ faqSection, formCourses }: LandingPageFaqProps)
             FAQ
           </span>
 
-          <h2 className="mt-2 text-2xl font-extrabold leading-tight tracking-[-0.5px] text-gray-900 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-2 text-[22px] font-extrabold leading-tight tracking-[-0.5px] text-gray-900 sm:text-3xl lg:text-4xl">
             <HighlightedTitle text={sectionHeading} fallbackLastWord highlightClassName="text-red-500" />
           </h2>
 
           <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-600">
-            Quick answers about eligibility, curriculum, recognition and learning format.
+            Quick answers on eligibility, curriculum &amp; format.
           </p>
 
           <div className="mt-6 hidden w-full lg:block">{helpCard}</div>

@@ -31,8 +31,10 @@ export function LandingPageCounsellors({
   )
     return null;
 
-  const sectionHeading =
-    counsellorsSection.sectionHeading || "Meet Our Counsellors";
+  // "Meet Our Counsellors" → "Meet Your Counsellors"
+  const sectionHeading = (
+    counsellorsSection.sectionHeading || "Meet Your Counsellors"
+  ).replace(/\bOur\b/, "Your");
   const counsellors = counsellorsSection.counsellors;
 
   const grid =

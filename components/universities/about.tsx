@@ -31,7 +31,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
   return (
     <section
       id="why"
-      className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 pt-0 pb-8 sm:pb-12 font-sans"
+      className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 pt-0 pb-4 sm:pb-6 font-sans"
     >
       <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 lg:p-10 xl:p-12 shadow-xs">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14">
@@ -64,7 +64,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
           {/* Right Column: Copy & Feature Pills */}
           <div className="lg:col-span-6 w-full text-left pt-2 lg:pt-0">
             {/* Badge */}
-            <div className="flex items-center gap-2 mb-2.5">
+            <div className="flex items-center justify-center gap-2 mb-2.5 lg:justify-start">
               <GraduationCap className="h-4 w-4 text-[#ea384c]" />
               <span className="text-xs font-bold text-[#ea384c] uppercase tracking-wider">
                 {aboutData?.badge || "ABOUT THE UNIVERSITY"}
@@ -72,12 +72,12 @@ export default function AboutProgram({ university }: AboutProgramProps) {
             </div>
 
             {/* Heading */}
-            <h2 className="text-2xl sm:text-3xl lg:text-3xl xl:text-[34px] font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+            <h2 className="text-center lg:text-left text-2xl sm:text-3xl lg:text-3xl xl:text-[34px] font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
               <HighlightedText text={headingText} defaultColor="#ea384c" />
             </h2>
 
             {/* Description */}
-            <div className="text-xs sm:text-[13px] xl:text-sm text-slate-600 leading-relaxed space-y-3.5 font-normal mb-6 sm:mb-7 [&_strong]:font-semibold [&_strong]:text-slate-900">
+            <div className="text-justify [hyphens:auto] lg:text-left lg:[hyphens:manual] text-xs sm:text-[13px] xl:text-sm text-slate-600 leading-relaxed space-y-3.5 font-normal mb-6 sm:mb-7 [&_strong]:font-semibold [&_strong]:text-slate-900">
               {aboutData?.description ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: aboutData.description }}

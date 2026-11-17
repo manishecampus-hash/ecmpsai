@@ -214,13 +214,21 @@ export default function SampleCertificateSection({
 
       <section
         id="certificate"
-        className="bg-white px-4 pt-12 pb-14 sm:px-6 sm:pt-16 lg:px-8 lg:pb-20 font-[Inter] border-t border-slate-100"
+        className="bg-white px-4 pt-7 pb-14 sm:px-6 sm:pt-10 lg:px-8 lg:pb-20 font-[Inter] border-t border-slate-100"
       >
         <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-5 lg:gap-6">
           {/* Left: heading, description & checklist */}
-          <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-3xl">
+          <div className="text-center lg:col-span-3 lg:text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-xs font-bold text-slate-900 uppercase tracking-wider">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-red-500" aria-hidden="true">
+                <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" />
+                <path d="M22 10v6" />
+                <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
+              </svg>
+              Degree
+            </span>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl lg:text-3xl">
               {certData.heading ? (
                 <HighlightedText text={certData.heading} />
               ) : (
@@ -231,12 +239,12 @@ export default function SampleCertificateSection({
               )}
             </h2>
 
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600">
+            <p className="mx-auto mt-5 max-w-2xl text-justify text-base leading-relaxed text-slate-600 [hyphens:auto] lg:mx-0 lg:text-left lg:[hyphens:manual]">
               {certData.description ||
                 `Become alumnus of ${universityName} Online and get a UGC-approved online degree. The degree awarded by the university is also been accredited by WES, etc.`}
             </p>
 
-            <ul className="mt-5 space-y-4">
+            <ul className="mx-auto mt-5 w-fit max-w-full space-y-4 text-left lg:mx-0 lg:w-auto">
               {checklist.map((item: string) => (
                 <li
                   key={item}

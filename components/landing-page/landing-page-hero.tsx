@@ -83,19 +83,19 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
       <div className="pointer-events-none absolute -top-28 left-1/2 h-[420px] w-full max-w-6xl -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08),transparent_70%)]" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="grid items-center gap-10 py-10 sm:gap-12 sm:py-12 lg:grid-cols-12 lg:gap-14 lg:py-14">
+        <div className="grid items-center gap-4 py-10 sm:gap-12 sm:py-12 lg:grid-cols-12 lg:gap-14 lg:py-14">
           {/* ================= LEFT CONTENT ================= */}
           <div className="flex flex-col items-start gap-5 lg:col-span-7">
             {/* Tag / Pre-headline */}
             <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-red-50/90 px-4 py-1.5 text-xs font-bold text-red-600 shadow-2xs backdrop-blur-xs">
               <Sparkles className="h-3.5 w-3.5 text-red-500" />
-              <span className="tracking-wider uppercase text-[11px] font-extrabold">
+              <span className="tracking-normal uppercase text-[11px] font-extrabold sm:tracking-wider">
                 Accelerate Your Career
               </span>
             </div>
 
             {/* Heading */}
-            <h1 className="m-0 text-3xl font-black leading-[1.12] tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[52px]">
+            <h1 className="m-0 text-[26px] font-black leading-[1.12] tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[52px]">
               <HighlightedTitle text={hero.mainHeading} />
             </h1>
 
@@ -107,29 +107,28 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
             )}
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+            {/* Mobile: both CTAs on one line with smaller text. sm and up: unchanged */}
+            <div className="flex w-full flex-nowrap items-center gap-2 pt-2 sm:w-auto sm:flex-wrap sm:gap-3.5">
               {hero.primaryCtaUrl?.startsWith("http") ? (
                 <a
                   href={hero.primaryCtaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0"
+                  className="group inline-flex min-h-[44px] flex-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-base"
                 >
                   <span>{ctaText}</span>
                   <ArrowRight
-                    size={18}
-                    className="transition-transform duration-200 group-hover:translate-x-1"
+                    className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
                   />
                 </a>
               ) : (
                 <ApplyNowButton
                   courses={formCourses}
-                  className="group inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0"
+                  className="group inline-flex min-h-[44px] flex-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-base"
                 >
                   <span>{ctaText}</span>
                   <ArrowRight
-                    size={18}
-                    className="transition-transform duration-200 group-hover:translate-x-1"
+                    className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
                   />
                 </ApplyNowButton>
               )}
@@ -137,7 +136,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
               {hero.secondaryCtaText && (
                 <a
                   href={hero.secondaryCtaUrl || "#"}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl border border-slate-300/80 bg-white px-6 py-3.5 text-sm sm:text-base font-semibold text-slate-700 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm active:translate-y-0"
+                  className="inline-flex min-h-[44px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300/80 bg-white px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-semibold text-slate-700 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:px-6 sm:py-3.5 sm:text-base"
                 >
                   {hero.secondaryCtaText}
                 </a>
@@ -154,7 +153,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
                 <ShieldCheck className="h-4 w-4 text-red-500 shrink-0" />
                 <span>Globally Recognized</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 sm:flex">
                 <Award className="h-4 w-4 text-amber-500 shrink-0" />
                 <span>WES / ECE Accredited</span>
               </div>
@@ -162,7 +161,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
           </div>
 
           {/* ================= RIGHT IMAGE AREA ================= */}
-          <div className="relative flex min-h-[380px] items-center justify-center lg:col-span-5 lg:min-h-[440px]">
+          <div className="relative flex min-h-[300px] items-center justify-center sm:min-h-[380px] lg:col-span-5 lg:min-h-[440px]">
             {/* Ambient Multi-Layer Glow */}
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-tr from-red-200/40 via-rose-100/30 to-amber-100/25 blur-3xl sm:h-[420px] sm:w-[420px]" />
 
@@ -191,7 +190,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
             </div>
 
             {/* Images Wrapper */}
-            <div className="relative z-10 flex w-full max-w-[460px] items-end justify-center gap-3.5 pt-10 sm:gap-4.5">
+            <div className="relative z-10 flex w-full max-w-[460px] items-end justify-center gap-3.5 pt-7 sm:gap-4.5 sm:pt-10">
               {/* Transition Badge between Before and After */}
               {badgeText && (
                 isDbaTransition ? (
@@ -202,7 +201,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
                       <span className="absolute -right-1 -top-[5px] h-2 w-2 rotate-45 border-r-2 border-t-2 border-red-500" />
                     </div>
                     <span className="text-xs font-black text-red-600">&#39;Dr.&#39;</span>
-                    <span className="text-[11px] font-bold text-slate-500">To</span>
+                    <span className="hidden text-[11px] font-bold text-slate-500 sm:inline">To</span>
                   </div>
                 ) : (
                   <div className="absolute -top-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-red-200/90 bg-white/95 px-4 py-1.5 shadow-[0_8px_20px_rgba(239,68,68,0.12)] backdrop-blur-md">

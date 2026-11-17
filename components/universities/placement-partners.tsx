@@ -39,7 +39,7 @@ export default function PlacementPartners({ university }: PlacementPartnersProps
           {hiringNetwork.badge || "Our Elite Hiring Network"}
         </span>
 
-        <h2 className="mt-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
+        <h2 className="mt-3 text-2xl font-bold text-gray-900 sm:text-4xl lg:text-3xl">
           {hiringNetwork.heading ? (
             <HighlightedText text={hiringNetwork.heading} />
           ) : (

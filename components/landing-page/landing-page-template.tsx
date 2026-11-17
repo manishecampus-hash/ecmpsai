@@ -11,6 +11,7 @@ import LandingPagePlacementPartners, { LandingPagePlacementPartnersData } from "
 import LandingPageFaq, { LandingPageFaqData } from "./landing-page-faq";
 import { DBA_SPECIALISATIONS, DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
 import { LP_REVEAL_CSS } from "./lp-ui";
+import { DBA_UNIVERSITIES } from "@/data/dba-universities";
 
 export interface LandingPageData {
   id?: string;
@@ -49,16 +50,36 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
   const experience = data.slug === "online-dba" && data.experience
     ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
     : data.experience;
-  const COUNSELLOR_NAMES = ["Harsh Sharma", "Vishal Kumar"];
+  // DBA counsellors (name, photo and experience); rating & students counselled still come from the CMS
+  const DBA_COUNSELLORS = [
+    {
+      name: "Priya Verma",
+      image: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/Priya.png",
+      experience: "7+ Yrs. Experience",
+    },
+    {
+      name: "Prithvi Kumar",
+      image: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/shivi.png",
+      experience: "2+ Yrs. Experience",
+    },
+  ];
   const counsellorsSection = data.counsellorsSection && isDba
     ? {
         ...data.counsellorsSection,
         counsellors: data.counsellorsSection.counsellors?.map((c, i) => ({
           ...c,
-          name: COUNSELLOR_NAMES[i] ?? c.name,
+          ...(DBA_COUNSELLORS[i] ?? {}),
         })),
       }
     : data.counsellorsSection;
+
+  // DBA page: the partner strip shows only the universities featured in "Top Online Universities"
+  const globalPartners = isDba
+    ? {
+        ...(data.globalPartners || {}),
+        logos: DBA_UNIVERSITIES.map((u) => ({ id: u.slug, name: u.name, logo: u.logo })),
+      }
+    : data.globalPartners;
 
   return (
     <>
@@ -98,8 +119,8 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
       {isDba && <DbaJourney />}
 
       {/* 6. Global University Partners */}
-      {data.globalPartners?.logos && data.globalPartners.logos.length > 0 && (
-        <LandingPagePartners partners={data.globalPartners} />
+      {globalPartners?.logos && globalPartners.logos.length > 0 && (
+        <LandingPagePartners partners={globalPartners} />
       )}
 
       {/* 7. Counsellors Section */}
@@ -107,8 +128,8 @@ export function LandingPageTemplate({ data, isPreview }: LandingPageTemplateProp
         <LandingPageCounsellors counsellorsSection={counsellorsSection} />
       )}
 
-      {/* 8. Top Placement Partners (Dynamic from Admin) */}
-      {data.placementPartners?.logos && data.placementPartners.logos.length > 0 && (
+      {/* 8. Top Placement Partners (Dynamic from Admin) — not shown on the DBA page */}
+      {!isDba && data.placementPartners?.logos && data.placementPartners.logos.length > 0 && (
         <LandingPagePlacementPartners placementPartners={data.placementPartners} />
       )}
 

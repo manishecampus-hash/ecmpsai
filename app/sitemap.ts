@@ -129,6 +129,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .filter((route: any) => route.url && !route.url.endsWith("/universities/"));
 
+  // 3b. University LMS Portal Routes (/study/[slug]) — only LMS-enabled universities
+  const lmsRoutes: MetadataRoute.Sitemap = dbUniversities
+    .filter((uni: any) => {
+      if (uni.status === "inactive") return false;
+      if (!(uni.enableLms === true || uni.enableLms === "true" || uni.enableLms === 1)) return false;
+      return Boolean(uni.slug);
+    })
+    .map((uni: any) => ({
+      url: `${baseUrl}/study/${(uni.slug.split("/").pop() || "").toLowerCase()}`,
+      lastModified: uni.updatedAt ? new Date(uni.updatedAt) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }))
+    .filter((route: any) => !route.url.endsWith("/study/"));
+
   // 4. Dynamic Root Courses & Sub-Header Page Routes
   const dbCourses = await getRootCourses();
   const courseRoutes: MetadataRoute.Sitemap = [];
@@ -185,5 +200,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  return [...staticRoutes, ...blogRoutes, ...universityRoutes, ...courseRoutes, ...landingPageRoutes];
+  return [...staticRoutes, ...blogRoutes, ...universityRoutes, ...lmsRoutes, ...courseRoutes, ...landingPageRoutes];
 }

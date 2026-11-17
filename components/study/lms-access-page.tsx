@@ -22,6 +22,7 @@ import {
 import {
   DynamicUniversity,
   buildLmsUrl,
+  buildStudyDetailUrl,
   isExternalUrl,
   formatLmsUniversities,
 } from "@/lib/lms";
@@ -407,8 +408,11 @@ export default function LmsAccessPage({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {filteredUniversities.map((university) => {
                   const LocationIcon = iconMap[university.locationIcon] ?? MapPin;
-                  const lmsUrl = buildLmsUrl(university.lmsSlug, university.lmsUrl);
-                  const isExternal = isExternalUrl(lmsUrl);
+                  // Route through the university's LMS detail page (/study/[slug]);
+                  // fall back to the direct LMS link if the university has no slug.
+                  const detailUrl = buildStudyDetailUrl(university.slug);
+                  const lmsUrl = detailUrl || buildLmsUrl(university.lmsSlug, university.lmsUrl);
+                  const isExternal = !detailUrl && isExternalUrl(lmsUrl);
 
                   return (
                     <div

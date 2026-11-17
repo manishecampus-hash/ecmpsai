@@ -154,7 +154,7 @@ export default function EligibilityFeesSection({
         {/* Left Card: Eligibility Criteria */}
         <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-xs hover:shadow-sm transition-shadow duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 sm:mb-6">
+            <h2 className="text-center lg:text-left text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 sm:mb-6">
               <HighlightedText text={criteriaHeading} defaultColor="#ea384c" />
             </h2>
 
@@ -191,11 +191,11 @@ export default function EligibilityFeesSection({
         {/* Right Card: Fees Structure & Semester Rates */}
         <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-xs hover:shadow-sm transition-shadow duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-center lg:text-left text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               <HighlightedText text={feesTitle} defaultColor="#ea384c" />
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mt-2 mb-5 sm:mb-6">
+            <p className="text-justify [hyphens:auto] lg:text-left lg:[hyphens:manual] text-xs sm:text-sm text-slate-500 font-normal leading-relaxed mt-2 mb-5 sm:mb-6">
               {description}
             </p>
 
@@ -212,7 +212,7 @@ export default function EligibilityFeesSection({
                 return (
                   <div
                     key={idx}
-                    className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-4.5 flex flex-col justify-between transition-colors duration-200 hover:border-slate-300/80"
+                    className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-4.5 flex flex-col items-center text-center sm:items-stretch sm:text-left justify-between transition-colors duration-200 hover:border-slate-300/80"
                   >
                     <div>
                       <span className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">

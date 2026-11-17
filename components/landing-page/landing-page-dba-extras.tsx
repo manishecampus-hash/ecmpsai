@@ -74,7 +74,11 @@ export function DbaAudience() {
 export function DbaJourney() {
   return (
     <LpSection tone="muted">
-      <LpHeading heading="Your Path to *'Dr. Title'*" description="A simple, guided journey from your first call to your doctorate." />
+      <LpHeading
+        heading="Your Path to *'Dr. Title'*"
+        description="A simple, guided journey from your first call to your doctorate."
+        descriptionClassName="whitespace-nowrap text-[clamp(11px,3.05vw,15px)] tracking-[-0.01em] sm:whitespace-normal sm:tracking-normal"
+      />
       <div className="relative">
         {/* connector through the step icons on wide screens */}
         <span aria-hidden className="absolute left-[10%] right-[10%] top-7 hidden border-t-2 border-dashed border-red-200 lg:block" />
@@ -114,7 +118,7 @@ export function DbaFinalCta() {
             <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
               <UserCheck className="h-3.5 w-3.5" /> Free 1-on-1 Counselling
             </p>
-            <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-3xl">Ready to add &lsquo;Dr.&rsquo; to your name?</h2>
+            <h2 className="mt-3 whitespace-nowrap text-[clamp(16px,4.6vw,24px)] font-extrabold leading-tight text-white sm:whitespace-normal sm:text-3xl">Ready to add &lsquo;Dr.&rsquo; to your name?</h2>
             <p className="mt-2 max-w-xl text-sm text-red-50 sm:text-base">
               Talk to a DBA counsellor and find the right program for your goals, budget and schedule.
             </p>

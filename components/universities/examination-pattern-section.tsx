@@ -54,15 +54,6 @@ const ICON_MAP: Record<string, any> = {
   lock: Lock,
 };
 
-const BADGE_STYLES = [
-  { bg: "bg-red-50", text: "text-red-500" },
-  { bg: "bg-amber-50", text: "text-amber-500" },
-  { bg: "bg-indigo-50", text: "text-indigo-500" },
-  { bg: "bg-purple-50", text: "text-purple-500" },
-  { bg: "bg-emerald-50", text: "text-emerald-500" },
-  { bg: "bg-rose-50", text: "text-rose-500" },
-];
-
 const PATTERN_ITEMS: PatternItem[] = [
   {
     title: "Weightage Distribution",
@@ -130,27 +121,38 @@ export default function ExaminationPatternSection({
     return null;
   };
 
+  // When every item leads with a figure ("15K+ …"), phones get a compact 2-column grid
+  const allStats = rawItems.length > 1 && rawItems.every((item: any) => splitStat(item.title || ""));
+  const mobileCols = allStats ? "grid-cols-2" : "grid-cols-1";
   const gridColsClass =
     rawItems.length === 1
       ? "grid-cols-1 max-w-2xl mx-auto"
       : rawItems.length === 2
-        ? "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
-        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+        ? `${mobileCols} sm:grid-cols-2 max-w-4xl mx-auto`
+        : `${mobileCols} sm:grid-cols-2 lg:grid-cols-3`;
 
   return (
     <section
       id="examination"
-      className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8 pt-0 pb-6 sm:pb-10 font-sans"
+      className="relative mb-8 w-full overflow-hidden border-y border-slate-200/70 bg-gradient-to-b from-slate-50 via-white to-slate-50 font-sans text-slate-900 sm:mb-12"
     >
-      <div className="rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-6 lg:p-8 shadow-xs">
+      {/* subtle grid texture + glow orbs */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,#000_40%,transparent_100%)]"
+      />
+      <div aria-hidden className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-slate-200/50 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-slate-200/50 blur-3xl" />
+
+      <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {/* Header Block */}
-        <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200/80 px-3.5 py-1 text-[11px] font-bold tracking-wider text-slate-800 uppercase">
+        <div className="mx-auto mb-9 max-w-3xl text-center sm:mb-12">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-800 shadow-sm">
             <ClipboardCheck className="h-3.5 w-3.5 text-[#ea384c]" />
             {examData.badge || "EXAMINATION"}
           </span>
 
-          <h2 className="mt-2.5 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
             {examData.heading ? (
               <HighlightedText text={examData.heading} defaultColor="#ea384c" />
             ) : (
@@ -161,33 +163,44 @@ export default function ExaminationPatternSection({
           </h2>
         </div>
 
-        {/* 3-Column Card Grid with reduced vertical spacing */}
-        <div className={`grid ${gridColsClass} gap-4 sm:gap-4.5`}>
+        {/* Open grid — no cards: each item is set off by a red accent line */}
+        <div className={`grid ${gridColsClass} gap-x-5 gap-y-7 sm:gap-x-8 sm:gap-y-10`}>
           {rawItems.map((item: any, idx: number) => {
-            const badgeStyle = BADGE_STYLES[idx % BADGE_STYLES.length];
-            const iconElement = renderIcon(item, badgeStyle.text);
+            const iconElement = renderIcon(item, "text-[#ea384c]");
+            const stat = splitStat(item.title || "");
 
             return (
               <div
                 key={item.title || idx}
-                className="rounded-2xl bg-[#f8fafc] border border-slate-200/70 p-4 sm:p-5 flex flex-col hover:border-slate-300 hover:shadow-xs transition-all duration-200 text-left"
+                className="group relative border-l-2 border-slate-200 pl-3.5 text-left sm:pl-5 transition-colors duration-300 hover:border-red-300"
               >
-                {/* Icon Badge (only when explicitly provided) */}
-                {iconElement && (
-                  <div
-                    className={`h-8 w-8 rounded-xl flex items-center justify-center mb-2.5 ${badgeStyle.bg}`}
-                  >
-                    {iconElement}
+                {/* accent that grows on hover */}
+                <span
+                  aria-hidden
+                  className="absolute -left-[2px] top-0 h-8 w-[2px] bg-[#ea384c] transition-all duration-300 group-hover:h-full"
+                />
+
+                {stat ? (
+                  <>
+                    <p className="text-[26px] font-extrabold leading-none tracking-tight text-[#ea384c] sm:text-[34px]">
+                      {stat.value}
+                    </p>
+                    <h3 className="mt-2 text-[13px] font-bold leading-snug text-slate-900 sm:mt-2.5 sm:text-[15px]">
+                      {stat.label}
+                    </h3>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2.5">
+                    {iconElement && (
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                        {iconElement}
+                      </span>
+                    )}
+                    <h3 className="text-sm font-bold leading-snug text-slate-900 sm:text-base">{item.title}</h3>
                   </div>
                 )}
 
-                {/* Title */}
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5 leading-snug tracking-tight">
-                  {item.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed font-normal whitespace-pre-line">
+                <p className="mt-1.5 whitespace-pre-line text-[11px] leading-relaxed text-slate-500 sm:text-[13px]">
                   {item.description}
                 </p>
               </div>
@@ -197,4 +210,17 @@ export default function ExaminationPatternSection({
       </div>
     </section>
   );
+}
+
+/**
+ * Display-only: splits a leading figure off a title so it can be shown large,
+ * e.g. "1 Lakh+ Students Guided" → { value: "1 Lakh+", label: "Students Guided" }.
+ * Titles without a leading figure are returned as null and render normally.
+ */
+function splitStat(title: string): { value: string; label: string } | null {
+  const match = title
+    .trim()
+    .match(/^((?:up to\s+)?[₹$]?\d[\d.,/]*\s*(?:lakh|lac|k|cr|crore|m)?\+?%?)\s+(.+)$/i);
+  if (!match) return null;
+  return { value: match[1].trim(), label: match[2].trim() };
 }

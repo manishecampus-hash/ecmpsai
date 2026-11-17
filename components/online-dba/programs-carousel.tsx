@@ -57,7 +57,7 @@ export default function ProgramsCarousel({
   };
 
   const arrowClass =
-    "absolute top-[19%] z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-red-600 shadow-[0_8px_20px_-6px_rgba(15,23,42,0.35)] ring-1 ring-slate-200 backdrop-blur transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-40 sm:hidden";
+    "absolute top-[calc(50%-14px)] z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-red-600 shadow-[0_8px_20px_-6px_rgba(15,23,42,0.35)] ring-1 ring-slate-200 backdrop-blur transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-40 sm:hidden";
 
   return (
     <div className="relative">

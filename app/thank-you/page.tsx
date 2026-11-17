@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, ArrowRight, Home } from "lucide-react";
+import { CheckCircle2, Home } from "lucide-react";
 
 export default function ThankYouPage() {
   return (
@@ -67,14 +67,6 @@ export default function ThankYouPage() {
             >
               <Home className="h-4 w-4" />
               Back to Home
-            </Link>
-
-            <Link
-              href="/programs"
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 sm:w-auto"
-            >
-              Explore Programs
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -340,13 +340,6 @@ export function ApplicationForm({
             Connect With An Expert
           </span>
         </div>
-        <h2 className="mt-2 flex items-center justify-center gap-2 text-[30px] font-black leading-tight tracking-[-0.04em] text-gray-900 sm:text-[34px]">
-          <span>
-            Apply <span className="text-[#ee2c3c]">Now</span>
-          </span>
-          <Sparkles className="h-6 w-6 text-[#ee2c3c]" />
-        </h2>
-        <p className="mt-1.5 whitespace-nowrap text-[10px] text-gray-500 sm:text-xs">Share your details and we’ll help you with the next steps.</p>
       </div>
 
       <form

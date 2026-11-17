@@ -14,8 +14,17 @@ export async function GET(req: NextRequest) {
       authUser?.advisorProfile?.highestQualification ||
       "";
 
-    const coursePreference =
-      searchParams.get("coursePreference") ||
+    // If client explicitly sent coursePreference, use it. If "all", query all.
+    // If not passed, default to "all" so AI degree finder is never locked to 1 degree!
+    let coursePreference = "all";
+    if (searchParams.has("coursePreference")) {
+      coursePreference = searchParams.get("coursePreference") || "all";
+    } else if (searchParams.has("degrees") || searchParams.has("degree")) {
+      coursePreference = searchParams.get("degrees") || searchParams.get("degree") || "all";
+    }
+
+    const targetPreference =
+      searchParams.get("targetPreference") ||
       authUser?.advisorProfile?.coursePreference ||
       authUser?.course ||
       authUser?.coursesInterested?.[0] ||
@@ -36,11 +45,12 @@ export async function GET(req: NextRequest) {
       authUser?.state ||
       "";
 
-    const limitParam = parseInt(searchParams.get("limit") || "60", 10);
+    const limitParam = parseInt(searchParams.get("limit") || "500", 10);
 
     const courses = await getUniversityListings({
       qualification,
       coursePreference,
+      targetPreference,
       budget,
       category,
       state,
@@ -53,6 +63,7 @@ export async function GET(req: NextRequest) {
       filtersApplied: {
         qualification,
         coursePreference,
+        targetPreference,
         budget,
       },
       courses,

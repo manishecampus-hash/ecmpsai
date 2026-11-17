@@ -33,6 +33,7 @@ export interface UniversityCourseListing {
   features: string[];
   tags: string[];
   slug?: string;
+  eligibility?: string;
 }
 
 export function extractDynamicTags(
@@ -167,9 +168,35 @@ export function extractDynamicTags(
   return tags.slice(0, 4);
 }
 
-export function buildDegreeRegex(rawCourse?: string): RegExp {
+export function buildDegreeRegex(rawCourse?: string): RegExp | null {
   const raw = (rawCourse || "").toLowerCase().trim();
-  if (!raw) return /mba|mca|bca|bba/i;
+  if (!raw || raw === "all") return null;
+
+  // Handle multiple comma-separated degrees, e.g. "MBA,MCA"
+  if (raw.includes(",")) {
+    const parts = raw
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
+    const subRegexes = parts.map((p) => {
+      if (p.includes("mca")) return "mca";
+      if (p.includes("mba")) return "mba";
+      if (p.includes("bca")) return "bca";
+      if (p.includes("bba")) return "bba";
+      if (p.includes("b.com") || p.includes("bcom")) return "b\\.?com";
+      if (p.includes("m.com") || p.includes("mcom")) return "m\\.?com";
+      if (p.includes("m.sc") || p.includes("msc")) return "m\\.?sc";
+      if (p.includes("b.sc") || p.includes("bsc")) return "b\\.?sc";
+      if (p.includes("b.tech") || p.includes("btech")) return "b\\.?tech";
+      if (p.includes("m.tech") || p.includes("mtech")) return "m\\.?tech";
+      if (p.includes("dba")) return "dba";
+      if (p === "ma" || p.includes("master of arts")) return "\\bma\\b";
+      if (p === "ba" || p.includes("bachelor of arts")) return "\\bba\\b";
+      return p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    });
+    return new RegExp(subRegexes.join("|"), "i");
+  }
+
   if (raw.includes("mca")) return /mca/i;
   if (raw.includes("mba")) return /mba/i;
   if (raw.includes("bca")) return /bca/i;
@@ -183,8 +210,9 @@ export function buildDegreeRegex(rawCourse?: string): RegExp {
   if (raw.includes("dba") || raw.includes("doctor of business")) return /dba|doctor/i;
   if (raw.includes("dcs") || raw.includes("doctor of computer")) return /dcs|computer/i;
   if (raw.includes("b.tech") || raw.includes("btech")) return /b\.?tech/i;
-  if (raw.includes("ma")) return /\bma\b|master of arts/i;
-  if (raw.includes("ba")) return /\bba\b|bachelor of arts/i;
+  if (raw.includes("m.tech") || raw.includes("mtech")) return /m\.?tech/i;
+  if (raw === "ma" || raw.includes("master of arts")) return /\bma\b|master of arts/i;
+  if (raw === "ba" || raw.includes("bachelor of arts")) return /\bba\b|bachelor of arts/i;
   const clean = raw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(clean, "i");
 }
@@ -253,8 +281,8 @@ async function queryUniversityCoursesWithFilters(params: {
   const queryRegex = buildDegreeRegex(params.coursePreference);
   const { min: budgetMin, max: budgetMax } = parseBudgetRange(params.budget);
 
-  // 1. Course Name Match
-  const matchFilter: any = { name: queryRegex };
+  // 1. Course Name Match (optional when coursePreference is "all" or omitted)
+  const matchFilter: any = queryRegex ? { name: queryRegex } : {};
 
   // 2. Budget Range Match
   // Include courses within or below the maximum budget range ceiling
@@ -579,22 +607,25 @@ export async function getRecommendationsForStudent(
 export async function getUniversityListings(params: {
   qualification?: string;
   coursePreference?: string;
+  targetPreference?: string;
   budget?: string;
   category?: string;
   state?: string;
   limit?: number;
 }): Promise<UniversityCourseListing[]> {
   try {
+    // For AI Degree Finder (/dashboard/matcher), do not strictly filter out courses by qualification
+    // or budget ceiling in MongoDB so the user has the entire catalog available to filter dynamically.
+    // The student's questionnaire preferences (targetPreference, qualification, budget) are used
+    // for AI match scoring and budget tier ordering instead.
     const docs = await queryUniversityCoursesWithFilters({
-      qualification: params.qualification,
-      coursePreference: params.coursePreference,
-      budget: params.budget,
-      limit: params.limit || 60,
+      coursePreference: params.coursePreference === "all" ? undefined : params.coursePreference,
+      limit: params.limit || 500,
     });
 
     const targetDegree = extractTargetDegree({
       advisorProfile: {
-        coursePreference: params.coursePreference || "",
+        coursePreference: params.targetPreference || params.coursePreference || "",
       } as any,
     });
 
@@ -736,6 +767,7 @@ export async function getUniversityListings(params: {
         features,
         tags: dynamicTags,
         slug: doc.slug,
+        eligibility: (doc.eligibility || "").trim(),
       };
     });
 

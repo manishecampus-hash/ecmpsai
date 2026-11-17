@@ -5,8 +5,6 @@ import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "../components/applied-badge";
-import WhyEcampusCard from "../components/ai-assist/why-ecampus-card";
-import AiChatCard from "../components/ai-assist/ai-chat-card";
 import AiChatPanel from "../components/ai-assist/ai-chat-panel";
 import { describeAdvisorProfile, cleanCourseDisplay } from "@/components/layout/onboarding-options";
 import { parseBudgetRange } from "@/lib/recommendations";
@@ -38,6 +36,7 @@ import {
   Layers,
   IndianRupee,
   ShieldCheck,
+  Award,
   type LucideIcon,
 } from "lucide-react";
 
@@ -71,6 +70,7 @@ interface UniversityListing {
   features: FeatureTag[];
   tags?: string[];
   slug?: string;
+  eligibility?: string;
 }
 
 const UNIVERSITIES: UniversityListing[] = [
@@ -93,6 +93,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "100% Online · 2 Years Duration",
     accreditations: ["NAAC", "UGC", "AICTE"],
     features: ["Scholarship", "ZeroCostEMI", "Placement"],
+    eligibility: "Graduate",
   },
   {
     id: "nmims",
@@ -113,6 +114,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "Live Weekend Batches",
     accreditations: ["UGC", "AICTE"],
     features: ["Placement"],
+    eligibility: "Graduate",
   },
   {
     id: "amity",
@@ -133,6 +135,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "Self-Paced with Masterclasses",
     accreditations: ["NAAC", "UGC"],
     features: ["ZeroCostEMI"],
+    eligibility: "Graduate",
   },
   {
     id: "manipal",
@@ -153,6 +156,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "Live Mentorship Included",
     accreditations: ["NAAC", "WES"],
     features: ["Scholarship"],
+    eligibility: "Graduate",
   },
   {
     id: "gla",
@@ -173,6 +177,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "Live Interactive Sessions",
     accreditations: ["NAAC", "UGC", "AICTE"],
     features: ["ZeroCostEMI", "Placement"],
+    eligibility: "12th Pass",
   },
   {
     id: "jain",
@@ -193,6 +198,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "100% Online · 3 Years Duration",
     accreditations: ["NAAC", "UGC"],
     features: ["Scholarship"],
+    eligibility: "12th Pass",
   },
   {
     id: "dypatil",
@@ -212,6 +218,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "Industry-Aligned Labs",
     accreditations: ["NAAC", "AICTE", "WES"],
     features: ["Placement"],
+    eligibility: "Graduate with exp.",
   },
   {
     id: "sharda",
@@ -232,6 +239,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "100% Online · 2 Years Duration",
     accreditations: ["UGC", "AICTE"],
     features: ["Scholarship", "ZeroCostEMI"],
+    eligibility: "Graduate",
   },
   {
     id: "galgotias",
@@ -251,6 +259,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "On-Campus · 2 Years Duration",
     accreditations: ["NAAC", "AICTE"],
     features: ["Placement"],
+    eligibility: "Graduate",
   },
   {
     id: "ggu",
@@ -271,6 +280,7 @@ const UNIVERSITIES: UniversityListing[] = [
     durationNote: "100% Online · 2 Years Duration",
     accreditations: ["UGC", "AICTE"],
     features: ["ZeroCostEMI"],
+    eligibility: "Graduate",
   },
 ];
 
@@ -359,6 +369,7 @@ const FEE_PRESETS = [
 type FilterState = {
   search: string;
   location: string;
+  eligibility: string | null;
   degrees: Degree[];
   specializations: Specialization[];
   modes: Mode[];
@@ -366,7 +377,7 @@ type FilterState = {
   accreditations: Accreditation[];
   features: FeatureTag[];
 };
-type FacetKey = "degree" | "specialization" | "mode" | "accreditation" | "feature";
+type FacetKey = "eligibility" | "degree" | "specialization" | "mode" | "accreditation" | "feature";
 
 // `skip` ignores one filter group so facet counts show how many results each option would give
 function matchesFilters(u: UniversityListing, f: FilterState, skip?: FacetKey) {
@@ -376,19 +387,22 @@ function matchesFilters(u: UniversityListing, f: FilterState, skip?: FacetKey) {
     !(
       u.name.toLowerCase().includes(q) ||
       u.program.toLowerCase().includes(q) ||
-      u.specialization.toLowerCase().includes(q)
+      u.specialization.toLowerCase().includes(q) ||
+      (u.eligibility && u.eligibility.toLowerCase().includes(q))
     )
   )
     return false;
   if (f.location !== "Any Location" && u.location !== f.location) return false;
-  if (skip !== "degree" && f.degrees.length && !f.degrees.includes(u.degree)) return false;
-  if (skip !== "specialization" && f.specializations.length && !f.specializations.includes(u.specialization))
+  if (skip !== "eligibility" && f.eligibility && u.eligibility !== f.eligibility)
     return false;
-  if (skip !== "mode" && f.modes.length && !f.modes.includes(u.mode)) return false;
+  if (skip !== "degree" && f.degrees?.length && !f.degrees.includes(u.degree)) return false;
+  if (skip !== "specialization" && f.specializations?.length && !f.specializations.includes(u.specialization))
+    return false;
+  if (skip !== "mode" && f.modes?.length && !f.modes.includes(u.mode)) return false;
   if (u.fee > f.maxFee) return false;
-  if (skip !== "accreditation" && f.accreditations.length && !f.accreditations.some((a) => u.accreditations.includes(a)))
+  if (skip !== "accreditation" && f.accreditations?.length && !f.accreditations.some((a) => u.accreditations.includes(a)))
     return false;
-  if (skip !== "feature" && f.features.length && !f.features.some((x) => u.features.includes(x)))
+  if (skip !== "feature" && f.features?.length && !f.features.some((x) => u.features.includes(x)))
     return false;
   return true;
 }
@@ -398,6 +412,81 @@ const formatFeeShort = (fee: number) =>
 
 function toggleInArray<T>(arr: T[], value: T): T[] {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
+}
+
+export function getQuestionnaireEligibility(profile?: StudentProfile): string | null {
+  const qual = (profile?.advisorProfile?.highestQualification || "").toLowerCase().trim();
+  if (!qual) return null;
+
+  if (qual === "12th_pass" || qual === "12th pass" || qual.includes("12th")) {
+    return "12th Pass";
+  }
+  if (qual === "diploma" || qual.includes("diploma")) {
+    return "10+3 Years Diploma";
+  }
+  if (qual === "bachelors" || qual === "graduate" || qual.includes("bachelor") || qual.includes("graduate")) {
+    return "Graduate";
+  }
+  if (qual === "masters" || qual === "post-graduate" || qual.includes("master") || qual.includes("post-grad") || qual.includes("post graduate")) {
+    return "Post-graduate";
+  }
+  return null;
+}
+
+export function getQuestionnaireDegree(profile?: StudentProfile): Degree | null {
+  const raw = (
+    profile?.advisorProfile?.coursePreference ||
+    profile?.course ||
+    profile?.coursesInterested?.[0] ||
+    ""
+  ).toLowerCase().trim();
+
+  if (!raw) return null;
+
+  // Exact ID checks and substrings from onboarding-options
+  if (raw === "mba" || raw.includes("mba")) return "MBA";
+  if (raw === "mca" || raw.includes("mca")) return "MCA";
+  if (raw === "bca" || raw.includes("bca")) return "BCA";
+  if (raw === "bba" || raw.includes("bba")) return "BBA";
+  if (raw === "mcom" || raw.includes("m.com") || raw.includes("mcom") || raw.includes("master of commerce")) return "M.Com";
+  if (raw === "bcom" || raw.includes("b.com") || raw.includes("bcom") || raw.includes("bachelor of commerce")) return "B.Com";
+  if (raw === "msc" || raw.includes("m.sc") || raw.includes("msc") || raw.includes("master of science")) return "M.Sc";
+  if (raw === "bsc" || raw.includes("b.sc") || raw.includes("bsc") || raw.includes("bachelor of science")) return "B.Sc";
+  if (raw === "btech" || raw.includes("b.tech") || raw.includes("btech")) return "B.Tech";
+  if (raw === "mtech" || raw.includes("m.tech") || raw.includes("mtech")) return "M.Tech";
+  if (raw.includes("dba") || raw.includes("doctor of business") || raw.includes("phd")) return "DBA";
+  if (raw === "ma" || raw === "ma_jmc" || raw.includes("online ma") || raw.includes("master of arts") || /\bma\b/.test(raw)) return "MA";
+  if (raw === "ba" || raw.includes("online ba") || raw.includes("bachelor of arts") || /\bba\b/.test(raw)) return "BA";
+
+  return null;
+}
+
+export function getQuestionnaireMode(profile?: StudentProfile): Mode[] {
+  const format = (profile?.advisorProfile?.format || "").toLowerCase();
+  if (format.includes("online") || format.includes("100% online")) return ["Online"];
+  if (format.includes("hybrid")) return ["Hybrid"];
+  if (format.includes("campus") || format.includes("on-campus")) return ["Campus"];
+  return [];
+}
+
+export function getQuestionnaireSpecialization(profile?: StudentProfile): Specialization[] {
+  const focus = (profile?.advisorProfile?.focusArea || "").toLowerCase();
+  const pref = (profile?.advisorProfile?.coursePreference || "").toLowerCase();
+  const combined = `${focus} ${pref}`;
+
+  if (combined.includes("ai") || combined.includes("machine learning") || combined.includes("gen-ai")) {
+    return ["AI & ML"];
+  }
+  if (combined.includes("data science") || combined.includes("analytics")) {
+    return ["Data Science"];
+  }
+  if (combined.includes("cyber") || combined.includes("cloud") || combined.includes("security")) {
+    return ["Cloud & Cyber Security"];
+  }
+  if (combined.includes("full stack") || combined.includes("software")) {
+    return ["Full Stack"];
+  }
+  return [];
 }
 
 function OptionRow({
@@ -411,15 +500,13 @@ function OptionRow({
   label: string;
   count: number;
 }) {
-  const disabled = count === 0 && !checked;
   return (
     <button
       type="button"
       role="checkbox"
       aria-checked={checked}
       onClick={onChange}
-      disabled={disabled}
-      className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+      className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-50"
     >
       <span
         className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
@@ -447,6 +534,52 @@ function OptionRow({
   );
 }
 
+function EligibilityOptionRow({
+  checked,
+  onClick,
+  label,
+}: {
+  checked: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={checked}
+      onClick={onClick}
+      className={`group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors ${
+        checked
+          ? "bg-red-50 text-red-950 font-medium"
+          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+      }`}
+    >
+      <span
+        className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full border transition-colors ${
+          checked
+            ? "border-red-600 bg-red-600 text-white"
+            : "border-gray-300 bg-white group-hover:border-gray-400"
+        }`}
+      >
+        {checked && (
+          <motion.span
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            className="flex"
+          >
+            <Check className="h-3 w-3 text-white" strokeWidth={3.5} />
+          </motion.span>
+        )}
+      </span>
+      <span className="flex-1 text-[13px] leading-snug">
+        {label}
+      </span>
+    </button>
+  );
+}
+
 function ChoiceChip({
   active,
   onClick,
@@ -456,16 +589,14 @@ function ChoiceChip({
   active: boolean;
   onClick: () => void;
   label: string;
-  count: number;
+  count?: number;
 }) {
-  const disabled = count === 0 && !active;
   return (
     <button
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${
+      className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition active:scale-95 ${
         active
           ? "border-red-500 bg-red-50 text-red-700"
           : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
@@ -473,7 +604,9 @@ function ChoiceChip({
     >
       {active && <Check className="h-3 w-3" strokeWidth={3} />}
       {label}
-      <span className={`tabular-nums ${active ? "text-red-400" : "text-gray-400"}`}>{count}</span>
+      {count !== undefined && (
+        <span className={`tabular-nums ${active ? "text-red-400" : "text-gray-400"}`}>{count}</span>
+      )}
     </button>
   );
 }
@@ -490,14 +623,12 @@ function ModeTile({
   count: number;
 }) {
   const Icon = MODE_ICONS[mode];
-  const disabled = count === 0 && !active;
   return (
     <button
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      disabled={disabled}
-      className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${
+      className={`relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition active:scale-[0.97] ${
         active
           ? "border-red-500 bg-red-50 text-red-700 shadow-sm shadow-red-100"
           : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
@@ -599,12 +730,14 @@ function FilterSection({
   title,
   icon: Icon,
   selected = 0,
+  hideCount = false,
   defaultOpen = true,
   children,
 }: {
   title: string;
   icon: LucideIcon;
   selected?: number;
+  hideCount?: boolean;
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
@@ -627,7 +760,7 @@ function FilterSection({
           <Icon className="h-3.5 w-3.5" strokeWidth={2} />
         </span>
         <span className="flex-1 text-[13px] font-semibold text-gray-900">{title}</span>
-        {selected > 0 && (
+        {!hideCount && selected > 0 && (
           <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
             {selected}
           </span>
@@ -655,6 +788,7 @@ export default function AIDegreeMatcherPage() {
 
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("Any Location");
+  const [selectedEligibility, setSelectedEligibility] = useState<string | null>(null);
   const [degrees, setDegrees] = useState<Degree[]>([]);
   const [specializations, setSpecializations] = useState<Specialization[]>([]);
   const [modes, setModes] = useState<Mode[]>([]);
@@ -668,19 +802,29 @@ export default function AIDegreeMatcherPage() {
   const [whyMatchOpen, setWhyMatchOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
+  const studentRef = useRef<StudentProfile>(student);
+  useEffect(() => {
+    studentRef.current = student;
+  }, [student]);
+
   const fetchCourses = useCallback(async (currentStudent?: StudentProfile) => {
     try {
       setLoadingCourses(true);
-      const s = currentStudent || student;
+      const s = currentStudent || studentRef.current;
       const params = new URLSearchParams();
-      if (s?.advisorProfile?.highestQualification) {
-        params.set("highestQualification", s.advisorProfile.highestQualification);
-      }
+
+      // Degree Finder loads all courses so all filters remain fully interactive
+      params.set("coursePreference", "all");
+      params.set("limit", "500");
+
       if (s?.advisorProfile?.coursePreference || s?.course || s?.coursesInterested?.[0]) {
         params.set(
-          "coursePreference",
+          "targetPreference",
           s.advisorProfile?.coursePreference || s.course || s.coursesInterested?.[0] || ""
         );
+      }
+      if (s?.advisorProfile?.highestQualification) {
+        params.set("highestQualification", s.advisorProfile.highestQualification);
       }
       if (s?.advisorProfile?.budget) {
         params.set("budget", s.advisorProfile.budget);
@@ -706,21 +850,66 @@ export default function AIDegreeMatcherPage() {
     } finally {
       setLoadingCourses(false);
     }
-  }, [student]);
+  }, []);
+
+  const applyQuestionnaireFilters = useCallback((s?: StudentProfile) => {
+    const initElig = getQuestionnaireEligibility(s);
+    setSelectedEligibility(initElig);
+
+    const deg = getQuestionnaireDegree(s);
+    setDegrees(deg ? [deg] : []);
+
+    const initModes = getQuestionnaireMode(s);
+    setModes(initModes);
+
+    const initSpecs = getQuestionnaireSpecialization(s);
+    setSpecializations(initSpecs);
+
+    setMaxFee(MAX_FEE);
+    setAccreditations([]);
+    setFeatures([]);
+    setSearch("");
+    setLocation("Any Location");
+  }, []);
 
   useEffect(() => {
+    let currentProfile: StudentProfile = {};
     const saved = localStorage.getItem("ecampus_student");
     if (saved) {
       try {
-        const s: StudentProfile = JSON.parse(saved);
-        setStudent(s);
-        fetchCourses(s);
+        currentProfile = JSON.parse(saved);
+        setStudent(currentProfile);
+        applyQuestionnaireFilters(currentProfile);
+        fetchCourses(currentProfile);
       } catch {
         fetchCourses();
       }
     } else {
       fetchCourses();
     }
+
+    // Check if authenticated user has newer advisorProfile saved on backend
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.authenticated && data?.user) {
+          const u = data.user;
+          const merged: StudentProfile = {
+            ...currentProfile,
+            name: u.full_name || currentProfile.name,
+            email: u.email || currentProfile.email,
+            course: u.course || currentProfile.course,
+            coursesInterested: u.coursesInterested || currentProfile.coursesInterested,
+            advisorProfile: u.advisorProfile || currentProfile.advisorProfile,
+          };
+          localStorage.setItem("ecampus_student", JSON.stringify(merged));
+          setStudent(merged);
+          applyQuestionnaireFilters(merged);
+          fetchCourses(merged);
+        }
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Course picked in the AI Advisor questionnaire, e.g. "MBA" — personalises the AI card
@@ -735,9 +924,95 @@ export default function AIDegreeMatcherPage() {
     [universities],
   );
 
+  const availableEligibilities = useMemo(() => {
+    const set = new Set<string>();
+    for (const u of universities) {
+      if (u.eligibility && u.eligibility.trim()) {
+        set.add(u.eligibility.trim());
+      }
+    }
+    const priority = [
+      "10th Pass",
+      "12th Pass",
+      "10+3 Years Diploma",
+      "Graduate",
+      "Graduate with exp.",
+      "Graduate with exp. or Post-graduate",
+      "Post-graduate",
+      "B.Tech with exp.",
+    ];
+    return Array.from(set).sort((a, b) => {
+      const idxA = priority.indexOf(a);
+      const idxB = priority.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+  }, [universities]);
+
+  const handleSelectEligibility = useCallback((el: string) => {
+    setSelectedEligibility((prev) => {
+      const next = prev === el ? null : el;
+      if (next) {
+        const validDegrees = new Set(
+          universities
+            .filter((u) => u.eligibility === next)
+            .map((u) => u.degree)
+            .filter(Boolean)
+        );
+        setDegrees((prevDegrees) => prevDegrees.filter((d) => validDegrees.has(d)));
+      }
+      return next;
+    });
+  }, [universities]);
+
+  const availableDegrees = useMemo(() => {
+    const source = selectedEligibility
+      ? universities.filter((u) => u.eligibility === selectedEligibility)
+      : universities;
+    const degSet = new Set<string>();
+    for (const u of source) {
+      if (u.degree && u.degree.trim() && u.degree !== "Degree") {
+        degSet.add(u.degree.trim());
+      }
+    }
+    if (degSet.size === 0 && !selectedEligibility) {
+      return DEGREES;
+    }
+    return Array.from(degSet).sort((a, b) => {
+      const idxA = DEGREES.indexOf(a);
+      const idxB = DEGREES.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+  }, [universities, selectedEligibility]);
+
   const filterState: FilterState = useMemo(
-    () => ({ search, location, degrees, specializations, modes, maxFee, accreditations, features }),
-    [search, location, degrees, specializations, modes, maxFee, accreditations, features],
+    () => ({
+      search,
+      location,
+      eligibility: selectedEligibility,
+      degrees,
+      specializations,
+      modes,
+      maxFee,
+      accreditations,
+      features,
+    }),
+    [
+      search,
+      location,
+      selectedEligibility,
+      degrees,
+      specializations,
+      modes,
+      maxFee,
+      accreditations,
+      features,
+    ],
   );
 
   const filtered = useMemo(
@@ -750,7 +1025,15 @@ export default function AIDegreeMatcherPage() {
     const count = (skip: FacetKey, test: (u: UniversityListing) => boolean) =>
       universities.filter((u) => matchesFilters(u, filterState, skip) && test(u)).length;
     return {
-      degree: Object.fromEntries(DEGREES.map((d) => [d, count("degree", (u) => u.degree === d)])),
+      eligibility: Object.fromEntries(
+        availableEligibilities.map((el) => [
+          el,
+          count("eligibility", (u) => u.eligibility === el),
+        ]),
+      ),
+      degree: Object.fromEntries(
+        availableDegrees.map((d) => [d, count("degree", (u) => u.degree === d)])
+      ),
       specialization: Object.fromEntries(
         SPECIALIZATIONS.map((x) => [x.id, count("specialization", (u) => u.specialization === x.id)]),
       ),
@@ -762,7 +1045,7 @@ export default function AIDegreeMatcherPage() {
         FEATURES.map((x) => [x.id, count("feature", (u) => u.features.includes(x.id))]),
       ),
     } as Record<FacetKey, Record<string, number>>;
-  }, [universities, filterState]);
+  }, [universities, availableEligibilities, availableDegrees, filterState]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -806,7 +1089,7 @@ export default function AIDegreeMatcherPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [search, location, degrees, specializations, modes, maxFee, accreditations, features, sortBy]);
+  }, [search, location, selectedEligibility, degrees, specializations, modes, maxFee, accreditations, features, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -855,6 +1138,7 @@ export default function AIDegreeMatcherPage() {
   };
 
   const handleResetFilters = () => {
+    setSelectedEligibility(null);
     setDegrees([]);
     setSpecializations([]);
     setModes([]);
@@ -864,6 +1148,7 @@ export default function AIDegreeMatcherPage() {
   };
 
   const activeFilterCount =
+    (selectedEligibility ? 1 : 0) +
     degrees.length +
     specializations.length +
     modes.length +
@@ -880,6 +1165,15 @@ export default function AIDegreeMatcherPage() {
   const activeChips: { key: string; label: string; onRemove: () => void }[] = [
     ...(location !== "Any Location"
       ? [{ key: "loc", label: location, onRemove: () => setLocation("Any Location") }]
+      : []),
+    ...(selectedEligibility
+      ? [
+          {
+            key: `elig-${selectedEligibility}`,
+            label: selectedEligibility,
+            onRemove: () => setSelectedEligibility(null),
+          },
+        ]
       : []),
     ...degrees.map((d) => ({ key: `deg-${d}`, label: d, onRemove: () => setDegrees((p) => p.filter((x) => x !== d)) })),
     ...specializations.map((sp) => ({
@@ -920,13 +1214,39 @@ export default function AIDegreeMatcherPage() {
 
   const filterBody = (
     <>
-      <FilterSection title="Degree Program" icon={GraduationCap} selected={degrees.length}>
+      {availableEligibilities.length > 0 && (
+        <FilterSection title="Eligibility" icon={Award} selected={selectedEligibility ? 1 : 0} hideCount>
+          <div className="-mx-2 space-y-0.5">
+            {selectedEligibility && (
+              <div className="flex justify-end px-2.5 pb-1">
+                <button
+                  type="button"
+                  onClick={() => setSelectedEligibility(null)}
+                  className="text-[11px] font-semibold text-red-600 hover:text-red-700 hover:underline"
+                >
+                  Clear Selection
+                </button>
+              </div>
+            )}
+            {availableEligibilities.map((el) => (
+              <EligibilityOptionRow
+                key={el}
+                label={el}
+                checked={selectedEligibility === el}
+                onClick={() => handleSelectEligibility(el)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
+
+      <FilterSection title="Program" icon={GraduationCap} selected={degrees.length}>
         <div className="flex flex-wrap gap-1.5">
-          {DEGREES.map((d) => (
+          {availableDegrees.map((d) => (
             <ChoiceChip
               key={d}
               label={d}
-              count={facets.degree[d]}
+              count={facets.degree?.[d] || 0}
               active={degrees.includes(d)}
               onClick={() => setDegrees((p) => toggleInArray(p, d))}
             />
@@ -1063,9 +1383,6 @@ export default function AIDegreeMatcherPage() {
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
         <main ref={mainRef} className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
-          {/* On wide screens the advisor + AI cards get their own column from the top of the page */}
-          <div className="flex flex-1 gap-5 min-[1700px]:items-start">
-          <div className="flex min-w-0 flex-1 flex-col">
           <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
@@ -1292,12 +1609,22 @@ export default function AIDegreeMatcherPage() {
                         </span>
                       )}
                     </div>
-                    <a
-                      href="/dashboard/profile"
-                      className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
-                    >
-                      Edit questionnaire →
-                    </a>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => applyQuestionnaireFilters(student)}
+                        className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
+                      >
+                        Reset to questionnaire
+                      </button>
+                      <span className="text-gray-300">·</span>
+                      <a
+                        href="/dashboard/profile"
+                        className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
+                      >
+                        Edit questionnaire →
+                      </a>
+                    </div>
                   </div>
                 )}
 
@@ -1448,7 +1775,10 @@ export default function AIDegreeMatcherPage() {
                               {u.scholarshipNote}
                             </p>
                           )}
-                          <p className="mt-0.5 text-xs text-gray-400">{u.durationNote}</p>
+                          <p className="mt-0.5 text-xs text-gray-400">
+                            {u.durationNote}
+                            {u.eligibility ? ` · Eligibility: ${u.eligibility}` : ""}
+                          </p>
                         </div>
 
                         <div className="flex flex-shrink-0 flex-col gap-3 sm:w-40">
@@ -1537,20 +1867,7 @@ export default function AIDegreeMatcherPage() {
                 </motion.div>
               )}
 
-              {/* Advisor + AI cards — below the results until there's room for their own column */}
-              <div className="grid gap-4 pt-2 sm:grid-cols-2 min-[1700px]:hidden">
-                <WhyEcampusCard />
-                <AiChatCard course={preferredCourse} onChat={() => setAiChatOpen(true)} />
-              </div>
             </div>
-          </div>
-          </div>
-
-            {/* Advisor + AI cards — own column on wide screens, pinned while the results scroll */}
-            <aside className="hidden w-[340px] flex-shrink-0 space-y-5 min-[1700px]:sticky min-[1700px]:top-0 min-[1700px]:block">
-              <WhyEcampusCard delay={0.08} />
-              <AiChatCard course={preferredCourse} onChat={() => setAiChatOpen(true)} delay={0.16} />
-            </aside>
           </div>
         </main>
       </div>

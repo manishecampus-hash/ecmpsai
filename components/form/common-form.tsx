@@ -145,13 +145,45 @@ export function ApplicationForm({
   onBack,
   courses,
   coursePlaceholder = "Select Course",
+  variant = "default",
 }: {
   onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
   /** Page-specific options for the course dropdown; defaults to the shared course list */
   courses?: string[];
   coursePlaceholder?: string;
+  /** Visual theme only — "assured" matches the eCampus Assured popup. Fields & submission are identical. */
+  variant?: "default" | "assured";
 }) {
+  const A = variant === "assured";
+  const ui = {
+    wrapper: A
+      ? "relative isolate mx-auto w-full max-w-lg px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-7"
+      : "relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8",
+    form: A
+      ? "relative z-10 flex flex-col gap-2.5 rounded-xl bg-[#f8fafc] p-3 md:p-3.5"
+      : "relative z-10 flex flex-col gap-3.5",
+    fieldFocus: A
+      ? "focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-100"
+      : "focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100",
+    fieldIdle: A ? "border-[#d0d5dd] bg-[#f9fafb]" : "border-gray-200 bg-white",
+    fieldShape: A ? "rounded-[5px]" : "rounded-xl",
+    fieldSize: A ? "h-[38px] text-[15px] md:text-sm placeholder:text-slate-500" : "h-11 text-sm placeholder:text-gray-400",
+    triggerSize: A ? "!h-[38px]" : "!h-11",
+    trigger: A
+      ? "flex w-full items-center rounded-[5px] border border-[#d0d5dd] bg-[#f9fafb] px-3 text-[15px] text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 md:text-sm"
+      : "flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100",
+    phoneFocus: A
+      ? "focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100"
+      : "focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100",
+    submit: A
+      ? "mx-auto mt-0.5 h-10 w-[78%] max-w-[280px] rounded-md bg-gradient-to-b from-[#ff9a1f] to-[#ea7a00] text-[15px] font-bold text-white shadow-[0_8px_18px_-6px_rgba(234,122,0,0.65)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2"
+      : "mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2",
+    timer: A
+      ? "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-orange-100 bg-orange-50 px-3 py-2 text-center text-xs font-medium text-orange-900 sm:text-sm"
+      : "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm",
+    timerStrong: A ? "text-orange-600" : "text-red-700",
+  };
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [offerSecondsRemaining, setOfferSecondsRemaining] = useState(OFFER_DURATION_SECONDS);
@@ -329,7 +361,18 @@ export function ApplicationForm({
   };
 
   return (
-    <div className="relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+    <div className={ui.wrapper}>
+      {A ? (
+        <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4">
+          <h2 className="text-[19px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[20px]">
+            Get <span className="text-orange-500">₹10,000*</span> Scholarship
+          </h2>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2563eb] px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-white shadow-sm shadow-blue-600/30">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Connect With An Expert
+          </span>
+        </div>
+      ) : (
       <div className="relative z-10 mb-5 text-center">
         <div className="flex flex-col items-center gap-2">
           <p className="text-xs font-extrabold uppercase tracking-[0.1em] text-[#ee2c3c]">
@@ -341,15 +384,16 @@ export function ApplicationForm({
           </span>
         </div>
       </div>
+      )}
 
       <form
         onSubmit={handleSubmit}
-        className="relative z-10 flex flex-col gap-3.5"
+        className={ui.form}
       >
         {/* Name */}
         <div>
           <Input
-            placeholder="Enter Full Name"
+            placeholder={A ? "Full Name" : "Enter Full Name"}
             value={formData.fullName}
             onChange={(e) =>
               setFormData({
@@ -357,10 +401,10 @@ export function ApplicationForm({
                 fullName: e.target.value,
               })
             }
-            className={`h-11 w-full rounded-xl border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
+            className={`${ui.fieldSize} w-full ${ui.fieldShape} border px-3 text-gray-900 ${ui.fieldFocus} ${
               errors.fullName
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white"
+                : ui.fieldIdle
             }`}
           />
 
@@ -375,7 +419,7 @@ export function ApplicationForm({
         <div>
           <Input
             type="email"
-            placeholder="Enter Full Email Address"
+            placeholder={A ? "Email Address" : "Enter Full Email Address"}
             value={formData.email}
             onChange={(e) =>
               setFormData({
@@ -383,10 +427,10 @@ export function ApplicationForm({
                 email: e.target.value,
               })
             }
-            className={`h-11 w-full rounded-xl border px-3 text-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 ${
+            className={`${ui.fieldSize} w-full ${ui.fieldShape} border px-3 text-gray-900 ${ui.fieldFocus} ${
               errors.email
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white"
+                : ui.fieldIdle
             }`}
           />
 
@@ -421,7 +465,7 @@ export function ApplicationForm({
               }
             }}
           >
-            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <SelectTrigger className={`${ui.triggerSize} !min-h-0 !py-0 ${ui.trigger}`}>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
 
@@ -445,10 +489,10 @@ export function ApplicationForm({
         {/* Mobile */}
         <div>
           <div
-            className={`__phone-input-wrapper flex h-11 w-full items-center overflow-hidden rounded-xl border transition focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100 ${
+            className={`__phone-input-wrapper flex ${A ? "h-[38px]" : "h-11"} w-full items-center overflow-hidden ${ui.fieldShape} border transition ${ui.phoneFocus} ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-white"
+                : ui.fieldIdle
             }`}
           >
             <div className="__country-code flex h-full min-w-fit items-center whitespace-nowrap border-r border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-700">
@@ -458,9 +502,11 @@ export function ApplicationForm({
             <input
               type="tel"
               placeholder={
-                selectedCountry.code === "in"
-                  ? "xxxxxxxxxx"
-                  : "Enter Phone Number"
+                A
+                  ? "Mobile Number"
+                  : selectedCountry.code === "in"
+                    ? "xxxxxxxxxx"
+                    : "Enter Phone Number"
               }
               value={formData.mobile.replace(/\D/g, "")}
               onChange={(e) => {
@@ -509,7 +555,7 @@ export function ApplicationForm({
               })
             }
           >
-            <SelectTrigger className="!h-11 !min-h-0 !py-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
+            <SelectTrigger className={`${ui.triggerSize} !min-h-0 !py-0 ${ui.trigger}`}>
               <SelectValue placeholder={coursePlaceholder} />
             </SelectTrigger>
 
@@ -545,8 +591,8 @@ export function ApplicationForm({
                 })
               }
             >
-              <SelectTrigger className="!h-11 !min-h-0 flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100">
-                <SelectValue placeholder="Select State" />
+              <SelectTrigger className={`${ui.triggerSize} !min-h-0 ${ui.trigger}`}>
+                <SelectValue placeholder={A ? "Choose State" : "Select State"} />
               </SelectTrigger>
 
               <SelectContent
@@ -578,7 +624,7 @@ export function ApplicationForm({
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
+          className={ui.submit}
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />
@@ -594,14 +640,14 @@ export function ApplicationForm({
       <div
         role="timer"
         aria-live="off"
-        className="relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm"
+        className={ui.timer}
       >
         {offerExpired ? (
-          <span className="font-semibold text-red-700">Offer Expired</span>
+          <span className={`font-semibold ${ui.timerStrong}`}>Offer Expired</span>
         ) : (
           <>
             <span>Offer Expires In:</span>
-            <span className="font-bold tabular-nums text-red-700">
+            <span className={`font-bold tabular-nums ${ui.timerStrong}`}>
               {String(offerDays).padStart(2, "0")}d&nbsp; : &nbsp;
               {String(offerHours).padStart(2, "0")}h&nbsp; : &nbsp;
               {String(offerMinutes).padStart(2, "0")}m&nbsp; : &nbsp;

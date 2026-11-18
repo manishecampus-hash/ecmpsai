@@ -38,13 +38,20 @@ export default function LeadFormModalFrame({
   onClose,
   title,
   imageSrc,
+  mobileImageSrc,
+  variant = "default",
 }: {
   children: ReactNode;
   onClose: () => void;
   title: string;
   imageSrc?: string;
+  /** Separate artwork for phones — shown in full and scrolls with the form */
+  mobileImageSrc?: string;
+  /** "assured": eCampus Assured layout (image + form) */
+  variant?: "default" | "assured";
 }) {
   const reduceMotion = useReducedMotion();
+  const isAssured = variant === "assured";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -99,10 +106,36 @@ export default function LeadFormModalFrame({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative z-10 grid max-h-[94vh] w-full max-w-5xl grid-cols-1 overflow-hidden rounded-2xl border border-white/10 bg-white shadow-[0_32px_100px_-12px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:max-h-[90vh] md:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] ${imageSrc ? "grid-rows-[auto_minmax(0,1fr)] md:grid-rows-1" : ""}`}
+        className={
+          isAssured
+            ? // phones: the whole popup scrolls (image + form); desktop: image | form side by side
+              "relative z-10 max-h-[92vh] w-full max-w-[360px] overflow-y-auto overscroll-contain rounded-[20px] bg-white shadow-[0_32px_100px_-12px_rgba(0,0,0,0.55)] [scrollbar-width:thin] md:grid md:max-h-[90vh] md:max-w-[860px] md:grid-cols-[minmax(0,1fr)_400px] md:overflow-hidden"
+            : `relative z-10 grid max-h-[94vh] w-full max-w-5xl grid-cols-1 overflow-hidden rounded-2xl border border-white/10 bg-white shadow-[0_32px_100px_-12px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:max-h-[90vh] md:grid-cols-[minmax(0,1.08fr)_minmax(400px,0.92fr)] ${imageSrc ? "grid-rows-[auto_minmax(0,1fr)] md:grid-rows-1" : ""}`
+        }
         onClick={(e) => e.stopPropagation()}
       >
-        {imageSrc ? (
+        {isAssured && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 md:bg-transparent"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+        {isAssured && imageSrc ? (
+          <>
+            {/* phones: full mobile artwork above the form */}
+            <div aria-hidden="true" className="bg-[#eef4ff] md:hidden">
+              <img src={mobileImageSrc || imageSrc} alt="" className="block h-auto w-full" />
+            </div>
+            {/* desktop: portrait artwork beside the form */}
+            <div aria-hidden="true" className="relative hidden min-h-0 md:block">
+              <img src={imageSrc} alt="" className="absolute inset-3.5 h-[calc(100%-28px)] w-[calc(100%-28px)] rounded-2xl object-cover object-top" />
+            </div>
+          </>
+        ) : imageSrc ? (
           <>
             <div aria-hidden="true" className="relative h-[74px] overflow-hidden md:hidden">
               <img src={imageSrc} alt="" className="h-full w-full object-cover object-top" />
@@ -114,15 +147,17 @@ export default function LeadFormModalFrame({
         ) : (
           <div aria-hidden="true" data-course-image-placeholder className="hidden bg-[#fffafa] md:block" />
         )}
-        <div className="relative min-h-0 overflow-y-auto bg-white">
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
+        <div className={isAssured ? "relative bg-white md:min-h-0 md:overflow-y-auto" : "relative min-h-0 overflow-y-auto bg-white"}>
+          {!isAssured && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
           {children}
         </div>
       </motion.div>

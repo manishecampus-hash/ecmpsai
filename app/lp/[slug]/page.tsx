@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import LandingPageTemplate, {
   LandingPageData,
 } from "@/components/landing-page/landing-page-template";
+import type { MbaCourseData } from "@/components/landing-page/landing-page-mba-extras";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,6 +35,18 @@ async function fetchLandingPage(
     return await res.json();
   } catch (error) {
     console.error("Error fetching landing page:", error);
+    return null;
+  }
+}
+
+/** Course content (specialisations, syllabus, universities…) for the MBA landing page */
+async function fetchMbaCourse(): Promise<MbaCourseData | null> {
+  try {
+    const res = await fetch(`${FRONTEND_API_URL}/root-courses/online-mba`, { cache: "no-cache" });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching online MBA course:", error);
     return null;
   }
 }
@@ -95,11 +108,15 @@ export default async function DynamicLandingPage({
   const { preview } = await searchParams;
   const isPreview = preview === "true";
 
-  const data = await fetchLandingPage(slug, isPreview);
+  const isMba = /mba/i.test(slug);
+  const [data, mbaCourse] = await Promise.all([
+    fetchLandingPage(slug, isPreview),
+    isMba ? fetchMbaCourse() : Promise.resolve(null),
+  ]);
 
   if (!data) {
     notFound();
   }
 
-  return <LandingPageTemplate data={data} isPreview={isPreview} />;
+  return <LandingPageTemplate data={data} isPreview={isPreview} mbaCourse={mbaCourse} />;
 }

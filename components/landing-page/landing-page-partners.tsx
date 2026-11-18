@@ -15,9 +15,11 @@ export interface LandingPageGlobalPartnersData {
 
 interface LandingPagePartnersProps {
   partners?: LandingPageGlobalPartnersData;
+  /** Line under the logo strip */
+  footnote?: string;
 }
 
-export function LandingPagePartners({ partners }: LandingPagePartnersProps) {
+export function LandingPagePartners({ partners, footnote = "Accredited Global University Network" }: LandingPagePartnersProps) {
   // CRITICAL REQUIREMENT: If no logos are present, the section shall NOT be visible.
   // No fallback content.
   const logos = partners?.logos;
@@ -43,7 +45,7 @@ export function LandingPagePartners({ partners }: LandingPagePartnersProps) {
       <LpHeading heading={sectionHeading} description={sectionDescription || undefined} />
       <LogoMarquee logos={validLogos} speed={30} />
       <p className="mt-5 flex items-center justify-center gap-2 text-xs font-semibold text-slate-500">
-        <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> Accredited Global University Network
+        <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {footnote}
       </p>
     </LpSection>
   );

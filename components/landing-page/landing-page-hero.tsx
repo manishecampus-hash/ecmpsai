@@ -23,6 +23,10 @@ export interface LandingPageHeroData {
   beforeLabel?: string;
   afterLabel?: string;
   badgeText?: string;
+  /** Floating chip on the hero image (default "Verified Doctorate") */
+  credentialLabel?: string;
+  /** Third trust indicator under the CTAs (default "WES / ECE Accredited") */
+  trustLabel?: string;
 }
 
 interface LandingPageHeroProps {
@@ -155,7 +159,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
               </div>
               <div className="hidden items-center gap-2 sm:flex">
                 <Award className="h-4 w-4 text-amber-500 shrink-0" />
-                <span>WES / ECE Accredited</span>
+                <span>{hero.trustLabel || "WES / ECE Accredited"}</span>
               </div>
             </div>
           </div>
@@ -175,7 +179,7 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
             {/* Floating Credential Chip */}
             <div className="pointer-events-none absolute -right-2 top-2 z-20 hidden items-center gap-2 rounded-full border border-red-100/90 bg-white/95 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-md backdrop-blur-md sm:flex">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Verified Doctorate</span>
+              <span>{hero.credentialLabel || "Verified Doctorate"}</span>
             </div>
 
             {/* Study-while-working chip */}

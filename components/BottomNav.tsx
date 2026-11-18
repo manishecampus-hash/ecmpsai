@@ -39,8 +39,13 @@ export default function BottomNav() {
     };
   }, []);
 
+  // Landing pages that use their own floating actions don't show the bottom bar
+  const hideOnThisPage = pathname?.startsWith("/lp/online-dba");
+
   const aiActive = isActive(aiLink.href);
   const AiIcon = aiLink.icon;
+
+  if (hideOnThisPage) return null;
 
   return (
     <div

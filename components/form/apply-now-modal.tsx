@@ -1,12 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 // The form and popup frame load only when the popup is first opened,
 // so pages with "Apply Now" buttons don't ship the form code up front.
 const ApplicationForm = dynamic(() => import("@/components/form/common-form").then((m) => m.ApplicationForm), { ssr: false });
 const LeadFormModalFrame = dynamic(() => import("@/components/form/lead-form-modal-frame"), { ssr: false });
+
+/**
+ * Visual style of the Apply popup. "assured" shows the eCampus Assured artwork
+ * (desktop / mobile images) with the matching form look. A page opts in by wrapping
+ * its content in <ApplyFormStyleProvider value="assured">; every other page keeps the default.
+ */
+export type ApplyFormStyle = "default" | "assured";
+
+const ApplyFormStyleContext = createContext<ApplyFormStyle>("default");
+
+export function ApplyFormStyleProvider({ value, children }: { value: ApplyFormStyle; children: React.ReactNode }) {
+  return <ApplyFormStyleContext.Provider value={value}>{children}</ApplyFormStyleContext.Provider>;
+}
+
+const ASSURED_IMAGES = {
+  desktop: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/application-form-popup.jpeg",
+  mobile: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/application-form-mobile%20view.jpeg",
+};
 
 interface ApplyNowModalProps {
   isOpen: boolean;
@@ -16,6 +34,9 @@ interface ApplyNowModalProps {
 }
 
 export function ApplyNowModal({ isOpen, onClose, courses }: ApplyNowModalProps) {
+  const style = useContext(ApplyFormStyleContext);
+  const isAssured = style === "assured";
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -30,12 +51,19 @@ export function ApplyNowModal({ isOpen, onClose, courses }: ApplyNowModalProps) 
   if (!isOpen) return null;
 
   return (
-    <LeadFormModalFrame onClose={onClose} title="Apply now" imageSrc="/application-form-popup.jpeg">
+    <LeadFormModalFrame
+      onClose={onClose}
+      title="Apply now"
+      imageSrc={isAssured ? ASSURED_IMAGES.desktop : "/application-form-popup.jpeg"}
+      mobileImageSrc={isAssured ? ASSURED_IMAGES.mobile : undefined}
+      variant={style}
+    >
       <ApplicationForm
         onSubmit={() => onClose()}
         onBack={() => onClose()}
         courses={courses}
         coursePlaceholder={courses?.length ? "Choose Specialisation" : undefined}
+        variant={style}
       />
     </LeadFormModalFrame>
   );

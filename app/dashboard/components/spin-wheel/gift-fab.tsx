@@ -4,6 +4,8 @@ const PARTICLES = ["🎉", "✨", "⭐", "🎊", "💫", "✨"];
 
 interface GiftFabProps {
   onClick: () => void;
+  /** Fixed-position classes; defaults to the dashboard placement */
+  positionClassName?: string;
 }
 
 /**
@@ -11,7 +13,7 @@ interface GiftFabProps {
  * bubble, styled after eCampus's existing scholarship-offer widget but
  * recolored to this dashboard's red/gold brand instead of blue.
  */
-export default function GiftFab({ onClick }: GiftFabProps) {
+export default function GiftFab({ onClick, positionClassName = "bottom-4 left-20" }: GiftFabProps) {
   return (
     <>
       <button
@@ -19,7 +21,7 @@ export default function GiftFab({ onClick }: GiftFabProps) {
         onClick={onClick}
         title="Click to spin for a scholarship reward"
         aria-label="Open Spin & Win scholarship wheel"
-        className="sw-fab fixed bottom-4 left-20 z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-red-600 bg-gradient-to-br from-white to-gray-50 shadow-[0_10px_24px_rgba(220,38,38,0.3),0_4px_10px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_16px_32px_rgba(220,38,38,0.38)] sm:h-[54px] sm:w-[54px]"
+        className={`sw-fab fixed ${positionClassName} z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-red-600 bg-gradient-to-br from-white to-gray-50 shadow-[0_10px_24px_rgba(220,38,38,0.3),0_4px_10px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_16px_32px_rgba(220,38,38,0.38)] sm:h-[54px] sm:w-[54px]`}
       >
         <span className="sw-fab-wrapper relative flex h-full w-full items-center justify-center">
           <span className="sw-fab-pulse-ring pointer-events-none absolute -inset-1.5 rounded-full border-2 border-red-500" />

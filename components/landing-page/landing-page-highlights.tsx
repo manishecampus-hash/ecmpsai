@@ -37,12 +37,31 @@ interface LandingPageHighlightsProps {
   highlights?: LandingPageHighlightsData;
   /** Options for the Apply form's course dropdown on this page */
   formCourses?: string[];
+  /** Page-specific wording (defaults are the DBA page's) */
+  copy?: Partial<HighlightsCopy>;
 }
+
+export interface HighlightsCopy {
+  leadSubtitle: string;
+  otherSubtitle: string;
+  otherShort: string;
+  promptText: string;
+  promptCta: string;
+}
+
+const DEFAULT_COPY: HighlightsCopy = {
+  leadSubtitle: "Best for working professionals",
+  otherSubtitle: "Academic research track",
+  otherShort: "Research track",
+  promptText: "Not sure which doctorate fits your goals?",
+  promptCta: "Talk to a DBA Counsellor",
+};
 
 const ROW_ICONS = [Bookmark, CheckSquare, Search, CalendarDays, Users, Award, BookOpen];
 
-export function LandingPageHighlights({ highlights, formCourses }: LandingPageHighlightsProps) {
+export function LandingPageHighlights({ highlights, formCourses, copy: copyOverride }: LandingPageHighlightsProps) {
   if (!highlights || !highlights.rows || highlights.rows.length === 0) return null;
+  const copy = { ...DEFAULT_COPY, ...(copyOverride || {}) };
 
   const sectionHeading = highlights.sectionHeading || "Key Highlights";
   const columns = highlights.columns && highlights.columns.length > 0
@@ -84,12 +103,12 @@ export function LandingPageHighlights({ highlights, formCourses }: LandingPageHi
               <Crown className="h-3.5 w-3.5" /> Recommended
             </span>
             <span className="mt-3 text-3xl font-extrabold tracking-tight text-red-600">{lead.title}</span>
-            <span className="mt-0.5 text-xs font-semibold text-slate-500">Best for working professionals</span>
+            <span className="mt-0.5 text-xs font-semibold text-slate-500">{copy.leadSubtitle}</span>
           </div>
           {others.map((col, i) => (
             <div key={col.id} style={at(i + 3, 1)} className="flex flex-col items-center justify-end px-6 pb-5 pt-6 text-center">
               <span className="text-2xl font-extrabold tracking-tight text-slate-500">{col.title}</span>
-              <span className="mt-0.5 text-xs font-semibold text-slate-400">Academic research track</span>
+              <span className="mt-0.5 text-xs font-semibold text-slate-400">{copy.otherSubtitle}</span>
             </div>
           ))}
 
@@ -155,7 +174,7 @@ export function LandingPageHighlights({ highlights, formCourses }: LandingPageHi
                 <th key={col.id} scope="col" className="px-3 py-3.5 align-middle">
                   <span className="block text-[15px] font-extrabold leading-none">{col.title}</span>
                   <span className="mt-1 block text-[9px] font-semibold uppercase tracking-wide text-red-100">
-                    Research track
+                    {copy.otherShort}
                   </span>
                 </th>
               ))}
@@ -201,9 +220,9 @@ export function LandingPageHighlights({ highlights, formCourses }: LandingPageHi
 
       {/* Lead prompt */}
       <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4 md:mt-16">
-        <p className="text-sm font-medium text-slate-600">Not sure which doctorate fits your goals?</p>
+        <p className="text-sm font-medium text-slate-600">{copy.promptText}</p>
         <ApplyNowButton courses={formCourses} className="group inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 text-sm font-bold text-red-700 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white">
-          Talk to a DBA Counsellor
+          {copy.promptCta}
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </ApplyNowButton>
       </div>

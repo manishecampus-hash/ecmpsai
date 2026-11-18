@@ -114,9 +114,18 @@ export function LogoMarquee({
   const tile = size === "sm" ? "h-16 w-32 sm:h-[72px] sm:w-36" : "h-20 w-40 sm:h-24 sm:w-48";
   const img = size === "sm" ? "max-h-9 sm:max-h-10" : "max-h-12 sm:max-h-14";
   const base = logos.length < 6 ? [...logos, ...logos, ...logos] : logos;
+  // Edge fade. Safari needs the -webkit- mask and its own compositing layer,
+  // otherwise the moving strip inside the mask may not repaint.
+  const fade = "linear-gradient(to right, transparent, black 7%, black 93%, transparent)";
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white py-6 sm:py-8 [mask-image:linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]">
-      <div className="lp-marquee flex w-max items-center" style={{ animationDuration: `${speed}s` }}>
+    <div
+      className="relative isolate overflow-hidden rounded-2xl border border-slate-200 bg-white py-6 sm:py-8"
+      style={{ WebkitMaskImage: fade, maskImage: fade, transform: "translateZ(0)" }}
+    >
+      <div
+        className="lp-marquee flex w-max items-center"
+        style={{ "--lp-marquee-duration": `${speed}s` } as React.CSSProperties}
+      >
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center gap-4 pr-4 sm:gap-5 sm:pr-5" aria-hidden={copy === 1}>
             {base.map((p, i) => (
@@ -137,10 +146,23 @@ export function LogoMarquee({
         ))}
       </div>
       <style>{`
-        @keyframes lp-marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
-        .lp-marquee { animation: lp-marquee linear infinite; }
-        .lp-marquee:hover { animation-play-state: paused; }
-        @media (prefers-reduced-motion: reduce) { .lp-marquee { animation: none; } }
+        @-webkit-keyframes lp-marquee { from { -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); } to { -webkit-transform: translate3d(-50%, 0, 0); transform: translate3d(-50%, 0, 0); } }
+        @keyframes lp-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+        .lp-marquee {
+          -webkit-animation: lp-marquee var(--lp-marquee-duration, 30s) linear infinite;
+          animation: lp-marquee var(--lp-marquee-duration, 30s) linear infinite;
+          will-change: transform;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+        }
+        .lp-marquee:hover { -webkit-animation-play-state: paused; animation-play-state: paused; }
+        /* macOS / iOS "Reduce motion": keep the logos moving, just slower (previously it stopped completely) */
+        @media (prefers-reduced-motion: reduce) {
+          .lp-marquee {
+            -webkit-animation-duration: calc(var(--lp-marquee-duration, 30s) * 2.5);
+            animation-duration: calc(var(--lp-marquee-duration, 30s) * 2.5);
+          }
+        }
       `}</style>
     </div>
   );

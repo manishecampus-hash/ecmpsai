@@ -11,9 +11,11 @@ import LandingPagePlacementPartners, { LandingPagePlacementPartnersData } from "
 import LandingPageFaq, { LandingPageFaqData } from "./landing-page-faq";
 import { DBA_SPECIALISATIONS, DbaAudience, DbaFinalCta, DbaJourney } from "./landing-page-dba-extras";
 import {
+  MbaAboutWhy,
   MbaAdmissionJourney,
   MbaAudienceSection,
   MbaFinalCta,
+  MbaKeyInfo,
   MbaOffers,
   MbaSpecializations,
   MbaSyllabus,
@@ -23,6 +25,7 @@ import {
 import { LP_REVEAL_CSS } from "./lp-ui";
 import { ApplyFormStyleProvider } from "@/components/form/apply-now-modal";
 import DbaGiftButton from "./dba-gift-button";
+import MbaHeroForm from "./mba-hero-form";
 import { DBA_UNIVERSITIES } from "@/data/dba-universities";
 
 export interface LandingPageData {
@@ -162,12 +165,32 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       )}
 
       {/* 1. Hero Section */}
-      {hero && <LandingPageHero hero={hero} formCourses={formCourses} />}
+      {hero && (
+        <LandingPageHero hero={hero} formCourses={formCourses} aside={isMba ? <MbaHeroForm /> : undefined} />
+      )}
+
+      {/* MBA: partners strip, key programme info, about + recognitions — right after the hero */}
+      {isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
+        <LandingPagePartners partners={globalPartners} footnote="UGC-Entitled University Network" />
+      )}
+      {mba && <MbaKeyInfo course={mba} tone="muted" />}
+      {mba && (
+        <MbaAboutWhy
+          course={mba}
+          universityCount={mbaUniversities.length}
+          specializationCount={mba.details?.specializations?.items?.length || 0}
+          tone="white"
+        />
+      )}
+      {/* MBA: specialisations & careers right after "Recognised & Trusted" */}
+      {mba?.details?.specializations?.items && (
+        <MbaSpecializations items={mba.details.specializations.items} tone="muted" />
+      )}
 
       {/* 2. Trust / Statistics — hidden for now */}
 
-      {/* 3. Key Highlights / Comparison */}
-      {data.highlights && (
+      {/* 3. Key Highlights / Comparison — shown lower down on the MBA page */}
+      {!isMba && data.highlights && (
         <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
       )}
 
@@ -182,19 +205,21 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
 
       {isDba && <DbaAudience />}
 
-      {/* MBA: graduates vs working professionals, specialisations & career roles, what it offers */}
+      {/* MBA: graduates vs working professionals */}
       {mba && <MbaAudienceSection tone="muted" />}
-      {mba?.details?.specializations?.items && (
-        <MbaSpecializations items={mba.details.specializations.items} tone="white" />
-      )}
-      {mba?.details?.courseOffer?.categories && <MbaOffers categories={mba.details.courseOffer.categories} tone="muted" />}
 
       {/* 5. Experience / Benefits Section */}
       {experience && <LandingPageExperience experience={experience} />}
 
+      {/* MBA: Online vs Distance comparison sits lower on this page */}
+      {isMba && data.highlights && (
+        <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+      )}
+
       {isDba && <DbaJourney />}
 
       {/* MBA: what an online MBA offers, semester-wise journey, admission steps */}
+      {mba?.details?.courseOffer?.categories && <MbaOffers categories={mba.details.courseOffer.categories} tone="white" />}
       {mba?.details?.syllabus && <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />}
       {mba?.details?.processFlow?.steps && (
         <MbaAdmissionJourney
@@ -205,11 +230,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       )}
 
       {/* 6. Global University Partners */}
-      {globalPartners?.logos && globalPartners.logos.length > 0 && (
-        <LandingPagePartners
-          partners={globalPartners}
-          {...(isMba ? { footnote: "UGC-Entitled University Network" } : {})}
-        />
+      {!isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
+        <LandingPagePartners partners={globalPartners} />
       )}
 
       {/* 7. Counsellors Section */}

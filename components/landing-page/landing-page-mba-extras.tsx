@@ -5,6 +5,10 @@ import {
   ArrowUpRight,
   BadgeCheck,
   BookOpenCheck,
+  CalendarCheck,
+  Clock3,
+  GraduationCap,
+  IndianRupee,
   ClipboardCheck,
   FileCheck2,
   Landmark,
@@ -64,6 +68,8 @@ export interface MbaCourseData {
     processFlow?: { heading?: string; subHeading?: string; steps?: { title: string; description: string }[] };
     supportDesk?: { faqs?: { question: string; answer: string }[] };
     courseOffer?: { categories?: { name: string; items?: string[] }[] };
+    courseFees?: { rows?: { university?: string; fee?: string }[] };
+    about?: { heading?: string; description?: string };
   };
 }
 
@@ -473,6 +479,174 @@ export function MbaOffers({
             );
           })}
         </ul>
+      </div>
+    </LpSection>
+  );
+}
+
+/* ------------------------------------------------------------
+   10. Key programme info (batch · duration · fee · eligibility)
+------------------------------------------------------------ */
+export function MbaKeyInfo({ course, tone = "muted" }: { course: MbaCourseData; tone?: "white" | "muted" }) {
+  const semesters = course.details?.syllabus?.semesters?.length || 4;
+  const cards: {
+    icon: LucideIcon;
+    label: string;
+    prefix?: string;
+    value: string;
+    live?: boolean;
+    lines: string[];
+    link?: { href: string; text: string };
+  }[] = [
+    { icon: CalendarCheck, label: "Batch Starts", value: "Admissions Open", live: true, lines: ["Limited seats", "Apply for the upcoming batch"] },
+    { icon: Clock3, label: "Duration", value: course.duration || "2 Years", lines: [`${semesters} semesters`, "100% online, live + recorded"] },
+    {
+      icon: IndianRupee,
+      label: "Programme Fee",
+      prefix: "Starting from",
+      value: "₹15,000",
+      lines: ["Varies by university", "EMI options available"],
+      link: { href: "#programs", text: "Compare universities" },
+    },
+    { icon: GraduationCap, label: "Eligibility", value: course.eligibility || "Graduate", lines: ["Any stream", "Min. 40–50% aggregate"] },
+  ];
+
+  return (
+    <LpSection tone={tone}>
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        {cards.map((c, i) => (
+          <LpReveal key={c.label} delay={i * 0.07} className="group h-full">
+            <div className="relative flex h-full flex-col items-center overflow-hidden rounded-2xl bg-white px-3 pb-5 pt-5 text-center shadow-[0_10px_30px_-18px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_24px_48px_-24px_rgba(220,38,38,0.5)] group-hover:ring-red-200 sm:px-5 sm:pb-6 sm:pt-6">
+              <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-rose-500 to-amber-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-red-600 group-hover:to-rose-500 group-hover:text-white group-hover:shadow-[0_10px_22px_-8px_rgba(220,38,38,0.7)] group-hover:ring-transparent sm:h-12 sm:w-12">
+                <c.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+              </span>
+
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 sm:mt-4 sm:text-[11px]">{c.label}</p>
+
+              {c.live ? (
+                <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-100 sm:text-[11px]">
+                  <span className="relative flex h-1.5 w-1.5" aria-hidden>
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
+                    <span className="relative inline-flex h-full w-full rounded-full bg-emerald-500" />
+                  </span>
+                  Enrolling now
+                </span>
+              ) : (
+                c.prefix && <p className="mt-1.5 text-[11px] font-semibold text-slate-500 sm:text-[13px]">{c.prefix}</p>
+              )}
+              <p
+                className={`${c.prefix || c.live ? "mt-0.5" : "mt-1.5"} text-[19px] font-extrabold leading-tight tracking-tight text-red-600 sm:text-[26px]`}
+              >
+                {c.value}
+              </p>
+
+              <span aria-hidden className="my-3 h-0.5 w-8 rounded-full bg-red-100 transition-all duration-300 group-hover:w-14 group-hover:bg-red-500" />
+
+              <div className="space-y-0.5 text-[12px] leading-snug text-slate-600 sm:text-[13.5px]">
+                {c.lines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+
+              {c.link && (
+                <a
+                  href={c.link.href}
+                  className="mt-auto inline-flex items-center gap-1 pt-3 text-[12px] font-bold text-red-600 underline-offset-4 hover:underline sm:text-[13px]"
+                >
+                  {c.link.text}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </a>
+              )}
+            </div>
+          </LpReveal>
+        ))}
+      </div>
+    </LpSection>
+  );
+}
+
+/* ------------------------------------------------------------
+   11. About the Online MBA + recognitions & numbers
+------------------------------------------------------------ */
+const RECOGNITIONS = [
+  { name: "University Grants Commission (UGC)", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-56--1788866561905-fbg2j0.png" },
+  { name: "NAAC Accreditation", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-57--1788867779015-l35op5.png" },
+  { name: "Association of Indian Universities (AIU)", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-24-1--1789639165318-xbov6h.svg" },
+  { name: "NIRF Ranking", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/2-1788867466527-xddkkk.png" },
+];
+
+/** First two paragraphs of the CMS "about" HTML */
+const firstParagraphs = (html?: string, count = 2) => (html || "").match(/<p[\s\S]*?<\/p>/gi)?.slice(0, count).join("") || "";
+
+export function MbaAboutWhy({
+  course,
+  universityCount,
+  specializationCount,
+  tone = "white",
+}: {
+  course: MbaCourseData;
+  universityCount: number;
+  specializationCount: number;
+  tone?: "white" | "muted";
+}) {
+  const about = firstParagraphs(course.details?.about?.description);
+  const stats = [
+    universityCount > 0 && { value: `${universityCount}+`, label: "UGC-Entitled Universities" },
+    specializationCount > 0 && { value: `${specializationCount}+`, label: "MBA Specialisations" },
+    { value: String(course.details?.syllabus?.semesters?.length || 4), label: "Semesters in 2 Years" },
+    { value: "100%", label: "Online Learning" },
+  ].filter(Boolean) as { value: string; label: string }[];
+
+  return (
+    <LpSection tone={tone}>
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+        {/* Left: about */}
+        <LpReveal>
+          <h2 className="text-[26px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+            Online <span className="text-red-600">MBA</span>
+          </h2>
+          {about && (
+            <div
+              className="mt-5 border-l-4 border-red-600 pl-4 text-[14px] italic leading-relaxed text-slate-600 sm:mt-6 sm:pl-5 sm:text-[15.5px] [&_p+p]:mt-3 [&_strong]:font-bold [&_strong]:not-italic [&_strong]:text-slate-900"
+              dangerouslySetInnerHTML={{ __html: about }}
+            />
+          )}
+        </LpReveal>
+
+        {/* Right: recognitions + numbers */}
+        <LpReveal delay={0.1}>
+          <h2 className="text-[26px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-center">
+            Recognised &amp; <span className="text-red-600">Trusted</span>
+          </h2>
+          <div className="mt-5 grid grid-cols-4 items-center gap-2 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/80 sm:mt-6 sm:gap-4 sm:p-6">
+            {RECOGNITIONS.map((r) => (
+              <div key={r.name} className="group flex flex-col items-center text-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={r.logo}
+                  alt={r.name}
+                  loading="lazy"
+                  className="h-11 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 sm:h-14"
+                />
+                <span className="mt-2 text-[9.5px] font-semibold uppercase leading-tight tracking-wide text-slate-500 sm:text-[10.5px]">
+                  {r.name.replace(/\s*\(.*\)/, "")}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-center text-[11px] text-slate-400">Approvals and rankings vary by university.</p>
+
+          <div className="mt-6 grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3">
+            {stats.map((st) => (
+              <div key={st.label} className="text-center">
+                <p className="text-[26px] font-extrabold leading-none tracking-tight text-slate-900 sm:text-[30px]">{st.value}</p>
+                <p className="mt-1.5 text-[12.5px] leading-snug text-slate-600 sm:text-[13.5px]">{st.label}</p>
+              </div>
+            ))}
+          </div>
+        </LpReveal>
       </div>
     </LpSection>
   );

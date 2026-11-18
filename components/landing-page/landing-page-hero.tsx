@@ -31,6 +31,8 @@ export interface LandingPageHeroData {
 
 interface LandingPageHeroProps {
   hero: LandingPageHeroData;
+  /** Optional right-hand content (e.g. an inline form) shown instead of the before/after images */
+  aside?: React.ReactNode;
   /** Options for the Apply form's course dropdown on this page */
   formCourses?: string[];
 }
@@ -42,7 +44,7 @@ const HERO_LINES = [
   "M1000 -20 C 920 180, 1100 380, 980 620",
 ];
 
-export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
+export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
   const beforeImg = hero.beforeImage || "/dba/before.png";
   const afterImg = hero.afterImage || "/dba/after.png";
@@ -164,6 +166,11 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
             </div>
           </div>
 
+          {aside ? (
+            /* ================= RIGHT: CUSTOM CONTENT (inline form) ================= */
+            <div className="relative lg:col-span-5">{aside}</div>
+          ) : (
+          <>
           {/* ================= RIGHT IMAGE AREA ================= */}
           <div className="relative flex min-h-[300px] items-center justify-center sm:min-h-[380px] lg:col-span-5 lg:min-h-[440px]">
             {/* Ambient Multi-Layer Glow */}
@@ -261,6 +268,8 @@ export function LandingPageHero({ hero, formCourses }: LandingPageHeroProps) {
               )}
             </div>
           </div>
+          </>
+          )}
         </div>
       </div>
     </section>

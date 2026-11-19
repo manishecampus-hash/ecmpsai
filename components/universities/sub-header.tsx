@@ -482,10 +482,12 @@ const NAV_ITEMS: NavItem[] = [
 interface SubHeaderProps {
   university?: any;
   universityName?: string;
+  /** Section links; defaults to the university-page sections */
+  items?: NavItem[];
 }
 
-export default function SubHeader({ university, universityName }: SubHeaderProps = {}) {
-  const navItems: NavItem[] = NAV_ITEMS;
+export default function SubHeader({ university, universityName, items }: SubHeaderProps = {}) {
+  const navItems: NavItem[] = items && items.length > 0 ? items : NAV_ITEMS;
 
   const [activeId, setActiveId] = useState<string>("overview");
   const [isSticky, setIsSticky] = useState(false);

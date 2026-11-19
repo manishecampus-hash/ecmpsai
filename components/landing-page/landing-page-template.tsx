@@ -26,6 +26,7 @@ import { LP_REVEAL_CSS } from "./lp-ui";
 import { ApplyFormStyleProvider } from "@/components/form/apply-now-modal";
 import DbaGiftButton from "./dba-gift-button";
 import MbaHeroForm from "./mba-hero-form";
+import SubHeader from "@/components/universities/sub-header";
 import { DBA_UNIVERSITIES } from "@/data/dba-universities";
 
 export interface LandingPageData {
@@ -146,6 +147,39 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       }
     : undefined;
 
+  // In-page navigation — same sticky sub-header as the university pages.
+  // Only sections that actually render on this page are listed.
+  const hasCounsellors = Boolean(counsellorsSection && (counsellorsSection.counsellors?.length ?? 0) > 0);
+  const hasFaq = Boolean(faqSection && (faqSection.faqs?.length ?? 0) > 0);
+  const hasPartners = Boolean(globalPartners?.logos && globalPartners.logos.length > 0);
+  const subHeaderItems = (
+    isMba
+      ? [
+          hasPartners && { id: "lp-partners", label: "Partners" },
+          mba && { id: "lp-overview", label: "Overview" },
+          mba?.details?.specializations?.items?.length && { id: "lp-specialisations", label: "Specialisations" },
+          { id: "programs", label: "Universities" },
+          mba && { id: "lp-audience", label: "Who It's For" },
+          experience && { id: "lp-why", label: "Why MBA" },
+          data.highlights && { id: "lp-compare", label: "Online vs Distance" },
+          mba?.details?.courseOffer?.categories?.length && { id: "lp-benefits", label: "Benefits" },
+          mba?.details?.syllabus && { id: "lp-syllabus", label: "Syllabus" },
+          mba?.details?.processFlow?.steps?.length && { id: "lp-admission", label: "Admission" },
+          hasCounsellors && { id: "lp-counsellors", label: "Counsellors" },
+          hasFaq && { id: "lp-faq", label: "FAQs" },
+        ]
+      : [
+          data.highlights && { id: "lp-compare", label: "Key Highlights" },
+          { id: "programs", label: "Universities" },
+          isDba && { id: "lp-audience", label: "Who Can Apply" },
+          experience && { id: "lp-why", label: isDba ? "Why DBA" : "Why Us" },
+          isDba && { id: "lp-journey", label: "Your Path" },
+          hasPartners && { id: "lp-partners", label: "Partners" },
+          hasCounsellors && { id: "lp-counsellors", label: "Counsellors" },
+          hasFaq && { id: "lp-faq", label: "FAQs" },
+        ]
+  ).filter(Boolean) as { id: string; label: string }[];
+
   return (
     // DBA page: Apply popups use the eCampus Assured design; other pages keep the default
     <ApplyFormStyleProvider value={isDba ? "assured" : "default"}>
@@ -166,14 +200,27 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
 
       {/* 1. Hero Section */}
       {hero && (
-        <LandingPageHero hero={hero} formCourses={formCourses} aside={isMba ? <MbaHeroForm /> : undefined} />
+        <LandingPageHero
+          hero={hero}
+          formCourses={formCourses}
+          aside={isMba || isDba ? <MbaHeroForm courses={formCourses} /> : undefined}
+        />
       )}
+
+      {/* Sticky in-page navigation (same component & look as the university pages) */}
+      <SubHeader items={subHeaderItems} />
 
       {/* MBA: partners strip, key programme info, about + recognitions — right after the hero */}
       {isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
-        <LandingPagePartners partners={globalPartners} footnote="UGC-Entitled University Network" />
+        <div id="lp-partners" className="scroll-mt-28">
+          <LandingPagePartners partners={globalPartners} footnote="UGC-Entitled University Network" />
+        </div>
       )}
-      {mba && <MbaKeyInfo course={mba} tone="muted" />}
+      {mba && (
+        <div id="lp-overview" className="scroll-mt-28">
+          <MbaKeyInfo course={mba} tone="muted" />
+        </div>
+      )}
       {mba && (
         <MbaAboutWhy
           course={mba}
@@ -184,18 +231,22 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       )}
       {/* MBA: specialisations & careers right after "Recognised & Trusted" */}
       {mba?.details?.specializations?.items && (
-        <MbaSpecializations items={mba.details.specializations.items} tone="muted" />
+        <div id="lp-specialisations" className="scroll-mt-28">
+          <MbaSpecializations items={mba.details.specializations.items} tone="muted" />
+        </div>
       )}
 
       {/* 2. Trust / Statistics — hidden for now */}
 
       {/* 3. Key Highlights / Comparison — shown lower down on the MBA page */}
       {!isMba && data.highlights && (
-        <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+        <div id="lp-compare" className="scroll-mt-28">
+          <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+        </div>
       )}
 
       {/* 4. Universities — MBA page lists the Online MBA universities; others keep the DBA list */}
-      <div id="programs">
+      <div id="programs" className="scroll-mt-28">
         {isMba && mbaUniversities.length > 0 ? (
           <MbaUniversities universities={mbaUniversities} />
         ) : (
@@ -203,39 +254,70 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         )}
       </div>
 
-      {isDba && <DbaAudience />}
+      {isDba && (
+        <div id="lp-audience" className="scroll-mt-28">
+          <DbaAudience />
+        </div>
+      )}
 
       {/* MBA: graduates vs working professionals */}
-      {mba && <MbaAudienceSection tone="muted" />}
+      {mba && (
+        <div id="lp-audience" className="scroll-mt-28">
+          <MbaAudienceSection tone="muted" />
+        </div>
+      )}
 
       {/* 5. Experience / Benefits Section */}
-      {experience && <LandingPageExperience experience={experience} />}
+      {experience && (
+        <div id="lp-why" className="scroll-mt-28">
+          <LandingPageExperience experience={experience} />
+        </div>
+      )}
 
       {/* MBA: Online vs Distance comparison sits lower on this page */}
       {isMba && data.highlights && (
-        <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+        <div id="lp-compare" className="scroll-mt-28">
+          <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+        </div>
       )}
 
-      {isDba && <DbaJourney />}
+      {isDba && (
+        <div id="lp-journey" className="scroll-mt-28">
+          <DbaJourney />
+        </div>
+      )}
 
       {/* MBA: what an online MBA offers, semester-wise journey, admission steps */}
-      {mba?.details?.courseOffer?.categories && <MbaOffers categories={mba.details.courseOffer.categories} tone="white" />}
-      {mba?.details?.syllabus && <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />}
+      {mba?.details?.courseOffer?.categories && (
+        <div id="lp-benefits" className="scroll-mt-28">
+          <MbaOffers categories={mba.details.courseOffer.categories} tone="white" />
+        </div>
+      )}
+      {mba?.details?.syllabus && (
+        <div id="lp-syllabus" className="scroll-mt-28">
+          <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />
+        </div>
+      )}
       {mba?.details?.processFlow?.steps && (
-        <MbaAdmissionJourney
-          steps={mba.details.processFlow.steps}
-          description={mba.details.processFlow.subHeading}
-          tone="white"
-        />
+        <div id="lp-admission" className="scroll-mt-28">
+          <MbaAdmissionJourney
+            steps={mba.details.processFlow.steps}
+            description={mba.details.processFlow.subHeading}
+            tone="white"
+          />
+        </div>
       )}
 
       {/* 6. Global University Partners */}
       {!isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
-        <LandingPagePartners partners={globalPartners} />
+        <div id="lp-partners" className="scroll-mt-28">
+          <LandingPagePartners partners={globalPartners} />
+        </div>
       )}
 
       {/* 7. Counsellors Section */}
-      {counsellorsSection && (
+      {counsellorsSection && (counsellorsSection.counsellors?.length ?? 0) > 0 && (
+        <div id="lp-counsellors" className="scroll-mt-28">
         <LandingPageCounsellors
           counsellorsSection={counsellorsSection}
           {...(isMba
@@ -245,6 +327,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
               }
             : {})}
         />
+        </div>
       )}
 
       {/* 8. Top Placement Partners (Dynamic from Admin) — not shown on the DBA page */}
@@ -253,7 +336,11 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       )}
 
       {/* 9. FAQ Section */}
-      {faqSection && <LandingPageFaq faqSection={faqSection} formCourses={formCourses} />}
+      {faqSection && (faqSection.faqs?.length ?? 0) > 0 && (
+        <div id="lp-faq" className="scroll-mt-28">
+          <LandingPageFaq faqSection={faqSection} formCourses={formCourses} />
+        </div>
+      )}
 
       {isDba && <DbaFinalCta />}
       {isMba && <MbaFinalCta />}

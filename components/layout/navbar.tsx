@@ -986,6 +986,20 @@ export function Navbar() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  // Landing pages (/lp/...) keep the header minimal: logo + sign up only
+  const isLandingPage = pathname?.startsWith("/lp/") ?? false;
+  const [lpHeaderHidden, setLpHeaderHidden] = useState(false);
+  useEffect(() => {
+    if (!isLandingPage) {
+      setLpHeaderHidden(false);
+      return;
+    }
+    // same trigger point as the in-page sub-header (400px)
+    const onScroll = () => setLpHeaderHidden(window.scrollY > 400);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isLandingPage]);
 
   const [headerNavLinks, setHeaderNavLinks] = useState<any[]>([]);
   const [programsMenu, setProgramsMenu] = useState<any[]>([]);
@@ -1208,14 +1222,18 @@ export function Navbar() {
       `}</style>
 
       {/* <header className="fixed top-0 left-0 right-0 z-[65] bg-white">   30 aug */}
-      <header className="fixed top-0 left-0 right-0 z-[65] bg-white border-b border-gray-200">
+      <header
+        className={`fixed top-0 left-0 right-0 z-[65] bg-white border-b border-gray-200 transition-transform duration-300 ${
+          lpHeaderHidden ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left side: Hamburger (mobile only) + Logo */}
             {/* CHANGED: Hamburger button moved here, to the left of the logo, mobile-only */}
             <div className="flex items-center gap-2">
               <button
-                className="md:hidden p-2 text-gray-800 relative w-10 h-10 flex items-center justify-center"
+                className={`${isLandingPage ? "hidden" : "md:hidden"} p-2 text-gray-800 relative w-10 h-10 flex items-center justify-center`}
                 onClick={() => setMobileOpen((prev) => !prev)}
                 aria-label="Toggle menu"
               >
@@ -1265,7 +1283,7 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <nav
-              className="hidden md:flex items-center gap-1"
+              className={`hidden items-center gap-1 ${isLandingPage ? "" : "md:flex"}`}
               ref={desktopTriggerRef}
             >
               {programsMenu.length > 0 && (
@@ -1367,7 +1385,7 @@ export function Navbar() {
               )}
 
               {/* Mobile Programs button - direct button, same style as desktop */}
-              {programsMenu.length > 0 && (
+              {!isLandingPage && programsMenu.length > 0 && (
                 <button
                   ref={mobileTriggerRef}
                   onClick={(e) => toggle("program", e)}

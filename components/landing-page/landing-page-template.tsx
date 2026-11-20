@@ -68,7 +68,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         primaryCtaText: "Start Your Dr. Journey",
       }
     : data.hero && isMba
-      ? { ...data.hero, credentialLabel: "UGC-Entitled Degree", trustLabel: "UGC-DEB Approved" }
+      ? { 
+          ...data.hero, 
+          credentialLabel: "UGC-Entitled Degree", 
+          trustLabel: "UGC-DEB Approved",
+          secondaryCtaText: "View Universities",
+          secondaryCtaUrl: "#programs"
+        }
       : data.hero;
   const experience = data.slug === "online-dba" && data.experience
     ? { ...data.experience, sectionHeading: "Make Your Experience *Worth It*" }
@@ -108,7 +114,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
 
   // DBA page: the partner strip shows only the universities featured in "Top Online Universities"
   // MBA page: the logos of the universities offering the Online MBA
-  const mbaUniversities = (mba?.associatedUniversities || []).filter((u) => u && u.name);
+  // Filter out specific universities that should not be displayed
+  const excludedUniversities = ['solini', 'shoolini', 'andra', 'andhra', 'sharda', 'lingayas', 'vignan', 'centurion', 'uttaranchal', 'galgotias', 'jain'];
+  const mbaUniversities = (mba?.associatedUniversities || []).filter(
+    (u) => u && u.name && !excludedUniversities.some(excluded => 
+      u.name.toLowerCase().includes(excluded)
+    )
+  );
   const globalPartners = isDba
     ? {
         ...(data.globalPartners || {}),
@@ -117,6 +129,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
     : isMba && mbaUniversities.length > 0
       ? {
           ...(data.globalPartners || {}),
+          sectionHeading: "Top School & *University Partners*",
           sectionDescription: "Leading UGC-entitled universities that offer the Online MBA programme.",
           logos: mbaUniversities
             .filter((u) => u.logoUrl)
@@ -159,11 +172,9 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
           mba && { id: "lp-overview", label: "Overview" },
           mba?.details?.specializations?.items?.length && { id: "lp-specialisations", label: "Specialisations" },
           { id: "programs", label: "Universities" },
-          mba && { id: "lp-audience", label: "Who It's For" },
-          experience && { id: "lp-why", label: "Why MBA" },
-          data.highlights && { id: "lp-compare", label: "Online vs Distance" },
-          mba?.details?.courseOffer?.categories?.length && { id: "lp-benefits", label: "Benefits" },
           mba?.details?.syllabus && { id: "lp-syllabus", label: "Syllabus" },
+          mba && { id: "lp-audience", label: "Who It's For" },
+          data.highlights && { id: "lp-compare", label: "Online vs Distance" },
           mba?.details?.processFlow?.steps?.length && { id: "lp-admission", label: "Admission" },
           hasCounsellors && { id: "lp-counsellors", label: "Counsellors" },
           hasFaq && { id: "lp-faq", label: "FAQs" },
@@ -254,6 +265,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         )}
       </div>
 
+      {/* MBA: 2-Year MBA Journey right after universities */}
+      {mba?.details?.syllabus && (
+        <div id="lp-syllabus" className="scroll-mt-28">
+          <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />
+        </div>
+      )}
+
       {isDba && (
         <div id="lp-audience" className="scroll-mt-28">
           <DbaAudience />
@@ -267,12 +285,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         </div>
       )}
 
-      {/* 5. Experience / Benefits Section */}
-      {experience && (
-        <div id="lp-why" className="scroll-mt-28">
-          <LandingPageExperience experience={experience} />
-        </div>
-      )}
+      {/* MBA: "Why MBA" section removed as requested */}
 
       {/* MBA: Online vs Distance comparison sits lower on this page */}
       {isMba && data.highlights && (
@@ -287,17 +300,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         </div>
       )}
 
-      {/* MBA: what an online MBA offers, semester-wise journey, admission steps */}
-      {mba?.details?.courseOffer?.categories && (
-        <div id="lp-benefits" className="scroll-mt-28">
-          <MbaOffers categories={mba.details.courseOffer.categories} tone="white" />
-        </div>
-      )}
-      {mba?.details?.syllabus && (
-        <div id="lp-syllabus" className="scroll-mt-28">
-          <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />
-        </div>
-      )}
+      {/* MBA: Remove "Why Choose an Online MBA" section - MbaOffers removed */}
+      
       {mba?.details?.processFlow?.steps && (
         <div id="lp-admission" className="scroll-mt-28">
           <MbaAdmissionJourney

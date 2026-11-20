@@ -45,7 +45,7 @@ export function LpHeading({
           {eyebrow}
         </p>
       )}
-      <h2 className="text-[22px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+      <h2 className="whitespace-nowrap text-[clamp(20px,5vw,22px)] font-extrabold leading-tight tracking-tight text-slate-900 sm:whitespace-normal sm:text-4xl">
         <HighlightedTitle text={heading} fallbackLastWord highlightClassName="text-red-600" />
       </h2>
       {description && (

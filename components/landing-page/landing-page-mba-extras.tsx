@@ -32,6 +32,7 @@ import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 import MbaSemesterTabs from "./mba-semester-tabs";
 import MbaSpecExplorer from "./mba-spec-explorer";
 import MbaAudience from "./mba-audience";
+import { AnimatedCounter } from "./animated-counter";
 
 /* ============================================================
    Online MBA landing-page sections.
@@ -94,19 +95,19 @@ export function MbaUniversities({ universities }: { universities: MbaUniversity[
   if (list.length === 0) return null;
 
   return (
-    <LpSection>
+    <LpSection tone="muted">
       <LpHeading
         eyebrow={
           <>
             <Trophy className="h-3.5 w-3.5" /> UGC-Entitled Universities
           </>
         }
-        heading="Top Online *MBA Universities*"
+        heading="Top Online MBA *Universities*"
         description="Compare leading UGC-entitled universities offering a 2-year Online MBA for working professionals and graduates."
-        descriptionClassName="text-[clamp(11px,3vw,15px)] tracking-[-0.01em] sm:tracking-normal"
+        descriptionClassName="text-[clamp(13px,3.2vw,15px)] tracking-[-0.01em] sm:tracking-normal"
       />
 
-      <p className="-mt-3 mb-4 text-center text-xs font-semibold text-slate-500 sm:hidden">
+      <p className="-mt-3 mb-5 text-center text-xs font-semibold text-slate-500 sm:hidden">
         {`Swipe to see all ${list.length} universities →`}
       </p>
 
@@ -123,6 +124,9 @@ export function MbaUniversities({ universities }: { universities: MbaUniversity[
               tone: "bg-blue-50 text-blue-600 ring-1 ring-blue-100",
             },
           ].filter(Boolean) as { icon: LucideIcon; text: string; tone: string }[];
+          
+          // Load first 6 images eagerly, rest lazy
+          const shouldLoadEager = i < 6;
 
           return (
             <LpReveal
@@ -130,43 +134,46 @@ export function MbaUniversities({ universities }: { universities: MbaUniversity[
               delay={Math.min(i, 5) * 0.07}
               duration={0.75}
               distance={8}
-              className="w-[82%] shrink-0 snap-start max-sm:![animation:none] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+              className="w-[85%] shrink-0 snap-start max-sm:![animation:none] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
             >
-              <article className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-slate-200 border-t-[3px] border-t-red-600 bg-white shadow-[0_8px_24px_-18px_rgba(15,23,42,0.3)] transition duration-500 hover:-translate-y-0.5 hover:border-slate-300 hover:border-t-red-600 hover:shadow-[0_18px_34px_-22px_rgba(15,23,42,0.32)]">
+              <article className="group relative flex h-full flex-col overflow-hidden rounded-[20px] border-2 border-slate-200 bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.3)] transition-all duration-400 will-change-transform hover:-translate-y-1.5 hover:border-red-600 hover:shadow-[0_20px_40px_-20px_rgba(220,38,38,0.4)] hover:z-10">
                 {/* Logo stage */}
-                <div className="relative flex h-32 items-center justify-center overflow-hidden border-b border-slate-100 bg-slate-50/70 px-6">
+                <div className="relative flex h-32 items-center justify-center border-b-2 border-slate-100 bg-gradient-to-br from-slate-50 to-white px-6">
                   {u.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={u.logoUrl}
                       alt={`${u.name} logo`}
-                      loading="lazy"
-                      className="relative max-h-16 w-auto max-w-[78%] object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                      loading={shouldLoadEager ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={shouldLoadEager ? "high" : "auto"}
+                      className="relative max-h-16 w-auto max-w-[80%] object-contain transition-transform duration-400 group-hover:scale-105"
                     />
                   ) : (
-                    <span className="relative text-2xl font-black text-slate-300">{u.name.charAt(0)}</span>
+                    <span className="relative text-3xl font-black text-slate-300">{u.name.charAt(0)}</span>
                   )}
-                  <span className="absolute left-4 top-4 rounded-full border border-red-100 bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-700 backdrop-blur">
+                  <span className="absolute left-4 top-4 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
                     Online MBA
                   </span>
                   {u.ugcApproval !== false && (
-                    <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-100">
+                    <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200">
                       <BadgeCheck className="h-3 w-3" /> UGC
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                  <h3 className="line-clamp-2 min-h-[48px] text-[17px] font-bold leading-snug tracking-[-0.02em] text-slate-900 transition-colors group-hover:text-red-700">
+                  <h3 className="line-clamp-2 min-h-[48px] text-[17px] font-bold leading-snug tracking-[-0.02em] text-slate-900 transition-colors duration-300 group-hover:text-red-700">
                     {u.name.trim()}
                   </h3>
 
-                  <div className="my-3 h-px bg-gradient-to-r from-slate-200 via-slate-100 to-transparent" />
-                  <ul className="grid flex-1 grid-cols-1 content-start gap-y-2.5 text-[12.5px] font-medium text-slate-600">
+                  <div className="my-3.5 h-px bg-gradient-to-r from-slate-300 via-slate-200 to-transparent" />
+                  
+                  <ul className="grid flex-1 grid-cols-1 content-start gap-y-2.5 text-[13px] font-medium text-slate-700">
                     {meta.map(({ icon: Icon, text, tone }) => (
                       <li key={text} className="flex min-w-0 items-center gap-2.5">
-                        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${tone}`}>
-                          <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
+                        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-105 ${tone}`}>
+                          <Icon className="h-4 w-4" strokeWidth={2.2} />
                         </span>
                         <span className="truncate">{text}</span>
                       </li>
@@ -177,7 +184,7 @@ export function MbaUniversities({ universities }: { universities: MbaUniversity[
                     {href ? (
                       <Link
                         href={href}
-                        className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                        className="flex h-11 items-center justify-center gap-1.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-bold text-slate-700 transition-all duration-300 hover:border-slate-300 hover:bg-slate-50"
                       >
                         View
                         <ArrowUpRight className="h-4 w-4" />
@@ -186,7 +193,7 @@ export function MbaUniversities({ universities }: { universities: MbaUniversity[
                       <span />
                     )}
                     <ApplyNowButton
-                      className={`group/btn flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 text-sm font-bold text-red-700 transition-colors duration-300 hover:border-red-700 hover:bg-red-700 hover:text-white group-hover:border-red-700 group-hover:bg-red-700 group-hover:text-white ${
+                      className={`group/btn flex h-11 w-full items-center justify-center gap-2 rounded-xl border-2 border-red-600 bg-red-600 text-sm font-bold text-white transition-all duration-300 hover:bg-red-700 hover:shadow-lg ${
                         href ? "" : "col-span-2"
                       }`}
                     >
@@ -490,73 +497,84 @@ export function MbaOffers({
 export function MbaKeyInfo({ course, tone = "muted" }: { course: MbaCourseData; tone?: "white" | "muted" }) {
   const semesters = course.details?.syllabus?.semesters?.length || 4;
   const cards: {
-    icon: LucideIcon;
     label: string;
-    prefix?: string;
     value: string;
-    live?: boolean;
+    subtitle?: string;
     lines: string[];
-    link?: { href: string; text: string };
+    link?: { text: string; href: string };
   }[] = [
-    { icon: CalendarCheck, label: "Batch Starts", value: "Admissions Open", live: true, lines: ["Limited seats", "Apply for the upcoming batch"] },
-    { icon: Clock3, label: "Duration", value: course.duration || "2 Years", lines: [`${semesters} semesters`, "100% online, live + recorded"] },
-    {
-      icon: IndianRupee,
-      label: "Programme Fee",
-      prefix: "Starting from",
-      value: "₹15,000",
-      lines: ["Varies by university", "EMI options available"],
-      link: { href: "#programs", text: "Compare universities" },
+    { 
+      label: "BATCH STARTS", 
+      value: "Admissions Open", 
+      subtitle: "Limited Seats",
+      lines: [] 
     },
-    { icon: GraduationCap, label: "Eligibility", value: course.eligibility || "Graduate", lines: ["Any stream", "Min. 40–50% aggregate"] },
+    { 
+      label: "DURATION", 
+      value: `Duration : ${course.duration || "2 Years"}`, 
+      lines: [
+        `No. of Semesters : ${semesters}`,
+        `Programme Completion Validity : ${Math.ceil(semesters / 2) * 2} Years`
+      ]
+    },
+    {
+      label: "PROGRAMME FEE",
+      value: "Starting at ₹15,000 / Semester",
+      lines: [
+        `No. of Semesters : ${semesters}`,
+        "No Cost EMI Option Available"
+      ],
+      link: { text: "Detailed Fee Structure & EMI Options", href: "#programs" },
+    },
+    { 
+      label: "ELIGIBILITY", 
+      value: course.eligibility || "Graduate",
+      lines: [
+        "Graduate with minimum 50%"
+      ],
+      link: { text: "Detailed Programme Eligibility", href: "#lp-overview" }
+    },
   ];
 
   return (
     <LpSection tone={tone}>
-      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
         {cards.map((c, i) => (
-          <LpReveal key={c.label} delay={i * 0.07} className="group h-full">
-            <div className="relative flex h-full flex-col items-center overflow-hidden rounded-2xl bg-white px-3 pb-5 pt-5 text-center shadow-[0_10px_30px_-18px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/80 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-[0_24px_48px_-24px_rgba(220,38,38,0.5)] group-hover:ring-red-200 sm:px-5 sm:pb-6 sm:pt-6">
-              <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-rose-500 to-amber-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-red-600 group-hover:to-rose-500 group-hover:text-white group-hover:shadow-[0_10px_22px_-8px_rgba(220,38,38,0.7)] group-hover:ring-transparent sm:h-12 sm:w-12">
-                <c.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
-              </span>
-
-              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 sm:mt-4 sm:text-[11px]">{c.label}</p>
-
-              {c.live ? (
-                <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-100 sm:text-[11px]">
-                  <span className="relative flex h-1.5 w-1.5" aria-hidden>
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
-                    <span className="relative inline-flex h-full w-full rounded-full bg-emerald-500" />
-                  </span>
-                  Enrolling now
-                </span>
-              ) : (
-                c.prefix && <p className="mt-1.5 text-[11px] font-semibold text-slate-500 sm:text-[13px]">{c.prefix}</p>
-              )}
-              <p
-                className={`${c.prefix || c.live ? "mt-0.5" : "mt-1.5"} text-[19px] font-extrabold leading-tight tracking-tight text-red-600 sm:text-[26px]`}
-              >
-                {c.value}
+          <LpReveal key={c.label} delay={i * 0.07}>
+            <div className="flex h-full flex-col rounded-xl bg-[#f5f5f5] px-5 pb-5 pt-6 text-center">
+              {/* Label */}
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                {c.label}
               </p>
 
-              <span aria-hidden className="my-3 h-0.5 w-8 rounded-full bg-red-100 transition-all duration-300 group-hover:w-14 group-hover:bg-red-500" />
+              {/* Main Value */}
+              <h3 className="mt-3 text-[17px] font-bold leading-tight text-red-700 sm:text-[19px]">
+                {c.value}
+              </h3>
 
-              <div className="space-y-0.5 text-[12px] leading-snug text-slate-600 sm:text-[13.5px]">
-                {c.lines.map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
-              </div>
+              {/* Subtitle if exists */}
+              {c.subtitle && (
+                <p className="mt-1 text-[13px] font-medium text-slate-900">
+                  {c.subtitle}
+                </p>
+              )}
 
+              {/* Additional lines */}
+              {c.lines.length > 0 && (
+                <div className="mt-3 space-y-1 text-[13px] leading-relaxed text-slate-900">
+                  {c.lines.map((line, idx) => (
+                    <p key={idx}>{line}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Link if exists */}
               {c.link && (
                 <a
                   href={c.link.href}
-                  className="mt-auto inline-flex items-center gap-1 pt-3 text-[12px] font-bold text-red-600 underline-offset-4 hover:underline sm:text-[13px]"
+                  className="mt-auto inline-block pt-3 text-[12px] font-semibold text-red-700 underline-offset-2 hover:underline"
                 >
                   {c.link.text}
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </a>
               )}
             </div>
@@ -571,10 +589,10 @@ export function MbaKeyInfo({ course, tone = "muted" }: { course: MbaCourseData; 
    11. About the Online MBA + recognitions & numbers
 ------------------------------------------------------------ */
 const RECOGNITIONS = [
-  { name: "University Grants Commission (UGC)", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-56--1788866561905-fbg2j0.png" },
   { name: "NAAC Accreditation", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-57--1788867779015-l35op5.png" },
   { name: "Association of Indian Universities (AIU)", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-24-1--1789639165318-xbov6h.svg" },
   { name: "NIRF Ranking", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/2-1788867466527-xddkkk.png" },
+  { name: "University Grants Commission (UGC)", logo: "https://ecampus-admin-ui.b-cdn.net/blogs/untitled-design-56--1788866561905-fbg2j0.png" },
 ];
 
 /** First two paragraphs of the CMS "about" HTML */
@@ -593,11 +611,11 @@ export function MbaAboutWhy({
 }) {
   const about = firstParagraphs(course.details?.about?.description);
   const stats = [
-    universityCount > 0 && { value: `${universityCount}+`, label: "UGC-Entitled Universities" },
-    specializationCount > 0 && { value: `${specializationCount}+`, label: "MBA Specialisations" },
-    { value: String(course.details?.syllabus?.semesters?.length || 4), label: "Semesters in 2 Years" },
-    { value: "100%", label: "Online Learning" },
-  ].filter(Boolean) as { value: string; label: string }[];
+    universityCount > 0 && { value: universityCount, label: "UGC-Entitled Universities", suffix: "+" },
+    specializationCount > 0 && { value: specializationCount, label: "MBA Specialisations", suffix: "+" },
+    { value: course.details?.syllabus?.semesters?.length || 4, label: "Semesters in 2 Years", suffix: "" },
+    { value: 100, label: "Online Learning", suffix: "%" },
+  ].filter(Boolean) as { value: number; label: string; suffix: string }[];
 
   return (
     <LpSection tone={tone}>
@@ -607,12 +625,14 @@ export function MbaAboutWhy({
           <h2 className="text-[26px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
             Online <span className="text-red-600">MBA</span>
           </h2>
-          {about && (
-            <div
-              className="mt-5 border-l-4 border-red-600 pl-4 text-[14px] italic leading-relaxed text-slate-600 sm:mt-6 sm:pl-5 sm:text-[15.5px] [&_p+p]:mt-3 [&_strong]:font-bold [&_strong]:not-italic [&_strong]:text-slate-900"
-              dangerouslySetInnerHTML={{ __html: about }}
-            />
-          )}
+          <div className="mt-5 space-y-3 text-[14px] leading-relaxed text-slate-600 sm:mt-6 sm:text-[15.5px]">
+            <p className="border-l-4 border-red-600 pl-4 font-medium sm:pl-5">
+              An <strong className="font-bold text-slate-900">Online MBA</strong> is a flexible, career-focused postgraduate degree designed for working professionals and recent graduates seeking management expertise without pausing their careers.
+            </p>
+            <p>
+              The program combines <strong className="font-semibold text-slate-900">live interactive sessions</strong>, self-paced learning, and practical business insights, preparing you for leadership roles across industries.
+            </p>
+          </div>
         </LpReveal>
 
         {/* Right: recognitions + numbers */}
@@ -620,7 +640,7 @@ export function MbaAboutWhy({
           <h2 className="text-[26px] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-center">
             Recognised &amp; <span className="text-red-600">Trusted</span>
           </h2>
-          <div className="mt-5 grid grid-cols-4 items-center gap-2 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/80 sm:mt-6 sm:gap-4 sm:p-6">
+          <div className="mt-5 grid grid-cols-4 items-center gap-3 rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200/80 sm:mt-6 sm:gap-4 sm:p-6">
             {RECOGNITIONS.map((r) => (
               <div key={r.name} className="group flex flex-col items-center text-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -628,11 +648,8 @@ export function MbaAboutWhy({
                   src={r.logo}
                   alt={r.name}
                   loading="lazy"
-                  className="h-11 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 sm:h-14"
+                  className="h-16 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 sm:h-20 lg:h-24"
                 />
-                <span className="mt-2 text-[9.5px] font-semibold uppercase leading-tight tracking-wide text-slate-500 sm:text-[10.5px]">
-                  {r.name.replace(/\s*\(.*\)/, "")}
-                </span>
               </div>
             ))}
           </div>
@@ -641,7 +658,9 @@ export function MbaAboutWhy({
           <div className="mt-6 grid grid-cols-2 gap-y-6 sm:grid-cols-4 sm:gap-x-3">
             {stats.map((st) => (
               <div key={st.label} className="text-center">
-                <p className="text-[26px] font-extrabold leading-none tracking-tight text-slate-900 sm:text-[30px]">{st.value}</p>
+                <p className="text-[26px] font-extrabold leading-none tracking-tight text-slate-900 sm:text-[30px]">
+                  <AnimatedCounter end={st.value} duration={2000} suffix={st.suffix} />
+                </p>
                 <p className="mt-1.5 text-[12.5px] leading-snug text-slate-600 sm:text-[13.5px]">{st.label}</p>
               </div>
             ))}

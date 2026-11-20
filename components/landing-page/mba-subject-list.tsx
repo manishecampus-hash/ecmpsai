@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 /**
  * Semester subjects that reveal one after another when the card scrolls into view.
@@ -37,15 +37,15 @@ export default function MbaSubjectList({ subjects, className = "space-y-1" }: { 
       {subjects.map((sub, i) => (
         <li
           key={sub}
-          style={{ transitionDelay: visible ? `${150 + i * 90}ms` : "0ms" }}
-          className={`group/item flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-all duration-500 ease-out hover:bg-red-50/70 ${
-            visible ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0"
+          style={{ transitionDelay: visible ? `${120 + i * 70}ms` : "0ms" }}
+          className={`group/item flex items-start gap-3 rounded-xl border border-transparent px-3 py-2.5 transition-all duration-500 ease-out hover:border-red-100 hover:bg-red-50/50 hover:shadow-sm ${
+            visible ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
           }`}
         >
-          <span className="mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 ring-1 ring-red-100 transition-colors group-hover/item:bg-red-600 group-hover/item:text-white">
-            <Check className="h-3 w-3" strokeWidth={3} />
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-sm transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-md">
+            <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.5} />
           </span>
-          <span className="text-[13px] font-medium leading-snug text-slate-700 transition-colors group-hover/item:text-slate-900">
+          <span className="flex-1 text-[13.5px] font-semibold leading-relaxed text-slate-700 transition-colors group-hover/item:text-slate-900">
             {sub}
           </span>
         </li>

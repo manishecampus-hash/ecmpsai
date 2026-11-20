@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
- * Phones: horizontal swipe row with left/right arrows and position dots.
- * sm and up: the cards simply wrap into a grid (arrows and dots are hidden).
+ * Horizontal swipe/scroll carousel with left/right arrows and position dots.
+ * Works on all screen sizes - mobile, tablet, and desktop.
  */
 export default function ProgramsCarousel({
   children,
@@ -57,13 +57,13 @@ export default function ProgramsCarousel({
   };
 
   const arrowClass =
-    "absolute top-[calc(50%-14px)] z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-red-600 shadow-[0_8px_20px_-6px_rgba(15,23,42,0.35)] ring-1 ring-slate-200 backdrop-blur transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-40 sm:hidden";
+    "absolute top-[calc(50%-14px)] z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-red-600 shadow-[0_10px_24px_-8px_rgba(15,23,42,0.4)] ring-1 ring-slate-200/80 backdrop-blur transition-all duration-200 hover:bg-white hover:shadow-[0_14px_30px_-10px_rgba(220,38,38,0.35)] hover:ring-red-200 active:scale-95 disabled:pointer-events-none disabled:opacity-30";
 
   return (
-    <div className="relative">
+    <div className="relative overflow-visible">
       <div
         ref={stripRef}
-        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-start sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overflow-y-visible px-4 py-4 pb-6 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </div>
@@ -75,7 +75,7 @@ export default function ProgramsCarousel({
             aria-label="Previous university"
             onClick={() => scrollToIndex(active - 1)}
             disabled={atStart}
-            className={`${arrowClass} -left-1`}
+            className={`${arrowClass} -left-2 sm:-left-5`}
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
           </button>
@@ -84,12 +84,12 @@ export default function ProgramsCarousel({
             aria-label="Next university"
             onClick={() => scrollToIndex(active + 1)}
             disabled={atEnd}
-            className={`${arrowClass} -right-1`}
+            className={`${arrowClass} -right-2 sm:-right-5`}
           >
             <ChevronRight className="h-5 w-5" strokeWidth={2.5} />
           </button>
 
-          {/* position dots */}
+          {/* position dots - mobile only */}
           <div className="mt-3 flex items-center justify-center gap-1.5 sm:hidden">
             {Array.from({ length: count }).map((_, i) => (
               <button

@@ -2,19 +2,28 @@
 
 import Link from "next/link";
 import { CheckCircle2, Home } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ThankYouPage() {
+  // Prevent scrolling on mount
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
+    <main className="fixed inset-0 bg-white flex items-center justify-center px-4 overflow-hidden pt-20 pb-4">
       <div className="w-full max-w-2xl">
-        <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white px-6 py-12 text-center shadow-[0_20px_70px_rgba(0,0,0,0.08)] sm:px-10 sm:py-16">
+        <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white px-6 py-8 text-center shadow-[0_20px_70px_rgba(0,0,0,0.08)] sm:px-10 sm:py-10">
 
           {/* Background Decoration */}
           <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-red-50" />
           <div className="pointer-events-none absolute -bottom-28 -left-24 h-64 w-64 rounded-full bg-red-50" />
 
           {/* Success Icon */}
-          <div className="relative mx-auto mb-7 flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
+          <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
             <div className="absolute inset-0 rounded-full border border-red-100" />
 
             <CheckCircle2
@@ -29,18 +38,18 @@ export default function ThankYouPage() {
               Submission Successful
             </p>
 
-            <h1 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl">
               Thank You!
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-gray-500 sm:text-lg">
+            <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-gray-500 sm:text-lg">
               Your request has been submitted successfully. Our education
               counsellor will get in touch with you shortly.
             </p>
           </div>
 
           {/* Info Box */}
-          <div className="relative mx-auto mt-8 max-w-lg rounded-2xl border border-gray-100 bg-gray-50 px-5 py-5 text-left">
+          <div className="relative mx-auto mt-7 max-w-lg rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4 text-left">
             <div className="flex gap-4">
               <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                 <CheckCircle2 className="h-5 w-5 text-green-500" />
@@ -60,7 +69,7 @@ export default function ThankYouPage() {
           </div>
 
           {/* Buttons */}
-          <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="relative mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/"
               className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-6 text-sm font-semibold text-white transition-all duration-200 hover:bg-red-600 hover:shadow-lg hover:shadow-red-100 sm:w-auto"
@@ -71,7 +80,7 @@ export default function ThankYouPage() {
           </div>
 
           {/* Bottom Text */}
-          <p className="relative mt-8 text-xs text-gray-400">
+          <p className="relative mt-7 text-xs text-gray-400">
             We appreciate your interest in eCampus Edu.
           </p>
         </div>

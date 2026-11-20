@@ -89,9 +89,9 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
       <div className="pointer-events-none absolute -top-28 left-1/2 h-[420px] w-full max-w-6xl -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08),transparent_70%)]" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="grid items-center gap-4 py-10 sm:gap-12 sm:py-12 lg:grid-cols-12 lg:gap-14 lg:py-14">
+        <div className="grid items-center gap-6 py-8 sm:gap-10 sm:py-10 lg:grid-cols-12 lg:gap-14 lg:py-12">
           {/* ================= LEFT CONTENT ================= */}
-          <div className="flex flex-col items-start gap-5 lg:col-span-7">
+          <div className="flex flex-col items-start gap-4 lg:col-span-7 lg:gap-5">
             {/* Tag / Pre-headline */}
             <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-red-50/90 px-4 py-1.5 text-xs font-bold text-red-600 shadow-2xs backdrop-blur-xs">
               <Sparkles className="h-3.5 w-3.5 text-red-500" />
@@ -101,48 +101,48 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
             </div>
 
             {/* Heading */}
-            <h1 className="m-0 text-[26px] font-black leading-[1.12] tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-[52px]">
+            <h1 className="m-0 text-[26px] font-black leading-[1.12] tracking-tight text-slate-900 sm:text-[38px] md:text-[44px] lg:text-[48px]">
               <HighlightedTitle text={hero.mainHeading} />
             </h1>
 
             {/* Description */}
             {hero.subHeading && (
-              <p className="m-0 max-w-[600px] text-base leading-relaxed text-slate-600 sm:text-lg lg:text-[18px] whitespace-pre-line font-normal">
+              <p className="m-0 max-w-[600px] text-[15px] leading-relaxed text-slate-600 sm:text-[17px] lg:text-[17px] whitespace-pre-line font-normal">
                 <HighlightedTitle text={hero.subHeading} />
               </p>
             )}
 
             {/* CTAs */}
             {/* Mobile: both CTAs on one line with smaller text. sm and up: unchanged */}
-            <div className="flex w-full flex-nowrap items-center gap-2 pt-2 sm:w-auto sm:flex-wrap sm:gap-3.5">
+            <div className="flex w-full flex-nowrap items-center gap-2.5 pt-1 sm:w-auto sm:flex-wrap sm:gap-3.5 sm:pt-2">
               {hero.primaryCtaUrl?.startsWith("http") ? (
                 <a
                   href={hero.primaryCtaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex min-h-[44px] flex-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-base"
+                  className="group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   <span>{ctaText}</span>
                   <ArrowRight
-                    className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
+                    className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
                   />
                 </a>
               ) : (
                 <ApplyNowButton
                   courses={formCourses}
-                  className="group inline-flex min-h-[44px] flex-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-base"
+                  className="group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   <span>{ctaText}</span>
                   <ArrowRight
-                    className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
+                    className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
                   />
                 </ApplyNowButton>
               )}
 
               {hero.secondaryCtaText && (
                 <a
-                  href={hero.secondaryCtaUrl || "#"}
-                  className="inline-flex min-h-[44px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-300/80 bg-white px-2.5 py-2.5 text-[clamp(11px,3.1vw,14px)] font-semibold text-slate-700 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm active:translate-y-0 sm:min-h-[52px] sm:flex-none sm:px-6 sm:py-3.5 sm:text-base"
+                  href={hero.secondaryCtaUrl || "#programs"}
+                  className="inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl border-2 border-slate-300/80 bg-white px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-slate-700 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:shadow-sm active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:px-7 sm:py-3.5 sm:text-base"
                 >
                   {hero.secondaryCtaText}
                 </a>
@@ -150,7 +150,7 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
             </div>
 
             {/* Micro Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-2 text-xs font-semibold text-slate-500 sm:text-[13px]">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-1 text-xs font-semibold text-slate-500 sm:text-[13px]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                 <span>Free 1-on-1 Mentorship</span>

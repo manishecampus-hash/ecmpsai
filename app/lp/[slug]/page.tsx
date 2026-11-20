@@ -5,6 +5,7 @@ import LandingPageTemplate, {
   LandingPageData,
 } from "@/components/landing-page/landing-page-template";
 import type { MbaCourseData } from "@/components/landing-page/landing-page-mba-extras";
+import type { MediaArticle } from "@/components/home/media-marquee";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -48,6 +49,19 @@ async function fetchMbaCourse(): Promise<MbaCourseData | null> {
   } catch (error) {
     console.error("Error fetching online MBA course:", error);
     return null;
+  }
+}
+
+/** "Media & Press" list — same CMS data the home page shows */
+async function fetchMedia(): Promise<MediaArticle[]> {
+  try {
+    const res = await fetch(`${FRONTEND_API_URL}/homepage`, { next: { revalidate: 60 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data?.media) ? data.media : [];
+  } catch (error) {
+    console.error("Error fetching media list:", error);
+    return [];
   }
 }
 
@@ -109,14 +123,16 @@ export default async function DynamicLandingPage({
   const isPreview = preview === "true";
 
   const isMba = /mba/i.test(slug);
-  const [data, mbaCourse] = await Promise.all([
+  const isDba = /dba/i.test(slug);
+  const [data, mbaCourse, media] = await Promise.all([
     fetchLandingPage(slug, isPreview),
     isMba ? fetchMbaCourse() : Promise.resolve(null),
+    isMba || isDba ? fetchMedia() : Promise.resolve([] as MediaArticle[]),
   ]);
 
   if (!data) {
     notFound();
   }
 
-  return <LandingPageTemplate data={data} isPreview={isPreview} mbaCourse={mbaCourse} />;
+  return <LandingPageTemplate data={data} isPreview={isPreview} mbaCourse={mbaCourse} media={media} />;
 }

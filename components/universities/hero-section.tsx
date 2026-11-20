@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ApplicationForm } from "@/components/form/common-form";
-import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
+import { ApplyNowModal } from "@/components/form/apply-now-modal";
 import { getApplicationFlow, toUniversitySlug } from "@/data/application-flows";
 import { useAuth } from "@/components/auth/auth-context";
 import { SignupModal } from "@/components/layout/signup-modal";
@@ -499,18 +498,7 @@ export default function UniversityHeroWithStats({
       </div>
 
       {/* ── 3. Application Form Modal ── */}
-      {showApplicationForm && (
-        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now" imageSrc="/application-form-popup.jpeg">
-          <ApplicationForm
-            onSubmit={() => {
-              setShowApplicationForm(false);
-            }}
-            onBack={() => {
-              setShowApplicationForm(false);
-            }}
-          />
-        </LeadFormModalFrame>
-      )}
+      <ApplyNowModal isOpen={showApplicationForm} onClose={() => setShowApplicationForm(false)} />
 
       {/* ── 4. Signup Modal for Kivo AI CTA ── */}
       {showSignupModal && (

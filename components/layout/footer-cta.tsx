@@ -4,58 +4,12 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-
-import {
-  ApplicationForm,
-  type LeadData,
-} from "../discovery/degree-finder/application-form";
-
-function SuccessState({
-  name,
-  onClose,
-}: {
-  name: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className="flex flex-col items-center text-center py-6 px-2">
-      <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
-      <h3 className="text-xl font-bold text-gray-900">
-        Thanks, {name.split(" ")[0]}!
-      </h3>
-      <p className="text-sm text-gray-500 mt-1.5 max-w-xs">
-        Your application has been received. Our admissions team will reach out
-        to you shortly.
-      </p>
-      <Button
-        onClick={onClose}
-        className="mt-5 h-10 px-6 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm"
-      >
-        Close
-      </Button>
-    </div>
-  );
-}
+import { ApplyNowModal } from "@/components/form/apply-now-modal";
 
 // ── FooterCta ─────────────────────────────────────────────────────────────────
 
 export function FooterCta() {
   const [open, setOpen] = useState(false);
-  const [submittedLead, setSubmittedLead] = useState<LeadData | null>(null);
-
-  const handleFormSubmit = (data: LeadData) => {
-    setSubmittedLead(data);
-  };
-
-  const handleOpenChange = (next: boolean) => {
-    setOpen(next);
-    // reset once fully closed so the dialog shows a fresh form next time
-    if (!next) {
-      setTimeout(() => setSubmittedLead(null), 200);
-    }
-  };
 
   return (
     <div className="w-full relative overflow-hidden rounded-2xl border border-slate-800/60 bg-slate-900/10 backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,0.15)] md:rounded-[24px]">
@@ -97,35 +51,22 @@ export function FooterCta() {
 
         {/* Right Column: Button */}
         <div className="flex flex-col items-center gap-2.5 shrink-0 md:pl-6">
-          <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-7 sm:py-3.5"
-              >
-                <span
-                  className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
-                  aria-hidden="true"
-                />
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 sm:text-sm sm:px-7 sm:py-3.5"
+          >
+            <span
+              className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+              aria-hidden="true"
+            />
 
-                <span className="relative z-10 flex items-center gap-2">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              </button>
-            </DialogTrigger>
-
-            <DialogContent className="bg-white border border-gray-100 rounded-2xl px-4 sm:px-6 py-5 sm:py-6 max-w-md">
-              {submittedLead ? (
-                <SuccessState
-                  name={submittedLead.name}
-                  onClose={() => handleOpenChange(false)}
-                />
-              ) : (
-                <ApplicationForm onSubmit={handleFormSubmit} />
-              )}
-            </DialogContent>
-          </Dialog>
+            <span className="relative z-10 flex items-center gap-2">
+              Apply Now
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </button>
+          <ApplyNowModal isOpen={open} onClose={() => setOpen(false)} />
 
           <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
             Join 50,000+ Alumni

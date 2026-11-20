@@ -24,6 +24,8 @@ import { DEFAULT_SPECIALIZATIONS_DATA, SpecializationRow } from "@/data/speciali
 import { CARD_IMAGES } from "@/data/constant";
 import { formatINR } from "@/lib/course-helpers";
 import { SignupModal } from "@/components/layout/signup-modal";
+import { BrochureModal } from "@/components/form/apply-now-modal";
+import { getFormCourses } from "@/data/form-courses";
 
 /* TopSpecializations is intentionally compact: all large arrays & helpers
    are imported from data/ and lib/. Only rendering and fetch logic live here. */
@@ -39,6 +41,8 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
+  /** Row whose "Brochure" was clicked when no brochure file exists — opens the brochure form */
+  const [brochureRow, setBrochureRow] = useState<{ course: string; specialization: string } | null>(null);
   const itemsPerPage = 8;
 
   const cardsScrollRef = useRef<HTMLDivElement>(null);
@@ -245,7 +249,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
     }
   };
 
-  const handleDownload = (specialization: string, brochureUrl?: string) => {
+  const handleDownload = (specialization: string, brochureUrl?: string, course = "") => {
     if (!isUserAuthenticated()) {
       setShowSignupModal(true);
       return;
@@ -253,7 +257,8 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
     if (brochureUrl && brochureUrl !== "#") {
       window.open(brochureUrl, "_blank");
     } else {
-      alert(`Downloading Brochure for: ${specialization}`);
+      // No brochure file yet — collect the lead with the shared brochure form
+      setBrochureRow({ course, specialization });
     }
   };
 
@@ -412,7 +417,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
                             <td className="px-4 py-3.5 sm:px-6 sm:py-4 text-center whitespace-nowrap">
                               <button
                                 type="button"
-                                onClick={() => handleDownload(row.specialization, row.brochure)}
+                                onClick={() => handleDownload(row.specialization, row.brochure, row.course)}
                                 className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#ea384c] hover:text-[#ea384c] transition-colors cursor-pointer"
                               >
                                 <Download className="h-3.5 w-3.5" />
@@ -600,6 +605,13 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}
         onSwitchToLogin={() => setShowSignupModal(false)}
+      />
+
+      <BrochureModal
+        isOpen={Boolean(brochureRow)}
+        onClose={() => setBrochureRow(null)}
+        programName={brochureRow?.specialization}
+        courses={getFormCourses(`${brochureRow?.course ?? ""} ${brochureRow?.specialization ?? ""}`)}
       />
     </section>
   );

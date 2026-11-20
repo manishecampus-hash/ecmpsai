@@ -16,7 +16,7 @@ import { sanitizeAutoLinks } from "@/lib/utils";
 import { ShareSaveButtons } from "@/components/blog-content/ShareSaveButtons";
 import { Footer } from "@/components/layout/footer";
 import { EventViewCounter } from "@/components/event-content/EventViewCounter";
-import { ApplicationForm } from "@/components/form/common-form";
+import LeadFormCard from "@/components/form/lead-form-card";
 import { ScrollToTopButton } from "@/components/blog-content/ScrollToTopButton";
 import { cache } from "react";
 
@@ -296,9 +296,7 @@ export default async function NewsDetailPage({
             <TableOfContents headings={event.headings} collapsible={false} />
 
             {/* 2. Apply Now Form Card */}
-            <div className="sidebar-apply-card">
-              <ApplicationForm />
-            </div>
+            <LeadFormCard />
           </aside>
 
           {/* RIGHT COLUMN: NEWS DETAILS */}

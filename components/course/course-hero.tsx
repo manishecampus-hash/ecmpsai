@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import HighlightedText from "@/components/universities/HighlightedText";
 import { ArrowRight, CalendarDays, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
+import { getFormCourses } from "@/data/form-courses";
 import PodcastButton from "./podcast-button";
 import { EASE, STAT_ICONS } from "./section-ui";
 
@@ -361,7 +362,7 @@ export default function CourseHeroSection({
         </motion.div>
       </div>
 
-      <ApplyNowModal isOpen={showApplyModal} onClose={() => setShowApplyModal(false)} />
+      <ApplyNowModal isOpen={showApplyModal} onClose={() => setShowApplyModal(false)} courses={getFormCourses(heading)} />
     </section>
   );
 }

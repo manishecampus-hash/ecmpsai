@@ -487,7 +487,8 @@ import UniversityResultsList, {
 import { Sparkles } from "lucide-react";
 // import { ApplicationForm } from "./application-form";
 
-import { ApplicationForm } from "..//./../form/common-form";
+import LeadFormCard from "@/components/form/lead-form-card";
+import { getFormCourses } from "@/data/form-courses";
 
 // ── Step Indicator ────────────────────────────────────────────────────────────
 
@@ -964,9 +965,10 @@ export default function DegreeFinderFlow() {
         )}
 
         {showLeadGate && (
-          <ApplicationForm
+          <LeadFormCard
             onSubmit={handleLeadSubmit}
-            onBack={handleLeadBack}
+            courses={getFormCourses(selectedCourseName)}
+            className="mx-auto max-w-[440px]"
           />
         )}
 

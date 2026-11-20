@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SignupModal } from "@/components/layout/signup-modal";
@@ -44,6 +44,24 @@ const UNI_NODES: [number, number][] = [
   [248, 156], [720, 140], [1180, 98], [212, 258], [1288, 286], [820, 450], [232, 470], [1214, 432],
 ];
 
+/** Logged-in student check (same rule as the rest of the site: a stored student with id / phone / email) */
+function isStudentLoggedIn() {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = localStorage.getItem("ecampus_student");
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    return Boolean(parsed && (parsed.id || parsed.phone || parsed.email));
+  } catch {
+    return false;
+  }
+}
+
+/** Gap kept between the floating Compare button and the course quick-action bar (px) */
+const COMPARE_BAR_GAP = 16;
+/** Default distance from the bottom when the quick-action bar is hidden (= bottom-8) */
+const COMPARE_DEFAULT_BOTTOM = 32;
+
 export default function CourseUniversitySection({
   universities: propUniversities,
   courseName,
@@ -52,6 +70,26 @@ export default function CourseUniversitySection({
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
   const [selected, setSelected] = useState<string[]>([]);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  /** Bottom offset of the floating Compare button, lifted above the course quick-action bar when it shows */
+  const [compareBottom, setCompareBottom] = useState(COMPARE_DEFAULT_BOTTOM);
+
+  useEffect(() => {
+    const measure = (visible: boolean) => {
+      const bar = document.querySelector<HTMLElement>('[aria-label="Course Quick Action Bar"]');
+      const height = visible && bar ? bar.getBoundingClientRect().height : 0;
+      setCompareBottom(height > 0 ? Math.ceil(height) + COMPARE_BAR_GAP : COMPARE_DEFAULT_BOTTOM);
+    };
+    const onToggle = (e: Event) => measure(Boolean((e as CustomEvent).detail?.isVisible));
+    const onResize = () => measure(document.body.classList.contains("course-popup-active"));
+
+    measure(document.body.classList.contains("course-popup-active"));
+    window.addEventListener("course-popup-toggle", onToggle);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("course-popup-toggle", onToggle);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   const defaultCourseTitle = cleanCourseName(courseName) || "Program";
 
@@ -117,8 +155,14 @@ export default function CourseUniversitySection({
     );
   };
 
-  const handleCompareNow = () => {
+  const handleCompareNow = useCallback(() => {
     if (selected.length < 2) return;
+
+    // The AI chat is for logged-in students only — ask logged-out visitors to log in / sign up first
+    if (!isStudentLoggedIn()) {
+      setShowSignupModal(true);
+      return;
+    }
 
     // Preserve the user's selection order
     const selectedUnis = selected
@@ -143,7 +187,7 @@ export default function CourseUniversitySection({
       : `Compare ${uniNames.join(" vs ")}`;
 
     router.push(`/search?q=${encodeURIComponent(compareQuery)}`);
-  };
+  }, [selected, mappedUniversities, courseName, defaultCourseTitle, router]);
 
   return (
     <section
@@ -357,11 +401,15 @@ export default function CourseUniversitySection({
 
         {/* Compare Now button */}
         {selected.length >= 2 && (
-          <div className="fixed inset-x-0 bottom-8 z-50 flex justify-center px-4 animate-slide-up">
+          <div
+            className="pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4 animate-slide-up transition-[bottom] duration-300 ease-out"
+            // Sits above the course quick-action bar ("… Complete 2026 Guide") instead of covering it
+            style={{ bottom: compareBottom }}
+          >
             <button
               type="button"
               onClick={handleCompareNow}
-              className="flex items-center gap-2.5 rounded-full bg-[#ee2c3c] px-7 py-3.5 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(238,44,60,0.35)] transition-all duration-300 hover:bg-[#d02534] hover:scale-105 active:scale-95 hover:shadow-[0_16px_36px_rgba(238,44,60,0.45)]"
+              className="pointer-events-auto flex items-center gap-2.5 rounded-full bg-[#ee2c3c] px-7 py-3.5 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(238,44,60,0.35)] transition-all duration-300 hover:bg-[#d02534] hover:scale-105 active:scale-95 hover:shadow-[0_16px_36px_rgba(238,44,60,0.45)]"
             >
               Compare Now ({selected.length})
               <ArrowRight className="h-4.5 w-4.5" />

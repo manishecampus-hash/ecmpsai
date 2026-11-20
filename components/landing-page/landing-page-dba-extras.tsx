@@ -18,22 +18,9 @@ import { LpHeading, LpReveal, LpSection } from "./lp-ui";
 
 // Static DBA sections that sit between the CMS-driven ones on the landing page.
 
-/** Specialisations shown in the Apply form's dropdown on the DBA landing page */
-export const DBA_SPECIALISATIONS = [
-  "DBA_(Business_Analytics)",
-  "DBA_(Data_Science)",
-  "DBA_(Finance)",
-  "DBA_(General_Management)",
-  "DBA_(Healthcare_Management)",
-  "DBA_(Human_Resource_Management)",
-  "DBA_(International_Business)",
-  "DBA_(Marketing)",
-  "DBH_(Supply_Chain_Management)",
-  "DBA_(Information_Technology)",
-  "DBA_(Internet_of_Things_IoT)",
-  "DBA_(Cybersecurity)",
-  "DBA_(Artificial_Intelligence_AI)",
-];
+/** Specialisations for the form dropdown — shared data, see data/form-courses.ts */
+import { DBA_SPECIALISATIONS } from "@/data/form-courses";
+export { DBA_SPECIALISATIONS };
 
 const AUDIENCE: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Building2, title: "CXOs & Senior Leaders", text: "Add doctoral authority to your boardroom experience and lead strategy with evidence." },
@@ -120,14 +107,14 @@ export function DbaFinalCta() {
             </p>
             <h2 className="mt-3 whitespace-nowrap text-[clamp(16px,4.6vw,24px)] font-extrabold leading-tight text-white sm:whitespace-normal sm:text-3xl">Ready to add &lsquo;Dr.&rsquo; to your name?</h2>
             <p className="mt-2 max-w-xl text-sm text-red-50 sm:text-base">
-              Talk to a DBA counsellor and find the right program for your goals, budget and schedule.
+              Speak with a DBA program advisor and find the right program for your goals, budget and schedule.
             </p>
           </div>
           <ApplyNowButton
             courses={DBA_SPECIALISATIONS}
             className="group relative mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-red-600 shadow-lg transition hover:bg-red-50 lg:mt-0 lg:shrink-0"
           >
-            Talk to a Counsellor
+            Talk with Program Advisor
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </ApplyNowButton>
         </div>

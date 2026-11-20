@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
+import { DEFAULT_FORM_COURSES } from "@/data/form-courses";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,24 +24,7 @@ export interface LeadData {
 
 // ── Shared Data ──────────────────────────────────────────────────────────────
 
-const courseList = [
-  "BA",
-  "BCOM",
-  "BBA",
-  "BCA",
-  "BSC",
-  "MA",
-  "MCOM",
-  "MBA",
-  "MCA",
-  "MSC",
-  "BTech",
-  "DBA",
-  "HR & Analytics",
-  "AI for Business Professionals",
-  "Certificate in CTO & AI Leadership",
-  "Certificate in Chief data & AI officer",
-];
+const courseList = DEFAULT_FORM_COURSES;
 
 const OFFER_DURATION_SECONDS = 5 * 24 * 60 * 60;
 
@@ -144,18 +128,37 @@ export function ApplicationForm({
   onSubmit,
   onBack,
   courses,
-  coursePlaceholder = "Select Course",
-  variant = "default",
+  coursePlaceholder,
+  variant = "lp",
+  heading,
+  badge = "Connect With An Expert",
+  submitLabel = "Apply Now",
+  submitIcon,
 }: {
   onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
   /** Page-specific options for the course dropdown; defaults to the shared course list */
   courses?: string[];
+  /** Defaults to "Choose Specialisation" when a course list is given, otherwise "Select Course" */
   coursePlaceholder?: string;
-  /** Visual theme only — "assured" matches the eCampus Assured popup. Fields & submission are identical. */
-  variant?: "default" | "assured";
+  /**
+   * Visual theme only — fields & submission are identical.
+   * "assured" matches the eCampus Assured popup; "lp" is the same look with the
+   * landing-page university-card style Apply button (soft red → solid red on hover).
+   */
+  variant?: "default" | "assured" | "lp";
+  /** Replaces the "Get ₹10,000* Scholarship" title (assured / lp looks only) */
+  heading?: React.ReactNode;
+  /** Text of the blue pill under the title */
+  badge?: string;
+  /** Submit button text (e.g. "Download Brochure") */
+  submitLabel?: string;
+  /** Icon after the submit text (defaults to an arrow) */
+  submitIcon?: React.ReactNode;
 }) {
-  const A = variant === "assured";
+  const A = variant === "assured" || variant === "lp";
+  const placeholder = coursePlaceholder ?? (courses?.length ? "Choose Specialisation" : "Select Course");
+  const isLp = variant === "lp";
   const ui = {
     wrapper: A
       ? "relative isolate mx-auto w-full max-w-lg px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-7"
@@ -176,7 +179,9 @@ export function ApplicationForm({
     phoneFocus: A
       ? "focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100"
       : "focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100",
-    submit: A
+    submit: isLp
+      ? "group/btn mx-auto mt-0.5 flex h-10 w-[78%] max-w-[280px] items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 text-[15px] font-bold text-red-700 shadow-none transition-colors duration-300 hover:border-red-700 hover:bg-red-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
+      : A
       ? "mx-auto mt-0.5 h-10 w-[78%] max-w-[280px] rounded-md bg-gradient-to-b from-[#ff9a1f] to-[#ea7a00] text-[15px] font-bold text-white shadow-[0_8px_18px_-6px_rgba(234,122,0,0.65)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2"
       : "mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2",
     timer: A
@@ -365,11 +370,15 @@ export function ApplicationForm({
       {A ? (
         <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4">
           <h2 className="text-[19px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[20px]">
-            Get <span className="text-orange-500">₹10,000*</span> Scholarship
+            {heading ?? (
+              <>
+                Get <span className="text-orange-500">₹10,000*</span> Scholarship
+              </>
+            )}
           </h2>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2563eb] px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-white shadow-sm shadow-blue-600/30">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Connect With An Expert
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-700">
+            <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
+            {badge}
           </span>
         </div>
       ) : (
@@ -556,7 +565,7 @@ export function ApplicationForm({
             }
           >
             <SelectTrigger className={`${ui.triggerSize} !min-h-0 !py-0 ${ui.trigger}`}>
-              <SelectValue placeholder={coursePlaceholder} />
+              <SelectValue placeholder={placeholder} />
             </SelectTrigger>
 
             <SelectContent
@@ -623,15 +632,24 @@ export function ApplicationForm({
         {/* Submit */}
         <Button
           type="submit"
-          disabled={!isFormValid || isSubmitting}
+          // Landing pages: the button stays active (so its hover works) and missing fields are flagged on click
+          disabled={isSubmitting || (!isLp && !isFormValid)}
           className={ui.submit}
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />
           ) : (
             <>
-              Apply Now
-              <ArrowRight className="ml-2 w-4 h-4" />
+              {submitLabel}
+              {submitIcon ?? (
+                <ArrowRight
+                  className={
+                    isLp
+                      ? "h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+                      : "ml-2 w-4 h-4"
+                  }
+                />
+              )}
             </>
           )}
         </Button>

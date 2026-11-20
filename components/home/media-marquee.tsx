@@ -4,7 +4,7 @@ import { Newspaper } from "lucide-react";
 // Media coverage from the homepage API, shown as a scrolling strip of publication logos.
 // Each logo opens the article it links to (same redirectUrl as before).
 
-type MediaArticle = {
+export type MediaArticle = {
   name?: string;
   logo?: string;
   redirectUrl?: string;
@@ -28,7 +28,14 @@ const LOGO_HEIGHT = 72;
 
 const keyOf = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
+export function MediaMarquee({
+  articles,
+  className = "-mt-11 sm:-mt-14",
+}: {
+  articles?: MediaArticle[];
+  /** Outer spacing — the home page pulls the strip up under Student Stories; other pages pass their own */
+  className?: string;
+}) {
   const items = (articles ?? [])
     .filter((a) => a?.name && a.isActive !== false)
     .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
@@ -50,7 +57,7 @@ export function MediaMarquee({ articles }: { articles?: MediaArticle[] }) {
 
   return (
     // A div with the region role (not <section>) so the home page's section-spacing rule doesn't reset its pull-up margin
-    <div role="region" aria-labelledby="in-the-news" className="relative -mt-11 w-full sm:-mt-14">
+    <div role="region" aria-labelledby="in-the-news" className={`relative w-full ${className}`}>
       {/* Heading sits above the grey logo strip, sized like the other homepage section titles */}
       {/* Very thin divider between Student Stories and this section */}
       <span

@@ -24,6 +24,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
+import { MBA_SPECIALISATIONS } from "@/data/form-courses";
 
 export function RenderHeading({
   text,
@@ -285,7 +286,7 @@ export default function MbaAdmissionProcedure({ data, title }: MbaAdmissionProce
         </aside>
       </div>
 
-      <ApplyNowModal isOpen={showForm} onClose={() => setShowForm(false)} />
+      <ApplyNowModal isOpen={showForm} onClose={() => setShowForm(false)} courses={MBA_SPECIALISATIONS} />
     </section>
   );
 }

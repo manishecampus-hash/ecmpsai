@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AppShell } from "@/components/layout/app-shell";
 import { AnalyticsInjector } from "@/components/analytics/AnalyticsInjector";
 import { FloatingWhatsApp } from "@/components/layout/floating-whatsapp";
+import ScrollSignupPopup from "@/components/home/scroll-signup-popup";
 import { AuthProvider } from "@/components/auth/auth-context";
 
 import Script from "next/script";
@@ -107,6 +108,8 @@ export default function RootLayout({
           <AuthProvider>
             <AppShell>{children}</AppShell>
             <FloatingWhatsApp phoneNumber="919873794789" />
+            {/* Sign-up nudge: after 5s or 50% scroll, once per session, everywhere except /dashboard */}
+            <ScrollSignupPopup />
           </AuthProvider>
         </ThemeProvider>
       </body>

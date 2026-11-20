@@ -13,13 +13,13 @@ import { DBA_SPECIALISATIONS, DbaAudience, DbaFinalCta, DbaJourney } from "./lan
 import {
   MbaAboutWhy,
   MbaAdmissionJourney,
-  MbaAudienceSection,
   MbaFinalCta,
   MbaKeyInfo,
   MbaOffers,
   MbaSpecializations,
   MbaSyllabus,
   MbaUniversities,
+  MBA_SPECIALISATIONS,
   type MbaCourseData,
 } from "./landing-page-mba-extras";
 import { LP_REVEAL_CSS } from "./lp-ui";
@@ -28,6 +28,10 @@ import DbaGiftButton from "./dba-gift-button";
 import MbaHeroForm from "./mba-hero-form";
 import SubHeader from "@/components/universities/sub-header";
 import { DBA_UNIVERSITIES } from "@/data/dba-universities";
+import { MediaMarquee, type MediaArticle } from "@/components/home/media-marquee";
+import LpFeeStructure from "./lp-fee-structure";
+import LpWhyEcampus from "./lp-why-ecampus";
+import { DBA_FEE_PLANS, MBA_FEE_PLANS } from "./lp-fee-data";
 
 export interface LandingPageData {
   id?: string;
@@ -49,16 +53,18 @@ interface LandingPageTemplateProps {
   isPreview?: boolean;
   /** Online MBA course content from the CMS — only passed for MBA landing pages */
   mbaCourse?: MbaCourseData | null;
+  /** "Media & Press" logos — same CMS list as the home page */
+  media?: MediaArticle[];
 }
 
-export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageTemplateProps) {
+export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: LandingPageTemplateProps) {
   // Extra DBA-specific sections (who it's for, admission path, closing CTA)
   const isDba = /dba/i.test(data.slug || data.name || "");
   // Extra MBA-specific sections (never rendered on the DBA page)
   const isMba = !isDba && /mba/i.test(data.slug || data.name || "");
   const mba = isMba ? mbaCourse || null : null;
-  // DBA page: the Apply form's dropdown lists DBA specialisations instead of all courses
-  const formCourses = isDba ? DBA_SPECIALISATIONS : undefined;
+  // DBA / MBA pages: the form dropdowns list the programme's specialisations instead of all courses
+  const formCourses = isDba ? DBA_SPECIALISATIONS : isMba ? MBA_SPECIALISATIONS : undefined;
 
   // Frontend content overrides for the DBA page (until they're updated in the CMS)
   const hero = data.hero && isDba
@@ -66,14 +72,14 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         ...data.hero,
         mainHeading: data.hero.mainHeading.replace(/\bManoj\b/g, "Rajesh"),
         primaryCtaText: "Start Your Dr. Journey",
+        secondaryCtaText: undefined, // no "Explore Universities" button
       }
     : data.hero && isMba
       ? { 
           ...data.hero, 
           credentialLabel: "UGC-Entitled Degree", 
           trustLabel: "UGC-DEB Approved",
-          secondaryCtaText: "View Universities",
-          secondaryCtaUrl: "#programs"
+          secondaryCtaText: undefined, // no "View Universities" button
         }
       : data.hero;
   const experience = data.slug === "online-dba" && data.experience
@@ -137,6 +143,21 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         }
       : data.globalPartners;
 
+  // Fee structure (static for now). MBA logos come from the CMS university list when the name matches.
+  const MBA_LOGO_KEYS: Record<string, string> = { lpu: "lovely", "dy-patil": "patil" };
+  const feePlans = isDba
+    ? DBA_FEE_PLANS
+    : isMba
+      ? MBA_FEE_PLANS.map((plan) => {
+          const key = MBA_LOGO_KEYS[plan.id] || plan.id;
+          const match = (mba?.associatedUniversities || []).find(
+            (u) => u?.name && u.logoUrl && u.name.toLowerCase().includes(key),
+          );
+          return match?.logoUrl ? { ...plan, logo: match.logoUrl } : plan;
+        })
+      : [];
+  const hasMedia = (isDba || isMba) && (media?.length ?? 0) > 0;
+
   // MBA page: CMS FAQs first, then the course FAQs (no duplicates)
   const faqSection = isMba && mba?.details?.supportDesk?.faqs?.length
     ? (() => {
@@ -172,28 +193,33 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
           mba && { id: "lp-overview", label: "Overview" },
           mba?.details?.specializations?.items?.length && { id: "lp-specialisations", label: "Specialisations" },
           { id: "programs", label: "Universities" },
+          { id: "lp-fees", label: "Fees" },
           mba?.details?.syllabus && { id: "lp-syllabus", label: "Syllabus" },
-          mba && { id: "lp-audience", label: "Who It's For" },
           data.highlights && { id: "lp-compare", label: "Online vs Distance" },
           mba?.details?.processFlow?.steps?.length && { id: "lp-admission", label: "Admission" },
+          { id: "lp-why-ecampus", label: "Why eCampus" },
           hasCounsellors && { id: "lp-counsellors", label: "Counsellors" },
+          hasMedia && { id: "lp-media", label: "Media" },
           hasFaq && { id: "lp-faq", label: "FAQs" },
         ]
       : [
           data.highlights && { id: "lp-compare", label: "Key Highlights" },
           { id: "programs", label: "Universities" },
+          isDba && { id: "lp-fees", label: "Fees" },
           isDba && { id: "lp-audience", label: "Who Can Apply" },
           experience && { id: "lp-why", label: isDba ? "Why DBA" : "Why Us" },
           isDba && { id: "lp-journey", label: "Your Path" },
           hasPartners && { id: "lp-partners", label: "Partners" },
+          { id: "lp-why-ecampus", label: "Why eCampus" },
           hasCounsellors && { id: "lp-counsellors", label: "Counsellors" },
+          hasMedia && { id: "lp-media", label: "Media" },
           hasFaq && { id: "lp-faq", label: "FAQs" },
         ]
   ).filter(Boolean) as { id: string; label: string }[];
 
   return (
-    // DBA page: Apply popups use the eCampus Assured design; other pages keep the default
-    <ApplyFormStyleProvider value={isDba ? "assured" : "default"}>
+    // MBA & DBA pages: every popup (Apply, Download Brochure) uses the same look as the hero form; other pages keep the default
+    <ApplyFormStyleProvider value={isDba || isMba ? "lp" : "default"} courses={formCourses}>
       <style>{LP_REVEAL_CSS}</style>
 
       {/* Preview Bar Banner if in preview mode */}
@@ -219,7 +245,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       )}
 
       {/* Sticky in-page navigation (same component & look as the university pages) */}
-      <SubHeader items={subHeaderItems} />
+      <SubHeader items={subHeaderItems} spread />
 
       {/* MBA: partners strip, key programme info, about + recognitions — right after the hero */}
       {isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
@@ -265,6 +291,20 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         )}
       </div>
 
+      {/* MBA & DBA: fee structure (with / without immersion) right after the universities */}
+      {feePlans.length > 0 && (
+        <div id="lp-fees" className="scroll-mt-28">
+          <LpFeeStructure
+            programLabel={isDba ? "DBA" : "MBA"}
+            plans={feePlans}
+            formCourses={formCourses}
+            heading={isDba ? "Online DBA *Fee Structure*" : "Online MBA *Fee Structure*"}
+            description={`Secure your ${isDba ? "DBA" : "MBA"} seat today at special scholarship rates.`}
+            tone={isMba ? "white" : "muted"}
+          />
+        </div>
+      )}
+
       {/* MBA: 2-Year MBA Journey right after universities */}
       {mba?.details?.syllabus && (
         <div id="lp-syllabus" className="scroll-mt-28">
@@ -278,12 +318,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         </div>
       )}
 
-      {/* MBA: graduates vs working professionals */}
-      {mba && (
-        <div id="lp-audience" className="scroll-mt-28">
-          <MbaAudienceSection tone="muted" />
-        </div>
-      )}
+      {/* MBA: "Built for Graduates & Professionals" section removed as requested */}
 
       {/* MBA: "Why MBA" section removed as requested */}
 
@@ -319,6 +354,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
         </div>
       )}
 
+      {/* MBA & DBA: Why eCampus — benefits of applying through eCampus (programme-specific copy) */}
+      {(isDba || isMba) && (
+        <div id="lp-why-ecampus" className="scroll-mt-28">
+          <LpWhyEcampus program={isDba ? "dba" : "mba"} />
+        </div>
+      )}
+
       {/* 7. Counsellors Section */}
       {counsellorsSection && (counsellorsSection.counsellors?.length ?? 0) > 0 && (
         <div id="lp-counsellors" className="scroll-mt-28">
@@ -337,6 +379,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse }: LandingPageT
       {/* 8. Top Placement Partners (Dynamic from Admin) — not shown on the DBA page */}
       {!isDba && data.placementPartners?.logos && data.placementPartners.logos.length > 0 && (
         <LandingPagePlacementPartners placementPartners={data.placementPartners} />
+      )}
+
+      {/* Media & Press — same strip as the home page */}
+      {hasMedia && (
+        <div id="lp-media" className="scroll-mt-28 bg-white pb-8 pt-2 sm:pb-11">
+          <MediaMarquee articles={media} className="" />
+        </div>
       )}
 
       {/* 9. FAQ Section */}

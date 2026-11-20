@@ -12,7 +12,6 @@ export function FloatingWhatsApp({
   phoneNumber = "919873794789",
   message = "Hi! I would like to get more information about online university programs.",
 }: FloatingWhatsAppProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [hasCourseBar, setHasCourseBar] = useState(false);
   const pathname = usePathname();
   const aboveComposer = pathname === "/search" || pathname === "/dashboard/mychat";
@@ -47,34 +46,13 @@ export function FloatingWhatsApp({
     <div
       className={`fixed ${bottomPositionClass} right-3 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto transition-all duration-300 ease-out`}
     >
-      {/* Tooltip / Prompt bubble on desktop */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={`hidden ${aboveComposer ? "" : "md:flex"} items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 transform origin-right cursor-pointer hover:border-emerald-200 hover:text-emerald-700 hover:shadow-[0_10px_35px_rgba(37,211,102,0.2)] ${isHovered ? "opacity-100 translate-x-0 scale-100" : "opacity-90 translate-x-1 scale-95"
-          }`}
-        aria-label="Chat on WhatsApp"
-      >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span>Chat on WhatsApp</span>
-      </a>
-
       {/* Main WhatsApp Floating Button */}
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         className="relative group flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_25px_rgba(37,211,102,0.45)] transition-all duration-300 hover:scale-110 hover:shadow-[0_12px_32px_rgba(37,211,102,0.65)] active:scale-95 cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
         aria-label="Chat on WhatsApp"
-        title="Chat on WhatsApp (+91 9873794789)"
       >
         {/* Soft pulsing aura */}
         <span className="absolute -inset-1 rounded-full bg-[#25D366] opacity-35 blur-xs animate-pulse -z-10 group-hover:opacity-60 transition-opacity"></span>

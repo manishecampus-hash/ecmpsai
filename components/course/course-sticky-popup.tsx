@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Star, Clock, X, ArrowRight } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
+import { getFormCourses } from "@/data/form-courses";
 
 export interface CourseStickyPopupProps {
   courseName: string;
@@ -214,6 +215,7 @@ export default function CourseStickyPopup({
       <ApplyNowModal
         isOpen={showApplyModal}
         onClose={() => setShowApplyModal(false)}
+        courses={getFormCourses(courseName)}
       />
     </>
   );

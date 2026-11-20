@@ -40,6 +40,9 @@ import { AnimatedCounter } from "./animated-counter";
    (GET /root-courses/online-mba) and is rendered only on MBA pages.
 ============================================================ */
 
+/** Specialisations for the form dropdown — shared data, see data/form-courses.ts */
+export { MBA_SPECIALISATIONS } from "@/data/form-courses";
+
 export interface MbaUniversity {
   id?: string;
   name: string;
@@ -391,11 +394,11 @@ export function MbaFinalCta() {
               Ready to lead with an MBA?
             </h2>
             <p className="mt-2 max-w-xl text-sm text-red-50 sm:text-base">
-              Talk to an MBA counsellor to compare universities, fees and specialisations for your goals.
+              Speak with an MBA program advisor to compare universities, fees and specialisations for your goals.
             </p>
           </div>
           <ApplyNowButton className="group relative mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-red-600 shadow-lg transition hover:bg-red-50 lg:mt-0 lg:shrink-0">
-            Talk to a Counsellor
+            Talk with Program Advisor
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </ApplyNowButton>
         </div>

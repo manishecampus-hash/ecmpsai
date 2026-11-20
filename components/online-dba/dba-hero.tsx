@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
+import { DBA_SPECIALISATIONS } from "@/data/form-courses";
 
 interface DBAHeroProps {
   onCtaClick?: () => void;
@@ -141,6 +142,7 @@ export function DBAHero({
       <ApplyNowModal
         isOpen={showApplyModal}
         onClose={() => setShowApplyModal(false)}
+        courses={DBA_SPECIALISATIONS}
       />
     </section>
   );

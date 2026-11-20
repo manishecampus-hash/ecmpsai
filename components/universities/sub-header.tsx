@@ -484,9 +484,11 @@ interface SubHeaderProps {
   universityName?: string;
   /** Section links; defaults to the university-page sections */
   items?: NavItem[];
+  /** Desktop only: when every link fits, hide the arrows and spread the links edge to edge (landing pages) */
+  spread?: boolean;
 }
 
-export default function SubHeader({ university, universityName, items }: SubHeaderProps = {}) {
+export default function SubHeader({ university, universityName, items, spread }: SubHeaderProps = {}) {
   const navItems: NavItem[] = items && items.length > 0 ? items : NAV_ITEMS;
 
   const [activeId, setActiveId] = useState<string>("overview");
@@ -678,6 +680,27 @@ export default function SubHeader({ university, universityName, items }: SubHead
           font-size: 0.875rem;
         }
 
+        /* Landing pages on desktop: links fill the bar, aligned with the page content edges */
+        @media (min-width: 1024px) {
+          .subheader-spread {
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+          }
+          .subheader-spread .subheader-arrow {
+            display: none;
+          }
+          .subheader-spread .subheader-scroll {
+            justify-content: space-between;
+            padding: 0 !important;
+          }
+          .subheader-spread .subheader-item:first-child {
+            padding-left: 0 !important;
+          }
+          .subheader-spread .subheader-item:last-child {
+            padding-right: 0 !important;
+          }
+        }
+
         @media (max-width: 640px) {
           .subheader-wrap {
             padding: 0.5rem 0.5rem !important;
@@ -699,7 +722,7 @@ export default function SubHeader({ university, universityName, items }: SubHead
       `}</style>
 
       <div
-        className="subheader-wrap"
+        className={`subheader-wrap${spread && !canScrollLeft && !canScrollRight ? " subheader-spread" : ""}`}
         style={{
           display: "flex",
           alignItems: "center",

@@ -17,9 +17,8 @@ import {
   ArrowRight,
   GraduationCap,
 } from "lucide-react";
-import { BrochureForm } from "./../form/brochure-form";
-import { ApplicationForm } from "../form/common-form";
-import LeadFormModalFrame from "@/components/form/lead-form-modal-frame";
+import { ApplyNowModal, BrochureModal } from "@/components/form/apply-now-modal";
+import { getFormCourses } from "@/data/form-courses";
 import HighlightedText from "@/components/universities/HighlightedText";
 
 
@@ -206,6 +205,8 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
   const [activeCardId, setActiveCardId] = useState<string | number | null>(null);
   const [showBrochureForm, setShowBrochureForm] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  /** Programme whose "Get Brochure" was clicked — sets the popup title and course list */
+  const [brochureProgram, setBrochureProgram] = useState<string>("");
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -1244,6 +1245,7 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
       if (program.brochureUrl) {
         window.open(program.brochureUrl, "_blank");
       }
+      setBrochureProgram(program.title || "");
       setShowBrochureForm(true);
     }}
     className="flex-1 flex items-center justify-center rounded-[6px] bg-[#ff3b4f] border-[1.5px] border-[#ff3b4f] px-[10px] py-2 text-xs font-bold text-white whitespace-nowrap transition-colors hover:bg-[#e02035] hover:border-[#e02035] cursor-pointer"
@@ -1359,30 +1361,13 @@ export default function ProgramsSection({ programData }: ProgramsSectionProps = 
           )} */}
         </div>
       </div>
-      {showBrochureForm && (
-        <LeadFormModalFrame onClose={() => setShowBrochureForm(false)} title="Download brochure" imageSrc="/application-form-popup.jpeg">
-          <BrochureForm
-            onSubmit={() => {
-              setShowBrochureForm(false);
-            }}
-            onBack={() => {
-              setShowBrochureForm(false);
-            }}
-          />
-        </LeadFormModalFrame>
-      )}
-      {showApplicationForm && (
-        <LeadFormModalFrame onClose={() => setShowApplicationForm(false)} title="Apply now" imageSrc="/application-form-popup.jpeg">
-          <ApplicationForm
-            onSubmit={() => {
-              setShowApplicationForm(false);
-            }}
-            onBack={() => {
-              setShowApplicationForm(false);
-            }}
-          />
-        </LeadFormModalFrame>
-      )}
+      <BrochureModal
+        isOpen={showBrochureForm}
+        onClose={() => setShowBrochureForm(false)}
+        programName={brochureProgram || undefined}
+        courses={getFormCourses(brochureProgram)}
+      />
+      <ApplyNowModal isOpen={showApplicationForm} onClose={() => setShowApplicationForm(false)} />
     </section>
   );
 }

@@ -20,6 +20,7 @@ import {
   MbaSyllabus,
   MbaUniversities,
   MBA_SPECIALISATIONS,
+  MBA_LP_SEMESTERS,
   type MbaCourseData,
 } from "./landing-page-mba-extras";
 import { LP_REVEAL_CSS } from "./lp-ui";
@@ -31,7 +32,7 @@ import { DBA_UNIVERSITIES } from "@/data/dba-universities";
 import { MediaMarquee, type MediaArticle } from "@/components/home/media-marquee";
 import LpFeeStructure from "./lp-fee-structure";
 import LpWhyEcampus from "./lp-why-ecampus";
-import { DBA_FEE_PLANS, MBA_FEE_PLANS } from "./lp-fee-data";
+import { DBA_FEE_PLANS } from "./lp-fee-data";
 
 export interface LandingPageData {
   id?: string;
@@ -143,19 +144,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
         }
       : data.globalPartners;
 
-  // Fee structure (static for now). MBA logos come from the CMS university list when the name matches.
-  const MBA_LOGO_KEYS: Record<string, string> = { lpu: "lovely", "dy-patil": "patil" };
-  const feePlans = isDba
-    ? DBA_FEE_PLANS
-    : isMba
-      ? MBA_FEE_PLANS.map((plan) => {
-          const key = MBA_LOGO_KEYS[plan.id] || plan.id;
-          const match = (mba?.associatedUniversities || []).find(
-            (u) => u?.name && u.logoUrl && u.name.toLowerCase().includes(key),
-          );
-          return match?.logoUrl ? { ...plan, logo: match.logoUrl } : plan;
-        })
-      : [];
+  // Fee structure — DBA page only (static, same data as dba.ecampusapp.com)
+  const feePlans = isDba ? DBA_FEE_PLANS : [];
   const hasMedia = (isDba || isMba) && (media?.length ?? 0) > 0;
 
   // MBA page: CMS FAQs first, then the course FAQs (no duplicates)
@@ -193,8 +183,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
           mba && { id: "lp-overview", label: "Overview" },
           mba?.details?.specializations?.items?.length && { id: "lp-specialisations", label: "Specialisations" },
           { id: "programs", label: "Universities" },
-          { id: "lp-fees", label: "Fees" },
-          mba?.details?.syllabus && { id: "lp-syllabus", label: "Syllabus" },
+          mba && { id: "lp-syllabus", label: "Syllabus" },
           data.highlights && { id: "lp-compare", label: "Online vs Distance" },
           mba?.details?.processFlow?.steps?.length && { id: "lp-admission", label: "Admission" },
           { id: "lp-why-ecampus", label: "Why eCampus" },
@@ -291,24 +280,25 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
         )}
       </div>
 
-      {/* MBA & DBA: fee structure (with / without immersion) right after the universities */}
+      {/* DBA: fee structure (with / without immersion) right after the universities */}
       {feePlans.length > 0 && (
         <div id="lp-fees" className="scroll-mt-28">
           <LpFeeStructure
-            programLabel={isDba ? "DBA" : "MBA"}
+            programLabel="DBA"
             plans={feePlans}
             formCourses={formCourses}
-            heading={isDba ? "Online DBA *Fee Structure*" : "Online MBA *Fee Structure*"}
-            description={`Secure your ${isDba ? "DBA" : "MBA"} seat today at special scholarship rates.`}
-            tone={isMba ? "white" : "muted"}
+            heading="Online DBA *Fee Structure*"
+            description="Secure Your DBA Seat Today at Special Scholarship Rates"
+            tone="muted"
           />
         </div>
       )}
 
       {/* MBA: 2-Year MBA Journey right after universities */}
-      {mba?.details?.syllabus && (
+      {/* MBA: semesters are the static landing-page syllabus (heading / badge text still from the CMS) */}
+      {mba && (
         <div id="lp-syllabus" className="scroll-mt-28">
-          <MbaSyllabus syllabus={mba.details.syllabus} tone="muted" />
+          <MbaSyllabus syllabus={{ ...(mba.details?.syllabus || {}), semesters: MBA_LP_SEMESTERS }} tone="muted" />
         </div>
       )}
 

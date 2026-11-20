@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     // Pulling from env
     const token = process.env.ZEPTO_TOKEN;
-    const adminEmail = process.env.ADMIN_EMAIL || "tausifshahbaz@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "leads@blendedlearningschool.com";
     const endpoint = process.env.ZEPTO_ENDPOINT || "https://api.zeptomail.in/v1.1/email";
 
     // Safety check: ensure token is present

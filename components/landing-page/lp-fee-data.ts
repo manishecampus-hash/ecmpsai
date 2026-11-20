@@ -1,31 +1,41 @@
-// ── Data ─────────────────────────────────────────────────────────────────────
-// STATIC for now — replace with CMS / API data later. All amounts are in INR, including taxes.
+// DBA fee structure — same universities, amounts and wording as the "Online DBA Fee Structure"
+// section on dba.ecampusapp.com. Values are display text, kept exactly as shown there.
+// STATIC for now — replace with CMS / API data later.
 
 export interface FeePlan {
   id: string;
-  /** Full name, used in the popup title */
-  university: string;
-  /** Short name, used on the tab and the CTA ("Download GGU Brochure") */
-  shortName: string;
+  /** Tab label (as in the reference dropdown) */
+  label: string;
+  /** Name used in the CTA ("Download {name} Brochure") and the brochure popup */
+  name: string;
   logo?: string;
-  location: string;
-  duration: string;
-  standardFee: number;
-  /** eCampus waiver, e.g. "upto 20%" */
+  location?: string;
+  /** Small note under the tab label */
+  tabNote?: string;
+  /** Title pill of the fee card */
+  cardTitle: string;
+  standardFee: string;
+  /** Small note under the standard fee (e.g. "(Including taxes)") */
+  standardFeeNote?: string;
   waiver: string;
-  payableFee: number;
-  /** Months the payable fee is spread over for the "starting ₹X/month" line */
-  emiMonths: number;
-  /** Optional on-campus immersion — omit for fully online programmes */
+  /** Omitted when the reference doesn't show a payable fee */
+  payableFee?: string;
+  taxText?: string;
+  emiTitle: string;
+  emi: string;
+  /** Seat-block amount for "* Block your seat now with only …" */
+  seat: string;
+  /** Separate immersion card — omitted for single-card universities */
   immersion?: {
-    fee: number;
-    days: number;
-    location: string;
+    title: string;
+    price: string;
+    taxText: string;
+    showInclusionsTitle: boolean;
     inclusions: string[];
   };
 }
 
-const DBA_IMMERSION_INCLUSIONS = [
+const IMMERSION_INCLUSIONS = [
   "On-campus Immersion with accommodation & meals",
   "Academic & Group mentoring sessions",
   "City tour",
@@ -33,133 +43,168 @@ const DBA_IMMERSION_INCLUSIONS = [
 
 export const DBA_FEE_PLANS: FeePlan[] = [
   {
-    id: "ggu",
-    university: "Golden Gate University",
-    shortName: "Golden Gate",
-    logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/3.svg",
-    location: "California, USA",
-    duration: "3 Years",
-    standardFee: 1065000,
-    waiver: "upto 20%",
-    payableFee: 800000,
-    emiMonths: 36,
-    immersion: { fee: 225000, days: 7, location: "San Francisco, USA", inclusions: DBA_IMMERSION_INCLUSIONS },
-  },
-  {
-    id: "paiu",
-    university: "Paris American International University",
-    shortName: "PAIU",
-    logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/4.svg",
-    location: "Paris, France",
-    duration: "3 Years",
-    standardFee: 750000,
-    waiver: "upto 20%",
-    payableFee: 600000,
-    emiMonths: 36,
-    immersion: { fee: 180000, days: 5, location: "Paris, France", inclusions: DBA_IMMERSION_INCLUSIONS },
-  },
-  {
     id: "rushford",
-    university: "Rushford Business School",
-    shortName: "Rushford",
+    label: "Rushford Business School",
+    name: "Rushford University",
     logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/2.svg",
-    location: "Switzerland",
-    duration: "3 Years",
-    standardFee: 650000,
-    waiver: "upto 20%",
-    payableFee: 520000,
-    emiMonths: 36,
-  },
-  {
-    id: "lsmt",
-    university: "London School of Management & Technology",
-    shortName: "LSMT",
-    logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/6.svg",
-    location: "London, UK",
-    duration: "3 Years",
-    standardFee: 550000,
-    waiver: "upto 20%",
-    payableFee: 440000,
-    emiMonths: 36,
-    immersion: { fee: 150000, days: 5, location: "London, UK", inclusions: DBA_IMMERSION_INCLUSIONS },
+    location: "Lucerne, Switzerland",
+    tabNote: "+ Immersion option",
+    cardTitle: "Fee (without Immersion)",
+    standardFee: "INR 4,50,000",
+    waiver: "INR 1,00,000",
+    payableFee: "INR 3,50,000/-",
+    taxText: "Including taxes",
+    emiTitle: "Complete your doctorate starting",
+    emi: "INR 9,722/month",
+    seat: "₹25,000",
+    immersion: {
+      title: "Immersion Fee",
+      price: "INR 1,50,000*",
+      taxText: "Inclusive of taxes",
+      showInclusionsTitle: false,
+      inclusions: IMMERSION_INCLUSIONS,
+    },
   },
   {
     id: "esgci",
-    university: "Ecole de Commerce International (ESGCI)",
-    shortName: "ESGCI",
+    label: "ESGCI",
+    name: "ESGCI",
     logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/5.svg",
     location: "Paris, France",
-    duration: "3 Years",
-    standardFee: 625000,
+    tabNote: "+ Immersion option",
+    cardTitle: "Without Immersion",
+    standardFee: "INR 7,15,000/-*",
+    waiver: "INR 50,000/-*",
+    payableFee: "INR 6,65,000/-",
+    taxText: "Including taxes",
+    emiTitle: "Complete your doctorate starting",
+    emi: "INR 19,475/month",
+    seat: "₹25,000",
+    immersion: {
+      title: "Immersion Fee",
+      price: "INR 2,75,000*",
+      taxText: "Inclusive of taxes",
+      showInclusionsTitle: true,
+      inclusions: IMMERSION_INCLUSIONS,
+    },
+  },
+  {
+    id: "ssbm",
+    label: "SSBM",
+    name: "SSBM",
+    location: "Geneva, Switzerland",
+    tabNote: "+ Immersion option",
+    cardTitle: "DBA (without Immersion)",
+    standardFee: "INR 7,50,000",
+    waiver: "INR 1,00,000",
+    payableFee: "INR 6,50,000/-",
+    taxText: "Including taxes",
+    emiTitle: "Complete your doctorate starting",
+    emi: "INR 18,055/month",
+    seat: "₹25,000",
+    immersion: {
+      title: "Immersion Fee",
+      price: "INR 3,50,000*",
+      taxText: "Inclusive of taxes",
+      showInclusionsTitle: true,
+      inclusions: IMMERSION_INCLUSIONS,
+    },
+  },
+  {
+    id: "goldengate",
+    label: "Golden Gate University",
+    name: "Golden Gate University",
+    logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/3.svg",
+    location: "San Francisco, California",
+    tabNote: "+ Immersion option",
+    cardTitle: "DBA (without Immersion)",
+    standardFee: "INR 10,65,000",
+    standardFeeNote: "(Including taxes)",
     waiver: "upto 20%",
-    payableFee: 500000,
-    emiMonths: 36,
-  },
-];
-
-const MBA_IMMERSION_INCLUSIONS = [
-  "On-campus immersion with industry sessions",
-  "Faculty interaction & networking",
-  "Campus tour & convocation-style meet",
-];
-
-/** `logo` is filled from the CMS university list on the MBA page (matched by name) */
-export const MBA_FEE_PLANS: FeePlan[] = [
-  {
-    id: "amity",
-    university: "Amity University Online",
-    shortName: "Amity",
-    location: "Noida, India",
-    duration: "2 Years",
-    standardFee: 225000,
-    waiver: "upto 10%",
-    payableFee: 199000,
-    emiMonths: 24,
-    immersion: { fee: 25000, days: 3, location: "Noida Campus", inclusions: MBA_IMMERSION_INCLUSIONS },
+    emiTitle: "Complete your doctorate starting",
+    emi: "INR 22,222/month*",
+    seat: "₹44,999",
+    immersion: {
+      title: "Immersion Fee",
+      price: "INR 2,25,000*",
+      taxText: "Inclusive of taxes",
+      showInclusionsTitle: true,
+      inclusions: ["7 days On-campus Immersion with meals", "Lectures & Group mentoring sessions", "City tour"],
+    },
   },
   {
-    id: "manipal",
-    university: "Manipal University Jaipur",
-    shortName: "Manipal",
-    location: "Jaipur, India",
-    duration: "2 Years",
-    standardFee: 195000,
-    waiver: "upto 10%",
-    payableFee: 175000,
-    emiMonths: 24,
+    id: "lsmt",
+    label: "LSMT University",
+    name: "LSMT University",
+    logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/6.svg",
+    location: "Croydon, United Kingdom",
+    tabNote: "Immersion included",
+    cardTitle: "DBA (with Immersion)",
+    standardFee: "INR 4,00,000",
+    waiver: "INR 50,000",
+    payableFee: "INR 3,50,000/-",
+    taxText: "No taxes applicable.",
+    emiTitle: "No Cost EMI starts",
+    emi: "INR 9,722/month",
+    seat: "₹25,000/-",
   },
   {
-    id: "nmims",
-    university: "NMIMS Online",
-    shortName: "NMIMS",
-    location: "Mumbai, India",
-    duration: "2 Years",
-    standardFee: 220000,
-    waiver: "upto 10%",
-    payableFee: 196000,
-    emiMonths: 24,
+    id: "floridacoastal",
+    label: "Florida Coastal University",
+    name: "Florida Coastal University",
+    location: "Jacksonville, United States",
+    tabNote: "Immersion included",
+    cardTitle: "DBA (with Immersion)",
+    standardFee: "INR 4,00,000",
+    waiver: "INR 50,000",
+    payableFee: "INR 3,50,000/-",
+    taxText: "No taxes applicable.",
+    emiTitle: "No Cost EMI starts",
+    emi: "INR 9,722/month",
+    seat: "₹25,000/-",
   },
   {
-    id: "lpu",
-    university: "Lovely Professional University Online",
-    shortName: "LPU",
-    location: "Phagwara, India",
-    duration: "2 Years",
-    standardFee: 180000,
-    waiver: "upto 10%",
-    payableFee: 160000,
-    emiMonths: 24,
-    immersion: { fee: 20000, days: 3, location: "Phagwara Campus", inclusions: MBA_IMMERSION_INCLUSIONS },
+    id: "birchwood",
+    label: "Birchwood University",
+    name: "Birchwood University",
+    location: "Florida, USA",
+    tabNote: "Without immersion",
+    cardTitle: "DBA (Without Immersion)",
+    standardFee: "INR 5,00,000",
+    waiver: "INR 50,000",
+    payableFee: "INR 4,50,000/-",
+    taxText: "No taxes applicable.",
+    emiTitle: "No Cost EMI starts",
+    emi: "INR 15,270/month",
+    seat: "₹25,000",
   },
   {
-    id: "dy-patil",
-    university: "DY Patil University Online",
-    shortName: "DY Patil",
-    location: "Navi Mumbai, India",
-    duration: "2 Years",
-    standardFee: 210000,
-    waiver: "upto 10%",
-    payableFee: 189000,
-    emiMonths: 24,
+    id: "eimt",
+    label: "EIMT",
+    name: "EIMT",
+    location: "Cham, Switzerland",
+    tabNote: "Without immersion",
+    cardTitle: "DBA (Without Immersion)",
+    standardFee: "INR 4,00,000",
+    waiver: "INR 50,000",
+    payableFee: "INR 3,50,000/-",
+    taxText: "No taxes applicable.",
+    emiTitle: "No Cost EMI starts",
+    emi: "INR 9,722/month",
+    seat: "₹25,000",
+  },
+  {
+    id: "edgewood",
+    label: "Edgewood University",
+    name: "Edgewood University",
+    location: "Madison, USA",
+    cardTitle: "Doctor of Business Administration",
+    standardFee: "INR 9,50,000/-*",
+    waiver: "INR 50,000",
+    payableFee: "INR 9,00,000/-*",
+    taxText: "Including taxes",
+    emiTitle: "Complete your doctorate starting",
+    emi: "INR 23,000/month",
+    seat: "₹25,000",
   },
 ];

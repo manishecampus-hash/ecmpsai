@@ -195,8 +195,7 @@ export default function ScrollSignupPopup() {
                   <span className="text-red-600">don&apos;t leave just yet!</span>
                 </h2>
                 <p className="mx-auto mt-2.5 max-w-[400px] text-[14.5px] leading-relaxed text-slate-600">
-                  Can&apos;t find what you&apos;re looking for? Let our Program Experts guide you to the right course and
-                  university.
+                  Let our Program Experts guide you.
                 </p>
 
                 <ul className="mx-auto mt-5 max-w-[400px] space-y-2.5 text-left">

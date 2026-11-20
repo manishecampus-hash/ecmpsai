@@ -40,6 +40,60 @@ import { AnimatedCounter } from "./animated-counter";
    (GET /root-courses/online-mba) and is rendered only on MBA pages.
 ============================================================ */
 
+/**
+ * Online MBA landing page syllabus (static — overrides the CMS semesters on /lp pages).
+ * Subjects are listed as-is, so names containing commas stay whole.
+ */
+export const MBA_LP_SEMESTERS: { number: string; title: string; subjects: string[] }[] = [
+  {
+    number: "01",
+    title: "Semester 01",
+    subjects: [
+      "Managerial Economics",
+      "Statistics for Management",
+      "Professional communication",
+      "Accounting for Managers",
+      "Marketing Management",
+    ],
+  },
+  {
+    number: "02",
+    title: "Semester 02",
+    subjects: [
+      "Legal Aspects of Business",
+      "Business Research Methods",
+      "Financial Management",
+      "Human Resource Management",
+      "Conflict Resolution and Management",
+    ],
+  },
+  {
+    number: "03",
+    title: "Semester 03",
+    subjects: [
+      "Strategic Management",
+      "Minor Project",
+      "Professional Ethics",
+      "Specialization Elective 1",
+      "Specialization Elective 2",
+      "Specialization Elective 3",
+      "Specialization Elective 4",
+    ],
+  },
+  {
+    number: "04",
+    title: "Semester 04",
+    subjects: [
+      "Major Project",
+      "Management in Action: Social, Economic and Ethical Issues",
+      "Digital Marketing",
+      "AI Tools and Applications",
+      "Specialization Elective 1",
+      "Specialization Elective 2",
+    ],
+  },
+];
+
 /** Specialisations for the form dropdown — shared data, see data/form-courses.ts */
 export { MBA_SPECIALISATIONS } from "@/data/form-courses";
 
@@ -67,7 +121,8 @@ export interface MbaCourseData {
       journeyBadge?: string;
       journeyTitle?: string;
       journeySubtitle?: string;
-      semesters?: { number?: string; title?: string; text?: string }[];
+      /** `subjects` (exact list) wins over `text` (comma-separated) when both are present */
+      semesters?: { number?: string; title?: string; text?: string; subjects?: string[] }[];
     };
     processFlow?: { heading?: string; subHeading?: string; steps?: { title: string; description: string }[] };
     supportDesk?: { faqs?: { question: string; answer: string }[] };
@@ -254,12 +309,14 @@ export function MbaSyllabus({
   tone?: "white" | "muted";
 }) {
   const semesters = (syllabus.semesters || [])
-    .filter((sem) => sem && (sem.title || sem.text))
+    .filter((sem) => sem && (sem.title || sem.text || sem.subjects?.length))
     .map((sem, i) => ({
       number: sem.number || String(i + 1).padStart(2, "0"),
       title: sem.title || `Semester ${i + 1}`,
       yearLabel: i < 2 ? "Year 1 · Foundation" : "Year 2 · Specialisation",
-      subjects: (sem.text || "").split(/,\s*/).map((t) => t.trim()).filter(Boolean),
+      subjects: sem.subjects?.length
+        ? sem.subjects
+        : (sem.text || "").split(/,\s*/).map((t) => t.trim()).filter(Boolean),
     }));
   if (semesters.length === 0) return null;
 

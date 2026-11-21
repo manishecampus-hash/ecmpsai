@@ -9,7 +9,6 @@ import StatsCards from "./components/stats-cards";
 import Recommendations from "./components/recommendations";
 import Milestones from "./components/milestones";
 import SpinWheelModal from "./components/spin-wheel/spin-wheel-modal";
-import GiftFab from "./components/spin-wheel/gift-fab";
 import ResumeScanScreen from "./components/resume-scan/resume-scan-screen";
 import type { SpinWheelReward } from "./components/spin-wheel/data";
 import type { StudentProfile } from "./types";
@@ -21,8 +20,6 @@ export default function DashboardPage() {
   const [wonReward, setWonReward] = useState<SpinWheelReward | null>(null);
   // True if user already completed or skipped the spin before this session
   const [hasCompletedSpinPrior, setHasCompletedSpinPrior] = useState(false);
-  // Set once the saved profile has been read, so the gift launcher doesn't flash for students who already spun
-  const [profileRead, setProfileRead] = useState(false);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [spinWheelOpen, setSpinWheelOpen] = useState(false);
@@ -47,7 +44,6 @@ export default function DashboardPage() {
     }
 
     const alreadySpunLocally = Boolean(parsed.spinReward || parsed.spinSkipped);
-    setProfileRead(true);
     if (alreadySpunLocally) {
       setHasCompletedSpinPrior(true);
       setSpinWheelOpen(false);
@@ -213,10 +209,6 @@ export default function DashboardPage() {
     } catch {}
   };
 
-  const isUserCompletedSpin = Boolean(
-    hasCompletedSpinPrior || wonReward || student.spinReward || student.spinSkipped
-  );
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
       <Sidebar
@@ -284,11 +276,6 @@ export default function DashboardPage() {
           <StatsCards />
         </main>
       </div>
-
-      {/* The gift launcher is completely HIDDEN for users who have already spun or skipped */}
-      {profileRead && !isUserCompletedSpin && (
-        <GiftFab onClick={() => setSpinWheelOpen(true)} />
-      )}
 
       {/* The spin wheel modal is completely HIDDEN for users who have already spun */}
       {!hasCompletedSpinPrior && (

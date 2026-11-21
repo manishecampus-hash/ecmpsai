@@ -57,6 +57,8 @@ export default function Topbar({
   const [rewardLandPulse, setRewardLandPulse] = useState(0);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const profileCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const notificationsCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   const handleCopyReward = async () => {
@@ -78,16 +80,44 @@ export default function Topbar({
     return () => window.removeEventListener("reward-pill-landed", handleLanded);
   }, []);
 
-  // Menus open on hover (or click) and stay open until the user clicks outside,
-  // presses Escape or picks an item — moving the mouse away no longer closes them.
+  // Keep each menu open while the pointer is over it, then allow a short delay
+  // before closing so the pointer can move from the trigger into the popup.
+  const cancelClose = (timer: typeof profileCloseTimer) => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = null;
+    }
+  };
+  const scheduleClose = (
+    timer: typeof profileCloseTimer,
+    close: () => void,
+  ) => {
+    cancelClose(timer);
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      close();
+    }, 1000);
+  };
   const openProfileMenu = () => {
+    cancelClose(profileCloseTimer);
+    cancelClose(notificationsCloseTimer);
     setProfileMenuOpen(true);
     setNotificationsOpen(false);
   };
   const openNotifications = () => {
+    cancelClose(notificationsCloseTimer);
+    cancelClose(profileCloseTimer);
     setNotificationsOpen(true);
     setProfileMenuOpen(false);
   };
+
+  useEffect(
+    () => () => {
+      cancelClose(profileCloseTimer);
+      cancelClose(notificationsCloseTimer);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!profileMenuOpen && !notificationsOpen) return;
@@ -199,6 +229,11 @@ export default function Topbar({
             ref={notificationsRef}
             className="relative"
             onMouseEnter={openNotifications}
+            onMouseLeave={() =>
+              scheduleClose(notificationsCloseTimer, () =>
+                setNotificationsOpen(false),
+              )
+            }
           >
             <button
               type="button"
@@ -296,6 +331,9 @@ export default function Topbar({
             ref={profileMenuRef}
             className="relative"
             onMouseEnter={openProfileMenu}
+            onMouseLeave={() =>
+              scheduleClose(profileCloseTimer, () => setProfileMenuOpen(false))
+            }
           >
             <button
               type="button"
@@ -308,11 +346,6 @@ export default function Topbar({
               <span className="hidden text-left leading-tight sm:block">
                 <span className="block text-sm font-semibold text-gray-900">
                   {displayName}
-                </span>
-                <span className="block text-xs text-gray-400">
-                  {student.coursesInterested?.length
-                    ? student.coursesInterested[0]
-                    : "B.Tech CS"}
                 </span>
               </span>
               <ChevronDown

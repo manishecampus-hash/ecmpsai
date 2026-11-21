@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { Gift } from "lucide-react";
 import InviteOfferModal from "./invite-offer-modal";
+import GiftFab from "../spin-wheel/gift-fab";
 
 // Set before navigating so the Invite & Earn page skips its popup and goes straight to the form
 export const REFER_INTENT_KEY = "ecampus_invite_refer";
@@ -30,9 +30,12 @@ export default function InviteEarnButton() {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="Invite and earn offer" className={INVITE_BUTTON_CLASS}>
-        <InviteButtonContent />
-      </button>
+      <GiftFab
+        inline
+        title="Invite & Earn"
+        ariaLabel="Open Invite and Earn offer"
+        onClick={() => setOpen(true)}
+      />
       {/* Portalled so the sticky top bar can't affect the popup's position */}
       {mounted &&
         createPortal(

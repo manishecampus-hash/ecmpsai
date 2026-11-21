@@ -6,22 +6,33 @@ interface GiftFabProps {
   onClick: () => void;
   /** Fixed-position classes; defaults to the dashboard placement */
   positionClassName?: string;
+  /** Render as a compact control inside the dashboard top bar */
+  inline?: boolean;
+  title?: string;
+  ariaLabel?: string;
 }
 
 /**
- * Floating "Spin & Win" trigger — a 3D-styled gift box in a fixed bottom-left
- * bubble, styled after eCampus's existing scholarship-offer widget but
- * recolored to this dashboard's red/gold brand instead of blue.
+ * Animated 3D gift trigger. It can appear as a floating launcher or as a
+ * compact top-bar control, using eCampus's red and gold dashboard colors.
  */
-export default function GiftFab({ onClick, positionClassName = "bottom-4 left-20" }: GiftFabProps) {
+export default function GiftFab({
+  onClick,
+  positionClassName = "bottom-4 left-20",
+  inline = false,
+  title = "Click to spin for a scholarship reward",
+  ariaLabel = "Open Spin & Win scholarship wheel",
+}: GiftFabProps) {
   return (
     <>
       <button
         type="button"
         onClick={onClick}
-        title="Click to spin for a scholarship reward"
-        aria-label="Open Spin & Win scholarship wheel"
-        className={`sw-fab fixed ${positionClassName} z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-red-600 bg-gradient-to-br from-white to-gray-50 shadow-[0_10px_24px_rgba(220,38,38,0.3),0_4px_10px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_16px_32px_rgba(220,38,38,0.38)] sm:h-[54px] sm:w-[54px]`}
+        title={title}
+        aria-label={ariaLabel}
+        className={`sw-fab ${inline
+          ? "relative z-auto h-9 w-9 flex-shrink-0 rounded-xl border border-red-200 bg-red-50 shadow-sm transition-all duration-300 hover:scale-105 hover:bg-red-100 hover:shadow-md"
+          : `fixed ${positionClassName} z-40 h-12 w-12 rounded-full border-2 border-red-600 bg-gradient-to-br from-white to-gray-50 shadow-[0_10px_24px_rgba(220,38,38,0.3),0_4px_10px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1.5 hover:scale-105 hover:shadow-[0_16px_32px_rgba(220,38,38,0.38)] sm:h-[54px] sm:w-[54px]`} flex items-center justify-center`}
       >
         <span className="sw-fab-wrapper relative flex h-full w-full items-center justify-center">
           <span className="sw-fab-pulse-ring pointer-events-none absolute -inset-1.5 rounded-full border-2 border-red-500" />

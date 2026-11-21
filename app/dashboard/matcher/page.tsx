@@ -1383,18 +1383,6 @@ export default function AIDegreeMatcherPage() {
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
         <main ref={mainRef} className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
-          <motion.div {...fadeUp(0)} className="mb-5 flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
-                Find Your Perfect Online Degree in 60 Seconds
-              </h1>
-              <p className="mt-1 text-sm text-gray-500 text-nowrap">
-  Explore universities and degree programs matched to your goals, budget, and career plans.
-</p>
-            </div>
-            
-          </motion.div>
-
           {/* Search bar */}
           {/* <motion.div {...fadeUp(0.06)} className="relative z-20 mb-4 flex flex-col rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm transition-colors focus-within:border-red-300 focus-within:ring-4 focus-within:ring-red-50 sm:flex-row sm:items-center">
             <div className="flex flex-1 items-center gap-2.5 px-3 py-2.5">

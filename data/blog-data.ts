@@ -18,7 +18,9 @@ export type Blog = {
   category: string;
   title: string;
   imageSrc: string;
+  imageAlt?: string;
   mobileImageSrc?: string;
+  mobileImageAlt?: string;
   image?: string;
   /** Short card excerpt (used on listing page) */
   excerpt: string;

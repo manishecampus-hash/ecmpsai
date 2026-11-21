@@ -414,7 +414,7 @@ function toggleInArray<T>(arr: T[], value: T): T[] {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 }
 
-export function getQuestionnaireEligibility(profile?: StudentProfile): string | null {
+function getQuestionnaireEligibility(profile?: StudentProfile): string | null {
   const qual = (profile?.advisorProfile?.highestQualification || "").toLowerCase().trim();
   if (!qual) return null;
 
@@ -433,7 +433,7 @@ export function getQuestionnaireEligibility(profile?: StudentProfile): string | 
   return null;
 }
 
-export function getQuestionnaireDegree(profile?: StudentProfile): Degree | null {
+function getQuestionnaireDegree(profile?: StudentProfile): Degree | null {
   const raw = (
     profile?.advisorProfile?.coursePreference ||
     profile?.course ||
@@ -461,7 +461,7 @@ export function getQuestionnaireDegree(profile?: StudentProfile): Degree | null 
   return null;
 }
 
-export function getQuestionnaireMode(profile?: StudentProfile): Mode[] {
+function getQuestionnaireMode(profile?: StudentProfile): Mode[] {
   const format = (profile?.advisorProfile?.format || "").toLowerCase();
   if (format.includes("online") || format.includes("100% online")) return ["Online"];
   if (format.includes("hybrid")) return ["Hybrid"];
@@ -469,7 +469,7 @@ export function getQuestionnaireMode(profile?: StudentProfile): Mode[] {
   return [];
 }
 
-export function getQuestionnaireSpecialization(profile?: StudentProfile): Specialization[] {
+function getQuestionnaireSpecialization(profile?: StudentProfile): Specialization[] {
   const focus = (profile?.advisorProfile?.focusArea || "").toLowerCase();
   const pref = (profile?.advisorProfile?.coursePreference || "").toLowerCase();
   const combined = `${focus} ${pref}`;

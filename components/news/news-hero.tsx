@@ -10,7 +10,9 @@ export interface NewsHeroItem {
   category: string;
   title: string;
   imageSrc: string;
+  imageAlt?: string;
   mobileImageSrc?: string;
+  mobileImageAlt?: string;
   excerpt: string;
   description?: string;
   author: string;
@@ -110,7 +112,7 @@ export default function NewsHero({
                     >
                       <NextImage
                         src={item.imageSrc || "/blogs/top-career.png"}
-                        alt={item.title}
+                        alt={(item as any).imageAlt || item.title}
                         fill
                         priority
                         sizes="(max-width: 1024px) 100vw, 55vw"
@@ -121,7 +123,7 @@ export default function NewsHero({
                       {item.mobileImageSrc && (
                         <NextImage
                           src={item.mobileImageSrc}
-                          alt={item.title}
+                          alt={(item as any).mobileImageAlt || (item as any).imageAlt || item.title}
                           fill
                           priority
                           sizes="100vw"

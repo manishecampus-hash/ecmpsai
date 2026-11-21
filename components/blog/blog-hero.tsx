@@ -93,7 +93,7 @@ export default function BlogHero({
                     >
                       <NextImage
                         src={sliderBlog.imageSrc}
-                        alt={sliderBlog.title}
+                        alt={sliderBlog.imageAlt || sliderBlog.title}
                         fill
                         priority
                         sizes="(max-width: 1024px) 100vw, 55vw"
@@ -104,7 +104,7 @@ export default function BlogHero({
                       {sliderBlog.mobileImageSrc && (
                         <NextImage
                           src={sliderBlog.mobileImageSrc}
-                          alt={sliderBlog.title}
+                          alt={sliderBlog.mobileImageAlt || sliderBlog.imageAlt || sliderBlog.title}
                           fill
                           priority
                           sizes="100vw"

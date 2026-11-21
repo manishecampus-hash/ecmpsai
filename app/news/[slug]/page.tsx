@@ -92,7 +92,9 @@ function mapDbEventToEvent(dbEvent: any) {
     category: dbEvent.category || "General",
     title: dbEvent.title || "",
     imageSrc,
+    imageAlt: dbEvent.imageAlt || dbEvent.title || "",
     mobileImageSrc: dbEvent.mobileImageUrl || "",
+    mobileImageAlt: dbEvent.mobileImageAlt || dbEvent.imageAlt || dbEvent.title || "",
     excerpt: dbEvent.excerpt || "",
     description: dbEvent.excerpt || "",
     author: authorName,
@@ -311,7 +313,7 @@ export default async function NewsDetailPage({
               <figure className="blog-feature-image">
                 <Image
                   src={event.imageSrc}
-                  alt={event.title}
+                  alt={event.imageAlt || event.title}
                   width={1200}
                   height={675}
                   sizes="(max-width: 1024px) 100vw, 860px"
@@ -397,7 +399,7 @@ export default async function NewsDetailPage({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={event.imageSrc}
-                  alt={event.title}
+                  alt={event.mobileImageAlt || event.imageAlt || event.title}
                   className="mobile-img-element"
                 />
               </picture>

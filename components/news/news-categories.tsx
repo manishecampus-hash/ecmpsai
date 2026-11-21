@@ -232,7 +232,7 @@ export default function NewsCategories({ news }: { news: NewsHeroItem[] }) {
                         )}
                         <img
                           src={item.imageSrc || "/blogs/top-career.png"}
-                          alt={item.title}
+                          alt={(item as any).imageAlt || item.title}
                           className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                         />
                       </picture>

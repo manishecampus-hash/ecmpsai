@@ -113,6 +113,11 @@ export default function TopSpecializations({
     return map;
   }, [categoriesList]);
 
+  const specData =
+    university?.details?.specializations ||
+    university?.details?.inDemandSpecializations ||
+    {};
+
   const categoryTabs = useMemo(() => {
     if (isLoading && dbCourses.length === 0) {
       return [{ key: "top", label: "Top Specializations" }];
@@ -230,10 +235,6 @@ export default function TopSpecializations({
     };
   }, [checkScroll, visibleCourses, currentActiveCategory]);
 
-  const specData =
-    university?.details?.specializations ||
-    university?.details?.inDemandSpecializations ||
-    {};
   const specializationsData: SpecializationRow[] =
     specData.list && specData.list.length > 0
       ? specData.list.map((item: any, idx: number) => ({

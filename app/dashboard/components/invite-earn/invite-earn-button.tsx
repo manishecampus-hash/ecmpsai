@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { Gift } from "lucide-react";
 import InviteOfferModal from "./invite-offer-modal";
 import GiftFab from "../spin-wheel/gift-fab";
 

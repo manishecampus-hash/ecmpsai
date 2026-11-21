@@ -14,8 +14,69 @@ const socialLinkClass =
 const contactLinkClass =
   "group relative flex items-center justify-center gap-2 rounded-full border border-slate-800/80 bg-slate-900/20 px-5 py-2.5 transition-all duration-300 hover:bg-slate-900/50";
 
+const DEFAULT_FOOTER_SECTIONS = [
+  {
+    id: "ug",
+    name: "Online UG Courses",
+    items: [
+      { name: "Online BA", href: "/online-ba" },
+      { name: "Online BCOM", href: "/online-bcom" },
+      { name: "Online BBA", href: "/online-bba" },
+      { name: "Online BCA", href: "/online-bca" },
+      { name: "Online B.Sc", href: "/online-bsc" },
+    ],
+  },
+  {
+    id: "pg",
+    name: "Online PG Courses",
+    items: [
+      { name: "Online MBA", href: "/online-mba" },
+      { name: "Online MCA", href: "/online-mca" },
+      { name: "Online MCOM", href: "/online-mcom" },
+      { name: "Online MA", href: "/online-ma" },
+      { name: "Online MA JMC", href: "/online-majmc" },
+      { name: "Online M.Sc", href: "/online-msc" },
+    ],
+  },
+  {
+    id: "mba",
+    name: "Online MBA",
+    items: [
+      { name: "1 Year Executive MBA", href: "/one-year-online-mba" },
+      { name: "Finance Management", href: "/online-mba-in-finance-management" },
+      { name: "HR Management", href: "/online-mba-in-hr-management" },
+      { name: "Marketing Management", href: "/online-mba-in-marketing-management" },
+      { name: "SCM", href: "/online-mba-in-supply-chain-management" },
+    ],
+  },
+  {
+    id: "dba",
+    name: "DBA Specialisations",
+    items: [
+      { name: "DBA - General Management", href: "/doctor-of-business-administration-in-general-managment" },
+      { name: "DBA - Data Science", href: "/doctor-of-business-administration-in-data-science" },
+      { name: "DBA - Finance", href: "/doctor-of-business-administration-in-finance" },
+      { name: "DBA - Business Analytics", href: "/doctor-of-business-administration-in-business-analytics" },
+      { name: "DBA - Healthcare Management", href: "/doctor-of-business-administration-in-healthcare-management" },
+      { name: "DBA - International Business", href: "/doctor-of-business-administration-in-international-business" },
+    ],
+  },
+  {
+    id: "general",
+    name: "General",
+    items: [
+      { name: "About Us", href: "/about-us" },
+      { name: "Blog", href: "/blog" },
+      { name: "Universities", href: "/universities" },
+      { name: "Contact Us", href: "/contact-us" },
+      { name: "Invite & Earn", href: "/invite-and-earn" },
+      { name: "Latest News", href: "/news" },
+    ],
+  },
+];
+
 export function Footer() {
-  const [footerSections, setFooterSections] = useState<any[]>([]);
+  const [footerSections, setFooterSections] = useState<any[]>(DEFAULT_FOOTER_SECTIONS);
   const [socialMediaItems, setSocialMediaItems] = useState<any[]>([]);
 
   useEffect(() => {

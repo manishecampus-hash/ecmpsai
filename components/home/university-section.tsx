@@ -138,18 +138,57 @@ function getRegionFromLocation(loc: string): string {
   return "North India";
 }
 
-export default function UniversitySection() {
+function mapBackendUniversities(data: any[]) {
+  return data.map((u: any) => {
+    let slug = "";
+    if (u.slug) {
+      slug = u.slug.split("/").pop() || "";
+    } else if (u.seoSettings?.rewriteUrl) {
+      slug = u.seoSettings.rewriteUrl.split("/").pop() || "";
+    }
+    if (!slug) {
+      slug = u.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    const region = getRegionFromLocation(u.location);
+    const locationIcon = region === "International" ? "Globe" : "MapPin";
+
+    return {
+      id: u.id,
+      name: u.name,
+      image: u.logoUrl || u.image || "/placeholder-uni.png",
+      location: u.location || "Online / India",
+      region,
+      locationIcon,
+      slug,
+      shortcode: u.shortcode || "",
+    };
+  });
+}
+
+interface UniversitySectionProps {
+  initialUniversities?: any[];
+}
+
+export default function UniversitySection({ initialUniversities }: UniversitySectionProps = {}) {
   const [isMobile, setIsMobile] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [visibleCount, setVisibleCount] = useState(DESKTOP_PAGE_SIZE);
-  const [uniList, setUniList] = useState<any[]>(() =>
-    universities.map((u) => ({
-      ...u,
-      id: u.slug,
-      type: "Engineering",
-    }))
-  );
+  const [uniList, setUniList] = useState<any[]>(() => {
+    if (Array.isArray(initialUniversities) && initialUniversities.length > 0) {
+      return mapBackendUniversities(initialUniversities);
+    }
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    return !Array.isArray(initialUniversities) || initialUniversities.length === 0;
+  });
 
   const pageSize = isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE;
 
@@ -162,6 +201,11 @@ export default function UniversitySection() {
   }, []);
 
   useEffect(() => {
+    if (uniList.length > 0) {
+      setIsLoading(false);
+      return;
+    }
+
     const apiUrl =
       process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
       "http://localhost:5000";
@@ -169,47 +213,16 @@ export default function UniversitySection() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((u: any) => {
-            let slug = "";
-            if (u.slug) {
-              slug = u.slug.split("/").pop() || "";
-            } else if (u.seoSettings?.rewriteUrl) {
-              slug = u.seoSettings.rewriteUrl.split("/").pop() || "";
-            }
-            if (!slug) {
-              slug = u.name
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/[\s_-]+/g, "-")
-                .replace(/^-+|-+$/g, "");
-            }
-
-            const region = getRegionFromLocation(u.location);
-            const locationIcon =
-              region === "International" ? "Globe" : "MapPin";
-
-            return {
-              id: u.id,
-              name: u.name,
-              image: u.logoUrl || "/placeholder-uni.png",
-              location: u.location || "Online / India",
-              region,
-              locationIcon,
-              slug,
-              shortcode: u.shortcode || "",
-            };
-          });
-          setUniList(mapped);
-        } else {
-          setUniList(universities);
+          setUniList(mapBackendUniversities(data));
         }
       })
       .catch((err) => {
         console.error("Failed to fetch universities from backend:", err);
-        setUniList(universities);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, []);
+  }, [uniList.length]);
 
   // Filtered universities based on search query and region filter
   const filtered = useMemo(() => {
@@ -323,7 +336,23 @@ export default function UniversitySection() {
         </div>
 
         {/* ── Universities Cards Grid ── */}
-        {filtered.length === 0 ? (
+        {isLoading && uniList.length === 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4.5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-3.5 sm:p-4 animate-pulse min-h-[180px]"
+              >
+                <div className="h-16 w-full rounded-xl bg-slate-100 mb-3" />
+                <div className="space-y-2">
+                  <div className="h-3 w-16 rounded bg-slate-100" />
+                  <div className="h-4 w-full rounded bg-slate-100" />
+                  <div className="h-3 w-20 rounded bg-slate-100" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="py-20 text-center max-w-md mx-auto rounded-2xl bg-white border border-slate-200/80 p-8 shadow-sm">
             <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
               <Search className="h-5 w-5 text-slate-400" />

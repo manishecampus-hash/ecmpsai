@@ -971,6 +971,15 @@ function MobileDrawer({
   );
 }
 
+const DEFAULT_HEADER_NAV_LINKS = [
+  { label: "Discover", href: "/discover", target: "_self" },
+  { label: "AI Compare", href: "/compare", target: "_self" },
+  { label: "Universities", href: "/universities", target: "_self" },
+  { label: "Study", href: "/study", target: "_self" },
+  { label: "Smart Tools", href: "/tools", target: "_self" },
+  { label: "Contact Us", href: "/contact-us", target: "_self" },
+];
+
 export function Navbar() {
   const [student, setStudent] = useState<Student | null>(null);
   const [showSignupModal, setShowSignupModal] = useState(false);
@@ -1001,7 +1010,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [isLandingPage]);
 
-  const [headerNavLinks, setHeaderNavLinks] = useState<any[]>([]);
+  const [headerNavLinks, setHeaderNavLinks] = useState<any[]>(DEFAULT_HEADER_NAV_LINKS);
   const [programsMenu, setProgramsMenu] = useState<any[]>([]);
   const [activeCat, setActiveCat] = useState<string>("");
 

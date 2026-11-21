@@ -196,7 +196,7 @@ export default function BlogCategories({ blogs }: { blogs: Blog[] }) {
                         )}
                         <img
                           src={blog.imageSrc}
-                          alt={blog.title}
+                          alt={blog.imageAlt || blog.title}
                           className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-105"
                         />
                       </picture>

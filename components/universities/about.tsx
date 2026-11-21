@@ -41,7 +41,7 @@ export default function AboutProgram({ university }: AboutProgramProps) {
               <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] min-h-[320px] sm:min-h-[380px] lg:min-h-[440px] xl:min-h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs border border-slate-100 bg-slate-100">
                 <img
                   src={uniImage}
-                  alt={`${uniDisplayName} Modern Infrastructure`}
+                  alt={aboutData?.imageAlt || `${uniDisplayName} Modern Infrastructure`}
                   className="h-full w-full object-cover"
                 />
               </div>

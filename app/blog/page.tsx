@@ -42,7 +42,9 @@ function mapDbBlogToBlog(dbBlog: any) {
     category: dbBlog.category || "General",
     title: dbBlog.title || "",
     imageSrc,
+    imageAlt: dbBlog.imageAlt || dbBlog.title || "",
     mobileImageSrc: dbBlog.mobileImageUrl || "",
+    mobileImageAlt: dbBlog.mobileImageAlt || dbBlog.imageAlt || dbBlog.title || "",
     excerpt: dbBlog.excerpt || "",
     description: dbBlog.excerpt || "", // use excerpt as description/lead paragraph
     author: dbBlog.publisher || "eCampus Team",

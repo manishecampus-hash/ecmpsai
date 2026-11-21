@@ -284,7 +284,7 @@ export default function UniversityHeroWithStats({
       <div className="relative h-56 sm:h-64 lg:h-72 w-full overflow-hidden bg-slate-950">
         <img
           src={bannerBg}
-          alt={`${bannerHeading} Campus Cover`}
+          alt={banner?.imageAlt || `${bannerHeading} Campus Cover`}
           className="h-full w-full object-cover object-center opacity-85 transition-transform duration-700 hover:scale-102"
         />
 
@@ -308,7 +308,7 @@ export default function UniversityHeroWithStats({
                   <div className="relative z-10 -mt-14 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-2.5 shadow-[0_10px_24px_-8px_rgba(15,23,42,0.25)] sm:-mt-20 sm:h-24 sm:w-24 lg:-mt-[84px]">
                     <img
                       src={bannerLogo}
-                      alt={`${bannerHeading} Logo`}
+                      alt={university?.logoAlt || banner?.iconAlt || `${bannerHeading} Logo`}
                       className="h-full w-full object-contain"
                     />
                   </div>

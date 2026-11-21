@@ -97,7 +97,9 @@ function mapDbBlogToBlog(dbBlog: any) {
     category: dbBlog.category || "General",
     title: dbBlog.title || "",
     imageSrc,
+    imageAlt: dbBlog.imageAlt || dbBlog.title || "",
     mobileImageSrc: dbBlog.mobileImageUrl || "",
+    mobileImageAlt: dbBlog.mobileImageAlt || dbBlog.imageAlt || dbBlog.title || "",
     excerpt: dbBlog.excerpt || "",
     description: dbBlog.excerpt || "",
     author: authorName,
@@ -272,7 +274,7 @@ export default async function BlogDetailsPage({
               <figure className="blog-feature-image">
                 <Image
                   src={blog.imageSrc}
-                  alt={blog.title}
+                  alt={blog.imageAlt || blog.title}
                   width={1200}
                   height={675}
                   sizes="(max-width: 1024px) 100vw, 860px"
@@ -367,7 +369,7 @@ export default async function BlogDetailsPage({
                 )}
                 <img
                   src={blog.imageSrc}
-                  alt={blog.title}
+                  alt={blog.mobileImageAlt || blog.imageAlt || blog.title}
                   className="mobile-img-element"
                 />
               </picture>

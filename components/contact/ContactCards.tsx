@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Phone, Mail, MessageCircle, Copy, Check, Clock, ArrowUpRight } from "lucide-react";
+import { Phone, Mail, MessageCircle, Copy, Check, Clock, ArrowUpRight, Scale } from "lucide-react";
 
 export default function ContactCards() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -105,27 +105,60 @@ export default function ContactCards() {
                 Send us your detailed queries, verification requests, or proposals anytime.
               </p>
 
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 flex items-center justify-between group/email hover:bg-blue-50/50 hover:border-blue-100 transition-colors">
-                <div className="min-w-0 pr-2">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-500 font-medium block mb-1">Email</span>
-                  <a
-                    href="mailto:support@ecampusapp.com"
-                    className="text-sm sm:text-base font-bold text-gray-900 hover:text-blue-600 transition-colors truncate"
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3.5 mb-6 hover:bg-blue-50/40 hover:border-blue-100 transition-colors">
+                {/* General Support */}
+                <div className="flex items-center justify-between pb-3 border-b border-gray-200/80">
+                  <div className="min-w-0 pr-2">
+                    <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold block mb-0.5">
+                      Support
+                    </span>
+                    <a
+                      href="mailto:support@ecampusapp.com"
+                      className="text-xs sm:text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors truncate block"
+                    >
+                      support@ecampusapp.com
+                    </a>
+                  </div>
+
+                  <button
+                    onClick={() => handleCopy("support@ecampusapp.com", "email")}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white transition-all shrink-0"
+                    title="Copy support email"
                   >
-                    support@ecampusapp.com
-                  </a>
+                    {copiedField === "email" ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => handleCopy("support@ecampusapp.com", "email")}
-                  className="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-white transition-all shrink-0"
-                >
-                  {copiedField === "email" ? (
-                    <Check className="w-4 h-4 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
+                {/* For Legal */}
+                <div className="flex items-center justify-between pt-3">
+                  <div className="min-w-0 pr-2">
+                    <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold block mb-0.5">
+                      For Legal
+                    </span>
+                    <a
+                      href="mailto:legal@ecampusapp.com"
+                      className="text-xs sm:text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors truncate block"
+                    >
+                      legal@ecampusapp.com
+                    </a>
+                  </div>
+
+                  <button
+                    onClick={() => handleCopy("legal@ecampusapp.com", "legal")}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white transition-all shrink-0"
+                    title="Copy legal email"
+                  >
+                    {copiedField === "legal" ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 

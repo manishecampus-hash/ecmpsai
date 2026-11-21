@@ -7,6 +7,7 @@ import {
   MapPin,
   MessageCircle,
   Phone,
+  Scale,
   Send,
 } from "lucide-react";
 
@@ -32,7 +33,7 @@ const Banner = () => {
             </p>
 
             {/* Contact Info Line */}
-            <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-700 font-medium">
+            <div className="mt-4 sm:mt-5 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-slate-700 font-medium">
               <div className="flex items-center gap-1">
                 <Phone size={14} className="text-red-500 shrink-0" />
                 <a href="tel:18001216201" className="hover:text-red-500 transition">
@@ -44,6 +45,14 @@ const Banner = () => {
                 <Mail size={14} className="text-blue-500 shrink-0" />
                 <a href="mailto:support@ecampusapp.com" className="hover:text-blue-500 transition break-all">
                   support@ecampusapp.com
+                </a>
+              </div>
+              <span className="hidden sm:inline text-slate-400">•</span>
+              <div className="flex items-center gap-1">
+                <Scale size={14} className="text-slate-500 shrink-0" />
+                <span className="text-slate-500">For legal:</span>
+                <a href="mailto:legal@ecampusapp.com" className="hover:text-blue-500 transition break-all font-semibold">
+                  legal@ecampusapp.com
                 </a>
               </div>
             </div>

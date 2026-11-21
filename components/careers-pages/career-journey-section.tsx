@@ -48,12 +48,15 @@ export function CareerJourneySection() {
           w-full
           max-w-7xl
           px-4
-          py-7
+          pt-7
+          pb-2
           font-[Inter]
           sm:px-6
-          sm:py-9
+          sm:pt-9
+          sm:pb-3
           lg:px-16
-          lg:py-10
+          lg:pt-10
+          lg:pb-4
         "
       >
         {/* Heading */}
@@ -80,16 +83,7 @@ export function CareerJourneySection() {
           </div>
 
           <h2
-            className="
-              m-0
-              text-[25px]
-              font-extrabold
-              leading-[1.15]
-              tracking-[-0.6px]
-              text-slate-900
-              sm:text-[29px]
-              lg:text-[32px]
-            "
+            className="m-0 whitespace-nowrap text-[clamp(12px,4.2vw,24px)] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl"
           >
             From enrolling to{" "}
             <span className="text-red-500">getting hired</span>

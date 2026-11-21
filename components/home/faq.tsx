@@ -32,7 +32,13 @@ const faqs = [
   },
 ];
 
-export default function FAQ({ items }: { items?: { question: string; answer: string }[] }) {
+export default function FAQ({
+  items,
+  headingClassName,
+}: {
+  items?: { question: string; answer: string }[];
+  headingClassName?: string;
+}) {
   const currentFaqs = items && items.length > 0 ? items : faqs;
   const [openIndexes, setOpenIndexes] = useState<number[]>(
     currentFaqs.length > 0 ? [0] : []
@@ -64,9 +70,11 @@ export default function FAQ({ items }: { items?: { question: string; answer: str
               FAQ
             </span>
 
-            <h2 className="mt-2 text-2xl font-extrabold leading-tight tracking-[-0.5px] text-gray-900 sm:text-3xl lg:text-4xl">
+            <h2
+              className={`mt-2 ${headingClassName ?? "text-2xl font-extrabold leading-tight tracking-[-0.5px] text-gray-900 sm:text-3xl lg:text-4xl"}`}
+            >
               Frequently Asked{" "}
-              <span className="text-red-500">Questions</span>
+              <span className="text-red-500 sm:block">Questions</span>
             </h2>
 
             {/* Support Desk Info Card */}

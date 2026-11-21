@@ -7,32 +7,38 @@ import {
   Globe2,
   ArrowUpRight,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const stats = [
   {
     icon: TrendingUp,
-    value: "4.2X",
+    value: 4.2,
+    suffix: "X",
+    decimals: 1,
     label: "Average salary hike",
     description:
       "Reported by learners within 12 months of completing a career-track program.",
   },
   {
     icon: Users,
-    value: "50,000+",
+    value: 50000,
+    suffix: "+",
     label: "Learners trained",
     description:
       "Across working professionals, career switchers, and fresh graduates.",
   },
   {
     icon: Building2,
-    value: "300+",
+    value: 300,
+    suffix: "+",
     label: "Hiring partners",
     description:
       "Companies that actively recruit from our learner and alumni pool.",
   },
   {
     icon: Globe2,
-    value: "70+",
+    value: 70,
+    suffix: "+",
     label: "Countries reached",
     description:
       "Learners join live cohorts from every time zone, not just one region.",
@@ -40,6 +46,44 @@ const stats = [
 ];
 
 export function CareerOutcomes() {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [countProgress, setCountProgress] = useState(0);
+
+  useEffect(() => {
+    const statsElement = statsRef.current;
+    if (!statsElement) return;
+
+    let animationFrame = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          setCountProgress(1);
+          return;
+        }
+
+        const duration = 1400;
+        let startTime: number | undefined;
+        const animate = (time: number) => {
+          startTime ??= time;
+          const progress = Math.min((time - startTime) / duration, 1);
+          setCountProgress(1 - Math.pow(1 - progress, 3));
+          if (progress < 1) animationFrame = window.requestAnimationFrame(animate);
+        };
+        animationFrame = window.requestAnimationFrame(animate);
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(statsElement);
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
   return (
     <section className="w-full bg-white !m-0 !p-0">
       <div
@@ -48,13 +92,16 @@ export function CareerOutcomes() {
           w-full
           max-w-7xl
           px-4
-          py-7
+          pt-2
+          pb-7
           text-center
           font-[Inter]
           sm:px-6
-          sm:py-9
+          sm:pt-3
+          sm:pb-9
           lg:px-16
-          lg:py-10
+          lg:pt-4
+          lg:pb-10
         "
       >
         {/* HEADING */}
@@ -64,17 +111,7 @@ export function CareerOutcomes() {
           </p>
 
           <h2
-            className="
-              m-0
-              mt-2
-              text-[27px]
-              font-extrabold
-              leading-[1.15]
-              tracking-[-0.6px]
-              text-slate-900
-              sm:text-[31px]
-              lg:text-[34px]
-            "
+            className="m-0 mt-2 whitespace-nowrap text-[clamp(12px,4.2vw,24px)] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl"
           >
             Outcomes that{" "}
             <span className="text-red-500">speak for themselves</span>
@@ -82,7 +119,7 @@ export function CareerOutcomes() {
         </div>
 
         {/* STATS */}
-        <div className="mx-auto mt-8 max-w-6xl border-y border-slate-200">
+        <div ref={statsRef} className="mx-auto mt-8 max-w-6xl border-y border-slate-200">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
@@ -117,6 +154,7 @@ export function CareerOutcomes() {
                     />
 
                     <span
+                      aria-label={`${stat.value.toLocaleString("en-IN")}${stat.suffix}`}
                       className="
                         text-[28px]
                         font-black
@@ -126,7 +164,7 @@ export function CareerOutcomes() {
                         sm:text-[30px]
                       "
                     >
-                      {stat.value}
+                      {`${stat.decimals ? (stat.value * countProgress).toFixed(stat.decimals) : Math.round(stat.value * countProgress).toLocaleString("en-IN")}${stat.suffix}`}
                     </span>
                   </div>
 

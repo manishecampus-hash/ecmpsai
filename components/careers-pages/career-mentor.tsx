@@ -6,25 +6,21 @@ import { softwareDeveloper } from "@/data/careers-pages-data/software-developer"
 
 const softwareRoles = [
   "Software Developer",
-  "Chief Technology Officers (CTOs)",
+  "Frontend Engineer",
+  "Backend Engineer",
   "Cloud Engineer",
-  "Cloud Solutions Architect",
-  "Cloud Program Manager",
-  "Cybersecurity Architect",
-  "Automotive Engineer",
   "AI Engineer",
-  "Machine Learning / Data Science Infrastructure Specialist",
+  "Machine Learning Engineer",
+  "Cybersecurity Engineer",
 ];
 
 const infraRoles = [
-  "Technology Consultant",
-  "IT Infrastructure Manager",
+  "Cloud Engineer",
+  "Cloud Solutions Architect",
+  "DevOps Engineer",
   "Cloud Native Developer",
   "Cloud Consultant",
-  "Cloud Product Manager",
-  "Chief Information Security Officer (CISOs) / Technology Leader",
-  "Electrical and Electronics Engineer",
-  "MLOps Engineer",
+  "IT Infrastructure Manager",
 ];
 
 const ROLE_GROUPS: { id: string; title: string; icon: LucideIcon; roles: string[] }[] = [
@@ -36,7 +32,12 @@ const ROLE_GROUPS: { id: string; title: string; icon: LucideIcon; roles: string[
 const STAGE_TITLES = ["Junior Developer", "Software Engineer", "Senior Engineer", "Lead / Architect"];
 
 // Bars step up in tone as pay grows — soft tints, not a solid block of red
-const BAR_TONES = ["bg-red-100", "bg-red-200", "bg-red-300", "bg-red-500"];
+const BAR_TONES = [
+  "from-rose-100 to-rose-300",
+  "from-red-100 to-red-300",
+  "from-red-200 to-red-400",
+  "from-red-400 to-red-600",
+];
 
 // "₹18-35 LPA" → 35, used to scale the bars against the top bracket
 function upperLakh(range: string) {
@@ -64,15 +65,15 @@ export function CareerMentor() {
   ];
 
   return (
-    <section className="border-y border-slate-100 bg-slate-50/70 py-14 md:py-20">
-      <div className="container mx-auto max-w-6xl px-4">
+    <section className="border-y border-slate-100 bg-slate-50/70 py-10 sm:py-12">
+      <div className="container mx-auto max-w-5xl px-4">
         {/* Heading */}
-        <div className="mx-auto mb-10 max-w-2xl text-center">
+        <div className="mx-auto mb-8 max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
             Career Outcomes
           </span>
-          <h2 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">
+          <h2 className="mt-4 whitespace-nowrap text-[clamp(12px,4.2vw,24px)] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
             Career growth &amp; earning potential
           </h2>
           <p className="mt-3 text-base leading-6 text-gray-500">
@@ -81,11 +82,11 @@ export function CareerMentor() {
         </div>
 
         {/* Stat cards */}
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-3">
           {stats.map(({ icon: Icon, label, value, note }) => (
             <div
               key={label}
-              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md sm:p-4"
             >
               <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
                 <Icon className="h-5 w-5" strokeWidth={1.8} />
@@ -99,15 +100,15 @@ export function CareerMentor() {
           ))}
         </div>
 
-        <div className="mt-5 grid gap-5 lg:grid-cols-12">
+        <div className="mx-auto mt-4 grid max-w-5xl gap-4 lg:grid-cols-2">
           {/* Salary chart */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7 lg:col-span-7">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6">
             <div>
-              <p className="text-base font-bold text-slate-900">Salary progression</p>
-              <p className="mt-0.5 text-sm text-slate-500">Typical annual pay in India by experience</p>
+              <p className="text-sm font-bold text-slate-900 sm:text-base">Salary progression</p>
+              <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">Typical annual pay in India by experience</p>
             </div>
 
-            <div className="relative mt-8 flex min-h-[15rem] flex-1">
+            <div className="relative mt-5 flex min-h-[11rem] flex-1">
               {/* guide lines */}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 top-7 flex flex-col justify-between">
                 {[0, 1, 2, 3].map((i) => (
@@ -115,7 +116,7 @@ export function CareerMentor() {
                 ))}
               </div>
 
-              <div className="relative grid flex-1 grid-cols-4 items-stretch gap-3 sm:gap-6">
+              <div className="relative grid flex-1 grid-cols-4 items-stretch gap-2 sm:gap-4">
                 {ranges.map((r, i) => {
                   const height = Math.max(12, Math.round((upperLakh(r.salary) / top) * 100));
                   const isTop = i === ranges.length - 1;
@@ -131,7 +132,7 @@ export function CareerMentor() {
                       </span>
                       <div className="flex w-full flex-1 items-end">
                         <div
-                          className={`w-full rounded-t-lg ${BAR_TONES[i] ?? "bg-red-300"}`}
+                          className={`w-full rounded-t-lg bg-gradient-to-t ${BAR_TONES[i] ?? "from-red-200 to-red-400"} shadow-sm`}
                           style={{ height: `${height}%` }}
                         />
                       </div>
@@ -141,26 +142,26 @@ export function CareerMentor() {
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-4 gap-3 border-t border-slate-200 pt-3 sm:gap-6">
+            <div className="mt-3 grid grid-cols-4 gap-2 border-t border-slate-200 pt-3 sm:gap-4">
               {ranges.map((r, i) => (
                 <div key={r.experience} className="text-center">
-                  <p className="text-xs font-semibold text-slate-800">{r.experience}</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-slate-400">{STAGE_TITLES[i]}</p>
+                  <p className="text-[10px] font-semibold text-slate-800 sm:text-xs">{r.experience}</p>
+                  <p className="mt-0.5 text-[10px] leading-4 text-slate-400">{STAGE_TITLES[i]}</p>
                 </div>
               ))}
             </div>
 
-            <p className="mt-5 text-xs text-slate-400">
+            <p className="mt-4 text-[10px] leading-4 text-slate-400 sm:text-xs">
               Indicative ranges in ₹ lakh per annum. Actual pay depends on city, company and skills.
             </p>
           </div>
 
           {/* Career roles with track tabs */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7 lg:col-span-5">
-            <p className="text-base font-bold text-slate-900">Career roles</p>
-            <p className="mt-0.5 text-sm text-slate-500">Explore roles by career track</p>
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6">
+            <p className="text-sm font-bold text-slate-900 sm:text-base">Career roles</p>
+            <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">Explore roles by career track</p>
 
-            <div className="mt-5 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1" role="tablist">
+            <div className="mt-4 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1" role="tablist">
               {ROLE_GROUPS.map((g) => {
                 const active = g.id === group.id;
                 return (
@@ -181,14 +182,14 @@ export function CareerMentor() {
               })}
             </div>
 
-            <ul className="mt-4 flex-1 space-y-1" role="tabpanel">
+            <ul className="mt-3 flex-1 space-y-0.5" role="tabpanel">
               {group.roles.map((role) => (
                 <li
                   key={role}
-                  className="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                  className="flex items-start gap-2.5 rounded-lg px-2 py-1.5 text-xs leading-4 text-slate-700 transition-colors hover:bg-red-50/70 sm:text-sm"
                 >
-                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-                    <group.icon className="h-3 w-3" strokeWidth={2} />
+                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-md bg-red-50 text-red-500">
+                    <group.icon className="h-2.5 w-2.5" strokeWidth={2} />
                   </span>
                   <span className="leading-5">{role}</span>
                 </li>

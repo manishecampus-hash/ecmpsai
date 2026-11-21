@@ -48,7 +48,7 @@ type CareerHeroProps = {
   };
 };
 
-/* Right column: the hero photo with a small "engineering dashboard" panel tucked under it */
+/* Right column: the hero photo with an admission workflow panel tucked under it */
 function HeroVisual({ hero }: CareerHeroProps) {
   if (!hero.image) return null;
 
@@ -79,22 +79,37 @@ function HeroVisual({ hero }: CareerHeroProps) {
 
       {/* Info panel overlapping the bottom of the photo */}
       <div className="relative z-10 mx-3 -mt-14 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.35)] sm:mx-6 sm:p-4">
-        {/* Editor strip */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-500">
-          <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="h-2 w-2 rounded-full bg-amber-400" />
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          <span className="font-semibold text-slate-700">cluster.service.ts</span>
-          <span className="inline-flex items-center gap-1 text-emerald-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Build Passing (0.18s)
-          </span>
-          <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-white px-1.5 py-0.5 text-slate-600 ring-1 ring-slate-200">
-            <GitBranch className="h-3 w-3" />
-            main
-          </span>
+        {/* Admission workflow panel */}
+        <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-3 sm:px-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
+              <span className="h-2 w-2 rounded-full bg-amber-400" />
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="ml-1 font-semibold text-slate-700">admission.workflow.ts</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-red-100 bg-white px-2 py-1 font-sans text-[10px] font-semibold text-red-600">
+              <GitBranch className="h-3 w-3" />
+              4-step process
+            </span>
+          </div>
+
+          <div
+            aria-label="Admission process: application, eligibility, counselling, enrolment"
+            className="relative mt-4 grid grid-cols-4 gap-1"
+          >
+            <div className="absolute left-[12.5%] right-[12.5%] top-3 h-px bg-slate-200" />
+            {["Apply", "Eligibility", "Counselling", "Enrolment"].map((step, index) => (
+              <div key={step} className="relative flex flex-col items-center gap-1.5 text-center">
+                <span className={`z-10 flex h-6 w-6 items-center justify-center rounded-full border text-[9px] font-bold ${index === 0 ? "border-red-600 bg-red-600 text-white" : "border-slate-200 bg-white text-slate-500"}`}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="whitespace-nowrap text-[9px] font-semibold text-slate-600 sm:text-[10px]">
+                  {step}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Outcome stats */}
@@ -136,7 +151,7 @@ function HeroVisual({ hero }: CareerHeroProps) {
 export function CareerHero({ hero }: CareerHeroProps) {
   return (
     <section className="relative w-full overflow-hidden border-b border-slate-100 bg-slate-50/60">
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-14 pt-10 sm:px-8 sm:pb-16 sm:pt-14 lg:px-10 lg:pb-20 lg:pt-16">
+      <div className="relative mx-auto w-full max-w-7xl px-6 pb-8 pt-10 sm:px-8 sm:pb-10 sm:pt-14 lg:px-10 lg:pb-10 lg:pt-16">
         <div className="grid items-start gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
           {/* LEFT CONTENT */}
           <div className="w-full max-w-2xl">

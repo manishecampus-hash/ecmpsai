@@ -39,7 +39,7 @@ export function CareerComparisonSection() {
     <section className="bg-white py-8 md:py-10">
       <div className="container mx-auto px-4">
         {/* Heading */}
-        <h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
+        <h2 className="whitespace-nowrap text-center text-[clamp(12px,4.2vw,24px)] font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
           Upskill with the best programs in the world
         </h2>
 

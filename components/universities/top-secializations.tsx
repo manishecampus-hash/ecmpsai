@@ -32,13 +32,21 @@ import { getFormCourses } from "@/data/form-courses";
 
 interface TopSpecializationsProps {
   university?: any;
+  initialCourses?: any[];
+  initialCategories?: any[];
 }
 
-export default function TopSpecializations({ university }: TopSpecializationsProps) {
+export default function TopSpecializations({
+  university,
+  initialCourses = [],
+  initialCategories = [],
+}: TopSpecializationsProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [dbCourses, setDbCourses] = useState<any[]>([]);
-  const [categoriesList, setCategoriesList] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [dbCourses, setDbCourses] = useState<any[]>(initialCourses);
+  const [categoriesList, setCategoriesList] = useState<any[]>(initialCategories);
+  const [isLoading, setIsLoading] = useState<boolean>(
+    !initialCourses || initialCourses.length === 0
+  );
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSignupModal, setShowSignupModal] = useState<boolean>(false);
   /** Row whose "Brochure" was clicked when no brochure file exists — opens the brochure form */
@@ -52,6 +60,11 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   const normalize = (val?: string) => (val || "").toLowerCase().trim().replace(/[\s_-]+/g, "");
 
   useEffect(() => {
+    if (initialCourses && initialCourses.length > 0 && initialCategories && initialCategories.length > 0) {
+      setIsLoading(false);
+      return;
+    }
+
     if (!university?.id) {
       setIsLoading(false);
       return;
@@ -86,7 +99,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
     };
 
     fetchCoursesAndCategories();
-  }, [university?.id]);
+  }, [university?.id, initialCourses, initialCategories]);
 
   const categoryMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -101,7 +114,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
   }, [categoriesList]);
 
   const categoryTabs = useMemo(() => {
-    if (isLoading) {
+    if (isLoading && dbCourses.length === 0) {
       return [{ key: "top", label: "Top Specializations" }];
     }
 
@@ -128,12 +141,14 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
         return a.label.localeCompare(b.label);
       });
 
+    const hasSpecializations = specData.list && specData.list.length > 0;
+
     return [
       ...dynamicTabs,
-      { key: "top", label: "Top Specializations" },
+      ...(hasSpecializations ? [{ key: "top", label: "Top Specializations" }] : []),
       { key: "explore", label: "Explore Online Courses" },
     ];
-  }, [dbCourses, categoryMap, isLoading]);
+  }, [dbCourses, categoryMap, isLoading, specData.list]);
 
   // Display-only icon for each filter tab (shown on mobile tiles)
   const tabIcon = (tab: { key: string; label: string }) => {
@@ -230,7 +245,7 @@ export default function TopSpecializations({ university }: TopSpecializationsPro
           emi: item.emi || "",
           brochure: item.brochure || "",
         }))
-      : DEFAULT_SPECIALIZATIONS_DATA;
+      : [];
 
   const totalPages = Math.ceil(specializationsData.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;

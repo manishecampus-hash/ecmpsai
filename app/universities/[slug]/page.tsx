@@ -35,10 +35,11 @@ interface UniversityPageProps {
 
 async function getUniversityData(slug: string) {
   let dbUniversity: any = null;
+  const apiUrl =
+    process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
+    "http://localhost:5000";
+
   try {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_ECAMPUS_FRONTEND_API_URL ||
-      "http://localhost:5000";
     const res = await fetch(`${apiUrl}/universities/${slug}`, {
       cache: "no-store",
     });
@@ -55,6 +56,26 @@ async function getUniversityData(slug: string) {
     return null;
   }
 
+  // Pre-fetch courses and categories in parallel on the server
+  let coursesList: any[] = [];
+  let categoriesList: any[] = [];
+  if (dbUniversity.id) {
+    try {
+      const [coursesRes, categoriesRes] = await Promise.all([
+        fetch(`${apiUrl}/universities/${dbUniversity.id}/courses`, {
+          cache: "no-store",
+        }),
+        fetch(`${apiUrl}/universities/course-meta?type=category`, {
+          cache: "no-store",
+        }),
+      ]);
+      if (coursesRes.ok) coursesList = await coursesRes.json();
+      if (categoriesRes.ok) categoriesList = await categoriesRes.json();
+    } catch (e) {
+      console.error("Failed to prefetch university courses/categories on server:", e);
+    }
+  }
+
   const localUniversity = universities.find(
     (item) =>
       item.slug === slug ||
@@ -63,12 +84,13 @@ async function getUniversityData(slug: string) {
       (dbUniversity.slug && item.slug === dbUniversity.slug.split("/").pop())
   );
 
-  // Merge database university data with static fallbacks
   return {
-    name: localUniversity?.name || dbUniversity?.name,
-    image: localUniversity?.image || dbUniversity?.logoUrl,
     ...localUniversity,
     ...dbUniversity,
+    name: dbUniversity?.name || localUniversity?.name,
+    image: dbUniversity?.logoUrl || localUniversity?.image,
+    coursesList,
+    categoriesList,
     details: {
       ...dbUniversity?.details,
     },
@@ -122,7 +144,11 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
       <HeroSection university={university} />
 
       <AboutProgram university={university} />
-      <TopSpecializations university={university} />
+      <TopSpecializations
+        university={university}
+        initialCourses={university.coursesList}
+        initialCategories={university.categoriesList}
+      />
 
       <EligibilityFeesSection university={university} />
       <LoanSection university={university} />

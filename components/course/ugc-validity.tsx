@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Award, Briefcase } from "lucide-react";
+import { Award, Briefcase, ShieldCheck } from "lucide-react";
 import { CheckDot, CourseSection, Reveal, SectionHeading, VsBadge } from "./section-ui";
 
 const DEFAULT_PARAGRAPHS = [
@@ -101,18 +101,21 @@ export default function UgcValidity({ data }: { data?: any }) {
       )}
 
       <div className="relative mx-auto grid max-w-5xl items-stretch gap-4 md:grid-cols-2 md:gap-10">
-        {/* Muted side */}
+        {/* India side — light green */}
         <Reveal>
-          <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-            <div className="border-b border-slate-100 bg-slate-50 px-6 py-5 sm:px-7">
-              <h3 className="text-2xl font-extrabold tracking-tight text-slate-700 sm:text-[28px]">{columns[0].title}</h3>
-              {columns[0].subtitle && <p className="mt-1 text-sm font-medium text-slate-500">{columns[0].subtitle}</p>}
+          <div className="flex h-full flex-col overflow-hidden rounded-3xl border-2 border-emerald-200 bg-white shadow-[0_16px_36px_-22px_rgba(16,185,129,0.45)]">
+            <div className="flex items-start justify-between gap-3 border-b border-emerald-100 bg-emerald-50 px-6 py-5 sm:px-7">
+              <div>
+                <h3 className="text-2xl font-extrabold tracking-tight text-emerald-800 sm:text-[28px]">{columns[0].title}</h3>
+                {columns[0].subtitle && <p className="mt-1 text-sm font-medium text-emerald-700/80">{columns[0].subtitle}</p>}
+              </div>
+              <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-emerald-600" />
             </div>
             <ul className="flex-1 space-y-4 p-6 sm:px-7">
               {columns[0].items.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-300" />
-                  <span className="text-sm leading-relaxed text-slate-600">{item}</span>
+                  <CheckDot />
+                  <span className="text-sm font-semibold leading-relaxed text-slate-800">{item}</span>
                 </li>
               ))}
             </ul>

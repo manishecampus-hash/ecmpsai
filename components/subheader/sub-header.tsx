@@ -54,6 +54,9 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
   const basePath = `/${cleanCourseSlug}`;
 
   const isOnlineMbaRoute = pathname === "/online-mba" || pathname.startsWith("/online-mba/");
+  // Course sub-pages (e.g. /online-ba/subject-syllabus) pin the bar to the top from the start, exactly as it
+  // looks after scrolling; the course page itself keeps revealing it only after scrolling.
+  const isSubPage = pathname.startsWith(`${basePath}/`);
 
   // If no sub-headers punched in CMS and this is NOT the static /online-mba route, do not render sub-header bar
   if ((!subHeaders || subHeaders.length === 0) && !isOnlineMbaRoute) {
@@ -193,18 +196,20 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
     window.scrollTo({ top, behavior: "smooth" });
   };
 
+  const pinned = isSticky || isSubPage;
+
   return (
     <div
       ref={navRef}
       style={{
         position: "fixed",
-        top: isSticky ? 0 : "-100px",
+        top: pinned ? 0 : "-100px",
         left: 0,
         right: 0,
         zIndex: 70,
         borderBottom: "1px solid #e6f0fa",
         background: "#ffffff",
-        boxShadow: isSticky ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+        boxShadow: pinned ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
         transition: "box-shadow 200ms ease, top 250ms ease",
         pointerEvents: "auto",
       }}
@@ -345,7 +350,7 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: item.id === "about" ? "0.4rem" : undefined,
+                  gap: item.id === "about" ? "0.65rem" : undefined,
                 }}
               >
                 {item.id === "about" && <Home size={18} />}

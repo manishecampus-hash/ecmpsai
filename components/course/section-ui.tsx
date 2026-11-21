@@ -122,14 +122,23 @@ export const CARD_W = {
   4: "w-full sm:w-[calc(50%-8px)] lg:w-[calc(25%-12px)]",
 } as const;
 
-/** "VS" badge between two comparison cards — in the flow on phones, centred over the gap from md up */
+/**
+ * "VS" badge between two comparison cards — in the flow on phones, centred over the gap from md up.
+ * Its gradient runs from the green card into the red one (top to bottom when stacked, left to right side by side).
+ */
 export function VsBadge() {
   return (
-    <div className="relative z-10 -my-1 flex justify-center md:absolute md:left-1/2 md:top-1/2 md:my-0 md:-translate-x-1/2 md:-translate-y-1/2">
-      <span className="flex h-14 w-14 rotate-[-8deg] items-center justify-center rounded-2xl bg-gradient-to-br from-[#ee2c3c] to-rose-500 shadow-[0_12px_24px_-8px_rgba(238,44,60,0.65)] ring-4 ring-white">
-        <span className="rotate-[8deg] font-black italic leading-none tracking-tight text-white">
-          <span className="text-xl">V</span>
-          <span className="text-base">s</span>
+    <div className="relative z-10 -my-2 flex justify-center md:absolute md:left-1/2 md:top-1/2 md:my-0 md:-translate-x-1/2 md:-translate-y-1/2">
+      <span className="relative flex h-16 w-16 items-center justify-center">
+        {/* Soft glow + slow pulse ring */}
+        <span aria-hidden className="absolute inset-0 rounded-full bg-gradient-to-b from-emerald-400 to-[#ee2c3c] opacity-40 blur-md md:bg-gradient-to-r" />
+        <span aria-hidden className="absolute inset-0 rounded-full border-2 border-rose-300/60 motion-safe:animate-ping [animation-duration:2.4s]" />
+        <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-emerald-500 via-rose-500 to-[#ee2c3c] shadow-[0_14px_28px_-10px_rgba(238,44,60,0.7)] ring-4 ring-white md:bg-gradient-to-r">
+          <span aria-hidden className="absolute inset-[5px] rounded-full border border-white/40" />
+          <span className="font-black italic leading-none tracking-tight text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.25)]">
+            <span className="text-2xl">V</span>
+            <span className="text-lg">S</span>
+          </span>
         </span>
       </span>
     </div>

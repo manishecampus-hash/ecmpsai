@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SignupModal } from "@/components/layout/signup-modal";
@@ -11,7 +12,8 @@ import {
   ChevronUp,
   Clock,
   GraduationCap,
-  Sparkles,
+  Info,
+  Plus,
 } from "lucide-react";
 import { universities } from "@/data/universities";
 import { formatINR } from "@/lib/course-helpers";
@@ -61,6 +63,8 @@ function isStudentLoggedIn() {
 const COMPARE_BAR_GAP = 16;
 /** Default distance from the bottom when the quick-action bar is hidden (= bottom-8) */
 const COMPARE_DEFAULT_BOTTOM = 32;
+/** How long the "add one more university" hint stays on screen (ms) */
+const COMPARE_HINT_MS = 7000;
 
 export default function CourseUniversitySection({
   universities: propUniversities,
@@ -72,6 +76,13 @@ export default function CourseUniversitySection({
   const [showSignupModal, setShowSignupModal] = useState(false);
   /** Bottom offset of the floating Compare button, lifted above the course quick-action bar when it shows */
   const [compareBottom, setCompareBottom] = useState(COMPARE_DEFAULT_BOTTOM);
+  /** Hint shown at the top of the screen after the first university is added to AI Compare */
+  const [showCompareHint, setShowCompareHint] = useState(false);
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (hintTimer.current) clearTimeout(hintTimer.current);
+  }, []);
 
   useEffect(() => {
     const measure = (visible: boolean) => {
@@ -148,11 +159,18 @@ export default function CourseUniversitySection({
   };
 
   const toggleSelect = (key: string) => {
-    setSelected((current) =>
-      current.includes(key)
-        ? current.filter((item) => item !== key)
-        : [...current, key]
-    );
+    const removing = selected.includes(key);
+    const next = removing ? selected.filter((item) => item !== key) : [...selected, key];
+    setSelected(next);
+
+    // Only the first pick asks for a second one; any other change clears the hint
+    if (hintTimer.current) clearTimeout(hintTimer.current);
+    if (!removing && next.length === 1) {
+      setShowCompareHint(true);
+      hintTimer.current = setTimeout(() => setShowCompareHint(false), COMPARE_HINT_MS);
+    } else {
+      setShowCompareHint(false);
+    }
   };
 
   const handleCompareNow = useCallback(() => {
@@ -186,7 +204,9 @@ export default function CourseUniversitySection({
       ? `Compare ${uniNames.join(" vs ")} for ${targetCourse}`
       : `Compare ${uniNames.join(" vs ")}`;
 
-    router.push(`/search?q=${encodeURIComponent(compareQuery)}`);
+    // `from` lets the AI chat show a Back button that returns to this compare section
+    const from = `${window.location.pathname}#university-section`;
+    router.push(`/search?q=${encodeURIComponent(compareQuery)}&from=${encodeURIComponent(from)}`);
   }, [selected, mappedUniversities, courseName, defaultCourseTitle, router]);
 
   return (
@@ -315,38 +335,33 @@ export default function CourseUniversitySection({
                     </div>
                   </div>
 
-                  {/* University name */}
-                  <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">
-                    {university.name}
-                  </p>
-
                   {/* Heading */}
-                  <h3 className="mt-1 text-sm font-bold leading-snug text-slate-900 line-clamp-2 h-10 flex items-start">
+                  <h3 className="mt-3 line-clamp-2 text-sm font-bold leading-snug text-slate-900 sm:min-h-[2.5rem]">
                     {university.courseName || defaultCourseTitle} from {university.name}
                   </h3>
-
-                  {/* Starting Fees Pill (in place of WES Approved) */}
-                  {university.startingFeeText && (
-                    <div className="mt-2.5">
-                      <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50/90 px-2.5 py-0.5 text-[10.5px] font-bold tracking-tight text-emerald-700 border border-emerald-200/70">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                        <span className="truncate">{university.startingFeeText}</span>
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 <div>
-                  {/* Meta info: Category & Duration in a single compact row */}
-                  <div className="mt-3.5 flex items-center justify-between border-t border-slate-100 pt-2.5 text-[11px] font-medium text-slate-500">
-                    <div className="flex items-center gap-1.5 truncate max-w-[55%]">
-                      <GraduationCap className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                  {/* Meta info: starting fee | category | duration in one compact row */}
+                  <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-slate-100 pt-2.5 text-[10.5px] font-semibold text-slate-800">
+                    {university.startingFeeText && (
+                      <>
+                        <span className="inline-flex min-w-0 shrink items-center gap-1 rounded-md border border-emerald-200/70 bg-emerald-50/90 px-1.5 py-0.5 font-bold tracking-tight text-emerald-700">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                          <span className="truncate">{university.startingFeeText}</span>
+                        </span>
+                        <span aria-hidden className="h-3.5 w-px shrink-0 bg-slate-200" />
+                      </>
+                    )}
+                    <span className="flex min-w-0 shrink items-center gap-1">
+                      <GraduationCap className="h-3.5 w-3.5 shrink-0 text-slate-500" />
                       <span className="truncate">{university.category || "Degree"}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <Clock className="h-3.5 w-3.5 text-slate-400" />
+                    </span>
+                    <span aria-hidden className="h-3.5 w-px shrink-0 bg-slate-200" />
+                    <span className="flex shrink-0 items-center gap-1 whitespace-nowrap">
+                      <Clock className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
                       <span>{university.duration || "24 Months"}</span>
-                    </div>
+                    </span>
                   </div>
 
                   {/* CTA button */}
@@ -363,9 +378,9 @@ export default function CourseUniversitySection({
                       {isSelected ? (
                         <Check className="h-3.5 w-3.5 stroke-[2.5]" />
                       ) : (
-                        <Sparkles className="h-3.5 w-3.5" />
+                        <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
                       )}
-                      <span>AI Compare</span>
+                      <span>{isSelected ? "Added to AI Compare" : "AI Compare"}</span>
                     </button>
                   </div>
                 </div>
@@ -416,6 +431,28 @@ export default function CourseUniversitySection({
             </button>
           </div>
         )}
+
+        {/* First pick: ask for one more university */}
+        <AnimatePresence>
+          {showCompareHint && (
+            <motion.div
+              role="status"
+              aria-live="polite"
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="pointer-events-none fixed inset-x-0 top-20 z-[100] flex justify-center px-4"
+            >
+              <div className="flex max-w-sm items-center gap-2.5 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_-12px_rgba(15,23,42,0.6)]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#ee2c3c]">
+                  <Info className="h-3.5 w-3.5" />
+                </span>
+                Added to AI Compare. Add at least one more university to compare.
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Signup Modal */}
         <SignupModal

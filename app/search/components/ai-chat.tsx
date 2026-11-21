@@ -2,10 +2,12 @@
 "use client";
 
 import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDown,
+  ArrowLeft,
   GraduationCap,
   History,
   IndianRupee,
@@ -27,6 +29,12 @@ import type { ChatThread } from "./chat-store";
 import { useAiChat } from "./use-ai-chat";
 
 const SIDEBAR_KEY = "ecampus_ai_sidebar_collapsed";
+
+/** `?from=` must be a same-site path (blocks `//evil.com` style open redirects) */
+function safeReturnPath(value: string | null): string | null {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return null;
+  return value;
+}
 const SIDEBAR_SPRING = { type: "spring", stiffness: 320, damping: 34, mass: 0.9 } as const;
 
 export type ChatSuggestion = { icon: LucideIcon; text: string };
@@ -77,6 +85,11 @@ function AiChatBody({
   const searchParams = useSearchParams();
   const urlQuery = searchParams.get("q")?.trim() ?? "";
   const urlThread = searchParams.get("t");
+  // Set by pages that open the chat for a task (e.g. AI Compare on a course page); kept in the URL so
+  // the Back button survives the ?q → ?t rewrite and reloads.
+  const backHref = embedded ? null : safeReturnPath(searchParams.get("from"));
+  const withFrom = (url: string) =>
+    backHref ? `${url}${url.includes("?") ? "&" : "?"}from=${encodeURIComponent(backHref)}` : url;
 
   const {
     threads,
@@ -94,7 +107,11 @@ function AiChatBody({
     stop,
     removeThread,
   } = useAiChat((id, history) =>
-    window.history[history === "push" ? "pushState" : "replaceState"](null, "", id ? `${pathname}?t=${id}` : pathname),
+    window.history[history === "push" ? "pushState" : "replaceState"](
+      null,
+      "",
+      withFrom(id ? `${pathname}?t=${id}` : pathname),
+    ),
   );
 
   const [draft, setDraft] = useState("");
@@ -226,7 +243,15 @@ function AiChatBody({
 
   return (
     <>
-      <div className={`flex overflow-hidden bg-white ${embedded ? "h-full min-h-0 flex-1" : "h-[calc(100dvh-4rem)]"}`}>
+      {/* Opened from AI Compare (?from=…): the chat slides in from the right. The wrapper clips the
+          off-screen part so the page never scrolls sideways; otherwise it is layout-neutral. */}
+      <div className={backHref ? "overflow-x-clip" : "contents"}>
+      <motion.div
+        initial={backHref ? { x: "100%", opacity: 0.4 } : false}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={`flex overflow-hidden bg-white ${embedded ? "h-full min-h-0 flex-1" : "h-[calc(100dvh-4rem)]"}`}
+      >
         {/* Docked sidebar — tablets and up */}
         <motion.aside
           initial={false}
@@ -265,6 +290,18 @@ function AiChatBody({
         {/* Conversation */}
         <section className="relative flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 flex-shrink-0 items-center gap-1 px-2 sm:px-4">
+            {backHref && (
+              <Link
+                href={backHref}
+                aria-label="Back to the previous page"
+                className="group mr-1 flex h-10 flex-shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white pl-1.5 pr-4 text-sm font-bold text-[#0d0d0d] shadow-[0_6px_18px_-6px_rgba(15,23,42,0.3)] transition hover:border-red-200 hover:text-[#ee2c3c] active:scale-95"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ee2c3c] text-white transition-transform group-hover:-translate-x-0.5">
+                  <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
+                </span>
+                Back
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
@@ -364,10 +401,12 @@ function AiChatBody({
             </>
           )}
 
-          {/* Composer — sits above the phone bottom bar; in the middle of an empty chat on larger screens */}
+          {/* Composer — at the bottom on phones (above the bottom bar in My Chat); in the middle of an empty chat on larger screens */}
           <div
             className={`relative flex-shrink-0 px-3 pt-2 sm:px-6 ${
-              hasMessages ? "order-2 pb-[88px] md:pb-3" : "order-5 pb-[88px] md:order-4 md:mt-8 md:pb-0"
+              hasMessages
+                ? `order-2 ${embedded ? "pb-[88px]" : "pb-3"} md:pb-3`
+                : `order-5 ${embedded ? "pb-[88px]" : "pb-4"} md:order-4 md:mt-8 md:pb-0`
             }`}
           >
             <AnimatePresence>
@@ -413,6 +452,7 @@ function AiChatBody({
           onConfirm={() => pendingDelete && deleteThread(pendingDelete)}
         />
         <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} onSwitchToLogin={() => setShowSignup(false)} />
+      </motion.div>
       </div>
 
       {/* Footer sits right under the full-height chat — scroll past the conversation to reach it */}

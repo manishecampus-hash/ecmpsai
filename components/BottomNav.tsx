@@ -39,8 +39,8 @@ export default function BottomNav() {
     };
   }, []);
 
-  // Landing pages that use their own floating actions don't show the bottom bar
-  const hideOnThisPage = pathname?.startsWith("/lp/online-dba");
+  // Landing pages that use their own floating actions, and the full-screen AI chat, don't show the bottom bar
+  const hideOnThisPage = pathname?.startsWith("/lp/online-dba") || pathname === "/search";
 
   const aiActive = isActive(aiLink.href);
   const AiIcon = aiLink.icon;
@@ -49,6 +49,7 @@ export default function BottomNav() {
 
   return (
     <div
+      data-mobile-bottom-nav
       className={`fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-slate-300 bg-slate-100 px-1.5 py-2 transition-all duration-300 ${
         isVisible ? "translate-y-0" : "translate-y-24"
       }`}

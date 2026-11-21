@@ -93,18 +93,19 @@ export default function CourseStickyPopup({
         }`}
       >
         <div className="relative border-t border-slate-200 bg-white shadow-[0_-8px_32px_rgba(15,23,42,0.12)]">
+          {/* Dismiss — a small round button sitting on the bar's top edge, so the content stays centred */}
+          <button
+            type="button"
+            onClick={() => setIsDismissed(true)}
+            className="absolute -top-3.5 right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-[0_4px_12px_rgba(15,23,42,0.15)] transition hover:border-red-200 hover:text-[#f83d46] active:scale-95 sm:right-5"
+            aria-label="Dismiss quick action bar"
+            title="Dismiss"
+          >
+            <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
+
           {/* ── Desktop Layout (sm:flex hidden) ────────────────────────── */}
           <div className="hidden sm:flex mx-auto max-w-7xl items-center justify-between gap-6 px-6 py-3.5 lg:px-8 relative">
-            {/* Desktop Dismiss Button */}
-            <button
-              type="button"
-              onClick={() => setIsDismissed(true)}
-              className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
-              aria-label="Dismiss quick action bar"
-              title="Dismiss"
-            >
-              <X className="h-4 w-4" />
-            </button>
 
             {/* Left: Course Info */}
             <div className="flex min-w-0 flex-1 items-center">
@@ -140,7 +141,7 @@ export default function CourseStickyPopup({
             </div>
 
             {/* Right: Apply Now CTA + Status Notice */}
-            <div className="flex shrink-0 flex-col items-end gap-1.5 pr-8">
+            <div className="flex shrink-0 flex-col items-end gap-1.5">
               <button
                 type="button"
                 onClick={() => setShowApplyModal(true)}
@@ -160,26 +161,13 @@ export default function CourseStickyPopup({
           </div>
 
           {/* ── Mobile Layout (< sm) ─────────────────────────────────── */}
-          <div className="block sm:hidden px-3.5 py-2.5">
-            {/* Top Row: Title + Dismiss */}
-            <div className="flex items-center justify-between gap-2 mb-1.5">
-              <h4 className="truncate text-sm font-bold text-slate-900 leading-tight flex-1 min-w-0">
+          <div className="flex items-center gap-3 px-3.5 py-3 sm:hidden">
+            {/* Left: title + detail pills */}
+            <div className="min-w-0 flex-1">
+              <h4 className="truncate text-sm font-bold leading-tight text-slate-900">
                 {courseName}
               </h4>
-
-              <button
-                type="button"
-                onClick={() => setIsDismissed(true)}
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 active:scale-95"
-                aria-label="Dismiss quick action bar"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            {/* Bottom Row: Details Pills + Compact Apply Now Button */}
-            <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-100">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 overflow-hidden min-w-0">
+              <div className="mt-1.5 flex min-w-0 items-center gap-1.5 overflow-hidden text-[11px] font-semibold text-slate-600">
                 <span className="inline-flex items-center gap-0.5 text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 font-bold shrink-0">
                   <span>{rating}</span>
                   <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400 -translate-y-[0.5px]" />
@@ -197,16 +185,17 @@ export default function CourseStickyPopup({
                   </>
                 )}
               </div>
-
-              <button
-                type="button"
-                onClick={() => setShowApplyModal(true)}
-                className="inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-lg bg-[#f83d46] px-3.5 text-xs font-extrabold text-white shadow-[0_2px_8px_rgba(248,61,70,0.3)] active:scale-95"
-              >
-                <span>Apply Now</span>
-                <ArrowRight className="h-3 w-3" />
-              </button>
             </div>
+
+            {/* Right: Apply Now, centred against the whole bar */}
+            <button
+              type="button"
+              onClick={() => setShowApplyModal(true)}
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-xl bg-[#f83d46] px-4 text-xs font-extrabold text-white shadow-[0_4px_12px_rgba(248,61,70,0.35)] active:scale-95"
+            >
+              <span>Apply Now</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
       </div>

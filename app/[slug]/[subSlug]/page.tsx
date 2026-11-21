@@ -146,6 +146,8 @@ export default async function SubHeaderDynamicPage({ params }: PageProps) {
 
   return (
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
+      {/* Course pages hide the phone bottom menu */}
+      <style>{`[data-mobile-bottom-nav]{display:none!important}`}</style>
       <Navbar />
       <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
 

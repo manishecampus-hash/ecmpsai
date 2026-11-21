@@ -6,7 +6,7 @@ import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "../components/applied-badge";
 import AiChatPanel from "../components/ai-assist/ai-chat-panel";
-import { describeAdvisorProfile, cleanCourseDisplay } from "@/components/layout/onboarding-options";
+import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
 import { parseBudgetRange } from "@/lib/recommendations";
 import {
   AnimatePresence,
@@ -1480,28 +1480,10 @@ export default function AIDegreeMatcherPage() {
               <div className="flex-1 overflow-y-auto overscroll-contain px-5 [scrollbar-width:thin]">{filterBody}</div>
             </aside>
 
-            {/* Filters — mobile trigger (opens a bottom sheet) */}
-            <button
-              type="button"
-              onClick={() => setFiltersOpen(true)}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition active:scale-[0.99] lg:hidden"
-            >
-              <span className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4" />
-                Filters
-                {activeFilterCount > 0 && (
-                  <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </span>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-            </button>
-
             {/* Results */}
             <div className="min-w-0 flex-1 space-y-4">
-              <div ref={resultsTopRef} className="relative z-10 flex scroll-mt-4 flex-wrap items-center justify-between gap-x-3 gap-y-2.5">
-                <p className="flex-shrink-0 text-sm text-gray-500">
+              <div ref={resultsTopRef} className="relative z-10 grid scroll-mt-4 grid-cols-[minmax(0,1fr)_auto] grid-rows-2 items-center gap-x-2 gap-y-2 sm:flex sm:flex-wrap sm:justify-between sm:gap-x-3 sm:gap-y-2.5">
+                <p className="col-start-1 row-start-1 min-w-0 text-xs text-gray-500 sm:flex-shrink-0 sm:text-sm">
                   {sorted.length > 0 && (
                     <>
                       Showing{" "}
@@ -1523,9 +1505,9 @@ export default function AIDegreeMatcherPage() {
                   Universities Found
                 </p>
 
-                {/* Search — between the count and Sort by when the row has room, otherwise on its own line */}
-                <div className="order-last flex basis-full justify-end md:order-none md:min-w-0 md:flex-1 md:basis-0 lg:order-last lg:basis-full xl:order-none xl:basis-0">
-                  <label className="group flex h-9 w-full items-center gap-2 rounded-xl border border-red-300 bg-white px-3 transition-[max-width,border-color,box-shadow] duration-300 ease-out hover:border-red-400 focus-within:border-red-500 focus-within:shadow-[0_0_0_3px_rgba(238,44,60,0.10)] md:max-w-[180px] md:focus-within:max-w-[300px] lg:max-w-none lg:focus-within:max-w-none xl:max-w-[220px] xl:focus-within:max-w-[300px]">
+                {/* Search — second row on phones; existing responsive flow on larger screens */}
+                <div className="col-start-2 row-start-2 flex min-w-0 justify-end sm:order-last sm:basis-full md:order-none md:min-w-0 md:flex-1 md:basis-0 lg:order-last lg:basis-full xl:order-none xl:basis-0">
+                  <label className="group flex h-9 w-full min-w-0 items-center gap-1.5 rounded-xl border border-red-300 bg-white px-2 transition-[max-width,border-color,box-shadow] duration-300 ease-out hover:border-red-400 focus-within:border-red-500 focus-within:shadow-[0_0_0_3px_rgba(238,44,60,0.10)] sm:gap-2 sm:px-3 md:max-w-[180px] md:focus-within:max-w-[300px] lg:max-w-none lg:focus-within:max-w-none xl:max-w-[220px] xl:focus-within:max-w-[300px]">
                     <Search className="h-4 w-4 flex-shrink-0 text-gray-400 transition-colors group-focus-within:text-red-500" />
                     <input
                       type="text"
@@ -1548,9 +1530,9 @@ export default function AIDegreeMatcherPage() {
                   </label>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm">
+                <div className="col-start-1 row-start-2 flex min-w-0 items-center gap-1.5 text-xs sm:text-sm">
                   <span className="flex-shrink-0 text-gray-500">Sort by</span>
-                  <div className="w-44">
+                  <div className="w-24 sm:w-44">
                     <Dropdown
                       value={sortBy}
                       onChange={(v) => setSortBy(v as SortKey)}
@@ -1564,57 +1546,22 @@ export default function AIDegreeMatcherPage() {
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* Active Preferences Banner from Onboarding */}
-              {student?.advisorProfile &&
-                (student.advisorProfile.highestQualification ||
-                  student.advisorProfile.coursePreference ||
-                  student.advisorProfile.budget) && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200/70 bg-gradient-to-r from-red-50/80 via-white to-red-50/40 p-3.5 sm:p-4 text-xs shadow-xs">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-xs">
-                        <Sparkles className="h-3 w-3" />
-                        3-Way Matched
-                      </span>
-                      {student.advisorProfile.highestQualification && (
-                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
-                          Qualification:{" "}
-                          <strong className="text-gray-900">{student.advisorProfile.highestQualification}</strong>
-                        </span>
-                      )}
-                      {student.advisorProfile.coursePreference && (
-                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
-                          Course:{" "}
-                          <strong className="text-gray-900">
-                            {cleanCourseDisplay(student.advisorProfile.coursePreference)}
-                          </strong>
-                        </span>
-                      )}
-                      {student.advisorProfile.budget && (
-                        <span className="rounded-lg border border-red-200/60 bg-white px-2.5 py-1 font-medium text-gray-700 shadow-2xs">
-                          Budget Range: <strong className="text-gray-900">{student.advisorProfile.budget}</strong>
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => applyQuestionnaireFilters(student)}
-                        className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
-                      >
-                        Reset to questionnaire
-                      </button>
-                      <span className="text-gray-300">·</span>
-                      <a
-                        href="/dashboard/profile"
-                        className="font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline"
-                      >
-                        Edit questionnaire →
-                      </a>
-                    </div>
-                  </div>
-                )}
+                {/* Filters — compact mobile trigger beside the result count */}
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(true)}
+                  className="col-start-2 row-start-1 inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-2.5 text-xs font-semibold text-gray-700 shadow-sm transition active:scale-[0.99] sm:order-first sm:basis-full sm:justify-between sm:px-4 sm:py-3 sm:text-sm lg:hidden"
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </button>
+              </div>
 
               <AnimatePresence initial={false}>
                 {activeChips.length > 0 && (

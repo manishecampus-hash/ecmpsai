@@ -142,7 +142,7 @@ export default function CourseOverview({ data, banner }: { data?: any; banner?: 
     <CourseSection>
       <div className={`grid items-center gap-8 ${hasVisual ? "lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-12" : ""}`}>
         <div className="min-w-0">
-          <SectionHeading heading={heading} align={hasVisual ? "left" : "center"} className="sm:mb-6" />
+          <SectionHeading heading={heading} className="sm:mb-6" />
 
           {description ? (
             <div className={`${RICH_TEXT} ${hasVisual ? "" : "mx-auto max-w-4xl"}`} dangerouslySetInnerHTML={{ __html: description }} />

@@ -183,6 +183,8 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
 
   return (
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
+      {/* Course pages use their own quick-action bar: hide the mobile bottom nav and WhatsApp button */}
+      <style>{`[data-mobile-bottom-nav],[data-floating-whatsapp]{display:none!important}`}</style>
       <SubHeader subHeaders={course.subHeaders} courseSlug={course.slug} />
 
       <section id="hero-section">

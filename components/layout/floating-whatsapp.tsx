@@ -37,13 +37,16 @@ export function FloatingWhatsApp({
 
   // When course bar is active on mobile, lift WhatsApp smoothly above it with generous clearance
   const bottomPositionClass = aboveComposer
-    ? "bottom-[196px] md:bottom-[112px]"
+    ? pathname === "/search"
+      ? "bottom-[120px] md:bottom-[112px]"
+      : "bottom-[196px] md:bottom-[112px]"
     : hasCourseBar
       ? "bottom-[88px] md:bottom-6"
       : "bottom-20 md:bottom-6";
 
   return (
     <div
+      data-floating-whatsapp
       className={`fixed ${bottomPositionClass} right-3 sm:right-6 z-50 flex items-center gap-3 font-sans select-none pointer-events-auto transition-all duration-300 ease-out`}
     >
       {/* Main WhatsApp Floating Button */}

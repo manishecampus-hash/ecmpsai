@@ -3,11 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import HighlightedText from "@/components/universities/HighlightedText";
-import { ArrowRight, CalendarDays, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import ApplyNowModal from "@/components/form/apply-now-modal";
 import { getFormCourses } from "@/data/form-courses";
 import PodcastButton from "./podcast-button";
-import { EASE, STAT_ICONS } from "./section-ui";
+import { EASE } from "./section-ui";
 
 type HeroUniversity = { id?: string; name: string; logoUrl?: string };
 
@@ -18,7 +18,10 @@ const rise = (delay: number) => ({
 });
 
 // Endless right-to-left logo strip: the list is repeated so half the track always covers
-// the box, and the track slides by exactly that half.
+// the box, and the track slides by exactly that half. The track gets its own GPU layer
+// (translate3d + will-change) so iOS Safari keeps animating it inside the rounded,
+// overflow-hidden hero card, and logos load eagerly because Safari never lazy-loads
+// images that start outside the clipped box.
 function LogoMarquee({
   logos,
   className,
@@ -32,16 +35,16 @@ function LogoMarquee({
 }) {
   const copies = logos.length < 4 ? 4 : 2;
   return (
-    <div className={`relative overflow-hidden ${className ?? ""}`}>
+    <div className={`relative overflow-hidden [transform:translateZ(0)] ${className ?? ""}`}>
       <div
         className="hero-marquee flex w-max flex-nowrap items-center gap-2.5 pr-2.5"
-        style={{ animationDuration: `${speed}s` }}
+        style={{ animationDuration: `${speed}s`, WebkitAnimationDuration: `${speed}s` }}
       >
         {Array.from({ length: copies }).flatMap((_, c) =>
           logos.map((logo, i) => (
             <div key={`${c}-${i}`} className={tileClass}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logo.src} alt={c === 0 ? logo.alt : ""} className="max-h-full w-auto max-w-full object-contain" loading="lazy" />
+              <img src={logo.src} alt={c === 0 ? logo.alt : ""} className="max-h-full w-auto max-w-full object-contain" draggable={false} />
             </div>
           )),
         )}
@@ -120,10 +123,6 @@ export default function CourseHeroSection({
 
   const stats = Array.isArray(data?.stats) && data.stats.length > 0 ? data.stats : null;
 
-  const recognitionLogos = Array.isArray(data?.logos) && data.logos.length > 0
-    ? data.logos.map((src: string, i: number) => ({ src, alt: `Accreditation ${i + 1}` }))
-    : null;
-
   const universityLogos = universities
     .filter((u) => u?.logoUrl)
     .map((u) => ({ src: u.logoUrl as string, alt: u.name }));
@@ -140,10 +139,18 @@ export default function CourseHeroSection({
       </div>
 
       <style>{`
-        @keyframes hero-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        .hero-marquee { animation: hero-marquee linear infinite; }
-        .hero-marquee:hover { animation-play-state: paused; }
-        @media (prefers-reduced-motion: reduce) { .hero-marquee { animation: none; } }
+        @-webkit-keyframes hero-marquee { from { -webkit-transform: translate3d(0,0,0); } to { -webkit-transform: translate3d(-50%,0,0); } }
+        @keyframes hero-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+        .hero-marquee {
+          -webkit-animation: hero-marquee linear infinite;
+          animation: hero-marquee linear infinite;
+          will-change: transform;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+        }
+        /* Pause on hover only with a real pointer — on touch screens :hover sticks after a tap */
+        @media (hover: hover) { .hero-marquee:hover { animation-play-state: paused; } }
+        @media (prefers-reduced-motion: reduce) { .hero-marquee { -webkit-animation: none; animation: none; } }
       `}</style>
 
       <div className="mx-auto w-full max-w-7xl px-3 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
@@ -192,7 +199,7 @@ export default function CourseHeroSection({
                   </div>
                   <p
                     ref={descRef}
-                    className={`relative max-w-2xl break-words text-[15px] leading-7 text-slate-600 sm:text-base ${descExpanded ? "" : longTitle ? "lg:max-h-12 lg:overflow-hidden" : "lg:max-h-[72px] lg:overflow-hidden"}`}
+                    className={`relative max-w-2xl break-words text-[15px] leading-7 text-slate-600 max-lg:line-clamp-4 sm:text-base ${descExpanded ? "" : longTitle ? "lg:max-h-12 lg:overflow-hidden" : "lg:max-h-[72px] lg:overflow-hidden"}`}
                   >
                     <span>{aiText}</span>
                     <span
@@ -224,12 +231,12 @@ export default function CourseHeroSection({
               )}
 
               {(cta1 || podcastScript) && (
-                <motion.div {...rise(0.28)} className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <motion.div {...rise(0.28)} className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-4 sm:gap-x-6">
                   {cta1 && (
                     <button
                       type="button"
                       onClick={handleCta1}
-                      className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] px-7 text-sm font-bold text-white shadow-[0_12px_24px_-8px_rgba(238,44,60,0.6)] transition hover:bg-[#d92233] active:scale-[0.98]"
+                      className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] px-5 text-sm sm:px-7 font-bold text-white shadow-[0_12px_24px_-8px_rgba(238,44,60,0.6)] transition hover:bg-[#d92233] active:scale-[0.98]"
                     >
                       {cta1}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -241,23 +248,17 @@ export default function CourseHeroSection({
 
               {stats && (
                 <motion.div {...rise(0.34)} className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-                  {stats.map((stat: any) => {
-                    const Icon = STAT_ICONS[stat.iconName] || CalendarDays;
-                    return (
+                  {stats.map((stat: any) => (
                       <div
                         key={stat.label}
                         className="group min-w-0 rounded-2xl border border-slate-200 bg-slate-50/70 p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-200 hover:bg-white hover:shadow-[0_12px_24px_-16px_rgba(238,44,60,0.5)]"
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#ee2c3c] shadow-sm ring-1 ring-slate-100 transition-colors group-hover:bg-[#ee2c3c] group-hover:text-white">
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className="mt-2.5 block text-[10px] font-semibold uppercase leading-tight tracking-wide text-slate-500">
+                        <span className="block text-[10px] font-semibold uppercase leading-tight tracking-wide text-slate-500">
                           {stat.label}
                         </span>
                         <span className="mt-0.5 block break-words text-sm font-extrabold leading-snug text-slate-950">{stat.value}</span>
                       </div>
-                    );
-                  })}
+                  ))}
                 </motion.div>
               )}
             </div>
@@ -324,21 +325,6 @@ export default function CourseHeroSection({
                 </motion.div>
               )}
 
-              {/* Recognition logos */}
-              {recognitionLogos && (
-                <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-3.5">
-                  <p className="mb-2.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#ee2c3c]" /> Recognition
-                    <span className="font-semibold normal-case tracking-normal text-slate-900">· Globally respected credentials</span>
-                  </p>
-                  <LogoMarquee
-                    logos={recognitionLogos}
-                    speed={18}
-                    className="[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
-                    tileClass="flex h-12 w-[112px] flex-none items-center justify-center rounded-lg border border-slate-100 bg-slate-50 p-1.5"
-                  />
-                </div>
-              )}
             </motion.div>
           </div>
 

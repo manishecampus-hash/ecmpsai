@@ -1,7 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { CourseSection, SectionHeading } from "./section-ui";
+
+/** Core subjects shown at first, and how many more each "more" tap reveals */
+const CORE_STEP = 4;
 
 // "Subject A, Subject B, …" → individual subjects; sentence-style text stays as it is
 function toSubjects(text: string): string[] | null {
@@ -12,6 +16,7 @@ function toSubjects(text: string): string[] | null {
 
 export default function CourseSyllabus({ data }: { data?: any }) {
   const heading = data?.heading || data?.title;
+  const [coreVisible, setCoreVisible] = useState(CORE_STEP);
 
   if (!heading || typeof heading !== "string" || !heading.trim()) {
     return null;
@@ -78,8 +83,8 @@ export default function CourseSyllabus({ data }: { data?: any }) {
               <table className="w-full border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <th scope="col" className="w-[32%] px-5 py-3 sm:w-[220px] sm:px-6">Semester</th>
-                    <th scope="col" className="px-5 py-3 sm:px-6">Subjects</th>
+                    <th scope="col" className="w-px whitespace-nowrap px-3 py-3 sm:w-[220px] sm:px-6">Semester</th>
+                    <th scope="col" className="px-4 py-3 sm:px-6">Subjects</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -87,10 +92,10 @@ export default function CourseSyllabus({ data }: { data?: any }) {
                     const subjects = toSubjects(sem.text);
                     return (
                       <tr key={idx} className="align-top transition-colors hover:bg-slate-50/70">
-                        <th scope="row" className="border-r border-slate-100 px-5 py-4 font-semibold text-slate-900 sm:px-6">
+                        <th scope="row" className="w-px whitespace-nowrap border-r border-slate-100 px-3 py-4 font-semibold text-slate-900 sm:px-6">
                           <span className="block border-l-[3px] border-[#ee2c3c] pl-3 leading-snug">{sem.title.replace(/\b0+(\d)/g, "$1")}</span>
                         </th>
-                        <td className="px-5 py-4 sm:px-6">
+                        <td className="px-4 py-4 sm:px-6">
                           {subjects ? (
                             <ul className="grid gap-x-8 gap-y-2 md:grid-cols-2">
                               {subjects.map((subject) => (
@@ -156,7 +161,7 @@ export default function CourseSyllabus({ data }: { data?: any }) {
 
               {coreSubjects.length > 0 && (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {coreSubjects.map((subject, idx) => (
+                  {coreSubjects.slice(0, coreVisible).map((subject, idx) => (
                     <div
                       key={idx}
                       className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-3 transition-colors hover:border-red-200 hover:bg-red-50/40"
@@ -171,6 +176,31 @@ export default function CourseSyllabus({ data }: { data?: any }) {
                       </span>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {coreSubjects.length > CORE_STEP && (
+                <div className="mt-5 flex justify-center">
+                  {coreVisible < coreSubjects.length ? (
+                    <button
+                      type="button"
+                      onClick={() => setCoreVisible((n) => Math.min(n + CORE_STEP, coreSubjects.length))}
+                      aria-label={`Show ${Math.min(CORE_STEP, coreSubjects.length - coreVisible)} more subjects`}
+                      className="group inline-flex items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-2 text-xs font-bold text-[#ee2c3c] shadow-sm transition hover:bg-[#ee2c3c] hover:text-white active:scale-95"
+                    >
+                      {coreSubjects.length - coreVisible} more
+                      <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setCoreVisible(CORE_STEP)}
+                      className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:border-[#ee2c3c] hover:text-[#ee2c3c] active:scale-95"
+                    >
+                      Show less
+                      <ChevronUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>

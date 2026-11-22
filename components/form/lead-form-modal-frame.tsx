@@ -100,12 +100,15 @@ export default function LeadFormModalFrame({
         ))}
       </div>
       <motion.div
-        initial={reduceMotion ? undefined : { opacity: 0, y: 16, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        // Plain fade-in — no zoom / slide effect when the popup opens
+        initial={reduceMotion ? undefined : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        // Lead-form popup: its "Download Brochure" submit must not be caught by the sign-up gate in AppShell
+        data-lead-form=""
         className={
           isAssured
             ? // phones: the whole popup scrolls (image + form); desktop: image | form side by side

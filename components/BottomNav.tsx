@@ -40,7 +40,8 @@ export default function BottomNav() {
   }, []);
 
   // Landing pages that use their own floating actions, and the full-screen AI chat, don't show the bottom bar
-  const hideOnThisPage = pathname?.startsWith("/lp/online-dba") || pathname === "/search";
+  // Landing pages (/lp/…) have no menus; the search page has its own composer
+  const hideOnThisPage = pathname?.startsWith("/lp/") || pathname === "/search";
 
   const aiActive = isActive(aiLink.href);
   const AiIcon = aiLink.icon;

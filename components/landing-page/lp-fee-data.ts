@@ -14,6 +14,8 @@ export interface FeePlan {
   tabNote?: string;
   /** Title pill of the fee card */
   cardTitle: string;
+  /** Small line under the title pill (e.g. "Without Immersion") */
+  cardSubtitle?: string;
   standardFee: string;
   /** Small note under the standard fee (e.g. "(Including taxes)") */
   standardFeeNote?: string;
@@ -138,8 +140,9 @@ export const DBA_FEE_PLANS: FeePlan[] = [
     name: "LSMT University",
     logo: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/6.svg",
     location: "Croydon, United Kingdom",
-    tabNote: "Immersion included",
-    cardTitle: "DBA (with Immersion)",
+    tabNote: "Without immersion",
+    cardTitle: "Doctor of Business Administration",
+    cardSubtitle: "Without Immersion",
     standardFee: "INR 4,00,000",
     waiver: "INR 50,000",
     payableFee: "INR 3,50,000/-",
@@ -153,8 +156,9 @@ export const DBA_FEE_PLANS: FeePlan[] = [
     label: "Florida Coastal University",
     name: "Florida Coastal University",
     location: "Jacksonville, United States",
-    tabNote: "Immersion included",
-    cardTitle: "DBA (with Immersion)",
+    tabNote: "Without immersion",
+    cardTitle: "Doctor of Business Administration",
+    cardSubtitle: "Without Immersion",
     standardFee: "INR 4,00,000",
     waiver: "INR 50,000",
     payableFee: "INR 3,50,000/-",
@@ -169,7 +173,8 @@ export const DBA_FEE_PLANS: FeePlan[] = [
     name: "Birchwood University",
     location: "Florida, USA",
     tabNote: "Without immersion",
-    cardTitle: "DBA (Without Immersion)",
+    cardTitle: "Doctor of Business Administration",
+    cardSubtitle: "Without Immersion",
     standardFee: "INR 5,00,000",
     waiver: "INR 50,000",
     payableFee: "INR 4,50,000/-",
@@ -184,7 +189,8 @@ export const DBA_FEE_PLANS: FeePlan[] = [
     name: "EIMT",
     location: "Cham, Switzerland",
     tabNote: "Without immersion",
-    cardTitle: "DBA (Without Immersion)",
+    cardTitle: "Doctor of Business Administration",
+    cardSubtitle: "Without Immersion",
     standardFee: "INR 4,00,000",
     waiver: "INR 50,000",
     payableFee: "INR 3,50,000/-",

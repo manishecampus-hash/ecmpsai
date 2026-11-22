@@ -24,7 +24,7 @@ export default function WelcomeBanner({
   };
 
   return (
-    <div className="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 via-rose-50 to-white p-5 sm:p-6">
+    <div className="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 via-rose-50 to-white px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1">
          
@@ -38,7 +38,7 @@ export default function WelcomeBanner({
           </div> */}
 
 
-          <h1 className="mt-3 text-2xl font-bold leading-snug text-black sm:text-3xl">
+          <h1 className="text-2xl font-bold leading-snug text-black sm:text-3xl">
   Welcome, <span className="text-red-600">{firstName}!</span>
 </h1>
 

@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Download } from "lucide-react";
 
 // The form and popup frame load only when the popup is first opened,
 // so pages with "Apply Now" buttons don't ship the form code up front.
@@ -154,20 +153,8 @@ export function BrochureModal({ isOpen, onClose, courses: ownCourses, programNam
         onBack={() => onClose()}
         courses={courses}
         variant={style}
-        heading={
-          programName ? (
-            <>
-              Download <span className="text-red-600">{programName}</span> Brochure
-            </>
-          ) : (
-            <>
-              Download <span className="text-red-600">Brochure</span>
-            </>
-          )
-        }
-        badge="Fees, Syllabus & Scholarships"
+        // Same look as the Apply popup ("Talk to a DBA Counsellor"); only the button text differs
         submitLabel="Download Brochure"
-        submitIcon={<Download className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-y-0.5" />}
       />
     </LeadFormModalFrame>
   );
@@ -188,7 +175,8 @@ export function BrochureButton({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className}>
+      {/* data-brochure-lead: opens the lead form, so the site-wide "sign up for brochures" gate skips it */}
+      <button type="button" onClick={() => setOpen(true)} className={className} data-brochure-lead="">
         {children}
       </button>
       <BrochureModal isOpen={open} onClose={() => setOpen(false)} courses={courses} programName={programName} />

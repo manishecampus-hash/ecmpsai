@@ -34,7 +34,7 @@ export const DBA_SPECIALISATIONS = [
   "DBA_(Human_Resource_Management)",
   "DBA_(International_Business)",
   "DBA_(Marketing)",
-  "DBH_(Supply_Chain_Management)",
+  "DBA_(Supply_Chain_Management)",
   "DBA_(Information_Technology)",
   "DBA_(Internet_of_Things_IoT)",
   "DBA_(Cybersecurity)",
@@ -46,7 +46,7 @@ export const MBA_SPECIALISATIONS = [
   "MBA_(Data_Science_and_Artificial_Intelligence)",
   "MBA_(Business_Intelligence_and_Analytics)",
   "MBA_(AI_for_Business_Strategy)",
-  "MBA_(General_Management)",
+  "MBA_(General)",
   "MBA_(Marketing)",
   "MBA_(Human_Resource_and_Business_Analytics)",
   "MBA_(Operations_Management)",
@@ -69,7 +69,7 @@ export const MBA_SPECIALISATIONS = [
 
 // STATIC placeholder lists for the other programmes — update to the exact CRM values when available.
 export const BBA_SPECIALISATIONS = [
-  "BBA_(General_Management)",
+  "BBA_(General)",
   "BBA_(Marketing)",
   "BBA_(Finance)",
   "BBA_(Human_Resource_Management)",
@@ -124,6 +124,9 @@ export const MA_SPECIALISATIONS = [
   "MA_(Journalism_&_Mass_Communication)",
 ];
 
+/** MA in Journalism & Mass Communication — single course option */
+export const MAJMC_SPECIALISATIONS = ["MAJMC"];
+
 export const MCOM_SPECIALISATIONS = [
   "MCOM_(General)",
   "MCOM_(Accounting_&_Finance)",
@@ -165,6 +168,8 @@ const MATCHERS: [RegExp, string[]][] = [
   [/\bmca\b|master of computer/, MCA_SPECIALISATIONS],
   [/\bmcom\b|master of commerce/, MCOM_SPECIALISATIONS],
   [/\bmsc\b|master of science/, MSC_SPECIALISATIONS],
+  // before MA, so "MAJMC" / "MA in Journalism & Mass Communication" get their own list
+  [/\bmajmc\b|journalism (and|&) mass comm/, MAJMC_SPECIALISATIONS],
   [/\bma\b|master of arts/, MA_SPECIALISATIONS],
   [/\bbba\b|bachelor of business/, BBA_SPECIALISATIONS],
   [/\bbca\b|bachelor of computer/, BCA_SPECIALISATIONS],

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Star, Scale, Zap } from "lucide-react";
+import { ArrowRight, Star, Scale, Zap } from "lucide-react";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "./applied-badge";
 import type { StudentProfile } from "../types";
@@ -203,6 +203,17 @@ export default function Recommendations({ student: propStudent }: Recommendation
             </div>
           ))
         )}
+      </div>
+
+      {/* After the cards: go to the full matcher */}
+      <div className="mt-5 flex justify-center">
+        <Link
+          href="/dashboard/matcher"
+          className="group inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-bold text-red-700 transition-colors duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
+        >
+          View All Matches
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );

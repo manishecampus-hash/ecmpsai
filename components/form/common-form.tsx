@@ -161,31 +161,33 @@ export function ApplicationForm({
   const isLp = variant === "lp";
   const ui = {
     wrapper: A
-      ? "relative isolate mx-auto w-full max-w-lg px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-7"
+      ? "relative isolate mx-auto w-full max-w-lg px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-7 lg:pb-5 lg:pt-5"
       : "relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8",
     form: A
-      ? "relative z-10 flex flex-col gap-2.5 rounded-xl bg-[#f8fafc] p-3 md:p-3.5"
+      ? "relative z-10 flex flex-col gap-3 rounded-xl bg-[#f8fafc] p-3.5 md:p-4 lg:gap-2.5 lg:p-3.5"
       : "relative z-10 flex flex-col gap-3.5",
     fieldFocus: A
       ? "focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-100"
       : "focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100",
     fieldIdle: A ? "border-[#d0d5dd] bg-[#f9fafb]" : "border-gray-200 bg-white",
     fieldShape: A ? "rounded-[5px]" : "rounded-xl",
-    fieldSize: A ? "h-[38px] text-[15px] md:text-sm placeholder:text-slate-500" : "h-11 text-sm placeholder:text-gray-400",
-    triggerSize: A ? "!h-[38px]" : "!h-11",
+    // 16px text on phones: smaller inputs make iOS zoom the page when a field is tapped
+    // Desktop (lg) is a touch more compact so the whole hero form fits on screen
+    fieldSize: A ? "h-[44px] text-base md:h-[42px] md:text-[15px] lg:h-10 placeholder:text-slate-500" : "h-11 text-sm placeholder:text-gray-400",
+    triggerSize: A ? "!h-[44px] md:!h-[42px] lg:!h-10" : "!h-11",
     trigger: A
-      ? "flex w-full items-center rounded-[5px] border border-[#d0d5dd] bg-[#f9fafb] px-3 text-[15px] text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 md:text-sm"
+      ? "flex w-full items-center rounded-[5px] border border-[#d0d5dd] bg-[#f9fafb] px-3 text-base text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 md:text-[15px]"
       : "flex w-full items-center rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-100",
     phoneFocus: A
       ? "focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100"
       : "focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100",
     submit: isLp
-      ? "group/btn mx-auto mt-0.5 flex h-10 w-[78%] max-w-[280px] items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 text-[15px] font-bold text-red-700 shadow-none transition-colors duration-300 hover:border-red-700 hover:bg-red-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
+      ? "group/btn mx-auto mt-1 flex h-11 w-[80%] max-w-[300px] items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 text-base font-bold text-red-700 shadow-none transition-colors duration-300 hover:border-red-700 hover:bg-red-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2"
       : A
       ? "mx-auto mt-0.5 h-10 w-[78%] max-w-[280px] rounded-md bg-gradient-to-b from-[#ff9a1f] to-[#ea7a00] text-[15px] font-bold text-white shadow-[0_8px_18px_-6px_rgba(234,122,0,0.65)] transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2"
       : "mx-auto mt-1 h-11 w-3/4 max-w-sm rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200 disabled:text-white focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2",
     timer: A
-      ? "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-orange-100 bg-orange-50 px-3 py-2 text-center text-xs font-medium text-orange-900 sm:text-sm"
+      ? "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-orange-100 bg-orange-50 px-3 py-2 text-center text-xs font-medium text-orange-900 sm:text-sm lg:mt-3 lg:min-h-9 lg:py-1.5"
       : "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm",
     timerStrong: A ? "text-orange-600" : "text-red-700",
   };
@@ -368,15 +370,15 @@ export function ApplicationForm({
   return (
     <div className={ui.wrapper}>
       {A ? (
-        <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4">
-          <h2 className="text-[19px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[20px]">
+        <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4 lg:mb-3">
+          <h2 className="text-[21px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[22px]">
             {heading ?? (
               <>
                 Get <span className="text-orange-500">₹10,000*</span> Scholarship
               </>
             )}
           </h2>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-700">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 text-[12.5px] font-bold uppercase tracking-wide text-slate-700">
             <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
             {badge}
           </span>
@@ -498,7 +500,7 @@ export function ApplicationForm({
         {/* Mobile */}
         <div>
           <div
-            className={`__phone-input-wrapper flex ${A ? "h-[38px]" : "h-11"} w-full items-center overflow-hidden ${ui.fieldShape} border transition ${ui.phoneFocus} ${
+            className={`__phone-input-wrapper flex ${A ? "h-[44px] md:h-[42px] lg:h-10" : "h-11"} w-full items-center overflow-hidden ${ui.fieldShape} border transition ${ui.phoneFocus} ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
                 : ui.fieldIdle
@@ -542,7 +544,7 @@ export function ApplicationForm({
                   ? selectedCountry.length
                   : undefined
               }
-              className="__phone-input h-full flex-1 rounded-none border-0 bg-transparent px-3 text-sm text-gray-900 shadow-none outline-none placeholder:text-gray-400 focus:border-0 focus:bg-transparent focus:shadow-none"
+              className={`__phone-input h-full flex-1 rounded-none border-0 bg-transparent px-3 text-gray-900 ${A ? "text-base md:text-[15px]" : "text-sm"} shadow-none outline-none placeholder:text-gray-400 focus:border-0 focus:bg-transparent focus:shadow-none`}
             />
           </div>
 
@@ -634,7 +636,12 @@ export function ApplicationForm({
           type="submit"
           // Landing pages: the button stays active (so its hover works) and missing fields are flagged on click
           disabled={isSubmitting || (!isLp && !isFormValid)}
-          className={ui.submit}
+          // Landing-page look: soft red until the form is complete, then solid red (same as hover)
+          className={`${ui.submit} ${
+            isLp && isFormValid
+              ? "border-red-700 bg-red-700 text-white shadow-[0_10px_22px_-10px_rgba(185,28,28,0.75)] hover:bg-red-800"
+              : ""
+          }`}
         >
           {isSubmitting ? (
             <Loader2 className="animate-spin" />

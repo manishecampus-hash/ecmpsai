@@ -486,9 +486,11 @@ interface SubHeaderProps {
   items?: NavItem[];
   /** Desktop only: when every link fits, hide the arrows and spread the links edge to edge (landing pages) */
   spread?: boolean;
+  /** Hide the sticky bar again once the section with this id has been scrolled past (landing pages) */
+  hideAfterId?: string;
 }
 
-export default function SubHeader({ university, universityName, items, spread }: SubHeaderProps = {}) {
+export default function SubHeader({ university, universityName, items, spread, hideAfterId }: SubHeaderProps = {}) {
   const navItems: NavItem[] = items && items.length > 0 ? items : NAV_ITEMS;
 
   const [activeId, setActiveId] = useState<string>("overview");
@@ -547,7 +549,9 @@ export default function SubHeader({ university, universityName, items, spread }:
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > stickyTriggerOffset);
+      const endEl = hideAfterId ? document.getElementById(hideAfterId) : null;
+      const pastEnd = Boolean(endEl && endEl.getBoundingClientRect().bottom <= 64);
+      setIsSticky(window.scrollY > stickyTriggerOffset && !pastEnd);
 
       const offset =
         (window.scrollY > stickyTriggerOffset

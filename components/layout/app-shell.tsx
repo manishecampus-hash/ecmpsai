@@ -24,6 +24,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      // Landing pages (/lp/…) and lead-form brochure buttons collect the lead with the Download Brochure
+      // form instead, so they never require sign-up. [data-lead-form] = inside a lead-form popup
+      // (its "Download Brochure" submit button); [data-brochure-lead] = buttons that open that popup.
+      if (
+        window.location.pathname.startsWith("/lp/") ||
+        target.closest("[data-lead-form]") ||
+        target.closest("[data-brochure-lead]")
+      ) {
+        return;
+      }
+
       // Check if clicked element or its interactive ancestor relates to brochure download
       const clickable = target.closest("button, a, [role='button']") as HTMLElement | null;
       if (!clickable) return;

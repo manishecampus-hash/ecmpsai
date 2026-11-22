@@ -44,6 +44,9 @@ const HERO_LINES = [
   "M1000 -20 C 920 180, 1100 380, 980 620",
 ];
 
+const PRIMARY_CTA =
+  "lp-hero-cta group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_12px_28px_-8px_rgba(239,68,68,0.55)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_16px_34px_-8px_rgba(239,68,68,0.6)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base";
+
 export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
   const beforeImg = hero.beforeImage || "/dba/before.png";
@@ -56,20 +59,28 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
     badgeText.toLowerCase().includes("mr") && badgeText.toLowerCase().includes("dr");
 
   return (
-    <section className="relative z-10 w-full overflow-hidden bg-gradient-to-b from-red-50/50 via-white to-white border-b border-slate-100 !m-0 !p-0">
-      {/* Flowing line backdrop with light travelling along it */}
-      <svg aria-hidden viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 h-full w-full">
+    <section className="lp-hero relative z-10 w-full overflow-hidden border-b border-slate-100 bg-white !m-0 !p-0">
+      {/* ── Backdrop (static layers + one GPU-friendly line animation on desktop) ── */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-red-50/70 via-white to-white" />
+        {/* faint grid, fading out */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.10)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_70%_60%_at_30%_30%,black,transparent)]" />
+        {/* soft colour blobs */}
+        <div className="lp-hero-blob absolute -left-24 -top-24 h-[380px] w-[380px] rounded-full bg-red-200/35 blur-3xl" />
+        <div className="lp-hero-blob-late absolute right-[-8%] top-[18%] hidden h-[440px] w-[440px] rounded-full bg-rose-200/30 blur-3xl lg:block" />
+      </div>
+      <svg aria-hidden viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block">
         <defs>
           <linearGradient id="lp-hero-line" x1="0" x2="1">
             <stop offset="0" stopColor="#ef4444" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#ef4444" stopOpacity="0.28" />
+            <stop offset="0.5" stopColor="#ef4444" stopOpacity="0.22" />
             <stop offset="1" stopColor="#ef4444" stopOpacity="0" />
           </linearGradient>
         </defs>
         {HERO_LINES.map((d, i) => (
           <g key={i}>
             <path d={d} fill="none" stroke="url(#lp-hero-line)" strokeWidth="1" />
-            <path d={d} fill="none" stroke="#ef4444" strokeOpacity="0.5" strokeWidth="1.6" strokeLinecap="round" pathLength={100} strokeDasharray="5 95" className="lp-hero-flow" style={{ animationDuration: `${8 + i * 1.5}s`, animationDelay: `${i * -2}s` }} />
+            <path d={d} fill="none" stroke="#ef4444" strokeOpacity="0.45" strokeWidth="1.6" strokeLinecap="round" pathLength={100} strokeDasharray="5 95" className="lp-hero-flow" style={{ animationDuration: `${8 + i * 1.5}s`, animationDelay: `${i * -2}s` }} />
           </g>
         ))}
       </svg>
@@ -77,65 +88,92 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
         @keyframes lp-hero-flow { from { stroke-dashoffset: 100 } to { stroke-dashoffset: 0 } }
         @keyframes lp-hero-float { 0%,100% { translate: 0 0 } 50% { translate: 0 -8px } }
         @keyframes lp-hero-spin { to { rotate: 360deg } }
-        .lp-hero-flow { display: none; }
-        @media (min-width: 1024px) { .lp-hero-flow { display: inline; animation: lp-hero-flow linear infinite; } }
+        @keyframes lp-hero-drift { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(24px,18px,0) } }
+        /* entrance: content fades up; the heading only slides (no fade) so it paints immediately */
+        @keyframes lp-hero-in { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+        @keyframes lp-hero-rise { from { transform: translateY(14px) } to { transform: none } }
+        @keyframes lp-hero-card { from { opacity: 0; transform: translateY(18px) scale(.985) } to { opacity: 1; transform: none } }
+        @keyframes lp-hero-shine { 0% { transform: translateX(-130%) skewX(-20deg) } 60%,100% { transform: translateX(330%) skewX(-20deg) } }
+        @keyframes lp-hero-ring { 0% { transform: scale(.9); opacity: .55 } 100% { transform: scale(1.8); opacity: 0 } }
+        .lp-hero-flow { animation: lp-hero-flow linear infinite; }
         .lp-hero-float { animation: lp-hero-float 5s ease-in-out infinite; }
         .lp-hero-float-late { animation: lp-hero-float 5s ease-in-out 1.2s infinite; }
         .lp-hero-spin { animation: lp-hero-spin 50s linear infinite; }
-        @media (prefers-reduced-motion: reduce) { .lp-hero-flow, .lp-hero-float, .lp-hero-float-late, .lp-hero-spin { animation: none; } }
+        /* blob drift on desktop only (saves work on phones) */
+        @media (min-width: 1024px) {
+          .lp-hero-blob { animation: lp-hero-drift 18s ease-in-out infinite; }
+          .lp-hero-blob-late { animation: lp-hero-drift 22s ease-in-out -6s infinite reverse; }
+        }
+        .lp-hero-in { animation: lp-hero-in .6s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0s); }
+        .lp-hero-rise { animation: lp-hero-rise .6s cubic-bezier(.22,1,.36,1) both; }
+        .lp-hero-card { animation: lp-hero-card .7s cubic-bezier(.22,1,.36,1) .15s both; }
+        .lp-hero-mark { display: inline-block; background: linear-gradient(90deg,#dc2626,#f43f5e); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .lp-hero-cta { position: relative; overflow: hidden; }
+        .lp-hero-cta::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 35%; background: linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); animation: lp-hero-shine 3.6s ease-in-out 1.2s infinite; pointer-events: none; }
+        .lp-hero-ring { animation: lp-hero-ring 2.4s ease-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .lp-hero-flow, .lp-hero-float, .lp-hero-float-late, .lp-hero-spin, .lp-hero-blob, .lp-hero-blob-late,
+          .lp-hero-in, .lp-hero-rise, .lp-hero-card, .lp-hero-cta::after, .lp-hero-ring { animation: none; }
+        }
       `}</style>
 
-      {/* Top subtle radial aura */}
-      <div className="pointer-events-none absolute -top-28 left-1/2 h-[420px] w-full max-w-6xl -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08),transparent_70%)]" />
-
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="grid items-center gap-6 py-8 sm:gap-10 sm:py-10 lg:grid-cols-12 lg:gap-14 lg:py-12">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 font-sans sm:px-6 lg:px-8">
+        <div
+          className={`grid items-center gap-7 py-8 sm:gap-10 sm:py-10 lg:grid-cols-12 lg:gap-12 ${
+            aside ? "lg:min-h-[calc(100svh-64px)] lg:py-6" : "lg:py-12"
+          }`}
+        >
           {/* ================= LEFT CONTENT ================= */}
           <div className="flex flex-col items-start gap-4 lg:col-span-7 lg:gap-5">
             {/* Tag / Pre-headline */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-red-50/90 px-4 py-1.5 text-xs font-bold text-red-600 shadow-2xs backdrop-blur-xs">
-              <Sparkles className="h-3.5 w-3.5 text-red-500" />
-              <span className="tracking-normal uppercase text-[11px] font-extrabold sm:tracking-wider">
+            <div
+              className="lp-hero-in inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-white/80 py-1 pl-1 pr-4 text-xs font-bold text-red-600 shadow-[0_6px_18px_-12px_rgba(220,38,38,0.6)] backdrop-blur"
+              style={{ "--d": "0s" } as React.CSSProperties}
+            >
+              <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white">
+                <span aria-hidden className="lp-hero-ring absolute inset-0 rounded-full bg-red-500/50" />
+                <Sparkles className="relative h-3.5 w-3.5" />
+              </span>
+              <span className="text-[11px] font-extrabold uppercase tracking-normal sm:tracking-wider">
                 Accelerate Your Career
               </span>
             </div>
 
             {/* Heading */}
-            <h1 className="m-0 text-[26px] font-black leading-[1.12] tracking-tight text-slate-900 sm:text-[38px] md:text-[44px] lg:text-[48px]">
-              <HighlightedTitle text={hero.mainHeading} />
+            <h1 className="lp-hero-rise m-0 text-[28px] font-black leading-[1.1] tracking-tight text-slate-900 sm:text-[40px] md:text-[46px] lg:text-[52px]">
+              <HighlightedTitle text={hero.mainHeading} highlightClassName="lp-hero-mark" />
             </h1>
 
             {/* Description */}
             {hero.subHeading && (
-              <p className="m-0 max-w-[600px] text-[15px] leading-relaxed text-slate-600 sm:text-[17px] lg:text-[17px] whitespace-pre-line font-normal">
+              <p
+                className="lp-hero-in m-0 max-w-[600px] whitespace-pre-line text-[15px] font-normal leading-relaxed text-slate-600 sm:text-[17px]"
+                style={{ "--d": ".1s" } as React.CSSProperties}
+              >
                 <HighlightedTitle text={hero.subHeading} />
               </p>
             )}
 
             {/* CTAs */}
             {/* Mobile: both CTAs on one line with smaller text. sm and up: unchanged */}
-            <div className="flex w-full flex-nowrap items-center gap-2.5 pt-1 sm:w-auto sm:flex-wrap sm:gap-3.5 sm:pt-2">
+            <div
+              className="lp-hero-in flex w-full flex-nowrap items-center gap-2.5 pt-1 sm:w-auto sm:flex-wrap sm:gap-3.5 sm:pt-2"
+              style={{ "--d": ".2s" } as React.CSSProperties}
+            >
               {hero.primaryCtaUrl?.startsWith("http") ? (
                 <a
                   href={hero.primaryCtaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base"
+                  className={PRIMARY_CTA}
                 >
-                  <span>{ctaText}</span>
-                  <ArrowRight
-                    className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
-                  />
+                  <span className="relative">{ctaText}</span>
+                  <ArrowRight className="relative h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]" />
                 </a>
               ) : (
-                <ApplyNowButton
-                  courses={formCourses}
-                  className="group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_10px_25px_-5px_rgba(239,68,68,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_14px_30px_-5px_rgba(239,68,68,0.45)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base"
-                >
-                  <span>{ctaText}</span>
-                  <ArrowRight
-                    className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
-                  />
+                <ApplyNowButton courses={formCourses} className={PRIMARY_CTA}>
+                  <span className="relative">{ctaText}</span>
+                  <ArrowRight className="relative h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]" />
                 </ApplyNowButton>
               )}
 
@@ -150,25 +188,39 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
             </div>
 
             {/* Micro Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5 pt-1 text-xs font-semibold text-slate-500 sm:text-[13px]">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>Free 1-on-1 Mentorship</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-red-500 shrink-0" />
-                <span>Globally Recognized</span>
-              </div>
-              <div className="hidden items-center gap-2 sm:flex">
-                <Award className="h-4 w-4 text-amber-500 shrink-0" />
-                <span>{hero.trustLabel || "WES / ECE Accredited"}</span>
-              </div>
-            </div>
+            <ul
+              className="lp-hero-in flex flex-wrap items-center gap-2 pt-1 text-xs font-semibold text-slate-600 sm:gap-2.5 sm:text-[13px]"
+              style={{ "--d": ".3s" } as React.CSSProperties}
+            >
+              <li className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 py-1 pl-1 pr-3 shadow-[0_4px_12px_-10px_rgba(15,23,42,0.5)] backdrop-blur">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                </span>
+                Free 1-on-1 Mentorship
+              </li>
+              <li className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 py-1 pl-1 pr-3 shadow-[0_4px_12px_-10px_rgba(15,23,42,0.5)] backdrop-blur">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-50 text-red-600">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                </span>
+                Globally Recognized
+              </li>
+              <li className="hidden items-center gap-2 rounded-full border border-slate-200 bg-white/80 py-1 pl-1 pr-3 shadow-[0_4px_12px_-10px_rgba(15,23,42,0.5)] backdrop-blur sm:flex">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+                  <Award className="h-3.5 w-3.5" />
+                </span>
+                {hero.trustLabel || "WES / ECE Accredited"}
+              </li>
+            </ul>
+
           </div>
 
           {aside ? (
             /* ================= RIGHT: CUSTOM CONTENT (inline form) ================= */
-            <div className="relative lg:col-span-5">{aside}</div>
+            <div className="lp-hero-card relative lg:col-span-5">
+              {/* soft glow behind the card */}
+              <div aria-hidden className="pointer-events-none absolute -inset-4 -z-10 rounded-[32px] bg-gradient-to-br from-red-200/50 via-rose-100/40 to-amber-100/50 blur-2xl" />
+              {aside}
+            </div>
           ) : (
           <>
           {/* ================= RIGHT IMAGE AREA ================= */}

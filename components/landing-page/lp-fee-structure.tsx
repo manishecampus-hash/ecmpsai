@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Check, Download, MapPin, Plane, Sparkles, Ticket, TrendingDown } from "lucide-react";
+import React, { useEffect, useId, useRef, useState } from "react";
+import { Check, ChevronDown, Download, MapPin, Plane, Sparkles, Ticket, TrendingDown } from "lucide-react";
 import { BrochureButton } from "@/components/form/apply-now-modal";
 import { LpHeading, LpSection } from "./lp-ui";
 import type { FeePlan } from "./lp-fee-data";
@@ -29,6 +29,187 @@ const CARD =
 
 /** "INR 50,000/-*" → "INR 50,000" for the savings ribbon */
 const cleanAmount = (v: string) => v.replace(/\/-|\*/g, "").trim();
+
+/** University logo (or initial) — used in the dropdown trigger and its options */
+function UniLogo({ plan, size = "md" }: { plan: FeePlan; size?: "sm" | "md" }) {
+  const box = size === "md" ? "h-9 w-[64px]" : "h-8 w-[56px]";
+  return (
+    <span className={`flex shrink-0 items-center justify-center rounded-lg bg-white ${box}`}>
+      {plan.logo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={plan.logo} alt="" loading="lazy" className="max-h-full w-full object-contain" />
+      ) : (
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-sm font-black text-slate-700 ring-1 ring-slate-200">
+          {plan.label.charAt(0)}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function UniNote({ plan }: { plan: FeePlan }) {
+  if (!plan.tabNote) return null;
+  return (
+    <span className={`block truncate text-[11px] font-semibold ${plan.immersion ? "text-emerald-600" : "text-slate-500"}`}>
+      {plan.tabNote}
+    </span>
+  );
+}
+
+/**
+ * Custom dropdown (the native <select> list can't be styled or show logos).
+ * Listbox pattern: arrow keys / Home / End move, Enter or Space selects, Esc or an outside click closes.
+ */
+function UniversitySelect({
+  plans,
+  value,
+  onChange,
+  label,
+}: {
+  plans: FeePlan[];
+  value: string;
+  onChange: (id: string) => void;
+  label: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const baseId = useId();
+  const selectedIndex = Math.max(0, plans.findIndex((p) => p.id === value));
+  const selected = plans[selectedIndex];
+
+  // Close on outside click / tap
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [open]);
+
+  // Keep the highlighted option in view
+  useEffect(() => {
+    if (!open) return;
+    listRef.current?.querySelector<HTMLElement>(`[data-index="${highlight}"]`)?.scrollIntoView({ block: "nearest" });
+  }, [open, highlight]);
+
+  const openList = () => {
+    setHighlight(selectedIndex);
+    setOpen(true);
+  };
+  const choose = (index: number) => {
+    onChange(plans[index].id);
+    setOpen(false);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (!open) {
+      if (["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) {
+        e.preventDefault();
+        openList();
+      }
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((h) => Math.min(plans.length - 1, h + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((h) => Math.max(0, h - 1));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setHighlight(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setHighlight(plans.length - 1);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      choose(highlight);
+    } else if (e.key === "Escape" || e.key === "Tab") {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div ref={rootRef} className="relative z-30 mx-auto mb-5 w-full max-w-md sm:mb-6">
+      <p id={`${baseId}-label`} className="mb-1.5 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
+        Select University
+      </p>
+
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={`${baseId}-list`}
+        aria-labelledby={`${baseId}-label ${baseId}-value`}
+        aria-activedescendant={open ? `${baseId}-opt-${highlight}` : undefined}
+        onClick={() => (open ? setOpen(false) : openList())}
+        onKeyDown={onKeyDown}
+        className={`flex h-14 w-full items-center gap-3 rounded-2xl border-[1.5px] bg-white pl-3 pr-4 text-left shadow-[0_10px_24px_-14px_rgba(220,38,38,0.55)] outline-none transition-all duration-200 focus-visible:ring-4 focus-visible:ring-red-100 ${
+          open ? "border-red-600 ring-4 ring-red-100" : "border-red-500 hover:border-red-600"
+        }`}
+      >
+        <UniLogo plan={selected} />
+        <span id={`${baseId}-value`} className="min-w-0 flex-1 leading-tight">
+          <span className="block truncate text-[15px] font-bold text-slate-900">{selected.label}</span>
+          <UniNote plan={selected} />
+        </span>
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-200 ${
+            open ? "rotate-180 bg-red-600 text-white" : "bg-red-50 text-red-600"
+          }`}
+        >
+          <ChevronDown className="h-4 w-4" strokeWidth={2.5} />
+        </span>
+      </button>
+
+      {open && (
+        <ul
+          ref={listRef}
+          id={`${baseId}-list`}
+          role="listbox"
+          aria-label={label}
+          tabIndex={-1}
+          className="lp-uni-menu absolute inset-x-0 top-full mt-2 max-h-[min(380px,60vh)] overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_24px_50px_-20px_rgba(15,23,42,0.45)] [scrollbar-width:thin]"
+        >
+          {plans.map((p, i) => {
+            const isSelected = i === selectedIndex;
+            const isHighlighted = i === highlight;
+            return (
+              <li
+                key={p.id}
+                id={`${baseId}-opt-${i}`}
+                data-index={i}
+                role="option"
+                aria-selected={isSelected}
+                onMouseEnter={() => setHighlight(i)}
+                onClick={() => choose(i)}
+                className={`flex cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 transition-colors duration-150 ${
+                  isSelected ? "bg-red-50" : isHighlighted ? "bg-slate-50" : ""
+                }`}
+              >
+                <UniLogo plan={p} size="sm" />
+                <span className="min-w-0 flex-1 leading-tight">
+                  <span className={`block truncate text-[14.5px] font-bold ${isSelected ? "text-red-700" : "text-slate-800"}`}>
+                    {p.label}
+                  </span>
+                  <UniNote plan={p} />
+                </span>
+                {isSelected && (
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export function LpFeeStructure({
   programLabel,
@@ -63,57 +244,17 @@ export function LpFeeStructure({
           }
           heading={heading}
           description={description}
+          // Mobile: one line, font scales with the screen width; sm+ unchanged
+          descriptionClassName="whitespace-nowrap text-[clamp(10px,3.05vw,15px)] tracking-[-0.01em] sm:whitespace-normal sm:tracking-normal"
         />
 
-        {/* University selector — compact tabs */}
-        <div
-          role="tablist"
-          aria-label={`${programLabel} fee by university`}
-          className="-mx-4 mb-5 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:mb-6 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
-        >
-          {plans.map((p) => {
-            const active = p.id === plan.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setActiveId(p.id)}
-                className={`flex shrink-0 snap-start items-center gap-2.5 rounded-xl border px-2.5 py-1.5 text-left transition-all duration-200 ${
-                  active
-                    ? "border-red-500 bg-red-50/60 shadow-[0_6px_16px_-10px_rgba(220,38,38,0.55)]"
-                    : "border-slate-200 bg-white hover:border-red-200 hover:bg-red-50/30"
-                }`}
-              >
-                <span className="flex h-8 w-[60px] shrink-0 items-center justify-center rounded-md bg-white">
-                  {p.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.logo} alt={`${p.name} logo`} loading="lazy" className="max-h-8 w-full object-contain" />
-                  ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-sm font-black text-slate-700">
-                      {p.label.charAt(0)}
-                    </span>
-                  )}
-                </span>
-                <span className="leading-tight">
-                  <span className={`block whitespace-nowrap text-[12.5px] font-bold ${active ? "text-red-700" : "text-slate-800"}`}>
-                    {p.label}
-                  </span>
-                  {p.tabNote && (
-                    <span
-                      className={`block whitespace-nowrap text-[10px] font-semibold ${
-                        p.immersion || /included/i.test(p.tabNote) ? "text-emerald-600" : "text-slate-400"
-                      }`}
-                    >
-                      {p.tabNote}
-                    </span>
-                  )}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        {/* University selector — custom dropdown with logos */}
+        <UniversitySelect
+          plans={plans}
+          value={plan.id}
+          onChange={setActiveId}
+          label={`${programLabel} fee by university`}
+        />
 
         {/* Selected university */}
         <p className="mb-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-sm font-semibold text-slate-600">
@@ -138,25 +279,28 @@ export function LpFeeStructure({
 
             <div className="px-5 pb-2 pt-12 text-center sm:px-8 sm:pt-10">
               <CardPill>{plan.cardTitle}</CardPill>
+              {plan.cardSubtitle && (
+                <p className="mt-2 text-xs font-bold uppercase tracking-wider text-slate-500">{plan.cardSubtitle}</p>
+              )}
             </div>
 
             <dl className="px-5 sm:px-8">
-              <div className="flex items-center justify-between gap-3 border-b border-slate-200 py-4">
+              <div className="flex flex-col items-center gap-0.5 border-b border-slate-200 py-3.5 text-center sm:flex-row sm:justify-between sm:gap-3 sm:py-4 sm:text-left">
                 <dt className="text-[15px] text-slate-600 sm:text-base">Standard Fee:</dt>
-                <dd className="text-right text-[15px] font-extrabold text-slate-900 sm:text-base">
+                <dd className="text-center text-[15px] font-extrabold text-slate-900 sm:text-right sm:text-base">
                   {plan.standardFee}
                   {plan.standardFeeNote && (
                     <span className="block text-[11px] font-normal text-slate-500">{plan.standardFeeNote}</span>
                   )}
                 </dd>
               </div>
-              <div className="flex items-center justify-between gap-3 border-b border-slate-200 py-4">
+              <div className="flex flex-col items-center gap-0.5 border-b border-slate-200 py-3.5 text-center sm:flex-row sm:justify-between sm:gap-3 sm:py-4 sm:text-left">
                 <dt className="text-[15px] text-slate-600 sm:text-base">eCampus Waiver:</dt>
                 <dd className="whitespace-nowrap text-[15px] font-extrabold text-emerald-600 sm:text-base">{plan.waiver}</dd>
               </div>
             </dl>
 
-            <div className="mt-5 flex-1 bg-gradient-to-b from-slate-50 to-red-50/60 px-5 pb-7 pt-5 sm:px-8">
+            <div className="mt-5 flex-1 bg-gradient-to-b from-slate-50 to-red-50/60 px-5 pb-7 pt-5 text-center sm:px-8 sm:text-left">
               {plan.payableFee && (
                 <div className="mb-5">
                   <p className="text-[15px] text-slate-700 sm:text-base">
@@ -183,11 +327,11 @@ export function LpFeeStructure({
                 </p>
                 <p className="mt-2 text-sm text-slate-500">{plan.immersion.taxText}</p>
               </div>
-              <div className="flex-1 bg-gradient-to-b from-slate-50 to-red-50/60 px-6 py-7 sm:px-10">
+              <div className="flex flex-1 flex-col items-center bg-gradient-to-b from-slate-50 to-red-50/60 px-6 py-7 sm:block sm:px-10">
                 {plan.immersion.showInclusionsTitle && (
-                  <p className="mb-3.5 text-xs font-bold uppercase tracking-wider text-slate-500">Inclusions</p>
+                  <p className="mb-3.5 text-center text-xs font-bold uppercase tracking-wider text-slate-500 sm:text-left">Inclusions</p>
                 )}
-                <ul className="space-y-3.5">
+                <ul className="w-fit space-y-3.5 sm:w-auto">
                   {plan.immersion.inclusions.map((item) => (
                     <CheckItem key={item}>{item}</CheckItem>
                   ))}
@@ -209,7 +353,7 @@ export function LpFeeStructure({
             className="lp-fee-cta group/btn relative inline-flex min-h-12 w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_28px_-10px_rgba(239,68,68,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_16px_32px_-10px_rgba(239,68,68,0.7)] active:translate-y-0 sm:min-h-[52px] sm:text-[15px]"
           >
             <Download className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover/btn:translate-y-0.5" />
-            Download {plan.name} Brochure
+            Download Brochure
           </BrochureButton>
           <p className="max-w-3xl text-center text-[11px] leading-relaxed text-slate-400">
             Fees are as per the university and may change. Final fee is confirmed at the time of admission.
@@ -220,9 +364,11 @@ export function LpFeeStructure({
       <style>{`
         @keyframes lp-fee-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
         .lp-fee-in { animation: lp-fee-in .4s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes lp-uni-menu { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+        .lp-uni-menu { animation: lp-uni-menu .18s ease-out; }
         @keyframes lp-fee-shine { from { transform: translateX(-120%) skewX(-20deg); } to { transform: translateX(320%) skewX(-20deg); } }
         .lp-fee-cta::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 35%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); animation: lp-fee-shine 3.2s ease-in-out infinite; pointer-events: none; }
-        @media (prefers-reduced-motion: reduce) { .lp-fee-in, .lp-fee-cta::after { animation: none; } }
+        @media (prefers-reduced-motion: reduce) { .lp-fee-in, .lp-fee-cta::after, .lp-uni-menu { animation: none; } }
       `}</style>
     </LpSection>
   );

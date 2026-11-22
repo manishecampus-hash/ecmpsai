@@ -20,6 +20,8 @@ import CourseOffer from "@/components/course/course-offer";
 import Professionals from "@/components/course/professionals";
 import CourseFAQ from "@/components/course/course-faq";
 import CourseStickyPopup from "@/components/course/course-sticky-popup";
+import { ApplyFormStyleProvider } from "@/components/form/apply-now-modal";
+import { getFormCourses } from "@/data/form-courses";
 import { buildPodcastScript } from "@/components/course/podcast-script";
 
 interface SeoSettings {
@@ -182,6 +184,8 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
   }
 
   return (
+    // Every Apply / Brochure popup on this course page lists this course's options (e.g. MAJMC on /online-majmc)
+    <ApplyFormStyleProvider value="lp" courses={getFormCourses(course.name)}>
     <main className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans">
       {/* Course pages use their own quick-action bar: hide the mobile bottom nav and WhatsApp button */}
       <style>{`[data-mobile-bottom-nav],[data-floating-whatsapp]{display:none!important}`}</style>
@@ -265,5 +269,6 @@ export default async function RootCourseDetailPage({ params }: PageProps) {
         brochureUrl={course.brochureUrl}
       />
     </main>
+    </ApplyFormStyleProvider>
   );
 }

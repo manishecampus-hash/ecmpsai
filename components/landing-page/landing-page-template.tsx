@@ -1,5 +1,5 @@
 import React from "react";
-import { Footer } from "@/components/layout/footer";
+import LpFooter from "./lp-footer";
 import UniversityPrograms from "@/components/online-dba/university-programs";
 import LandingPageHero, { LandingPageHeroData } from "./landing-page-hero";
 import type { LandingPageStatisticItem } from "./landing-page-stats";
@@ -234,7 +234,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
       )}
 
       {/* Sticky in-page navigation (same component & look as the university pages) */}
-      <SubHeader items={subHeaderItems} spread />
+      <SubHeader items={subHeaderItems} spread hideAfterId="lp-faq" />
 
       {/* MBA: partners strip, key programme info, about + recognitions — right after the hero */}
       {isMba && globalPartners?.logos && globalPartners.logos.length > 0 && (
@@ -388,8 +388,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
       {isDba && <DbaFinalCta />}
       {isMba && <MbaFinalCta />}
 
-      {/* 10. Footer */}
-      <Footer />
+      {/* 10. Slim landing-page footer (no menu columns) */}
+      <LpFooter />
 
       {/* DBA page: floating gift button (bottom-left) opens the Apply form */}
       {isDba && <DbaGiftButton courses={formCourses} />}

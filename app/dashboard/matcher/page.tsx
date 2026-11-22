@@ -650,6 +650,7 @@ function Dropdown({
   icon: Icon,
   bordered = true,
   align = "left",
+  size = "md",
 }: {
   value: string;
   options: { value: string; label: string }[];
@@ -657,6 +658,8 @@ function Dropdown({
   icon?: React.ComponentType<{ className?: string }>;
   bordered?: boolean;
   align?: "left" | "right";
+  /** "sm" = h-9 (36px) trigger, matching the results search bar */
+  size?: "md" | "sm";
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -679,7 +682,9 @@ function Dropdown({
         onClick={() => setOpen((v) => !v)}
         className={
           bordered
-            ? "flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-700 transition hover:border-gray-300"
+            ? size === "sm"
+              ? "flex h-8 w-full items-center gap-1 rounded-lg border border-gray-200 bg-white px-2 text-xs font-medium text-gray-700 transition hover:border-gray-300 sm:h-9 sm:gap-2 sm:rounded-xl sm:px-3 sm:text-[13px]"
+              : "flex w-full items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-700 transition hover:border-gray-300"
             : "flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-gray-900 transition hover:text-gray-900"
         }
       >
@@ -1505,17 +1510,21 @@ export default function AIDegreeMatcherPage() {
                   Universities Found
                 </p>
 
-                {/* Search — second row on phones; existing responsive flow on larger screens */}
-                <div className="col-start-2 row-start-2 flex min-w-0 justify-end sm:order-last sm:basis-full md:order-none md:min-w-0 md:flex-1 md:basis-0 lg:order-last lg:basis-full xl:order-none xl:basis-0">
-                  <label className="group flex h-9 w-full min-w-0 items-center gap-1.5 rounded-xl border border-red-300 bg-white px-2 transition-[max-width,border-color,box-shadow] duration-300 ease-out hover:border-red-400 focus-within:border-red-500 focus-within:shadow-[0_0_0_3px_rgba(238,44,60,0.10)] sm:gap-2 sm:px-3 md:max-w-[180px] md:focus-within:max-w-[300px] lg:max-w-none lg:focus-within:max-w-none xl:max-w-[220px] xl:focus-within:max-w-[300px]">
-                    <Search className="h-4 w-4 flex-shrink-0 text-gray-400 transition-colors group-focus-within:text-red-500" />
+                {/* Phones: Sort by + Search share the second row (sort keeps its width, search takes the rest).
+                    sm and up: this wrapper dissolves (`contents`) so both keep their existing responsive flow. */}
+                <div className="col-span-2 row-start-2 flex min-w-0 items-center gap-2 sm:contents">
+                {/* Search */}
+                <div className="order-2 flex min-w-0 flex-1 justify-end sm:order-last sm:basis-full md:order-none md:min-w-0 md:flex-1 md:basis-0 lg:order-last lg:basis-full xl:order-none xl:basis-0">
+                  <label className="group flex h-8 w-full min-w-0 items-center gap-1.5 overflow-hidden rounded-lg border border-red-300 bg-white px-2 sm:h-9 sm:rounded-xl transition-[max-width,border-color,box-shadow] duration-300 ease-out hover:border-red-400 focus-within:border-red-500 focus-within:shadow-[0_0_0_3px_rgba(238,44,60,0.10)] sm:gap-2 sm:px-3 md:max-w-[180px] md:focus-within:max-w-[300px] lg:max-w-none lg:focus-within:max-w-none xl:max-w-[220px] xl:focus-within:max-w-[300px]">
+                    <Search className="h-3.5 w-3.5 flex-shrink-0 text-gray-400 transition-colors group-focus-within:text-red-500 sm:h-4 sm:w-4" />
                     <input
                       type="text"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search universities…"
                       aria-label="Search universities, degrees, or specializations"
-                      className="h-full w-full min-w-0 rounded-none border-0 bg-transparent p-0 text-[13px] text-gray-900 outline-none placeholder:text-gray-400 focus:border-0 focus:bg-transparent focus:shadow-none focus:outline-none focus:ring-0"
+                      // Phones: 16px text (so iOS doesn't zoom into the field) drawn at ~13px via scale; 13px from sm up
+                      className="h-full w-full min-w-0 rounded-none border-0 bg-transparent p-0 text-base text-gray-900 outline-none placeholder:text-gray-400 max-sm:-mr-[23%] max-sm:w-[123%] max-sm:origin-left max-sm:scale-[0.8125] sm:text-[13px] focus:border-0 focus:bg-transparent focus:shadow-none focus:outline-none focus:ring-0"
                     />
                     {search && (
                       <button
@@ -1530,13 +1539,14 @@ export default function AIDegreeMatcherPage() {
                   </label>
                 </div>
 
-                <div className="col-start-1 row-start-2 flex min-w-0 items-center gap-1.5 text-xs sm:text-sm">
+                <div className="order-1 flex flex-shrink-0 items-center gap-1.5 text-[11px] sm:order-none sm:text-sm">
                   <span className="flex-shrink-0 text-gray-500">Sort by</span>
-                  <div className="w-24 sm:w-44">
+                  <div className="w-[88px] sm:w-44">
                     <Dropdown
+                      size="sm"
                       value={sortBy}
                       onChange={(v) => setSortBy(v as SortKey)}
-                      align="right"
+                      align="left"
                       options={[
                         { value: "match", label: "AI Match Score" },
                         { value: "rating", label: "Highest Rated" },
@@ -1545,6 +1555,7 @@ export default function AIDegreeMatcherPage() {
                       ]}
                     />
                   </div>
+                </div>
                 </div>
 
                 {/* Filters — compact mobile trigger beside the result count */}
@@ -1562,6 +1573,20 @@ export default function AIDegreeMatcherPage() {
                   )}
                 </button>
               </div>
+
+              {/* Animated fee: the gradient slowly flows across the amount (CSS only, no layout change) */}
+              <style>{`
+                @keyframes matcher-fee-flow { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+                .matcher-fee {
+                  background-image: linear-gradient(90deg, #dc2626, #f43f5e, #fb923c, #f43f5e, #dc2626);
+                  background-size: 200% auto;
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  color: transparent;
+                  animation: matcher-fee-flow 4s linear infinite;
+                }
+                @media (prefers-reduced-motion: reduce) { .matcher-fee { animation: none; } }
+              `}</style>
 
               <AnimatePresence initial={false}>
                 {activeChips.length > 0 && (
@@ -1660,18 +1685,33 @@ export default function AIDegreeMatcherPage() {
                         transition={{ layout: LAYOUT_SPRING }}
                       >
                       <div
-                        className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 sm:flex-row sm:items-center"
+                        className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_10px_28px_-20px_rgba(15,23,42,0.45)] sm:gap-5 sm:p-5 sm:shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-red-200 hover:shadow-lg hover:shadow-red-100/50 sm:flex-row sm:items-center"
                       >
                         <div className="relative h-36 w-full flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 sm:h-32 sm:w-40">
                           <UniImage src={u.image} alt={u.name} className="object-cover" />
-                          <span className="absolute left-2 top-2 rounded-md bg-red-600 px-2 py-1 text-xs font-bold text-white shadow-sm">
+                          <span className="absolute left-2 top-2 rounded-md bg-gradient-to-r from-red-600 to-rose-500 px-2 py-1 text-xs font-bold text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
                             {u.matchScore}% Match
                           </span>
+                          {/* Phones: rating on the image */}
+                          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md bg-white/95 px-1.5 py-0.5 text-[11px] font-bold text-gray-800 shadow-sm sm:hidden">
+                            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                            {u.rating.toFixed(1)}
+                            <span className="font-medium text-gray-400">
+                              ({(u.reviews / 1000).toFixed(1).replace(".0", "")}k)
+                            </span>
+                          </span>
+                          {/* Phones: university name over the image */}
+                          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-3 pb-2 pt-10 sm:hidden">
+                            <p className="line-clamp-2 text-[13px] font-extrabold uppercase leading-snug tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]">
+                              {u.name}
+                            </p>
+                          </div>
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-bold tracking-wide text-red-600">
+                          <div className="hidden flex-wrap items-center gap-2 sm:flex">
+                            {/* shown on the image on phones */}
+                            <span className="hidden text-xs font-bold tracking-wide text-red-600 sm:inline">
                               {u.name.toUpperCase()}
                             </span>
                             <span className="inline-flex items-center gap-1 text-sm text-gray-500">
@@ -1683,45 +1723,65 @@ export default function AIDegreeMatcherPage() {
                             </span>
                           </div>
 
-                          <p className="mt-1.5 text-lg font-semibold text-gray-900">{u.program}</p>
+                          {/* Course name — on phones with "Annual Fee ₹…" on the same line */}
+                          <div className="flex items-baseline justify-between gap-3 sm:block">
+                            <p className="min-w-0 flex-1 pt-0.5 text-[15px] font-bold leading-snug text-gray-900 sm:mt-1.5 sm:pt-0 sm:text-lg sm:font-semibold">
+                              {u.program}
+                            </p>
+                            {/* same line height as before — colour & weight do the work */}
+                            <p className="flex flex-shrink-0 items-baseline gap-1.5 whitespace-nowrap sm:hidden">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Annual Fee</span>
+                              <span className="matcher-fee text-[16px] font-extrabold tracking-tight">
+                                ₹{u.fee.toLocaleString("en-IN")}
+                              </span>
+                            </p>
+                          </div>
 
-                          <div className="mt-2.5 flex flex-wrap gap-2">
+                          {/* Phones: duration · eligibility, then scholarship, then tags (sm+ keeps the original order) */}
+                          <div className="flex flex-col sm:block">
+                          <div className="order-3 mt-2.5 flex flex-wrap gap-1.5 sm:order-none sm:mt-2.5 sm:gap-2">
                             {(u.tags && u.tags.length > 0 ? u.tags : [
                               ...u.accreditations.map((a) => ACCREDITATION_CHIP_LABEL[a] || a),
                               ...u.features.map((f) => FEATURE_CHIP_LABEL[f] || f),
                             ]).map((badge) => (
                               <span
                                 key={badge}
-                                className="rounded-full bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
+                                // "N+ Hiring Partners" shows on tablet / desktop only (hidden on phones)
+                                className={`rounded-full bg-gray-50 px-2.5 py-1 text-[11px] font-medium text-gray-600 ring-1 ring-gray-100 sm:px-3 sm:py-1.5 sm:text-xs sm:ring-0 ${
+                                  /hiring partners/i.test(badge) ? "hidden sm:inline-block" : ""
+                                }`}
                               >
                                 {badge}
                               </span>
                             ))}
                           </div>
 
-                          <p className="mt-3 text-sm text-gray-500">
-                            Annual Fee{" "}
-                            <span className="font-semibold text-gray-900">
+                          {/* Annual fee — sm+ only (shown beside the course name on phones) */}
+                          <p className="mt-3 hidden items-baseline gap-2 sm:flex">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Annual Fee</span>
+                            <span className="matcher-fee text-base font-extrabold tracking-tight">
                               ₹{u.fee.toLocaleString("en-IN")}
                             </span>
                           </p>
                           {u.scholarshipNote && (
-                            <p className="mt-0.5 text-xs font-medium text-emerald-600">
+                            <p className="order-2 mt-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-gray-700 sm:order-none sm:mt-1 sm:text-xs">
+                              <Sparkles className="h-3.5 w-3.5 flex-shrink-0 text-amber-500" />
                               {u.scholarshipNote}
                             </p>
                           )}
-                          <p className="mt-0.5 text-xs text-gray-400">
+                          <p className="order-1 mt-1 text-[11.5px] text-gray-500 sm:order-none sm:mt-0.5 sm:text-xs sm:text-gray-400">
                             {u.durationNote}
                             {u.eligibility ? ` · Eligibility: ${u.eligibility}` : ""}
                           </p>
+                          </div>
                         </div>
 
-                        <div className="flex flex-shrink-0 flex-col gap-3 sm:w-40">
-                        <div className="flex gap-2.5 sm:flex-col">
+                        <div className="flex flex-shrink-0 flex-col gap-2 border-t border-gray-100 pt-3 sm:w-40 sm:gap-3 sm:border-0 sm:pt-0">
+                        <div className="flex gap-2 sm:flex-col sm:gap-2.5">
                           <button
                             type="button"
                             onClick={() => toggleCompare(u.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-semibold transition active:scale-[0.97] sm:flex-none sm:w-full ${
+                            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-2 text-[13px] font-semibold transition active:scale-[0.97] sm:flex-none sm:w-full sm:px-4 sm:py-2.5 sm:text-sm ${
                               compared
                                 ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                                 : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
@@ -1740,7 +1800,7 @@ export default function AIDegreeMatcherPage() {
                           </button>
                           <button
                             type="button"
-                            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 hover:shadow-md active:scale-[0.97] sm:flex-none sm:w-full"
+                            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-red-600 px-3 py-2 text-[13px] font-semibold text-white shadow-sm sm:px-4 sm:py-2.5 sm:text-sm transition hover:bg-red-700 hover:shadow-md active:scale-[0.97] sm:flex-none sm:w-full"
                           >
                             <Zap className="h-3.5 w-3.5 fill-white" />
                             1-Click Apply

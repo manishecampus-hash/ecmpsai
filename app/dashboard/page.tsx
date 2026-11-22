@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gift, Copy, Check } from "lucide-react";
 import Sidebar from "./components/sidebar";
 import Topbar from "./components/topbar";
 import WelcomeBanner from "./components/welcome-banner";
-import StatsCards from "./components/stats-cards";
 import Recommendations from "./components/recommendations";
-import Milestones from "./components/milestones";
 import SpinWheelModal from "./components/spin-wheel/spin-wheel-modal";
 import ResumeScanScreen from "./components/resume-scan/resume-scan-screen";
 import type { SpinWheelReward } from "./components/spin-wheel/data";
@@ -24,7 +21,6 @@ export default function DashboardPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [spinWheelOpen, setSpinWheelOpen] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [bannerCopied, setBannerCopied] = useState(false);
 
   useEffect(() => {
     let openTimer: NodeJS.Timeout | null = null;
@@ -200,15 +196,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCopyRewardBanner = async () => {
-    if (!wonReward) return;
-    try {
-      await navigator.clipboard.writeText(wonReward.couponCode);
-      setBannerCopied(true);
-      setTimeout(() => setBannerCopied(false), 2000);
-    } catch {}
-  };
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
       <Sidebar
@@ -224,56 +211,10 @@ export default function DashboardPage() {
         />
 
         <main className="flex min-w-0 flex-1 flex-col gap-5 overflow-y-auto p-4 sm:p-6">
-          {/* Active Scholarship Reward Banner — displays whenever user logs in if reward is won */}
-          {wonReward && (
-            <div className="relative overflow-hidden rounded-2xl border border-red-200 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 p-4 text-white shadow-md sm:p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3.5">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm ring-1 ring-white/30">
-                    <Gift className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-red-100">
-                        Scholarship Reward Unlocked
-                      </span>
-                      <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold text-white">
-                        100% Verified
-                      </span>
-                    </div>
-                    <p className="mt-0.5 text-base font-bold sm:text-lg">
-                      You won a <span className="underline decoration-white/40">{wonReward.label}</span> scholarship discount!
-                    </p>
-                    <p className="text-xs text-red-100">
-                      Apply code during university admission checkout or share with your academic advisor.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5 self-start sm:self-center">
-                  <div className="flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-3.5 py-2 backdrop-blur-sm">
-                    <span className="text-xs font-medium text-red-100">Code:</span>
-                    <span className="font-mono text-base font-extrabold tracking-wider text-white">
-                      {wonReward.couponCode}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleCopyRewardBanner}
-                    className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-white px-3.5 text-xs font-bold text-red-600 shadow-sm transition hover:bg-red-50 active:scale-95"
-                  >
-                    {bannerCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    <span>{bannerCopied ? "Copied" : "Copy Code"}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
+          {/* "Scholarship Reward Unlocked" banner, Milestones and KPI cards removed from the overview.
+              The won code is still shown in the top bar. */}
           <WelcomeBanner student={student} onResumeSelected={setResumeFile} />
           <Recommendations student={student} />
-          <Milestones />
-          <StatsCards />
         </main>
       </div>
 

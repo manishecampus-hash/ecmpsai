@@ -1003,8 +1003,13 @@ export function Navbar() {
       setLpHeaderHidden(false);
       return;
     }
-    // same trigger point as the in-page sub-header (400px)
-    const onScroll = () => setLpHeaderHidden(window.scrollY > 400);
+    // Same trigger point as the in-page sub-header (400px). Once the visitor has scrolled past the
+    // FAQs, the sub-header hides and this header (logo + call button) comes back.
+    const onScroll = () => {
+      const faq = document.getElementById("lp-faq");
+      const pastFaq = Boolean(faq && faq.getBoundingClientRect().bottom <= 64);
+      setLpHeaderHidden(window.scrollY > 400 && !pastFaq);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -1333,6 +1338,20 @@ export function Navbar() {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
+              {/* Landing pages: call button */}
+              {isLandingPage && (
+                <a
+                  href="tel:+919355907564"
+                  aria-label="Call 93559 07564"
+                  className="group inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 py-1 pl-1 pr-3.5 text-[13px] font-bold text-red-700 transition-colors duration-200 hover:border-red-600 hover:bg-red-600 hover:text-white sm:text-sm"
+                >
+                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white transition-colors group-hover:bg-white group-hover:text-red-600">
+                    <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-red-500/40 [animation-duration:2.2s]" />
+                    <Phone className="relative h-4 w-4" />
+                  </span>
+                  <span className="whitespace-nowrap tabular-nums">93559 07564</span>
+                </a>
+              )}
               {/* Desktop auth */}
               {student ? (
                 <div

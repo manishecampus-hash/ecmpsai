@@ -140,7 +140,8 @@ export default async function UniversityPage({ params }: UniversityPageProps) {
 
   return (
     <main className="min-h-screen">
-      <SubHeader university={university} />
+      {/* sub-header un-pins (main header shows again) once the FAQs have been scrolled past */}
+      <SubHeader university={university} hideAfterId="faq" />
       <HeroSection university={university} />
 
       <AboutProgram university={university} />

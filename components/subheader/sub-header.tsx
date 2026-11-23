@@ -15,6 +15,8 @@ export interface SubHeaderItemProp {
 interface SubHeaderProps {
   subHeaders?: SubHeaderItemProp[];
   courseSlug?: string;
+  /** Un-pin the bar (showing the main header again) once the section with this id has been scrolled past */
+  hideAfterId?: string;
 }
 
 interface NavItem {
@@ -37,7 +39,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "coupons", label: "Coupons", href: "/online-mba/coupons" },
 ];
 
-export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: SubHeaderProps) {
+export default function SubHeader({ subHeaders, courseSlug = "online-mba", hideAfterId }: SubHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeId, setActiveId] = useState<string>("overview");
@@ -46,6 +48,12 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const mainHeaderHeight = 70;
   const stickyTriggerOffset = 400;
+  // Pinned after 400px, until the `hideAfterId` section (e.g. the FAQs) has been scrolled past
+  const shouldPin = () => {
+    const endEl = hideAfterId ? document.getElementById(hideAfterId) : null;
+    const pastEnd = Boolean(endEl && endEl.getBoundingClientRect().bottom <= 64);
+    return window.scrollY > stickyTriggerOffset && !pastEnd;
+  };
   const [subHeaderHeight, setSubHeaderHeight] = useState<number>(56);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -132,7 +140,7 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
     if (pathname !== basePath) return;
 
     const handleScroll = () => {
-      setIsSticky(window.scrollY > stickyTriggerOffset);
+      setIsSticky(shouldPin());
 
       const offset =
         (window.scrollY > stickyTriggerOffset
@@ -159,8 +167,7 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba" }: Sub
 
   useEffect(() => {
     if (pathname === basePath) return;
-    const handleScroll = () =>
-      setIsSticky(window.scrollY > stickyTriggerOffset);
+    const handleScroll = () => setIsSticky(shouldPin());
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);

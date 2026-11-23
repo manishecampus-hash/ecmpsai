@@ -33,7 +33,22 @@ function LogoMarquee({
   tileClass: string;
   speed: number;
 }) {
-  const copies = logos.length < 4 ? 4 : 2;
+  // 1–3 universities: show each logo once in a still row (no scrolling / repeats).
+  // 4 or more: the endless scrolling strip below.
+  if (logos.length <= 3) {
+    return (
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
+        {logos.map((logo, i) => (
+          <div key={i} className={tileClass}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo.src} alt={logo.alt} className="max-h-full w-auto max-w-full object-contain" draggable={false} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const copies = 2;
   return (
     <div className={`relative overflow-hidden [transform:translateZ(0)] ${className ?? ""}`}>
       <div

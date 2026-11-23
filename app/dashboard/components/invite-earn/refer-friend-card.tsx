@@ -31,6 +31,47 @@ export function stageBadge(stage: number) {
   return { label: STAGE_LABELS[stage], className: "bg-amber-50 text-amber-700" };
 }
 
+/** Soft avatar colours, rotated per friend */
+const AVATAR_TONES = [
+  "bg-blue-50 text-blue-700",
+  "bg-emerald-50 text-emerald-700",
+  "bg-amber-50 text-amber-700",
+  "bg-violet-50 text-violet-700",
+  "bg-rose-50 text-rose-700",
+];
+
+/** Compact "View / Hide progress" button (sits above the row's full-size click area) */
+function ProgressButton({
+  selected,
+  name,
+  hint,
+  onClick,
+}: {
+  selected: boolean;
+  name: string;
+  /** soft ping on the first row until any friend is opened */
+  hint: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      aria-label={selected ? `Hide progress for ${name}` : `View progress for ${name}`}
+      className={`pointer-events-auto relative inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors duration-200 active:scale-95 ${
+        selected
+          ? "bg-red-600 text-white hover:bg-red-700"
+          : "border border-gray-200 bg-white text-gray-700 hover:border-red-600 hover:bg-red-600 hover:text-white"
+      }`}
+    >
+      {hint && <span aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500 motion-safe:animate-ping" />}
+      {selected ? <EyeOff className="h-3.5 w-3.5" aria-hidden /> : <Eye className="h-3.5 w-3.5" aria-hidden />}
+      {selected ? "Hide progress" : "View progress"}
+    </button>
+  );
+}
+
 export default function ReferFriendCard({
   referrals,
   selectedId,
@@ -82,12 +123,19 @@ export default function ReferFriendCard({
 
   return (
     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-     <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6">
-        <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+      <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100">
             <UserPlus className="h-5 w-5" aria-hidden />
           </span>
-          <h2 className="text-base font-bold text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
+          <div className="min-w-0">
+            <h2 className="text-[15px] font-bold text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
+            <p className="mt-0.5 text-xs text-gray-500">
+              {showForm
+                ? "Share a friend's details — our counselor will guide them"
+                : `${referrals.length} ${referrals.length === 1 ? "friend" : "friends"} invited · tap a friend to see progress`}
+            </p>
+          </div>
         </div>
         {!showForm && (
           <button
@@ -97,7 +145,7 @@ export default function ReferFriendCard({
               setFormOpen(true);
             }}
             aria-label="Invite another friend"
-            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98] sm:px-4"
+            className="inline-flex flex-shrink-0 items-center gap-2 rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98] sm:px-4"
           >
             <UserPlus className="h-4 w-4" aria-hidden />
             <span className="sm:hidden">Invite</span>
@@ -115,9 +163,9 @@ export default function ReferFriendCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
+            className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-4">
               <FormField
                 id="ref-name"
                 label="Candidate Name"
@@ -210,7 +258,7 @@ export default function ReferFriendCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
+            className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
             <AnimatePresence initial={false}>
               {justInvited && (
@@ -241,7 +289,7 @@ export default function ReferFriendCard({
               )}
             </AnimatePresence>
 
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {referrals.map((r, i) => {
                 const selected = r.id === selectedId;
                 const badge = stageBadge(r.stage);
@@ -251,19 +299,13 @@ export default function ReferFriendCard({
                     layout="position"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 5) * 0.05 } }}
-                    className={`group relative overflow-hidden rounded-xl border p-4 shadow-[inset_0_1px_0_rgba(255,255,255,1),0_8px_20px_-16px_rgba(17,24,39,0.35)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_16px_30px_-18px_rgba(17,24,39,0.4)] ${
+                    className={`group relative overflow-hidden rounded-xl border px-3.5 py-3 transition-[border-color,box-shadow,background-color] duration-200 sm:px-4 ${
                       selected
-                        ? "border-red-200 bg-gradient-to-br from-red-50 via-white to-red-50/40"
-                        : "border-gray-200 bg-gradient-to-b from-white to-gray-50 hover:border-red-100"
+                        ? "border-red-200 bg-red-50/50 shadow-[0_10px_24px_-18px_rgba(220,38,38,0.6)]"
+                        : "border-gray-200 bg-white hover:border-red-100 hover:shadow-[0_10px_24px_-20px_rgba(17,24,39,0.45)]"
                     }`}
                   >
-                    {/* Gloss: a glassy highlight on the top half and a light that sweeps across on hover */}
-                    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/70 to-transparent" />
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1/4 -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/70 to-transparent transition-transform duration-0 group-hover:translate-x-[500%] group-hover:duration-1000 motion-reduce:hidden"
-                    />
-                    {/* The whole card opens this friend's progress; the eye button sits above it */}
+                    {/* The whole row opens this friend's progress; the progress button sits above it */}
                     <button
                       type="button"
                       onClick={() => onSelect(r.id)}
@@ -279,85 +321,71 @@ export default function ReferFriendCard({
                       />
                     )}
 
-                    <div className="pointer-events-none relative flex items-start justify-between gap-3">
-                      <div className="flex min-w-0 flex-1 items-center gap-3">
-                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white ring-4 ring-red-50">
-                          {initials(r.name)}
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <p className="truncate text-[15px] font-bold text-gray-900">{r.name}</p>
-                            {r.courses.map((c) => (
-                              <span key={c} className="rounded-md bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-red-100">
-                                {c}
-                              </span>
-                            ))}
-                            {/* Labelled so it's clear this opens the friend's referral progress */}
-                            <button
-                              type="button"
-                              onClick={() => onSelect(selected ? null : r.id)}
-                              aria-pressed={selected}
-                              aria-label={selected ? `Hide progress for ${r.name}` : `View progress for ${r.name}`}
-                              className={`group/eye pointer-events-auto relative inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3.5 text-xs font-bold transition-all duration-300 active:scale-95 ${
-                                selected
-                                  ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-md shadow-red-600/30 hover:from-red-700 hover:to-red-600"
-                                  : "bg-gradient-to-r from-red-50 to-white text-red-600 shadow-sm ring-1 ring-red-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-red-600/20 hover:ring-red-300"
-                              }`}
-                            >
-                              <span
-                                className={`relative flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 ${
-                                  selected ? "bg-white text-red-600" : "bg-red-600 text-white"
-                                }`}
-                              >
-                                {/* A soft ping on the first card until a friend is opened, as a hint */}
-                                {!selectedId && i === 0 && (
-                                  <span aria-hidden className="absolute inset-0 rounded-full bg-red-500/40 motion-safe:animate-ping" />
-                                )}
-                                <AnimatePresence mode="wait" initial={false}>
-                                  <motion.span
-                                    key={selected ? "hide" : "show"}
-                                    initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
-                                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                                    exit={{ opacity: 0, scale: 0.5, rotate: 30 }}
-                                    transition={{ duration: 0.15 }}
-                                    className="relative flex"
-                                  >
-                                    {selected ? <EyeOff className="h-[18px] w-[18px]" aria-hidden /> : <Eye className="h-[18px] w-[18px]" aria-hidden />}
-                                  </motion.span>
-                                </AnimatePresence>
-                              </span>
-                              {selected ? "Hide progress" : "View progress"}
-                            </button>
-                          </div>
-                          <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
-                            <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" aria-hidden />
-                            Invited on {formatDate(r.createdAt)}
-                          </p>
-                          <span className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold sm:hidden ${badge.className}`}>
-                            <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                            {badge.label}
-                          </span>
+                    <div className="pointer-events-none relative flex items-start gap-3">
+                      <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ring-2 ring-white ${AVATAR_TONES[i % AVATAR_TONES.length]}`}>
+                        {initials(r.name)}
+                      </span>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <p className="truncate text-[14.5px] font-bold text-gray-900">{r.name}</p>
+                          {r.courses.map((c) => (
+                            <span key={c} className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10.5px] font-semibold text-gray-700">
+                              {c}
+                            </span>
+                          ))}
                         </div>
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                          <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" aria-hidden />
+                          Invited on {formatDate(r.createdAt)}
+                        </p>
                       </div>
-                      <div className="flex flex-shrink-0 items-center gap-2">
-                        <span className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold sm:inline-flex ${badge.className}`}>
+
+                      {/* Status + progress — right side on tablet / desktop */}
+                      <div className="hidden flex-shrink-0 items-center gap-2 sm:flex">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.className}`}>
                           <span className="h-1.5 w-1.5 rounded-full bg-current" />
                           {badge.label}
                         </span>
+                        <ProgressButton selected={selected} name={r.name} hint={!selectedId && i === 0} onClick={() => onSelect(selected ? null : r.id)} />
                       </div>
                     </div>
 
-                    <div className="pointer-events-none relative mt-3 grid gap-x-5 gap-y-2 border-t border-dashed border-gray-200 pt-3 text-xs text-gray-700 sm:grid-cols-3">
+                    {/* Phones: status + progress on their own row */}
+                    <div className="pointer-events-none relative mt-2.5 flex items-center justify-between gap-2 sm:hidden">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.className}`}>
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                        {badge.label}
+                      </span>
+                      <ProgressButton selected={selected} name={r.name} hint={!selectedId && i === 0} onClick={() => onSelect(selected ? null : r.id)} />
+                    </div>
+
+                    {/* Progress through the referral steps */}
+                    <div className="pointer-events-none relative mt-2.5 flex items-center gap-2.5">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(Math.min(r.stage, REFERRAL_STEPS.length) / REFERRAL_STEPS.length) * 100}%` }}
+                          transition={{ duration: 0.9, delay: 0.2 + Math.min(i, 5) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                          className="h-full rounded-full bg-gradient-to-r from-red-500 to-rose-400"
+                        />
+                      </div>
+                      <span className="whitespace-nowrap text-[11px] font-semibold text-gray-500">
+                        Step {Math.min(r.stage, REFERRAL_STEPS.length)} of {REFERRAL_STEPS.length}
+                      </span>
+                    </div>
+
+                    <div className="pointer-events-none relative mt-2.5 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-gray-600">
                       <span className="flex min-w-0 items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                        <Phone className="h-3.5 w-3.5 flex-shrink-0 text-gray-400" aria-hidden />
                         +91 {r.phone}
                       </span>
-                      <span className="flex min-w-0 items-center gap-1.5">
-                        <Mail className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                      <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 flex-shrink-0 text-gray-400" aria-hidden />
                         <span className="truncate">{r.email}</span>
                       </span>
                       <span className="flex min-w-0 items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-red-500" aria-hidden />
+                        <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-gray-400" aria-hidden />
                         <span className="truncate">{r.state}</span>
                       </span>
                     </div>
@@ -373,7 +401,7 @@ export default function ReferFriendCard({
                 setJustInvited(null);
                 setFormOpen(true);
               }}
-              className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-red-200 py-4 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50/50"
+              className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-red-300 py-3 text-sm font-semibold text-red-600 transition hover:border-red-400 hover:bg-red-50/50"
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 transition group-hover:bg-red-600 group-hover:text-white">
                 <UserPlus className="h-4 w-4" aria-hidden />

@@ -23,10 +23,10 @@ import {
 import type { StudentProfile } from "../types";
 
 const WHY_REFER = [
-  { icon: GraduationCap, title: "Help Your Friends", text: "Guide them towards the right career and education." },
-  { icon: Star, title: "Earn Rewards", text: "Get attractive rewards for successful referrals." },
-  { icon: ShieldCheck, title: "Trusted Platform", text: "eCampus is a reliable and student-friendly platform." },
-  { icon: HeartHandshake, title: "Make a Difference", text: "Help more students build a brighter future." },
+  { icon: GraduationCap, title: "Help Your Friends", text: "Guide them towards the right career and education.", tone: "bg-blue-50 text-blue-600" },
+  { icon: Star, title: "Earn Rewards", text: "Get attractive rewards for successful referrals.", tone: "bg-amber-50 text-amber-600" },
+  { icon: ShieldCheck, title: "Trusted Platform", text: "eCampus is a reliable and student-friendly platform.", tone: "bg-emerald-50 text-emerald-600" },
+  { icon: HeartHandshake, title: "Make a Difference", text: "Help more students build a brighter future.", tone: "bg-rose-50 text-rose-600" },
 ];
 
 // The progress panel sits beside the list from xl up and below it on smaller screens
@@ -129,17 +129,18 @@ export default function InviteEarnPage() {
         />
 
         <main className="min-w-0 flex-1 overflow-y-auto p-4 pb-28 sm:p-6 sm:pb-24">
-          <div className="mx-auto max-w-[1400px] space-y-5">
+          <div className="mx-auto max-w-[1280px] space-y-4">
             {loaded && (
               <>
                 <InviteHero referrals={referrals} referralCode={referralCode} />
 
-                <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:gap-0">
-                  <motion.div {...fadeUp(0.05)} className="min-w-0 flex-1 space-y-5">
-                    <BankDetailsCard saved={bank} onSave={updateBank} />
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:gap-0">
+                  {/* Main action first (invite / track friends), payout details below it */}
+                  <motion.div {...fadeUp(0.05)} className="min-w-0 flex-1 space-y-4">
                     <div ref={referFormRef} className="scroll-mt-4">
                       <ReferFriendCard referrals={referrals} selectedId={selected?.id ?? null} onSelect={setSelectedId} onSubmit={addReferral} />
                     </div>
+                    <BankDetailsCard saved={bank} onSave={updateBank} />
                   </motion.div>
 
                   {/* Opens when a friend's card is clicked: slides in from the right on wide screens, rises in below the list otherwise */}
@@ -165,25 +166,22 @@ export default function InviteEarnPage() {
             )}
 
             {/* Why refer */}
-            <motion.section
-              {...fadeUp(0.15)}
-              className="grid gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-[auto_repeat(4,minmax(0,1fr))] lg:items-center lg:gap-6"
-            >
-              <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 sm:col-span-2 lg:col-span-1 lg:max-w-[150px]">
-                <span className="h-6 w-1 rounded-full bg-red-600" aria-hidden />
-                Why Refer to eCampus?
-              </h2>
-              {WHY_REFER.map(({ icon: Icon, title, text }) => (
-                <div key={title} className="group flex items-start gap-3">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 transition group-hover:bg-red-600 group-hover:text-white">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{title}</p>
+            <motion.section {...fadeUp(0.15)} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+              <h2 className="text-[15px] font-bold text-gray-900">Why refer to eCampus?</h2>
+              <div className="mt-3.5 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+                {WHY_REFER.map(({ icon: Icon, title, text, tone }) => (
+                  <div
+                    key={title}
+                    className="group rounded-xl border border-gray-100 bg-white p-3 transition-all duration-300 hover:-translate-y-1 hover:border-gray-200 hover:shadow-[0_14px_28px_-20px_rgba(15,23,42,0.45)] sm:p-3.5"
+                  >
+                    <span className={`flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 ${tone}`}>
+                      <Icon className="h-[18px] w-[18px]" aria-hidden />
+                    </span>
+                    <p className="mt-2.5 text-[13.5px] font-semibold text-gray-900">{title}</p>
                     <p className="mt-0.5 text-xs leading-relaxed text-gray-500">{text}</p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </motion.section>
           </div>
         </main>

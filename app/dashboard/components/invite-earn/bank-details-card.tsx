@@ -49,12 +49,15 @@ export default function BankDetailsCard({
 
   return (
     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-5 sm:px-6">
-        <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-slate-200">
             <Landmark className="h-5 w-5" aria-hidden />
           </span>
-          <h2 className="text-base font-bold text-gray-900">Your Bank Account Details</h2>
+          <div className="min-w-0">
+            <h2 className="text-[15px] font-bold text-gray-900">Bank Account for Rewards</h2>
+            <p className="mt-0.5 text-xs text-gray-500">Your referral rewards are paid to this account</p>
+          </div>
         </div>
         {saved && (
           <div className="flex items-center gap-2">
@@ -80,9 +83,9 @@ export default function BankDetailsCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
+            className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
-            <div className="grid gap-4 rounded-xl border border-gray-100 bg-gray-50/70 p-4 sm:grid-cols-2">
+            <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3.5">
               <FormField
                 id="bank-holder"
                 label="Account Holder Name"
@@ -124,7 +127,11 @@ export default function BankDetailsCard({
                 error={errors.ifsc}
               />
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+            <div className="mt-4 flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-center gap-1.5 text-xs text-gray-500">
+                <Lock className="h-3 w-3 flex-shrink-0" aria-hidden />
+                Details are saved once and locked for your security.
+              </p>
               <button
                 type="submit"
                 disabled={saving}
@@ -142,7 +149,7 @@ export default function BankDetailsCard({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-              className="px-5 pb-5 pt-3 sm:px-6 sm:pb-6"
+              className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
             >
               {/* Saved account, shown like a bank card */}
               <div className="flex flex-col gap-4 rounded-xl border border-red-100 bg-red-50/40 p-4 sm:flex-row sm:items-center sm:justify-between">

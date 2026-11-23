@@ -44,7 +44,7 @@ export default function InviteHero({
 
   const completed = referrals.filter((r) => r.stage >= REFERRAL_STEPS.length - 1).length;
   const stats = [
-    { icon: Users, label: "Total Referrals", value: referrals.length, tone: "bg-red-50 text-red-600" },
+    { icon: Users, label: "Total Referrals", value: referrals.length, tone: "bg-blue-50 text-blue-600" },
     { icon: Hourglass, label: "In Progress", value: referrals.length - completed, tone: "bg-amber-50 text-amber-600" },
     { icon: CheckCircle2, label: "Completed", value: completed, tone: "bg-emerald-50 text-emerald-600" },
     { icon: Gift, label: "Rewards Earned", value: `₹${rewardsEarned.toLocaleString("en-IN")}`, tone: "bg-violet-50 text-violet-600" },
@@ -54,48 +54,54 @@ export default function InviteHero({
     <motion.section
       {...fadeUp()}
       aria-labelledby="earnings-title"
-      className="relative overflow-hidden rounded-[22px] border border-red-100 bg-[#fff5f5] shadow-[0_16px_40px_-30px_rgba(220,38,38,0.45)]"
+      className="relative overflow-hidden rounded-[20px] border border-red-100 bg-[#fff5f5] shadow-[0_16px_40px_-30px_rgba(220,38,38,0.45)]"
     >
+      <style>{`
+        @keyframes ie-shine { 0% { transform: translateX(-120%) skewX(-20deg) } 60%,100% { transform: translateX(320%) skewX(-20deg) } }
+        .ie-shine::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 35%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); animation: ie-shine 3.6s ease-in-out 1s infinite; pointer-events: none; }
+        @media (prefers-reduced-motion: reduce) { .ie-shine::after { animation: none; } }
+      `}</style>
+
       {/* Blush backdrop: flowing lines with travelling streaks and thin rings behind the code card */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <FlowingLines className="[mask-image:linear-gradient(to_right,transparent_20%,black_65%)]" />
-        <span className="absolute right-[-120px] top-[-80px] h-[420px] w-[420px] rounded-full border border-red-200/70" />
-        <span className="absolute right-[-40px] top-[-10px] h-[280px] w-[280px] rounded-full border border-dashed border-red-300/60 motion-safe:animate-[spin_40s_linear_infinite]" />
+        <span className="absolute right-[-120px] top-[-80px] h-[380px] w-[380px] rounded-full border border-red-200/70" />
+        <span className="absolute right-[-40px] top-[-10px] h-[250px] w-[250px] rounded-full border border-dashed border-red-300/60 motion-safe:animate-[spin_40s_linear_infinite]" />
       </div>
 
-      <div className="relative grid gap-6 px-5 py-4 sm:px-7 sm:py-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-center xl:gap-8">
+      <div className="relative grid gap-4 px-4 py-4 sm:px-6 sm:py-5 xl:grid-cols-[minmax(0,1fr)_330px] xl:items-center xl:gap-6">
         {/* Earnings: total on top, the four counters below */}
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-white shadow-md shadow-red-600/10 ring-1 ring-red-100">
-              <Trophy className="h-8 w-8 text-amber-500 motion-safe:animate-float" aria-hidden />
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white shadow-md shadow-red-600/10 ring-1 ring-red-100">
+              <Trophy className="h-7 w-7 text-amber-500 motion-safe:animate-float" aria-hidden />
             </span>
             <div className="min-w-0">
-              <h2 id="earnings-title" className="text-xs font-semibold uppercase tracking-[0.16em] text-red-600">
+              <h2 id="earnings-title" className="text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600">
                 Your Referral Earnings
               </h2>
-              <p className="mt-1 flex items-center text-[40px] font-extrabold leading-none tracking-tight text-gray-900 sm:text-[44px]">
-                <IndianRupee className="h-8 w-8 text-red-600" strokeWidth={2.75} aria-hidden />
+              <p className="mt-1 flex items-center text-[34px] font-extrabold leading-none tracking-tight text-gray-900 sm:text-[38px]">
+                <IndianRupee className="h-7 w-7 text-red-600" strokeWidth={2.75} aria-hidden />
                 {rewardsEarned.toLocaleString("en-IN")}
               </p>
             </div>
           </div>
 
-          <ul className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <ul className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
             {stats.map(({ icon: Icon, label, value, tone }, i) => (
               <motion.li
                 key={label}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0, transition: { delay: 0.15 + i * 0.08, duration: 0.4 } }}
-                className="group relative flex items-center gap-2.5 overflow-hidden rounded-2xl border border-white bg-white/90 px-3 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md"
+                className="group relative flex items-center gap-2.5 overflow-hidden rounded-xl border border-white bg-white/90 px-3 py-2.5 shadow-sm transition hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md"
               >
                 <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-red-600 transition-transform duration-300 group-hover:scale-x-100" />
                 <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${tone}`}>
                   <Icon className="h-[18px] w-[18px]" aria-hidden />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-xl font-bold leading-none text-gray-900">{value}</span>
-                  <span className="mt-1 block whitespace-nowrap text-xs font-medium text-gray-500">{label}</span>
+                  <span className="block text-lg font-bold leading-none text-gray-900">{value}</span>
+                  <span className="mt-1 block text-[11px] font-medium leading-tight text-gray-500 sm:text-[11.5px]">{label}</span>
                 </span>
               </motion.li>
             ))}
@@ -103,14 +109,19 @@ export default function InviteHero({
         </div>
 
         {/* Referral code to share */}
-        <div className="rounded-2xl border border-gray-200 border-t-red-600 bg-white p-5 shadow-[0_20px_45px_-28px_rgba(17,24,39,0.35)] [border-top-width:4px]">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">Your referral code</p>
-          <div className="mt-2.5 flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-red-200 bg-red-50/60 py-2 pl-3 pr-2">
+        <div className="rounded-2xl border border-gray-200 border-t-red-600 bg-white p-4 shadow-[0_20px_45px_-28px_rgba(17,24,39,0.35)] [border-top-width:4px]">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">Your referral code</p>
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10.5px] font-bold text-red-600">
+              <Gift className="h-3 w-3" aria-hidden /> Share &amp; earn
+            </span>
+          </div>
+          <div className="ie-shine relative mt-2.5 flex items-center justify-between gap-2 overflow-hidden rounded-xl border-2 border-dashed border-red-200 bg-red-50/60 py-2 pl-3 pr-2">
             <span className="min-w-0 truncate font-mono text-lg font-bold tracking-[0.08em] text-red-700">{referralCode}</span>
             <button
               type="button"
               onClick={() => copy(referralCode, "code")}
-              className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 active:scale-95"
+              className="relative z-10 inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 active:scale-95"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span

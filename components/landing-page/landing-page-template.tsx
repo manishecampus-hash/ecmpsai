@@ -26,6 +26,7 @@ import {
 import { LP_REVEAL_CSS } from "./lp-ui";
 import { ApplyFormStyleProvider } from "@/components/form/apply-now-modal";
 import DbaGiftButton from "./dba-gift-button";
+import { getFormCourses } from "@/data/form-courses";
 import MbaHeroForm from "./mba-hero-form";
 import SubHeader from "@/components/universities/sub-header";
 import { DBA_UNIVERSITIES } from "@/data/dba-universities";
@@ -65,7 +66,12 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
   const isMba = !isDba && /mba/i.test(data.slug || data.name || "");
   const mba = isMba ? mbaCourse || null : null;
   // DBA / MBA pages: the form dropdowns list the programme's specialisations instead of all courses
-  const formCourses = isDba ? DBA_SPECIALISATIONS : isMba ? MBA_SPECIALISATIONS : undefined;
+  // Any other landing page (e.g. one added from the admin panel) gets the list matching its slug / name
+  const formCourses = isDba
+    ? DBA_SPECIALISATIONS
+    : isMba
+      ? MBA_SPECIALISATIONS
+      : getFormCourses(data.slug) ?? getFormCourses(data.name);
 
   // Frontend content overrides for the DBA page (until they're updated in the CMS)
   const hero = data.hero && isDba
@@ -391,8 +397,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
       {/* 10. Slim landing-page footer (no menu columns) */}
       <LpFooter />
 
-      {/* DBA page: floating gift button (bottom-left) opens the Apply form */}
-      {isDba && <DbaGiftButton courses={formCourses} />}
+      {/* Every landing page: floating gift button (bottom-left) opens the Apply form */}
+      <DbaGiftButton courses={formCourses} />
     </ApplyFormStyleProvider>
   );
 }

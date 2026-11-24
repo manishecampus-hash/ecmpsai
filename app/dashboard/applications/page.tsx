@@ -2,47 +2,42 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Building2, CalendarDays, CheckCircle2, Compass, GraduationCap } from "lucide-react";
+import { AlertCircle, ArrowUpRight, CalendarDays, CheckCircle2, Compass, GraduationCap, Sparkles } from "lucide-react";
 import Sidebar from "../components/sidebar";
 import Topbar from "../components/topbar";
-import ApplicationDetail from "../components/applications/application-detail";
-import ApplicationsEmpty from "../components/applications/applications-empty";
+import UniImage from "@/components/ui/uniImage";
 import type { StudentProfile } from "../types";
-import { readSubmittedApplications, type SubmittedApplication } from "@/components/application-flow/submitted-applications";
-import { formatINR, formatLongDate } from "@/components/application-flow/options";
+import { APPLIED_EVENT, readApplied, type AppliedProgram } from "../components/applications/applied-store";
+
+// My Applications: everything applied to with "1-Click Apply" (directly or by the agent's AI Apply).
+// Green border = applied; red border = couldn't apply / already applied.
+// Frontend only for now: read from applied-store until the backend is connected.
+
+const formatDate = (ms: number) => new Date(ms).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 export default function ApplicationsPage() {
-  const router = useRouter();
   const [student, setStudent] = useState<StudentProfile>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [applications, setApplications] = useState<SubmittedApplication[] | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [applied, setApplied] = useState<AppliedProgram[] | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("ecampus_student");
-    if (saved) setStudent(JSON.parse(saved));
-    const list = readSubmittedApplications();
-    setApplications(list);
-    const requested = new URLSearchParams(window.location.search).get("id");
-    setSelectedId(list.some((a) => a.applicationId === requested) ? requested : null);
-    const syncSelection = () => {
-      const id = new URLSearchParams(window.location.search).get("id");
-      setSelectedId(list.some((a) => a.applicationId === id) ? id : null);
+    try {
+      const saved = localStorage.getItem("ecampus_student");
+      if (saved) setStudent(JSON.parse(saved));
+    } catch {
+      // No saved profile.
+    }
+    const sync = () => setApplied(readApplied());
+    sync();
+    window.addEventListener(APPLIED_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(APPLIED_EVENT, sync);
+      window.removeEventListener("storage", sync);
     };
-    window.addEventListener("popstate", syncSelection);
-    return () => window.removeEventListener("popstate", syncSelection);
   }, []);
 
-  const selected = applications?.find((a) => a.applicationId === selectedId);
-  const openApplication = (id: string) => {
-    setSelectedId(id);
-    router.push(`/dashboard/applications?id=${encodeURIComponent(id)}`, { scroll: false });
-  };
-  const showList = () => {
-    setSelectedId(null);
-    router.push("/dashboard/applications", { scroll: false });
-  };
+  const count = applied?.filter((a) => a.status === "applied").length ?? 0;
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f9fafb]">
@@ -50,32 +45,30 @@ export default function ApplicationsPage() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Topbar student={student} onOpenMobileMenu={() => setMobileMenuOpen(true)} />
         <main className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 pb-28 sm:p-6 sm:pb-24">
-          {selected ? (
-            <>
-              <button onClick={showList} className="mb-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-gray-600 transition hover:text-red-600">
-                <ArrowLeft className="h-4 w-4" /> All applications
-              </button>
-              <ApplicationDetail key={selected.applicationId} application={selected} />
-            </>
-          ) : applications === null ? null : applications.length === 0 ? (
-            <>
-              <PageHeading count={0} />
-              <ApplicationsEmpty />
-            </>
-          ) : (
-            <>
-              <PageHeading count={applications.length} />
-              <section aria-label="Your applications" className="grid gap-5 lg:grid-cols-2">
-                {applications.map((application) => (
-                  <ApplicationCard key={application.applicationId} application={application} onOpen={() => openApplication(application.applicationId)} />
+          <PageHeading count={count} />
+
+          {applied &&
+            (applied.length > 0 ? (
+              <ul aria-label="Your applications" className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+                {applied.map((a) => (
+                  <ApplicationCard key={a.id} application={a} />
                 ))}
-              </section>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5">
-                <p className="text-xs text-gray-500">Need to apply to another program?</p>
-                <Link href="/dashboard/matcher" className="inline-flex items-center gap-2 text-xs font-semibold text-red-600 hover:text-red-700"><Compass className="h-4 w-4" /> Explore programs</Link>
+              </ul>
+            ) : (
+              <div className="flex flex-col items-center rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-14 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+                  <GraduationCap className="h-6 w-6" />
+                </span>
+                <p className="mt-4 text-base font-bold text-gray-900">No applications yet</p>
+                <p className="mt-1 max-w-sm text-sm text-gray-500">Find a program you like and tap 1-Click Apply — it&apos;ll show up here.</p>
+                <Link
+                  href="/dashboard/matcher"
+                  className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-red-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-red-700"
+                >
+                  Find programs <ArrowUpRight className="h-4 w-4" />
+                </Link>
               </div>
-            </>
-          )}
+            ))}
         </main>
       </div>
     </div>
@@ -84,60 +77,64 @@ export default function ApplicationsPage() {
 
 function PageHeading({ count }: { count: number }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-gray-200 pb-5">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="flex items-start gap-3.5">
         <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-700">
           <GraduationCap className="h-5 w-5" strokeWidth={1.8} />
         </span>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">Student dashboard</p>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-[28px]">My Applications</h1>
-            <span className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold tabular-nums text-gray-600">{count} {count === 1 ? "application" : "applications"}</span>
-          </div>
-          <p className="mt-1.5 text-sm text-gray-500">Review your submissions and follow each application’s progress.</p>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-[28px]">My Applications</h1>
+          <span className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold tabular-nums text-gray-600">
+            {count} {count === 1 ? "application" : "applications"}
+          </span>
         </div>
       </div>
-      <Link href="/dashboard/matcher" className="group inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700">
-        <Compass className="h-4 w-4" /> Explore programs <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      <Link
+        href="/dashboard/matcher"
+        className="group inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+      >
+        <Compass className="h-4 w-4" /> Explore programs
+        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </Link>
     </div>
   );
 }
 
-function ApplicationCard({ application, onOpen }: { application: SubmittedApplication; onOpen: () => void }) {
-  const { program, payment, applicationId } = application;
+function ApplicationCard({ application: a }: { application: AppliedProgram }) {
+  const ok = a.status === "applied";
   return (
-    <button onClick={onOpen} className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-left shadow-sm transition hover:border-gray-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500">
-      <div className="relative h-40 overflow-hidden bg-gray-100 sm:h-44">
-        {program.image ? (
-          <div aria-hidden className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.02]" style={{ backgroundImage: `url("${program.image}")` }} />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            {program.universityLogo ? <img src={program.universityLogo} alt="" className="max-h-20 max-w-[180px] object-contain" /> : <GraduationCap className="h-10 w-10 text-gray-300" />}
-          </div>
-        )}
-        {program.image && <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-transparent to-transparent" />}
-        {program.image && <span className="absolute bottom-4 left-5 right-5 truncate text-base font-semibold text-white sm:text-lg">{program.universityName}</span>}
-        <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-emerald-700 shadow-sm">
-          <CheckCircle2 className="h-3.5 w-3.5" /> Paid
+    <li
+      className={`group flex flex-col overflow-hidden rounded-xl border-2 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg motion-safe:animate-fade-in ${
+        ok ? "border-emerald-400/70 hover:shadow-emerald-100/80" : "border-red-400/70 hover:shadow-red-100/80"
+      }`}
+    >
+      <div className="relative h-20 bg-gray-100 sm:h-24">
+        {a.image && <UniImage src={a.image} alt={a.university} className="object-cover transition-transform duration-300 group-hover:scale-[1.04]" />}
+        <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <span
+          className={`absolute left-2 top-2 inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm ${
+            ok ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+          }`}
+        >
+          {ok ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+          {ok ? "Applied" : a.note ?? "Couldn't apply"}
         </span>
-      </div>
-      <span className="flex flex-1 flex-col p-5 sm:p-6">
-        {!program.image && <span className="mb-2 flex items-center gap-1.5 text-xs font-medium text-gray-500"><Building2 className="h-3.5 w-3.5" />{program.universityName}</span>}
-        <span className="min-h-[56px] text-lg font-bold leading-7 text-gray-900 transition group-hover:text-red-700 sm:text-xl">{program.programName}</span>
-        <span className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-gray-500">
-          <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-gray-400" />Submitted {formatLongDate(payment.paidAt)}</span>
-          {program.durationLabel && <span className="border-l border-gray-200 pl-5">{program.durationLabel}</span>}
-        </span>
-        <span className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-4">
-          <span className="min-w-0"><span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">Application number</span><span className="mt-1 block truncate font-mono text-xs text-gray-700">{applicationId}</span></span>
-          <span className="flex items-center gap-3">
-            <span className="text-right"><span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">Seat block paid</span><span className="mt-1 block text-base font-bold text-gray-900">{formatINR(payment.amount)}</span></span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition group-hover:border-red-200 group-hover:bg-red-50 group-hover:text-red-600"><ArrowUpRight className="h-4 w-4" /></span>
+        {a.viaAI && (
+          <span title="Applied by AI Apply" className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-md bg-white/95 text-gray-700 shadow-sm">
+            <Sparkles className="h-3 w-3" />
           </span>
-        </span>
-      </span>
-    </button>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-3">
+        <p className="truncate text-[10.5px] font-bold uppercase tracking-wide text-gray-500">{a.university}</p>
+        <p title={a.program} className="mt-1 line-clamp-2 text-[13px] font-semibold leading-snug text-gray-900">
+          {a.program}
+        </p>
+        <p className="mt-auto flex items-center gap-1 pt-2 text-[11px] text-gray-400">
+          <CalendarDays className="h-3 w-3" />
+          {formatDate(a.appliedAt)}
+        </p>
+      </div>
+    </li>
   );
 }

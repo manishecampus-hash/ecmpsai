@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimate } from "framer-motion";
 import {
   X,
   ArrowLeft,
@@ -22,7 +22,6 @@ import {
   MessageSquare,
   Gift,
   GraduationCap,
-  CheckCircle2,
   Lock,
   Calendar,
   MapPin,
@@ -32,6 +31,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { indianStates } from "@/data/indian-states";
 import { courseOptions } from "@/data/course-options";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
+import { OtpProgressButton } from "@/components/auth/otp-progress-button";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -72,6 +72,9 @@ export function SignupModal({
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
   const [mode, setMode] = useState<SignupMode>("mobile");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpScope, animateOtp] = useAnimate();
 
   // ── Phone verification on details step (for email signup mode) ──
   const [phoneVerified, setPhoneVerified] = useState(false);
@@ -98,6 +101,7 @@ export function SignupModal({
   const [showReferral, setShowReferral] = useState(false);
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [showAdvisor, setShowAdvisor] = useState(false);
+  const [showMoreFields, setShowMoreFields] = useState(false);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -142,6 +146,7 @@ export function SignupModal({
     if (isOpen) {
       setStep("phone");
       setError("");
+      setShowMoreFields(false);
     }
   }, [isOpen]);
 
@@ -193,8 +198,7 @@ export function SignupModal({
         throw new Error(data.message || "Failed to send verification code");
       }
 
-      setResendCooldown(30);
-      setStep("otp");
+      enterOtpStep();
     } catch (err: any) {
       setError(err.message || "Something went wrong while sending code.");
     } finally {
@@ -231,8 +235,7 @@ export function SignupModal({
         throw new Error(data.message || "Failed to send verification code");
       }
 
-      setResendCooldown(30);
-      setStep("otp");
+      enterOtpStep();
     } catch (err: any) {
       setError(err.message || "Something went wrong while sending code.");
     } finally {
@@ -240,22 +243,30 @@ export function SignupModal({
     }
   };
 
-  const handleOtpVerify = async (e?: FormEvent) => {
-    if (e) e.preventDefault();
+  const enterOtpStep = () => {
+    setOtp("");
+    setOtpVerified(false);
+    setResendCooldown(30);
+    setStep("otp");
+  };
+
+  // Called automatically when the last digit lands (or on Enter / button click)
+  const verifyOtp = async (code: string) => {
+    if (otpVerifying) return;
     setError("");
 
-    if (!/^\d{6}$/.test(otp)) {
+    if (!/^\d{6}$/.test(code)) {
       setError("Please enter the complete 6-digit OTP.");
       return;
     }
 
-    setLoading(true);
+    setOtpVerifying(true);
 
     try {
       const payload =
         mode === "email"
-          ? { email: email.trim().toLowerCase(), otp }
-          : { phone: fullPhone, otp };
+          ? { email: email.trim().toLowerCase(), otp: code }
+          : { phone: fullPhone, otp: code };
 
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
@@ -268,6 +279,10 @@ export function SignupModal({
       if (!data.success) {
         throw new Error(data.message || "Invalid OTP code. Please try again.");
       }
+
+      // Let the button settle on its "Verified" state before moving on
+      setOtpVerified(true);
+      await new Promise((r) => setTimeout(r, 450));
 
       // CRITICAL REQUIREMENT:
       // If user account is already made and already has answers to questions, do not ask them again!
@@ -309,8 +324,12 @@ export function SignupModal({
       setStep("details");
     } catch (err: any) {
       setError(err.message || "Verification failed. Check the code and try again.");
+      setOtp("");
+      if (otpScope.current) {
+        animateOtp(otpScope.current, { x: [0, -8, 8, -5, 5, 0] }, { duration: 0.35 });
+      }
     } finally {
-      setLoading(false);
+      setOtpVerifying(false);
     }
   };
 
@@ -550,6 +569,18 @@ export function SignupModal({
 
   const activeIdentifier = mode === "email" ? email : fullPhone;
 
+  const moreSummary = [
+    state,
+    dob &&
+      new Date(`${dob}T00:00`).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -601,57 +632,53 @@ export function SignupModal({
 
             {/* Modal Content */}
             <div className="px-6 py-6 sm:px-8 sm:py-8">
-              {/* Header Branding */}
-              <div className="flex flex-col items-center text-center">
-                <img
-                  src="/image/logo.png"
-                  alt="eCampus"
-                  className="h-8 sm:h-9 w-auto object-contain mx-auto"
-                />
-
-                {/* Eyebrow badge (Only on details & otp steps) */}
-                {step === "details" && (
-                  <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold bg-[#FFF1F2] text-[#E11D48]">
-                    <Sparkles className="h-3.5 w-3.5 text-[#E11D48] fill-[#E11D48]/25" />
-                    <span>Almost Done!</span>
-                  </div>
-                )}
-                {step === "otp" && (
-                  <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100/80 shadow-2xs">
-                    <Sparkles className="h-3.5 w-3.5 text-rose-600 fill-rose-600/25" />
-                    <span>Security Verification</span>
-                  </div>
-                )}
-
-                {/* Title */}
-                <h2 className={`font-bold tracking-tight text-[#0D1527] ${step === "phone" ? "mt-3.5 mb-1 text-[26px] sm:text-[30px]" : "mt-2 text-2xl sm:text-[26px]"}`}>
-                  {step === "details"
-                    ? "Complete Your Profile"
-                    : step === "otp"
-                      ? "Enter Verification Code"
-                      : "Login/ Sign Up"}
+              {/* Header */}
+              {step === "details" ? (
+                <h2 className="px-10 text-center text-[22px] sm:text-2xl font-bold tracking-tight text-[#0D1527]">
+                  Complete your profile
                 </h2>
-
-                {/* Subtitle (Shown on OTP step) */}
-                {step === "otp" && (
-                  <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-[320px] leading-relaxed">
-                    <span className="inline-flex items-center justify-center gap-1 flex-wrap">
-                      <span>Code sent to</span>
-                      <span className="font-semibold text-slate-800">
-                        {activeIdentifier}
+              ) : (
+                <div className="flex flex-col items-center text-center">
+                  <img
+                    src="/image/logo.png"
+                    alt="eCampus"
+                    className="h-8 sm:h-9 w-auto object-contain mx-auto"
+                  />
+  
+                  {/* Eyebrow badge (OTP step) */}
+                  {step === "otp" && (
+                    <div className="mt-3.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100/80 shadow-2xs">
+                      <Sparkles className="h-3.5 w-3.5 text-rose-600 fill-rose-600/25" />
+                      <span>Security Verification</span>
+                    </div>
+                  )}
+  
+                  {/* Title */}
+                  <h2 className={`font-bold tracking-tight text-[#0D1527] ${step === "phone" ? "mt-3.5 mb-1 text-[26px] sm:text-[30px]" : "mt-2 text-2xl sm:text-[26px]"}`}>
+                    {step === "otp" ? "Enter Verification Code" : "Login/ Sign Up"}
+                  </h2>
+  
+                  {/* Subtitle (Shown on OTP step) */}
+                  {step === "otp" && (
+                    <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-[320px] leading-relaxed">
+                      <span className="inline-flex items-center justify-center gap-1 flex-wrap">
+                        <span>Code sent to</span>
+                        <span className="font-semibold text-slate-800">
+                          {activeIdentifier}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleBack}
+                          className="inline-flex items-center gap-0.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:underline ml-0.5"
+                        >
+                          <Pencil className="h-3 w-3" />
+                          Edit
+                        </button>
                       </span>
-                      <button
-                        type="button"
-                        onClick={handleBack}
-                        className="inline-flex items-center gap-0.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:underline ml-0.5"
-                      >
-                        <Pencil className="h-3 w-3" />
-                        Edit
-                      </button>
-                    </span>
-                  </p>
-                )}
-              </div>
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Error Banner */}
               {error && (
@@ -841,18 +868,23 @@ export function SignupModal({
                     <ShieldCheck className="h-6 w-6" />
                   </div>
 
-                  <form onSubmit={handleOtpVerify} className="mt-4 flex flex-col items-center gap-4">
-                    {/* OTP Pin Input */}
-                    <div className="w-full flex justify-center py-1">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      verifyOtp(otp);
+                    }}
+                    className="mt-4 flex flex-col items-center gap-4"
+                  >
+                    {/* OTP Pin Input — submits itself on the 6th digit */}
+                    <div ref={otpScope} className="w-full flex justify-center py-1">
                       <InputOTP
                         maxLength={6}
                         value={otp}
                         onChange={(value) => {
                           setOtp(value);
-                          if (value.length === 6) {
-                            setError("");
-                          }
+                          if (error) setError("");
                         }}
+                        onComplete={verifyOtp}
                         autoFocus
                       >
                         <InputOTPGroup className="gap-2 sm:gap-2.5">
@@ -860,7 +892,13 @@ export function SignupModal({
                             <InputOTPSlot
                               key={index}
                               index={index}
-                              className="h-12 w-10 sm:h-12 sm:w-11 rounded-xl border border-slate-200 bg-slate-50/60 text-lg sm:text-xl font-bold text-slate-900 transition-all focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 first:rounded-xl first:border last:rounded-xl shadow-xs"
+                              className={`h-12 w-10 sm:w-11 rounded-xl border text-lg sm:text-xl font-bold text-slate-900 shadow-xs transition-colors duration-200 first:rounded-xl first:border last:rounded-xl ${
+                                index < otp.length
+                                  ? otpVerified
+                                    ? "border-emerald-400 bg-emerald-50"
+                                    : "border-red-300 bg-white"
+                                  : "border-slate-200 bg-slate-50/60"
+                              }`}
                             />
                           ))}
                         </InputOTPGroup>
@@ -880,7 +918,7 @@ export function SignupModal({
                         <button
                           type="button"
                           onClick={handleResendOtp}
-                          disabled={loading}
+                          disabled={loading || otpVerifying}
                           className="inline-flex items-center gap-1 font-semibold text-red-600 hover:text-red-700 hover:underline transition-colors disabled:opacity-50"
                         >
                           <RotateCw className="h-3 w-3" />
@@ -889,37 +927,16 @@ export function SignupModal({
                       )}
                     </div>
 
-                    {/* Verify Action Button */}
-                    <Button
-                      type="submit"
-                      disabled={loading || otp.length !== 6}
-                      className="group mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 text-sm font-semibold text-white shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/30 hover:brightness-105 active:scale-[0.99] disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Verifying...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Verify & Proceed</span>
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        </>
-                      )}
-                    </Button>
+                    <div className="mt-1 w-full">
+                      <OtpProgressButton filled={otp.length} loading={otpVerifying} verified={otpVerified} />
+                    </div>
                   </form>
                 </div>
               )}
 
               {/* STEP 3: Details Onboarding */}
               {step === "details" && (
-                <form onSubmit={handleDetailsSubmit} className="mt-4 flex flex-col gap-3.5 sm:gap-4">
-                  {/* Verified Banner */}
-                  <div className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-emerald-800 shadow-2xs">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 stroke-[2.2]" />
-                    <span>Mobile verified successfully!</span>
-                  </div>
-
+                <form onSubmit={handleDetailsSubmit} className="mt-5 flex flex-col gap-3.5 sm:gap-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
                     {/* Full Name */}
                     <div>
@@ -1155,89 +1172,130 @@ export function SignupModal({
                     </motion.div>
                   )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                    {/* Your State (Left column) */}
-                    <div ref={stateRef} className="relative">
-                      <label className="mb-1.5 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
-                        Your State
-                      </label>
+                  {/* More details toggle — State & DOB stay tucked away until asked for */}
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-slate-200" />
                       <button
                         type="button"
                         onClick={() => {
-                          setStateOpen((v) => !v);
+                          setShowMoreFields((v) => !v);
+                          setStateOpen(false);
                         }}
-                        className="flex h-[50px] sm:h-[54px] w-full items-center justify-between rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 text-left text-sm sm:text-base font-medium shadow-2xs transition-all hover:border-slate-400 focus:border-[#818CF8] focus:ring-4 focus:ring-indigo-500/10 cursor-pointer"
+                        aria-expanded={showMoreFields}
+                        aria-controls="signup-more-fields"
+                        className="group inline-flex max-w-[75%] items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-3.5 pr-1 text-xs sm:text-[13px] font-semibold text-slate-600 shadow-2xs transition-colors hover:border-red-200 hover:text-slate-900 cursor-pointer"
                       >
-                        <span className={state ? "truncate text-slate-900 font-medium" : "text-slate-400 font-normal"}>
-                          {state || "Select your state"}
+                        <span className="truncate">
+                          {showMoreFields ? "Hide extra details" : moreSummary || "Add state & date of birth"}
                         </span>
-                        <ChevronDown className={`h-4.5 w-4.5 text-slate-400 transition-transform shrink-0 ${stateOpen ? "rotate-180" : ""}`} />
+                        <span
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 transition-transform duration-300 group-hover:bg-red-100 ${
+                            showMoreFields ? "rotate-180" : ""
+                          }`}
+                        >
+                          <ChevronDown className="h-3.5 w-3.5 stroke-[2.5]" />
+                        </span>
                       </button>
+                      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-slate-200" />
+                    </div>
 
-                      {stateOpen && (
-                        <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl flex flex-col p-1.5">
-                          <div className="relative p-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-                            <input
-                              type="text"
-                              placeholder="Search state..."
-                              value={stateSearch}
-                              onChange={(e) => setStateSearch(e.target.value)}
-                              className="h-9 w-full !rounded-xl !bg-slate-50 pl-8 pr-3 text-xs font-medium text-slate-900 !outline-none !border !border-slate-200 focus:!border-[#818CF8] focus:!bg-white focus:!ring-2 focus:!ring-indigo-500/20"
-                            />
+                    <AnimatePresence initial={false}>
+                      {showMoreFields && (
+                        <motion.div
+                          id="signup-more-fields"
+                          initial={{ height: 0, opacity: 0, overflow: "hidden" }}
+                          animate={{ height: "auto", opacity: 1, transitionEnd: { overflow: "visible" } }}
+                          exit={{ height: 0, opacity: 0, overflow: "hidden" }}
+                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 pt-3.5">
+                            {/* Your State (Left column) */}
+                            <div ref={stateRef} className="relative">
+                              <label className="mb-1.5 block text-xs sm:text-[13px] font-semibold text-[#1E293B]">
+                                Your State
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setStateOpen((v) => !v);
+                                }}
+                                className="flex h-[50px] sm:h-[54px] w-full items-center justify-between rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 text-left text-sm sm:text-base font-medium shadow-2xs transition-all hover:border-slate-400 focus:border-[#818CF8] focus:ring-4 focus:ring-indigo-500/10 cursor-pointer"
+                              >
+                                <span className={state ? "truncate text-slate-900 font-medium" : "text-slate-400 font-normal"}>
+                                  {state || "Select your state"}
+                                </span>
+                                <ChevronDown className={`h-4.5 w-4.5 text-slate-400 transition-transform shrink-0 ${stateOpen ? "rotate-180" : ""}`} />
+                              </button>
+        
+                              {stateOpen && (
+                                <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl flex flex-col p-1.5">
+                                  <div className="relative p-1">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                                    <input
+                                      type="text"
+                                      placeholder="Search state..."
+                                      value={stateSearch}
+                                      onChange={(e) => setStateSearch(e.target.value)}
+                                      className="h-9 w-full !rounded-xl !bg-slate-50 pl-8 pr-3 text-xs font-medium text-slate-900 !outline-none !border !border-slate-200 focus:!border-[#818CF8] focus:!bg-white focus:!ring-2 focus:!ring-indigo-500/20"
+                                    />
+                                  </div>
+                                  <div className="overflow-y-auto max-h-40 mt-1">
+                                    {filteredStates.length > 0 ? (
+                                      filteredStates.map((opt) => {
+                                        const selected = state === opt;
+                                        return (
+                                          <button
+                                            key={opt}
+                                            type="button"
+                                            onClick={() => {
+                                              setState(opt);
+                                              setStateOpen(false);
+                                              setStateSearch("");
+                                            }}
+                                            className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${selected
+                                                ? "bg-red-50 text-red-600 font-semibold"
+                                                : "text-slate-700 hover:bg-slate-50"
+                                              }`}
+                                          >
+                                            <span>{opt}</span>
+                                            {selected && <Check className="h-3.5 w-3.5 text-red-600" />}
+                                          </button>
+                                        );
+                                      })
+                                    ) : (
+                                      <p className="p-2 text-center text-xs text-slate-400">No states match</p>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+        
+                            {/* Date of Birth Calendar (Right column) */}
+                            <div>
+                              <div className="mb-1.5 flex items-center justify-between">
+                                <label className="text-xs sm:text-[13px] font-semibold text-[#1E293B]">
+                                  Date of Birth
+                                </label>
+                                <span className="text-[11px] font-normal text-slate-400">Optional</span>
+                              </div>
+                              <div className="relative flex h-[50px] sm:h-[54px] w-full items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 cursor-pointer overflow-hidden">
+                                <Calendar className="mr-2.5 h-5 w-5 text-slate-400 shrink-0 pointer-events-none stroke-[1.8]" />
+                                <input
+                                  type="date"
+                                  value={dob}
+                                  onChange={(e) => setDob(e.target.value)}
+                                  max={new Date().toISOString().split("T")[0]}
+                                  min="1940-01-01"
+                                  placeholder="dd/mm/yyyy"
+                                  className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none cursor-pointer"
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <div className="overflow-y-auto max-h-40 mt-1">
-                            {filteredStates.length > 0 ? (
-                              filteredStates.map((opt) => {
-                                const selected = state === opt;
-                                return (
-                                  <button
-                                    key={opt}
-                                    type="button"
-                                    onClick={() => {
-                                      setState(opt);
-                                      setStateOpen(false);
-                                      setStateSearch("");
-                                    }}
-                                    className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${selected
-                                        ? "bg-red-50 text-red-600 font-semibold"
-                                        : "text-slate-700 hover:bg-slate-50"
-                                      }`}
-                                  >
-                                    <span>{opt}</span>
-                                    {selected && <Check className="h-3.5 w-3.5 text-red-600" />}
-                                  </button>
-                                );
-                              })
-                            ) : (
-                              <p className="p-2 text-center text-xs text-slate-400">No states match</p>
-                            )}
-                          </div>
-                        </div>
+                        </motion.div>
                       )}
-                    </div>
-
-                    {/* Date of Birth Calendar (Right column) */}
-                    <div>
-                      <div className="mb-1.5 flex items-center justify-between">
-                        <label className="text-xs sm:text-[13px] font-semibold text-[#1E293B]">
-                          Date of Birth
-                        </label>
-                        <span className="text-[11px] font-normal text-slate-400">Optional</span>
-                      </div>
-                      <div className="relative flex h-[50px] sm:h-[54px] w-full items-center rounded-2xl border border-slate-300 bg-white px-3.5 sm:px-4 shadow-2xs transition-all hover:border-slate-400 focus-within:border-[#818CF8] focus-within:ring-4 focus-within:ring-indigo-500/10 cursor-pointer overflow-hidden">
-                        <Calendar className="mr-2.5 h-5 w-5 text-slate-400 shrink-0 pointer-events-none stroke-[1.8]" />
-                        <input
-                          type="date"
-                          value={dob}
-                          onChange={(e) => setDob(e.target.value)}
-                          max={new Date().toISOString().split("T")[0]}
-                          min="1940-01-01"
-                          placeholder="dd/mm/yyyy"
-                          className="h-full w-full min-w-0 flex-1 !border-0 !border-none !rounded-none !bg-transparent text-sm sm:text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!border-none focus:!rounded-none focus:!bg-transparent focus:!shadow-none focus:!ring-0 focus:!outline-none cursor-pointer"
-                        />
-                      </div>
-                    </div>
+                    </AnimatePresence>
                   </div>
 
                   {/* Referral Code Accordion */}

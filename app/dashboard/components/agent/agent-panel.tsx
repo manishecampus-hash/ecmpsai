@@ -180,18 +180,22 @@ export default function AgentPanel() {
   };
 
   const firstName = studentName?.trim().split(/\s+/)[0];
+  // In the laptop view the agent sits on the left and its screen on the right
+  const dockLeft = agent.screenMode;
 
   return (
     <motion.aside
-      initial={{ opacity: 0, x: 32 }}
+      initial={{ opacity: 0, x: dockLeft ? -32 : 32 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 32 }}
+      exit={{ opacity: 0, x: dockLeft ? -32 : 32 }}
       transition={{ duration: 0.3, ease: EASE }}
       aria-label="eCampus Agent"
-      className="fixed inset-0 z-[80] flex flex-col bg-white lg:relative lg:inset-auto lg:z-[55] lg:h-screen lg:w-[400px] lg:flex-shrink-0 lg:border-l lg:border-black/[0.08] lg:shadow-[-12px_0_40px_-24px_rgba(0,0,0,0.25)] xl:w-[440px]"
+      className={`fixed inset-0 z-[80] flex flex-col bg-white lg:relative lg:inset-auto lg:z-[55] lg:h-screen ${dockLeft ? "lg:w-[440px] xl:w-[500px] 2xl:w-[540px]" : "lg:w-[400px] xl:w-[440px]"} lg:flex-shrink-0 lg:border-black/[0.08] ${
+        dockLeft ? "lg:border-r lg:shadow-[12px_0_40px_-24px_rgba(0,0,0,0.18)]" : "lg:border-l lg:shadow-[-12px_0_40px_-24px_rgba(0,0,0,0.25)]"
+      }`}
     >
       {/* Header */}
-      <header className="flex-shrink-0 border-b border-black/[0.06] px-3 pb-3 sm:px-4">
+      <header className={`flex-shrink-0 border-b border-black/[0.06] px-3 sm:px-4 ${dockLeft ? "" : "pb-3"}`}>
         <div className="flex h-14 items-center gap-2">
           <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2a3346] to-[#1B2230] shadow-sm">
             <Bot className="h-4 w-4 text-white" aria-hidden />
@@ -201,7 +205,7 @@ export default function AgentPanel() {
           </span>
           {/* Phones: just the avatar — the title needs more room than the header has there */}
           <div className="invisible min-w-0 flex-1 sm:visible">
-            <h2 className="truncate text-[15px] font-semibold leading-tight text-[#1B2230]">eCampus Agent</h2>
+            <h2 className="truncate text-[15px] font-semibold leading-tight text-[#1B2230]">{dockLeft ? "eCampus AI Work Agent" : "eCampus Agent"}</h2>
             <p className={`truncate text-[11px] font-medium ${busy ? "text-red-600" : "text-[#6b7280]"}`}>
               {busy ? (runningTask && lastRun(runningTask)?.status === "awaiting" ? "Waiting for your go-ahead" : "Working in your dashboard…") : "Works in your dashboard"}
             </p>
@@ -241,7 +245,8 @@ export default function AgentPanel() {
             <X className="h-[18px] w-[18px]" />
           </button>
         </div>
-        <ModeSwitch stretch />
+        {/* While the agent works on its screen the panel is Work only — no switch to Chat */}
+        {!dockLeft && <ModeSwitch stretch />}
       </header>
 
       <div className="relative flex min-h-0 flex-1 flex-col">
@@ -279,7 +284,7 @@ export default function AgentPanel() {
 
         {active ? (
           <div ref={scrollRef} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto">
-            <div className="space-y-6 px-4 pb-8 pt-4 sm:px-5" onClickCapture={openLink}>
+            <div className="space-y-5 px-4 pb-8 pt-4 sm:px-5 [&_.whitespace-pre-wrap]:text-[13.5px]" onClickCapture={openLink}>
               {active.runs.map((r, i) => {
                 const isLast = i === active.runs.length - 1;
                 return (
@@ -362,7 +367,7 @@ export default function AgentPanel() {
         )}
 
         {/* Composer */}
-        <div className="relative flex-shrink-0 px-3 pb-3 pt-2 sm:px-4">
+        <div className="relative flex-shrink-0 px-3 pb-3 pt-2 sm:px-4 [&_textarea]:text-[14px]">
           <AnimatePresence>
             {showJump && active && (
               <motion.button
@@ -435,7 +440,7 @@ function RunCard({ run, onApprove, onSkip }: { run: AgentRun; onApprove: () => v
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
-          className="inline-flex items-center gap-2 rounded-full border border-black/[0.07] bg-[#f8f9fb] px-3 py-1.5 text-[13px] font-medium text-[#1B2230] transition hover:bg-[#f1f2f4]"
+          className="inline-flex items-center gap-2 rounded-full border border-black/[0.07] bg-[#f8f9fb] px-3 py-1.5 text-[12.5px] font-medium text-[#1B2230] transition hover:bg-[#f1f2f4]"
         >
           <StatusIcon className={`h-4 w-4 ${status.tone} ${status.spin ? "animate-spin" : ""}`} aria-hidden />
           <span>{status.text}</span>
@@ -533,7 +538,7 @@ function StepRow({ step, waiting }: { step: AgentStep; waiting: boolean }) {
       </span>
       <Icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${running ? "text-red-600" : waiting ? "text-amber-600" : "text-[#8f8f8f]"}`} aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className={`text-sm ${running || waiting ? "font-medium text-[#1B2230]" : step.status === "skipped" ? "text-[#8f8f8f] line-through" : "text-[#3d4352]"}`}>
+        <p className={`text-[13px] ${running || waiting ? "font-medium text-[#1B2230]" : step.status === "skipped" ? "text-[#8f8f8f] line-through" : "text-[#3d4352]"}`}>
           {step.title}
           {step.status === "skipped" && <span className="ml-1.5 text-[11px] no-underline">(skipped)</span>}
         </p>
@@ -571,7 +576,7 @@ function Report({ run, onRunAgain, onFollowup }: { run: AgentRun; onRunAgain?: (
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           Report
         </p>
-        <div className="[&_a]:text-red-600 [&_a]:decoration-red-300">
+        <div className="[&_a]:text-red-600 [&_a]:decoration-red-300 [&_h2]:text-[15px] [&_h3]:text-[14px] [&_h4]:text-[13.5px] [&_li]:text-[13.5px] [&_li]:leading-[1.65] [&_p]:text-[13.5px] [&_p]:leading-[1.7] [&_td]:text-[12.5px]">
           <MarkdownAnswer text={text} />
         </div>
         {!writing && (
@@ -603,7 +608,7 @@ function Report({ run, onRunAgain, onFollowup }: { run: AgentRun; onRunAgain?: (
                 key={q}
                 type="button"
                 onClick={() => onFollowup(q)}
-                className="group inline-flex max-w-full items-center gap-2 rounded-full border border-black/[0.08] bg-white px-3 py-1.5 text-left text-[13px] text-[#1B2230] transition hover:border-red-200 hover:bg-red-50/50"
+                className="group inline-flex max-w-full items-center gap-2 rounded-full border border-black/[0.08] bg-white px-3 py-1.5 text-left text-[12.5px] text-[#1B2230] transition hover:border-red-200 hover:bg-red-50/50"
               >
                 <ArrowUpRight className="h-3.5 w-3.5 flex-shrink-0 text-[#8f8f8f] group-hover:text-red-600" aria-hidden />
                 <span className="truncate">{q}</span>

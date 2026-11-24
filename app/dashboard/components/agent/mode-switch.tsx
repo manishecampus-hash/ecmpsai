@@ -6,11 +6,11 @@ import { Bot, MessageCircle, type LucideIcon } from "lucide-react";
 import { useAgent, type AgentMode } from "./agent-shell";
 
 const MODES: { id: AgentMode; label: string; icon: LucideIcon; hint: string }[] = [
-  { id: "chat", label: "Chat", icon: MessageCircle, hint: "Ask eCampus AI anything" },
   { id: "work", label: "Work", icon: Bot, hint: "The agent works in your dashboard" },
+  { id: "chat", label: "Chat", icon: MessageCircle, hint: "Ask eCampus AI anything" },
 ];
 
-// Chat ⇄ Work, like ChatGPT's agent mode. `stretch` fills the width (the work panel's sub-header).
+// Work ⇄ Chat, like ChatGPT's agent mode. `stretch` fills the width (the work panel's sub-header).
 export default function ModeSwitch({ stretch = false }: { stretch?: boolean }) {
   const agent = useAgent();
   // Each switch animates its own thumb (the chat's stays mounted while the work panel shows its own)

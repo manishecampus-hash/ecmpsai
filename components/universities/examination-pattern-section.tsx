@@ -149,7 +149,7 @@ export default function ExaminationPatternSection({
         <div className="mx-auto mb-9 max-w-3xl text-center sm:mb-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-800 shadow-sm">
             <ClipboardCheck className="h-3.5 w-3.5 text-[#ea384c]" />
-            {examData.badge || "EXAMINATION"}
+            {examData.badge || "Why Choose US"}
           </span>
 
           <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">

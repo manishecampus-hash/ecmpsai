@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type MutableRefObject, type ReactNode, type RefObject } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, MousePointer2, MousePointerClick, PauseCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, Globe, LayoutDashboard, Lock, MoreVertical, MousePointer2, MousePointerClick, PauseCircle, Plus, RotateCw, Square, X } from "lucide-react";
 import { REFER_INTENT_KEY } from "../invite-earn/invite-earn-button";
 import { parseFollowups, stripFollowups } from "@/app/search/components/chat-store";
 import { clickElement, markTarget, observe, scrollPage, selectOption, typeInto } from "./agent-dom";
@@ -45,6 +45,8 @@ export interface ChatRequest {
 interface AgentState {
   open: boolean;
   setOpen: (open: boolean) => void;
+  /** Work mode on laptop-size screens: the dashboard is shown inside the agent's "screen" (full-screen view) */
+  screenMode: boolean;
   toggle: () => void;
   mode: AgentMode;
   setMode: (mode: AgentMode) => void;
@@ -68,6 +70,18 @@ interface AgentState {
   stop: () => void;
   rename: (id: string, title: string) => void;
   remove: (id: string) => void;
+  /** Frontend-only scripted task in Work mode (e.g. AI Apply). Returns false if the agent is busy. */
+  runScript: (script: AgentScript) => boolean;
+}
+
+/** A task the agent works through step by step without eCampus AI — each step's line updates as it finishes */
+export interface AgentScript {
+  prompt: string;
+  /** Page the agent opens first (shown on its screen while it works) */
+  route?: string;
+  routeTitle?: string;
+  steps: { title: string; run: () => { ok: boolean; title: string; detail?: string } }[];
+  summarize: (results: { ok: boolean; title: string }[]) => string;
 }
 
 const AgentContext = createContext<AgentState | null>(null);
@@ -75,7 +89,14 @@ const AgentContext = createContext<AgentState | null>(null);
 export const useAgent = () => useContext(AgentContext);
 
 const OPEN_KEY = "ecampus_agent_open";
+const SCREEN_MIN_WIDTH = 1024;
 const MODE_KEY = "ecampus_agent_mode";
+// The agent's screen: device bezel and the browser bar (tab strip + address row) above the page
+const BEZEL = 10;
+const CHROME_H = 72;
+// The page inside the agent's screen is laid out at laptop size, so wide monitors don't stretch it
+const LAPTOP_W = 1440;
+const LAPTOP_H = 900;
 const uid = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
 const sleep = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 const remember = (key: string, value: string) => {
@@ -590,9 +611,95 @@ export default function AgentShell({ children }: { children: ReactNode }) {
     [setAll, stop],
   );
 
+  const runScript = useCallback(
+    (script: AgentScript) => {
+      if (liveRef.current) return false;
+      setMode("work");
+      setOpen(true);
+      const now = Date.now();
+      const run: AgentRun = { id: uid(), prompt: script.prompt, status: "running", steps: [], answer: "", startedAt: now };
+      const task: AgentTask = { id: uid(), title: titleFromPrompt(script.prompt), createdAt: now, updatedAt: now, runs: [run] };
+      setAll((all) => [task, ...all]);
+      setActiveId(task.id);
+      const live: LiveRun = { taskId: task.id, runId: run.id, cancelled: false, abort: new AbortController() };
+      liveRef.current = live;
+      const alive = () => !live.cancelled;
+      const addStep = (step: Omit<AgentStep, "id">) => {
+        const id = uid();
+        patchRun(task.id, run.id, (r) => ({ ...r, steps: [...r.steps, { ...step, id }] }));
+        return id;
+      };
+      const setStep = (id: string, patch: Partial<AgentStep>) =>
+        patchRun(task.id, run.id, (r) => ({ ...r, steps: r.steps.map((st) => (st.id === id ? { ...st, ...patch } : st)) }));
+
+      (async () => {
+        if (script.route) {
+          const id = addStep({ kind: "open", title: script.routeTitle ?? "Opening the page", status: "running", route: script.route, target: "main h1" });
+          goTo(script.route);
+          await waitForPage(script.route, alive);
+          if (!alive()) return;
+          setStep(id, { status: "done" });
+        }
+        const results: { ok: boolean; title: string }[] = [];
+        for (const step of script.steps) {
+          if (!alive()) return;
+          const id = addStep({ kind: "act", title: step.title, status: "running" });
+          await sleep(1100 + Math.round(Math.random() * 500));
+          if (!alive()) return;
+          const res = step.run();
+          results.push(res);
+          setStep(id, { title: res.title, detail: res.detail, status: res.ok ? "done" : "skipped" });
+        }
+        const answer = script.summarize(results);
+        await typeOut(live, answer);
+        if (!alive()) return;
+        patchRun(task.id, run.id, (r) => ({ ...r, status: "done", finishedAt: Date.now(), answer }));
+      })().finally(() => {
+        if (liveRef.current === live) liveRef.current = null;
+      });
+      return true;
+    },
+    [goTo, patchRun, setAll, setMode, setOpen, typeOut, waitForPage],
+  );
+
+  // Work mode on laptop-size screens, once there's a task: full-screen view with the dashboard inside a laptop-style
+  // screen and the agent docked on the right (like ChatGPT's agent). Before a task — and in Chat mode — the agent is
+  // docked beside the normal dashboard.
+  const [wide, setWide] = useState(false);
+  const [viewport, setViewport] = useState({ w: 1440, h: 900 });
+  useEffect(() => {
+    const sync = () => {
+      setWide(window.innerWidth >= SCREEN_MIN_WIDTH);
+      setViewport({ w: window.innerWidth, h: window.innerHeight });
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
+  }, []);
+  const activeTask = tasks.find((t) => t.id === activeId);
+  const screenMode = open && mode === "work" && wide && Boolean(runningTask || (activeTask && activeTask.runs.length > 0));
+
+  // Fit the full-size dashboard (laptop width × height) into the space beside the chat
+  const stageRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
+  const [stage, setStage] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || !screenMode) return;
+    const ro = new ResizeObserver(([e]) => setStage({ w: e.contentRect.width, h: e.contentRect.height }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [screenMode]);
+  const screen = { w: Math.min(viewport.w, LAPTOP_W), h: Math.min(viewport.h, LAPTOP_H) };
+  const scale =
+    stage.w > 0 && stage.h > 0
+      ? Math.min((stage.w - BEZEL * 2) / screen.w, (stage.h - BEZEL * 2 - CHROME_H) / screen.h, 1)
+      : 0.6;
+
   const value: AgentState = {
     open,
     setOpen,
+    screenMode,
     toggle: () => setOpen(!open),
     mode,
     setMode,
@@ -611,24 +718,70 @@ export default function AgentShell({ children }: { children: ReactNode }) {
     stop,
     rename,
     remove,
+    runScript,
   };
 
   const working = lastRun(runningTask);
   const chatVisible = open && mode === "chat";
+  const runningStep = working?.steps.find((st) => st.status === "running");
 
   return (
     <AgentContext.Provider value={value}>
-      <div className="flex h-screen overflow-hidden">
-        {/* The whole dashboard */}
-        <div ref={dashRef} className="relative min-w-0 flex-1">
-          {children}
-          <WorkingOverlay run={working ?? null} chatOpen={open && mode === "work"} hostRef={dashRef} />
+      <style>{`
+        @keyframes agent-screen-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes agent-frame-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+        .agent-screen-in { animation: agent-screen-in .3s ease-out; }
+        .agent-frame-in { animation: agent-frame-in .5s cubic-bezier(.22,1,.36,1); }
+        @media (prefers-reduced-motion: reduce) { .agent-screen-in, .agent-frame-in { animation: none; } }
+      `}</style>
+      {/* The wrappers below are display:contents outside the laptop view, so the dashboard keeps its normal layout
+          (and stays mounted — no reload — when the view changes) */}
+      <div className={screenMode ? "agent-screen-in fixed inset-0 z-[80] flex overflow-hidden bg-[#f5f6f8]" : "flex h-screen overflow-hidden"}>
+        {/* Agent's screen column — on the right in the laptop view (the agent panel sits on the left) */}
+        <div className={screenMode ? "order-2 flex min-w-0 flex-1 flex-col overflow-hidden" : "contents"}>
+          {screenMode && <ScreenHeader onExit={() => setOpen(false)} />}
+          <div ref={stageRef} className={screenMode ? "flex min-h-0 flex-1 items-center justify-center px-6 xl:px-10" : "contents"}>
+            <div
+              className={
+                screenMode
+                  ? "agent-frame-in flex flex-col rounded-[26px] bg-[#0f1219] shadow-[0_40px_80px_-36px_rgba(15,23,42,0.6),inset_0_0_0_1px_rgba(255,255,255,0.06)] ring-1 ring-black/25"
+                  : "contents"
+              }
+              style={screenMode ? { width: screen.w * scale + BEZEL * 2, padding: BEZEL } : undefined}
+            >
+              {screenMode && <BrowserChrome route={pathname} />}
+              <div
+                ref={viewRef}
+                className={screenMode ? "relative overflow-hidden rounded-b-[16px] bg-white" : "contents"}
+                style={screenMode ? { width: screen.w * scale, height: screen.h * scale } : undefined}
+              >
+                {/* The whole dashboard — full laptop size, scaled into the screen in the laptop view */}
+                <div
+                  ref={dashRef}
+                  className={screenMode ? "absolute left-0 top-0 origin-top-left" : "relative min-w-0 flex-1"}
+                  style={screenMode ? { width: screen.w, height: screen.h, transform: `scale(${scale})` } : undefined}
+                >
+                  {children}
+                  {!screenMode && <AgentCursor run={working ?? null} chatOpen={open && mode === "work"} hostRef={dashRef} scopeRef={dashRef} />}
+                </div>
+                {screenMode && <AgentCursor run={working ?? null} chatOpen inScreen hostRef={viewRef} scopeRef={dashRef} />}
+              </div>
+            </div>
+          </div>
+          {screenMode && (
+            <ControlBar
+              status={!working ? "idle" : working.status === "awaiting" ? "awaiting" : "working"}
+              stepTitle={runningStep?.title}
+              onStop={stop}
+            />
+          )}
         </div>
 
-        {/* Work mode: the agent beside the dashboard */}
+        {/* Work mode: the agent docked on the right beside the dashboard — or on the left beside its screen while it works */}
         <AnimatePresence initial={false}>{open && mode === "work" && <AgentPanel key="agent-panel" />}</AnimatePresence>
 
-        {/* Chat mode: full screen. Stays mounted once opened so an answer keeps streaming while the student looks at Work. */}
+        {/* Chat mode: docked on the right beside the dashboard (full screen on phones / tablets). Stays mounted once
+            opened so an answer keeps streaming while the student looks at Work. */}
         <AgentChat visible={chatVisible} />
 
         {/* Closed while a task runs: a pill with what the agent is doing, to bring it back */}
@@ -651,7 +804,7 @@ export default function AgentShell({ children }: { children: ReactNode }) {
                 <span className="truncate">
                   {working.status === "awaiting"
                     ? "Waiting for your go-ahead — tap to answer"
-                    : (working.steps.find((s) => s.status === "running")?.title ?? "eCampus Agent is working…")}
+                    : (working.steps.find((st) => st.status === "running")?.title ?? "eCampus Agent is working…")}
                 </span>
                 <span aria-hidden className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-500 motion-safe:animate-pulse" />
               </motion.button>
@@ -663,12 +816,122 @@ export default function AgentShell({ children }: { children: ReactNode }) {
   );
 }
 
-// Over the dashboard while the agent works: a red frame, the agent's cursor on the element it's working with,
-// and what it's doing right now. The dashboard is locked meanwhile so the student doesn't click under its hands.
-function WorkingOverlay({ run, chatOpen, hostRef }: { run: AgentRun | null; chatOpen: boolean; hostRef: RefObject<HTMLDivElement | null> }) {
+// Title row above the agent's screen, with the way back to the normal dashboard
+function ScreenHeader({ onExit }: { onExit: () => void }) {
+  return (
+    <div className="flex h-14 flex-shrink-0 items-center gap-2.5 border-b border-black/[0.06] bg-white/70 px-6 backdrop-blur xl:px-10">
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 ring-1 ring-inset ring-red-100">
+        <Globe className="h-3.5 w-3.5 text-red-600" aria-hidden />
+      </span>
+      <span className="text-[14px] font-semibold text-[#1B2230]">Agent&apos;s browser</span>
+      <span className="text-[12px] text-[#8f8f8f]">Your dashboard, live</span>
+      <button
+        type="button"
+        onClick={onExit}
+        className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-full border border-black/10 bg-white px-3.5 text-[12.5px] font-semibold text-[#1B2230] shadow-[0_1px_2px_rgba(16,24,40,0.05)] transition hover:border-red-200 hover:bg-red-50/60 hover:text-red-700"
+      >
+        <LayoutDashboard className="h-4 w-4" aria-hidden />
+        Go to Dashboard
+      </button>
+    </div>
+  );
+}
+
+// Browser bar inside the device frame: one tab for the page the agent is on, and the address row
+function BrowserChrome({ route }: { route: string }) {
+  const page = DASHBOARD_ROUTES.find(([r]) => r === route)?.[1].split(" — ")[0] ?? "Dashboard";
+  return (
+    <div aria-hidden className="flex flex-shrink-0 flex-col overflow-hidden rounded-t-[16px] bg-[#e8eaee]" style={{ height: CHROME_H }}>
+      <div className="flex h-[34px] items-end gap-1.5 px-3">
+        <span className="mb-[11px] flex items-center gap-1.5 pr-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+        </span>
+        <span className="flex h-[28px] w-[210px] min-w-0 items-center gap-2 rounded-t-[10px] bg-white px-3 text-[11.5px] font-medium text-[#1B2230]">
+          <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-[4px] bg-red-600 text-[8px] font-bold leading-none text-white">e</span>
+          <span className="truncate">{page} · eCampus</span>
+          <X className="ml-auto h-3 w-3 flex-shrink-0 text-[#9aa0aa]" />
+        </span>
+        <Plus className="mb-[8px] h-3.5 w-3.5 text-[#7b818c]" />
+      </div>
+      <div className="flex h-[38px] items-center gap-3 border-b border-black/[0.06] bg-white px-3.5 text-[#7b818c]">
+        <ArrowLeft className="h-3.5 w-3.5" />
+        <ArrowRight className="h-3.5 w-3.5 text-[#c2c6cd]" />
+        <RotateCw className="h-3.5 w-3.5" />
+        <span className="flex h-[26px] min-w-0 flex-1 items-center gap-1.5 rounded-full bg-[#f1f3f5] px-3 text-[11.5px] text-[#3d4352]">
+          <Lock className="h-3 w-3 flex-shrink-0 text-[#9aa0aa]" />
+          <span className="truncate">ecampusapp.com{route}</span>
+        </span>
+        <MoreVertical className="h-3.5 w-3.5" />
+      </div>
+    </div>
+  );
+}
+
+// Under the screen: who's in control right now, with a way to stop the agent while it works
+function ControlBar({ status, stepTitle, onStop }: { status: "idle" | "working" | "awaiting"; stepTitle?: string; onStop: () => void }) {
+  return (
+    <div className="flex flex-shrink-0 justify-center px-6 pb-5 pt-4">
+      <div
+        aria-live="polite"
+        className="inline-flex h-11 max-w-[min(560px,100%)] items-center gap-3 rounded-2xl bg-[#141821] pl-4 pr-1.5 text-[13px] text-white shadow-[0_16px_32px_-14px_rgba(15,23,42,0.65)]"
+      >
+        {status === "working" ? (
+          <span className="h-2 w-2 flex-shrink-0 rounded-full bg-red-500 motion-safe:animate-pulse" />
+        ) : status === "awaiting" ? (
+          <PauseCircle className="h-4 w-4 flex-shrink-0 text-amber-400" aria-hidden />
+        ) : (
+          <span className="h-2 w-2 flex-shrink-0 rounded-full bg-emerald-400" />
+        )}
+        <span className="min-w-0 truncate">
+          {status === "working" ? (
+            <>
+              <span className="font-semibold">Agent has control</span>
+              <span className="text-white/55"> · {stepTitle || "Working…"}</span>
+            </>
+          ) : status === "awaiting" ? (
+            <span className="text-white/85">Waiting for your go-ahead in the chat</span>
+          ) : (
+            <span className="font-semibold">You have control</span>
+          )}
+        </span>
+        {status === "idle" ? (
+          <span className="w-2.5" />
+        ) : (
+          <button
+            type="button"
+            onClick={onStop}
+            className="inline-flex h-8 flex-shrink-0 items-center gap-1.5 rounded-xl bg-white/10 px-3 text-[12.5px] font-semibold transition hover:bg-white/[0.16]"
+          >
+            <Square className="h-3 w-3 fill-current" aria-hidden />
+            Stop
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// While the agent works: a normal mouse pointer that glides to what it's working on and "clicks" it — like a person
+// using the dashboard. No frames or highlight boxes. The dashboard ignores the student's clicks meanwhile.
+// `hostRef` is the box the pointer is drawn in; `scopeRef` is where it looks for the element being worked on.
+function AgentCursor({
+  run,
+  chatOpen,
+  inScreen = false,
+  hostRef,
+  scopeRef,
+}: {
+  run: AgentRun | null;
+  chatOpen: boolean;
+  inScreen?: boolean;
+  hostRef: RefObject<HTMLDivElement | null>;
+  scopeRef: RefObject<HTMLDivElement | null>;
+}) {
   const pathname = usePathname();
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const [box, setBox] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const el = hostRef.current;
@@ -678,27 +941,24 @@ function WorkingOverlay({ run, chatOpen, hostRef }: { run: AgentRun | null; chat
     return () => ro.disconnect();
   }, [hostRef]);
 
-  const runningIndex = run ? run.steps.findIndex((s) => s.status === "running") : -1;
+  const runningIndex = run ? run.steps.findIndex((st) => st.status === "running") : -1;
   const step = runningIndex >= 0 && run ? run.steps[runningIndex] : undefined;
   const spot = CURSOR_SPOTS[Math.max(0, runningIndex) % CURSOR_SPOTS.length];
-
-  // Find what the step works on, bring it into view and follow it while the page settles
-  // (not while it waits for a go-ahead — the page that step works on isn't open yet)
   const target = run?.status === "awaiting" ? undefined : step?.target;
   const stepId = step?.id;
-  // A new run or a new page starts without a highlight; while the agent thinks (no target) the cursor stays put
-  const runId = run?.id;
-  useEffect(() => setBox(null), [runId, pathname]);
+  const clicks = step && (step.kind === "click" || step.kind === "select" || step.kind === "type" || step.kind === "open");
+
+  // Glide to the element the step works on (following it while the page scrolls / settles)
   useEffect(() => {
     const host = hostRef.current;
-    if (!target || !host) return;
-    setBox(null);
+    const scope = scopeRef.current;
+    if (!target || !host || !scope) return;
     let el: HTMLElement | null = null;
     let tries = 0;
     const find = () =>
       [target, "main h1"]
-        .flatMap((sel) => Array.from(host.querySelectorAll<HTMLElement>(sel)))
-        .find((e) => e.getClientRects().length > 0 && e.getBoundingClientRect().height > 8) ?? null;
+        .flatMap((sel) => Array.from(scope.querySelectorAll<HTMLElement>(sel)))
+        .find((e) => e.getClientRects().length > 0 && e.getBoundingClientRect().height > 4) ?? null;
     const timer = window.setInterval(() => {
       tries += 1;
       if (!el || !el.isConnected) {
@@ -708,85 +968,80 @@ function WorkingOverlay({ run, chatOpen, hostRef }: { run: AgentRun | null; chat
       if (el) {
         const h = host.getBoundingClientRect();
         const r = el.getBoundingClientRect();
-        const y = Math.max(8, r.top - h.top);
-        setBox({ x: Math.max(8, r.left - h.left), y, w: Math.min(r.width, h.width - 16), h: Math.max(24, Math.min(r.height, h.height - y - 16)) });
+        const x = Math.min(Math.max(10, r.left - h.left + Math.min(r.width / 2, 90)), h.width - 14);
+        const y = Math.min(Math.max(10, r.top - h.top + r.height / 2), h.height - 14);
+        setPoint({ x, y });
       }
       if (tries > 24) window.clearInterval(timer);
     }, 160);
     return () => window.clearInterval(timer);
-  }, [target, stepId, pathname, hostRef]);
+  }, [target, stepId, pathname, hostRef, scopeRef]);
 
-  const cursor = box ? { x: box.x + Math.min(box.w * 0.3, 160), y: box.y + Math.min(box.h * 0.5, 26) } : { x: spot.x * size.w, y: spot.y * size.h };
+  // Start each run from a resting spot; while the agent thinks the pointer stays where it is
+  const runId = run?.id;
+  useEffect(() => setPoint(null), [runId]);
+  const at = point ?? { x: spot.x * size.w, y: spot.y * size.h };
 
   return (
     <AnimatePresence>
       {run && (
         <motion.div
-          key="agent-overlay"
+          key="agent-cursor"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
           aria-hidden
-          className="absolute inset-0 z-[60] cursor-not-allowed"
+          className={`absolute inset-0 ${inScreen ? "z-[5]" : "z-[60]"}`}
         >
-          {/* Red working frame */}
-          <span className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_3px_rgba(239,68,68,0.55),inset_0_0_40px_rgba(239,68,68,0.18)]" />
-          <span className="pointer-events-none absolute right-4 top-[76px] inline-flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 text-[11px] font-semibold text-white shadow-lg shadow-red-600/30">
-            <span className="h-1.5 w-1.5 rounded-full bg-white motion-safe:animate-pulse" />
-            eCampus Agent is working
-          </span>
-
-          {/* What the agent is working on */}
-          <AnimatePresence>
-            {box && (
-              <motion.span
-                key="focus"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, x: box.x - 6, y: box.y - 6, width: box.w + 12, height: box.h + 12 }}
-                exit={{ opacity: 0 }}
-                transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                className="pointer-events-none absolute left-0 top-0 rounded-2xl border-2 border-red-500/70 bg-red-500/[0.04] shadow-[0_0_0_4px_rgba(239,68,68,0.12)]"
-              />
-            )}
-          </AnimatePresence>
-
-          {/* Agent cursor */}
+          {/* Mouse pointer (tip at the point) */}
           {size.w > 0 && (
             <motion.span
               className="pointer-events-none absolute left-0 top-0"
-              animate={{ x: cursor.x, y: cursor.y }}
-              transition={{ type: "spring", stiffness: 60, damping: 14 }}
+              animate={{ x: at.x - 3, y: at.y - 2 }}
+              transition={{ type: "spring", stiffness: 70, damping: 17, mass: 0.9 }}
             >
-              <MousePointer2 className="h-7 w-7 -rotate-12 fill-red-600 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]" />
-              {run.status === "running" && (
-                <span key={runningIndex} className="absolute left-0 top-0 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/40 motion-safe:animate-ping" />
+              <MousePointer2
+                className={`${inScreen ? "h-5 w-5" : "h-6 w-6"} fill-white text-[#111827] drop-shadow-[0_2px_3px_rgba(0,0,0,0.35)]`}
+                strokeWidth={1.75}
+              />
+              {/* click ripple once the pointer has arrived */}
+              {run.status === "running" && clicks && target && (
+                <motion.span
+                  key={stepId}
+                  initial={{ scale: 0.2, opacity: 0.55 }}
+                  animate={{ scale: 1.6, opacity: 0 }}
+                  transition={{ duration: 0.55, delay: 0.75, ease: "easeOut" }}
+                  className="absolute -left-2.5 -top-2.5 h-6 w-6 rounded-full border-2 border-[#111827]/40 bg-[#111827]/10"
+                />
               )}
             </motion.span>
           )}
 
-          {/* What it's doing */}
-          <AnimatePresence mode="wait">
-            {step && (
-              <motion.div
-                key={step.id + run.status}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-                transition={{ duration: 0.2 }}
-                className={`pointer-events-none absolute bottom-24 left-4 right-4 justify-center md:bottom-6 ${chatOpen ? "flex" : "hidden"}`}
-              >
-                <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-[#1B2230]/95 px-4 py-2 text-xs font-medium text-white shadow-xl">
-                  {run.status === "awaiting" ? (
-                    <PauseCircle className="h-4 w-4 flex-shrink-0 text-amber-400" />
-                  ) : (
-                    <MousePointerClick className="h-4 w-4 flex-shrink-0 text-red-400" />
-                  )}
-                  <span className="truncate">{run.status === "awaiting" ? "Waiting for your go-ahead in the chat" : step.title}</span>
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Phones / tablets (no laptop screen): what it's doing, under the pointer */}
+          {!inScreen && (
+            <AnimatePresence mode="wait">
+              {step && (
+                <motion.div
+                  key={step.id + run.status}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.2 }}
+                  className={`pointer-events-none absolute bottom-24 left-4 right-4 justify-center md:bottom-6 ${chatOpen ? "flex" : "hidden"}`}
+                >
+                  <span className="inline-flex max-w-full items-center gap-2 rounded-full bg-[#1B2230]/95 px-4 py-2 text-xs font-medium text-white shadow-xl">
+                    {run.status === "awaiting" ? (
+                      <PauseCircle className="h-4 w-4 flex-shrink-0 text-amber-400" />
+                    ) : (
+                      <MousePointerClick className="h-4 w-4 flex-shrink-0 text-white/70" />
+                    )}
+                    <span className="truncate">{run.status === "awaiting" ? "Waiting for your go-ahead in the chat" : step.title}</span>
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

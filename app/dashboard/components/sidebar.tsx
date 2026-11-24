@@ -13,7 +13,6 @@ import {
   GraduationCap,
   ClipboardList,
   FolderDown,
-  ReceiptText,
   Scale,
   ShieldCheck,
   Gift,
@@ -22,7 +21,6 @@ import {
   Settings,
   X,
   ChevronsLeft,
-  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 
@@ -97,13 +95,6 @@ function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean
   const pathname = usePathname();
   // "eCampus Agent" opens the agent beside the dashboard (work mode) rather than going to a page
   const agent = useAgent();
-  const [applicationsOpen, setApplicationsOpen] = useState(
-    () => pathname.startsWith("/dashboard/applications") || pathname === "/dashboard/receipts",
-  );
-
-  useEffect(() => {
-    setApplicationsOpen(pathname.startsWith("/dashboard/applications") || pathname === "/dashboard/receipts");
-  }, [pathname]);
 
   // Labels fade out quickly when collapsing and fade back in once there's room
   const labelMotion = {
@@ -172,11 +163,12 @@ function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean
       <nav
         className={`mt-5 flex-1 space-y-1 px-3 pb-5 ${collapsed ? "overflow-visible" : "overflow-y-auto"}`}
       >
-        {navItems.map((item) => {
+        {/* Inside the agent's screen the agent itself isn't listed — it's the one using the dashboard */}
+        {navItems.filter((item) => !(item.id === "agent" && agent?.screenMode)).map((item) => {
           const Icon = item.icon;
           const opensAgent = item.id === "agent" && agent;
           const active = opensAgent ? agent.open : item.href ? pathname === item.href || (item.id === "applications" && pathname.startsWith("/dashboard/applications/")) : false;
-          const className = `relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-[17px] py-2.5 text-left text-sm font-medium transition-colors ${item.id === "applications" && !collapsed ? "pr-9" : ""} ${
+          const className = `relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-[17px] py-2.5 text-left text-sm font-medium transition-colors ${
             active
               ? "bg-red-50 text-red-600"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -257,38 +249,8 @@ function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean
                     {content}
                   </button>
                 )}
-                {item.id === "applications" && !collapsed && (
-                  <button
-                    type="button"
-                    onClick={() => setApplicationsOpen((open) => !open)}
-                    aria-label={applicationsOpen ? "Close application links" : "Open application links"}
-                    aria-expanded={applicationsOpen}
-                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 transition hover:bg-white hover:text-gray-700"
-                  >
-                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${applicationsOpen ? "rotate-180" : ""}`} />
-                  </button>
-                )}
                 {collapsed && <CollapsedTooltip label={item.label} />}
               </div>
-              {item.id === "applications" && applicationsOpen && (
-                <div className="group/item relative">
-                  <Link
-                    href="/dashboard/receipts"
-                    aria-label={collapsed ? "Payment Receipts" : undefined}
-                    aria-current={pathname === "/dashboard/receipts" ? "page" : undefined}
-                    className={`relative mt-1 flex items-center rounded-lg text-xs font-medium transition-colors ${
-                      collapsed
-                        ? "mx-auto h-10 w-10 justify-center"
-                        : "ml-5 gap-2.5 border-l border-gray-200 py-2 pl-5"
-                    } ${pathname === "/dashboard/receipts" ? "text-red-600" : "text-gray-500 hover:text-gray-900"}`}
-                  >
-                    {pathname === "/dashboard/receipts" && !collapsed && <span className="absolute -left-px top-1/2 h-5 -translate-y-1/2 border-l-2 border-red-600" />}
-                    <ReceiptText className={`h-4 w-4 flex-shrink-0 ${collapsed ? "h-[18px] w-[18px]" : ""}`} strokeWidth={1.8} />
-                    {!collapsed && <span>Payment Receipts</span>}
-                  </Link>
-                  {collapsed && <CollapsedTooltip label="Payment Receipts" />}
-                </div>
-              )}
             </Fragment>
           );
         })}
@@ -307,7 +269,9 @@ export default function Sidebar({
   const savedCollapsed = useSyncExternalStore(subscribe, getCollapsed, () => false);
   // With the eCampus Agent open beside the dashboard, the sidebar folds to icons to give the pages room
   // (the student can still open it; their saved preference is left alone)
-  const agentOpen = Boolean(useAgent()?.open);
+  // (not inside the agent's laptop screen, where the dashboard shows exactly as it normally does)
+  const agentCtx = useAgent();
+  const agentOpen = Boolean(agentCtx?.open) && !agentCtx?.screenMode;
   const [expandedWithAgent, setExpandedWithAgent] = useState(false);
   const collapsed = agentOpen ? !expandedWithAgent : savedCollapsed;
   const toggleCollapsed = () => (agentOpen ? setExpandedWithAgent((e) => !e) : setCollapsed(!savedCollapsed));

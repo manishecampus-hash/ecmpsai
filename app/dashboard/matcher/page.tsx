@@ -6,6 +6,9 @@ import Topbar from "../components/topbar";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "../components/applied-badge";
 import AiChatPanel from "../components/ai-assist/ai-chat-panel";
+import { useAgent } from "../components/agent/agent-shell";
+import ApplyChoiceModal from "../components/applications/apply-choice-modal";
+import type { ApplyTarget } from "../components/applications/applied-store";
 import { describeAdvisorProfile } from "@/components/layout/onboarding-options";
 import { parseBudgetRange } from "@/lib/recommendations";
 import {
@@ -21,7 +24,6 @@ import {
   MapPin,
   Sparkles,
   Star,
-  Scale,
   Zap,
   Check,
   SlidersHorizontal,
@@ -332,6 +334,8 @@ const ACCREDITATION_CHIP_LABEL: Record<string, string> = {
 const MIN_FEE = 15000;
 const MAX_FEE = 1500000;
 const PAGE_SIZE = 6;
+// How many page numbers the pagination shows at once
+const PAGE_WINDOW = 5;
 
 // Page-to-page transition: a short cross-fade, then the new cards rise in one after another
 const pageVariants: Variants = {
@@ -409,6 +413,14 @@ function matchesFilters(u: UniversityListing, f: FilterState, skip?: FacetKey) {
 
 const formatFeeShort = (fee: number) =>
   fee >= 100000 ? `₹${(fee / 100000).toFixed(fee % 100000 ? 1 : 0)}L` : `₹${fee / 1000}K`;
+
+const listingToTarget = (u: UniversityListing): ApplyTarget => ({
+  university: u.name,
+  program: u.program,
+  image: u.image,
+  fee: `₹${u.fee.toLocaleString("en-IN")}`,
+  match: u.matchScore,
+});
 
 function toggleInArray<T>(arr: T[], value: T): T[] {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
@@ -802,7 +814,6 @@ export default function AIDegreeMatcherPage() {
   const [features, setFeatures] = useState<FeatureTag[]>([]);
   const [sortBy, setSortBy] = useState<SortKey>("match");
   const [page, setPage] = useState(1);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [whyMatchOpen, setWhyMatchOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
@@ -1098,6 +1109,8 @@ export default function AIDegreeMatcherPage() {
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
+  const blockStart = Math.floor((currentPage - 1) / PAGE_WINDOW) * PAGE_WINDOW + 1;
+  const blockEnd = Math.min(totalPages, blockStart + PAGE_WINDOW - 1);
   const pageItems = sorted.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
@@ -1209,11 +1222,24 @@ export default function AIDegreeMatcherPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [filtersOpen]);
 
-  const toggleCompare = (id: string) => {
-    setCompareIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev,
-    );
-  };
+  // "Is this for me?" opens the eCampus AI chat with a question about this program
+  const agent = useAgent();
+  const [applyFor, setApplyFor] = useState<UniversityListing | null>(null);
+  const closeApply = useCallback(() => setApplyFor(null), []);
+  const applyTarget = useMemo(() => (applyFor ? listingToTarget(applyFor) : null), [applyFor]);
+  // AI Apply: the best other universities from the current results
+  const applySimilar = useMemo(() => {
+    if (!applyFor) return [];
+    const seen = new Set([applyFor.name]);
+    return sorted
+      .filter((x) => !seen.has(x.name) && seen.add(x.name))
+      .slice(0, 3)
+      .map(listingToTarget);
+  }, [applyFor, sorted]);
+  const askIsThisForMe = (u: UniversityListing) =>
+    agent?.openChat({
+      q: `Is the ${u.program} at ${u.name} (₹${u.fee.toLocaleString("en-IN")}/year) right for me? Based on my profile, tell me how well it fits, and compare it with similar universities on fees, eligibility, accreditation and career outcomes.`,
+    });
 
   const feePct = ((maxFee - MIN_FEE) / (MAX_FEE - MIN_FEE)) * 100;
 
@@ -1674,7 +1700,6 @@ export default function AIDegreeMatcherPage() {
                 >
                   <AnimatePresence mode="popLayout">
                   {pageItems.map((u) => {
-                    const compared = compareIds.includes(u.id);
                     return (
                       // Motion lives on a wrapper so framer's transforms don't override the card's CSS hover lift
                       <motion.div
@@ -1780,26 +1805,15 @@ export default function AIDegreeMatcherPage() {
                         <div className="flex gap-2 sm:flex-col sm:gap-2.5">
                           <button
                             type="button"
-                            onClick={() => toggleCompare(u.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-2 text-[13px] font-semibold transition active:scale-[0.97] sm:flex-none sm:w-full sm:px-4 sm:py-2.5 sm:text-sm ${
-                              compared
-                                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                                : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
-                            }`}
+                            onClick={() => askIsThisForMe(u)}
+                            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-3 py-2 text-[13px] font-semibold text-gray-700 transition hover:border-red-200 hover:bg-red-50/60 hover:text-red-700 active:scale-[0.97] sm:flex-none sm:w-full sm:px-4 sm:py-2.5 sm:text-sm"
                           >
-                            <motion.span
-                              key={compared ? "added" : "compare"}
-                              initial={{ scale: 0.5, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                              className="flex"
-                            >
-                              {compared ? <Check className="h-3.5 w-3.5" /> : <Scale className="h-3.5 w-3.5" />}
-                            </motion.span>
-                            {compared ? "Added" : "Compare"}
+                            <Sparkles className="h-3.5 w-3.5 text-red-500" />
+                            Is this for me?
                           </button>
                           <button
                             type="button"
+                            onClick={() => setApplyFor(u)}
                             className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-red-600 px-3 py-2 text-[13px] font-semibold text-white shadow-sm sm:px-4 sm:py-2.5 sm:text-sm transition hover:bg-red-700 hover:shadow-md active:scale-[0.97] sm:flex-none sm:w-full"
                           >
                             <Zap className="h-3.5 w-3.5 fill-white" />
@@ -1819,7 +1833,7 @@ export default function AIDegreeMatcherPage() {
 
               {/* Pagination */}
               {sorted.length > 0 && (
-                <motion.div layout="position" transition={{ layout: LAYOUT_SPRING }} className="flex items-center justify-center gap-1.5 pt-2">
+                <motion.div layout="position" transition={{ layout: LAYOUT_SPRING }} className="flex items-center justify-center gap-1 pt-2 sm:gap-1.5">
                   <button
                     type="button"
                     disabled={currentPage === 1}
@@ -1829,7 +1843,18 @@ export default function AIDegreeMatcherPage() {
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                  {/* Five page numbers at a time; "…" jumps to the previous / next five */}
+                  {blockStart > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => goToPage(blockStart - PAGE_WINDOW)}
+                      aria-label={`Pages ${blockStart - PAGE_WINDOW}–${blockStart - 1}`}
+                      className="flex h-8 w-6 items-center justify-center rounded-full text-sm font-semibold text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                    >
+                      …
+                    </button>
+                  )}
+                  {Array.from({ length: blockEnd - blockStart + 1 }, (_, i) => blockStart + i).map((n) => (
                     <button
                       key={n}
                       type="button"
@@ -1850,6 +1875,16 @@ export default function AIDegreeMatcherPage() {
                       <span className="relative">{n}</span>
                     </button>
                   ))}
+                  {blockEnd < totalPages && (
+                    <button
+                      type="button"
+                      onClick={() => goToPage(blockEnd + 1)}
+                      aria-label={`Pages ${blockEnd + 1}–${Math.min(totalPages, blockEnd + PAGE_WINDOW)}`}
+                      className="flex h-8 w-6 items-center justify-center rounded-full text-sm font-semibold text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                    >
+                      …
+                    </button>
+                  )}
                   <button
                     type="button"
                     disabled={currentPage === totalPages}
@@ -1923,39 +1958,8 @@ export default function AIDegreeMatcherPage() {
 
       <AiChatPanel open={aiChatOpen} onClose={closeAiChat} />
 
-      {/* Sticky compare bar */}
-      <AnimatePresence>
-      {compareIds.length >= 2 && (
-        <motion.div
-          key="compare-bar"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 380, damping: 30 } }}
-          exit={{ opacity: 0, y: 40, transition: { duration: 0.18 } }}
-          className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4"
-        >
-          <div className="flex items-center gap-3 rounded-full bg-gray-900 py-2 pl-4 pr-2 text-white shadow-2xl">
-            <span className="text-sm font-medium">
-              {compareIds.length} universities selected
-            </span>
-            <button
-              type="button"
-              className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold transition hover:bg-emerald-700"
-            >
-              Compare Universities
-              <ChevronRight className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setCompareIds([])}
-              aria-label="Clear comparison"
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-gray-300 hover:bg-white/10 hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      <ApplyChoiceModal target={applyTarget} similar={applySimilar} onClose={closeApply} />
+
     </div>
     </MotionConfig>
   );

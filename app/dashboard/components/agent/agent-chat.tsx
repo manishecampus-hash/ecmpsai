@@ -14,6 +14,7 @@ import {
   Share2,
   Sparkles,
   SquarePen,
+  X,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -27,8 +28,9 @@ import { intentOf } from "./agent-engine";
 import { useAgent } from "./agent-shell";
 import ModeSwitch from "./mode-switch";
 
-// Chat mode of the eCampus Agent — the student's AI chat (formerly the My Chat page), full screen like ChatGPT:
-// saved chats on the left, the conversation on the right, answers streamed from eCampus AI (/api/chat).
+// Chat mode of the eCampus Agent — the student's AI chat (formerly the My Chat page). From 1024px it's docked on the
+// right beside the dashboard (saved chats in a drawer); on phones / tablets it's full screen with saved chats on the
+// left. Answers stream from eCampus AI (/api/chat).
 // Chats are the same ones saved by /search and the old My Chat page.
 
 const SUGGESTIONS: { icon: LucideIcon; text: string }[] = [
@@ -175,21 +177,24 @@ function ChatScreen({ visible }: { visible: boolean }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.985 }}
-      animate={visible ? { opacity: 1, scale: 1, visibility: "visible" } : { opacity: 0, scale: 0.985, transitionEnd: { visibility: "hidden" } }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      // Slides in from the right (full screen on phones, docked panel on desktop)
+      initial={{ opacity: 0, x: "100%" }}
+      animate={visible ? { opacity: 1, x: 0, visibility: "visible" } : { opacity: 0, x: "100%", transitionEnd: { visibility: "hidden" } }}
+      transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
       inert={!visible}
       aria-hidden={!visible}
       aria-label="eCampus Agent chat"
       role="dialog"
-      className="fixed inset-0 z-[80] flex overflow-hidden bg-white"
+      className={`fixed inset-0 z-[80] flex overflow-hidden bg-white lg:relative lg:inset-auto lg:z-[55] lg:h-screen lg:w-[400px] lg:flex-shrink-0 lg:border-l lg:border-black/[0.08] lg:shadow-[-12px_0_40px_-24px_rgba(0,0,0,0.25)] xl:w-[440px] ${
+        visible ? "" : "lg:hidden"
+      }`}
     >
       {/* Saved chats — docked from tablets up */}
       <motion.aside
         initial={false}
         animate={{ width: collapsed ? 60 : 260 }}
         transition={hydrated ? SIDEBAR_SPRING : { duration: 0 }}
-        className="hidden h-full flex-shrink-0 overflow-hidden border-r border-black/[0.06] bg-[#f8f9fb] md:block"
+        className="hidden h-full flex-shrink-0 overflow-hidden border-r border-black/[0.06] bg-[#f8f9fb] md:block lg:hidden"
       >
         <ChatSidebar {...sidebarProps} variant="docked" collapsed={collapsed} onToggle={toggleCollapsed} />
       </motion.aside>
@@ -204,14 +209,14 @@ function ChatScreen({ visible }: { visible: boolean }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={() => setDrawerOpen(false)}
-              className="fixed inset-0 z-[85] bg-black/40 md:hidden"
+              className="absolute inset-0 z-[85] bg-black/40 md:hidden lg:block"
             />
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-y-0 left-0 z-[90] w-[280px] bg-[#f8f9fb] shadow-2xl md:hidden [&>div]:w-full"
+              className="absolute inset-y-0 left-0 z-[90] w-[280px] max-w-[85%] bg-[#f8f9fb] shadow-2xl md:hidden lg:block [&>div]:w-full"
             >
               <ChatSidebar {...sidebarProps} variant="drawer" onToggle={() => setDrawerOpen(false)} />
             </motion.aside>
@@ -224,16 +229,17 @@ function ChatScreen({ visible }: { visible: boolean }) {
         {/* Soft brand wash behind the top of the page */}
         <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(238,44,60,0.06),transparent)]" />
 
-        <header className="relative z-10 flex h-16 flex-shrink-0 items-center gap-1.5 border-b border-black/[0.05] bg-white/80 px-2 backdrop-blur-sm sm:px-4">
+        <header className="relative z-10 flex-shrink-0 border-b border-black/[0.05] bg-white/80 px-2 backdrop-blur-sm sm:px-4 lg:px-3 lg:pb-3">
+         <div className="flex h-16 items-center gap-1.5 lg:h-14 lg:gap-1">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open chat history"
-            className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[#1B2230] hover:bg-black/[0.05] md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[#1B2230] hover:bg-black/[0.05] md:hidden lg:order-2 lg:flex lg:h-9 lg:w-9 lg:text-[#5d6472]"
           >
-            <History className="h-5 w-5" />
+            <History className="h-5 w-5 lg:h-[18px] lg:w-[18px]" />
           </button>
-          <div className="hidden min-w-0 items-center gap-2.5 lg:flex">
+          <div className="hidden min-w-0 items-center gap-2.5 lg:order-1 lg:flex lg:flex-1">
             <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-[#1B2230] shadow-sm">
               <Sparkles className="h-4 w-4 text-white" aria-hidden />
               <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
@@ -244,43 +250,59 @@ function ChatScreen({ visible }: { visible: boolean }) {
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+          <div className="flex min-w-0 flex-1 justify-center lg:hidden">
             <ModeSwitch />
           </div>
 
-          <div className="ml-auto flex items-center gap-1.5">
+          <div className="ml-auto flex items-center gap-1.5 lg:order-3 lg:ml-0 lg:gap-1">
             {firstQuestion && (
               <button
                 type="button"
                 onClick={() => share(firstQuestion)}
-                className="hidden h-9 items-center gap-2 rounded-full border border-black/10 px-3.5 text-sm font-medium text-[#1B2230] transition hover:bg-black/[0.04] sm:inline-flex"
+                aria-label="Share"
+                className="hidden h-9 items-center gap-2 rounded-full border border-black/10 px-3.5 text-sm font-medium text-[#1B2230] transition hover:bg-black/[0.04] sm:inline-flex lg:w-9 lg:justify-center lg:rounded-[10px] lg:border-0 lg:px-0 lg:text-[#5d6472] lg:hover:bg-black/[0.05]"
               >
-                <Share2 className="h-4 w-4" /> Share
+                <Share2 className="h-4 w-4" /> <span className="lg:hidden">Share</span>
               </button>
             )}
             <button
               type="button"
               onClick={newChat}
               aria-label="New chat"
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[#1B2230] hover:bg-black/[0.05] md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] text-[#1B2230] hover:bg-black/[0.05] md:hidden lg:flex lg:h-9 lg:w-9 lg:text-[#5d6472]"
             >
-              <SquarePen className="h-5 w-5" />
+              <SquarePen className="h-5 w-5 lg:h-[18px] lg:w-[18px]" />
             </button>
+            {/* Phones / tablets: back to the dashboard (the chat covers it) */}
             <button
               type="button"
               onClick={() => agent.setOpen(false)}
               aria-label="Back to dashboard"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#1B2230] px-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#2a3346] sm:px-3.5"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#1B2230] px-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#2a3346] sm:px-3.5 lg:hidden"
             >
               <LayoutDashboard className="h-4 w-4" aria-hidden />
               <span className="hidden sm:inline">Dashboard</span>
             </button>
+            {/* Docked beside the dashboard: close, like the Work panel */}
+            <button
+              type="button"
+              onClick={() => agent.setOpen(false)}
+              aria-label="Close eCampus Agent"
+              className="hidden h-9 w-9 items-center justify-center rounded-[10px] text-[#5d6472] transition hover:bg-black/[0.05] hover:text-[#1B2230] lg:flex"
+            >
+              <X className="h-[18px] w-[18px]" />
+            </button>
+          </div>
+         </div>
+          {/* Docked: Chat / Work switch on its own row, like the Work panel */}
+          <div className="hidden lg:block">
+            <ModeSwitch stretch />
           </div>
         </header>
 
         {hasMessages && active ? (
           <div ref={scrollRef} onScroll={onScroll} className="relative order-1 min-h-0 flex-1 overflow-y-auto">
-            <div className="mx-auto w-full max-w-3xl space-y-8 px-4 pb-10 pt-6 sm:px-6">
+            <div className="mx-auto w-full max-w-3xl space-y-8 px-4 pb-10 pt-6 sm:px-6 lg:space-y-6 lg:px-4 lg:pt-4">
               {active.messages.map((m, i) =>
                 m.role === "user" ? (
                   <UserMessage key={m.id} message={m} />
@@ -347,14 +369,14 @@ function ChatScreen({ visible }: { visible: boolean }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.05 }}
-                className="mt-5 text-2xl font-semibold tracking-tight text-[#1B2230] sm:text-[30px]"
+                className="mt-5 text-2xl font-semibold tracking-tight text-[#1B2230] sm:text-[30px] lg:text-[22px]"
               >
                 {firstName ? `Hi ${firstName}, what can I help with?` : "What can I help you with?"}
               </motion.h2>
               <p className="mt-2 text-sm text-[#5d6472]">Ask about programs, fees, scholarships and admissions.</p>
             </div>
 
-            <div className="order-3 mx-auto mt-6 grid w-full max-w-3xl grid-cols-1 gap-2 px-4 sm:grid-cols-2 sm:px-6 md:order-5 md:mt-4">
+            <div className="order-3 mx-auto mt-6 grid w-full max-w-3xl grid-cols-1 gap-2 px-4 sm:grid-cols-2 sm:px-6 md:order-5 md:mt-4 lg:order-3 lg:mt-5 lg:grid-cols-1 lg:px-4">
               {SUGGESTIONS.map(({ icon: Icon, text }, i) => (
                 <motion.button
                   key={text}
@@ -379,7 +401,7 @@ function ChatScreen({ visible }: { visible: boolean }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.32 }}
                 onClick={() => agent.setMode("work")}
-                className="group flex items-center gap-3 rounded-2xl border border-[#1B2230]/10 bg-gradient-to-r from-[#1B2230] to-[#2a3346] px-4 py-3.5 text-left text-white shadow-[0_12px_30px_-18px_rgba(27,34,48,0.7)] transition hover:-translate-y-0.5 sm:col-span-2"
+                className="group flex items-center gap-3 rounded-2xl border border-[#1B2230]/10 bg-gradient-to-r from-[#1B2230] to-[#2a3346] px-4 py-3.5 text-left text-white shadow-[0_12px_30px_-18px_rgba(27,34,48,0.7)] transition hover:-translate-y-0.5 sm:col-span-2 lg:col-span-1"
               >
                 <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
                   <Bot className="h-[18px] w-[18px]" aria-hidden />
@@ -391,12 +413,12 @@ function ChatScreen({ visible }: { visible: boolean }) {
                 <ArrowRight className="h-4 w-4 flex-shrink-0 text-white/80 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </motion.button>
             </div>
-            <div className="order-4 flex-1 md:order-6" />
+            <div className="order-4 flex-1 md:order-6 lg:order-4" />
           </>
         )}
 
         {/* Composer — at the bottom of a conversation; in the middle of an empty chat on larger screens */}
-        <div className={`relative flex-shrink-0 px-3 pt-2 sm:px-6 ${hasMessages ? "order-2 pb-3" : "order-5 pb-4 md:order-4 md:mt-8 md:pb-0"}`}>
+        <div className={`relative flex-shrink-0 px-3 pt-2 sm:px-6 lg:px-4 ${hasMessages ? "order-2 pb-3" : "order-5 pb-4 md:order-4 md:mt-8 md:pb-0 lg:order-5 lg:mt-0 lg:pb-3"}`}>
           <AnimatePresence>
             {showJump && hasMessages && (
               <motion.button

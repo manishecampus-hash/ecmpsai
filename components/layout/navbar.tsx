@@ -1155,6 +1155,14 @@ export function Navbar() {
     };
   }, []);
 
+  const profileCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (profileCloseTimer.current) clearTimeout(profileCloseTimer.current);
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!profileMenuOpen) return;
 
@@ -1357,7 +1365,15 @@ export function Navbar() {
                 <div
                   ref={profileMenuRef}
                   className="relative hidden sm:block"
-                  onMouseEnter={() => setProfileMenuOpen(true)}
+                  onMouseEnter={() => {
+                    if (profileCloseTimer.current) clearTimeout(profileCloseTimer.current);
+                    setProfileMenuOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    // Stays open while the pointer is over the menu; closes 1s after it leaves
+                    if (profileCloseTimer.current) clearTimeout(profileCloseTimer.current);
+                    profileCloseTimer.current = setTimeout(() => setProfileMenuOpen(false), 1000);
+                  }}
                 >
                   <button
                     type="button"

@@ -71,43 +71,102 @@ export function TableOfContents({
     return document.getElementById(id);
   };
 
+  const clickLock = useRef(false);
+  const clickLockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (clickLockTimer.current) clearTimeout(clickLockTimer.current);
+    },
+    [],
+  );
+
+  // Highlight the heading currently being read: the last one that has passed the top of the screen.
+  // Checked on every scroll, so it stays right when scrolling down, up, or jumping.
   useEffect(() => {
     if (!headings || headings.length === 0) return;
 
-    let observer: IntersectionObserver | null = null;
+    // A clicked heading lands 80px from the top, so the line sits a little below that
+    const READ_LINE = 120;
+    let targets: { id: string; el: HTMLElement }[] = [];
+    let frame = 0;
 
-    const observeElements = () => {
-      if (observer) observer.disconnect();
-
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) setActive(entry.target.id);
-          });
-        },
-        { rootMargin: "0px 0px -70% 0px" },
-      );
-
-      headings.forEach(({ id }) => {
-        const el = getTargetElement(id);
-        if (el) observer?.observe(el);
-      });
+    const collect = () => {
+      targets = headings
+        .map(({ id }) => ({ id, el: getTargetElement(id) }))
+        .filter((t): t is { id: string; el: HTMLElement } => Boolean(t.el));
     };
 
-    observeElements();
-    window.addEventListener("resize", observeElements);
+    const update = () => {
+      frame = 0;
+      // After a click, hold the clicked heading until the page has finished gliding to it,
+      // instead of flicking through every heading on the way
+      if (clickLock.current) {
+        if (clickLockTimer.current) clearTimeout(clickLockTimer.current);
+        clickLockTimer.current = setTimeout(() => {
+          clickLock.current = false;
+        }, 150);
+        return;
+      }
+      if (targets.length === 0) return;
+      let current = targets[0].id;
+      for (const { id, el } of targets) {
+        if (el.getBoundingClientRect().top <= READ_LINE) current = id;
+        else break;
+      }
+      setActive((prev) => (prev === current ? prev : current));
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const onResize = () => {
+      collect();
+      onScroll();
+    };
+
+    collect();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
 
     return () => {
-      window.removeEventListener("resize", observeElements);
-      observer?.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, [headings]);
+
+  // Keep the highlighted heading visible inside the list when the list has its own scroll
+  // (desktop sidebar). Only the list moves, never the page.
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || !active || list.scrollHeight <= list.clientHeight) return;
+    const item = list.querySelector<HTMLElement>(`[data-toc-id="${CSS.escape(active)}"]`);
+    if (!item) return;
+    const listRect = list.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    // Leave the list still while the heading is comfortably in view (e.g. the one just clicked),
+    // so it doesn't shift under the pointer or nudge on every heading while reading
+    if (itemRect.top >= listRect.top + 24 && itemRect.bottom <= listRect.bottom - 48) return;
+    // Otherwise bring it about a third of the way down, so the next ones show too
+    const target = list.scrollTop + (itemRect.top - listRect.top) - list.clientHeight / 3;
+    list.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+  }, [active]);
 
   if (!headings || headings.length === 0) return null;
 
   const handleHeadingClick = (id: string) => {
     const el = getTargetElement(id);
     if (el) {
+      // Hold this highlight while the page glides; released 150ms after scrolling stops,
+      // or after 1s if the page is already in place and doesn't scroll at all
+      clickLock.current = true;
+      if (clickLockTimer.current) clearTimeout(clickLockTimer.current);
+      clickLockTimer.current = setTimeout(() => {
+        clickLock.current = false;
+      }, 1000);
+
       // 80px accounts for top fixed navbar (64px) + breathing space
       const yOffset = -80;
       const elementTop = el.getBoundingClientRect().top;
@@ -165,21 +224,26 @@ export function TableOfContents({
       </div>
 
       {/* ── Items ── */}
-      <ul className="space-y-1 list-none p-0 m-0">
+      <ul ref={listRef} className="toc-list space-y-1 list-none p-0 m-0">
         {visibleHeadings.map(({ id, text, label, level }) => {
           const displayText = label ?? text ?? id;
           const isActive = active === id;
 
           return (
-            <li key={id} className="text-xs sm:text-sm">
+            // Indent sits on the row (padding), so the full-width button never spills past the list edge
+            <li
+              key={id}
+              data-toc-id={id}
+              className={`text-xs sm:text-sm ${level === 3 ? "pl-3" : level === 2 ? "pl-1.5" : ""}`}
+            >
               <button
                 type="button"
                 onClick={() => handleHeadingClick(id)}
                 className={`w-full flex items-start gap-2.5 py-1.5 px-2.5 rounded-xl text-left transition-all duration-200 cursor-pointer ${
                   level === 3
-                    ? "ml-3 text-[12.5px]"
+                    ? "text-[12.5px]"
                     : level === 2
-                    ? "ml-1.5 text-xs sm:text-sm"
+                    ? "text-xs sm:text-sm"
                     : "text-xs sm:text-sm"
                 } ${
                   isActive

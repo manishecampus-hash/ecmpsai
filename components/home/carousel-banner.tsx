@@ -650,39 +650,19 @@ export function CarouselBanner({ banners }: { banners?: any[] }) {
           border-radius: 0px;
           user-select: none;
           touch-action: pan-y;
- 
-          /* Mobile */
-          aspect-ratio: 5 / 2.4;
+
+          /* Fixed box in the admin banner's own size, so the space is reserved
+             before the image loads and nothing is cropped.
+             Below 1024px the mobile banner shows (512 x 288) */
+          aspect-ratio: 512 / 288;
         }
 
-        /* Tablet */
-        @media (min-width: 640px) {
-          .cb-wrap {
-            aspect-ratio: 8 / 3;
-          }
-        }
-
-        /* Laptop */
+        /* From 1024px the desktop banner shows (1920 x 350) */
         @media (min-width: 1024px) {
           .cb-wrap {
-            aspect-ratio: 16 / 3.5;
+            aspect-ratio: 1920 / 350;
           }
         }
-
-        /* Large laptop / desktop */
-        @media (min-width: 1280px) {
-          .cb-wrap {
-            aspect-ratio: 16 / 3.5;
-          }
-        }
-
-        /* Large desktop */
-        @media (min-width: 1920px) {
-          .cb-wrap {
-            aspect-ratio: 16 / 3.5;
-          }
-        }
-
 
         .cb-track {
           display: flex;

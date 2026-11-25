@@ -27,7 +27,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "rushford-vs-eimt",
     program: "Online DBA",
     region: "global",
-    cover: "/compare/rushford vs eimt.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/rushford%20vs%20eimt.png",
     a: {
       name: "Rushford Business School",
       short: "Rushford",
@@ -52,7 +52,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "ssbm-vs-esgci",
     program: "Executive DBA",
     region: "global",
-    cover: "/compare/ssbm vs esgci.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/ssbm%20vs%20esgci.png",
     a: {
       name: "SSBM Geneva",
       short: "SSBM",
@@ -78,7 +78,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "ggu-vs-edgewood",
     program: "DBA & MBA",
     region: "global",
-    cover: "/compare/ggu vs edgewood.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/ggu%20vs%20edgewood.png",
     a: {
       name: "Golden Gate University",
       short: "GGU",
@@ -104,7 +104,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "lsmt-vs-birchwood",
     program: "Doctorate / DBA",
     region: "global",
-    cover: "/compare/lsmt vs birchwood.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/lsmt%20vs%20birchwood.png",
     a: {
       name: "LSMT University",
       short: "LSMT",
@@ -128,7 +128,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "amity-vs-manipal-jaipur",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/amityonline-vs-manipal.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/amityonline-vs-manipal.png",
     a: {
       name: "Amity University Online",
       short: "Amity",
@@ -154,7 +154,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "chandigarh-vs-gla",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/chanddigarh-vs-GLA.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/chanddigarh-vs-GLA.png",
     a: {
       name: "Chandigarh University Online",
       short: "Chandigarh",
@@ -180,7 +180,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "jain-vs-sharda",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/Jain-vs-Sharda.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/Jain-vs-Sharda.png",
     a: {
       name: "Jain University Online",
       short: "Jain",
@@ -206,7 +206,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "galgotias-vs-uttaranchal",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/galgoltias-vs-uttranchal.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/galgoltias-vs-uttranchal.png",
     a: {
       name: "Galgotias University Online",
       short: "Galgotias",
@@ -232,7 +232,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "shoolini-vs-mangalayatan",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/shoolini-vs-mangalayatan.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/shoolini-vs-mangalayatan.png",
     a: {
       name: "Shoolini University Online",
       short: "Shoolini",
@@ -258,7 +258,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "smu-vs-vgu",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/SMU-vs-VGU.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/SMU-vs-VGU.png",
     a: {
       name: "Sikkim Manipal University Online",
       short: "Sikkim Manipal",
@@ -283,7 +283,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "gla-vs-manipal-jaipur",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/GLA-Vs-manipal.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/GLA-Vs-manipal.png",
     a: {
       name: "GLA University Online",
       short: "GLA",
@@ -309,7 +309,7 @@ export const COMPARE_PAIRS: ComparePair[] = [
     id: "amity-vs-gla",
     program: "Online MBA",
     region: "india",
-    cover: "/compare/e1435b81-f02a-499c-90aa-8560d914cefb.png",
+    cover: "https://ecampus-admin-ui.b-cdn.net/ecampus-images/amityvsGLA.png",
     a: {
       name: "Amity University Online",
       short: "Amity",

@@ -39,6 +39,11 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "coupons", label: "Coupons", href: "/online-mba/coupons" },
 ];
 
+/** Sideways scroll position of the bar per course, kept while moving between its sub-pages */
+const barScrollMemory = new Map<string, number>();
+/** Position of the last current link per course, to tell going forward from going back */
+const barActiveMemory = new Map<string, number>();
+
 export default function SubHeader({ subHeaders, courseSlug = "online-mba", hideAfterId }: SubHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -125,6 +130,61 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba", hideA
       window.removeEventListener("resize", updateScrollButtons);
     };
   }, []);
+
+  // Each sub-page mounts a fresh bar. Put it back where it was on the previous page straight away,
+  // so it never replays the slide from the first link.
+  const hadSavedScroll = useRef(false);
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const saved = barScrollMemory.get(basePath);
+    if (saved !== undefined) {
+      el.scrollLeft = saved;
+      hadSavedScroll.current = true;
+    }
+    const remember = () => barScrollMemory.set(basePath, el.scrollLeft);
+    el.addEventListener("scroll", remember, { passive: true });
+    return () => el.removeEventListener("scroll", remember);
+  }, [basePath]);
+
+  // Then move only as far as needed: going forward, the current link and the one after it come
+  // on screen; going back, the current link and the one before it do.
+  // Only the bar scrolls sideways; the page itself does not move.
+  useEffect(() => {
+    const el = scrollRef.current;
+    const active = el?.querySelector<HTMLElement>('[data-active="true"]');
+    if (!el || !active) return;
+
+    const links = Array.from(el.children) as HTMLElement[];
+    const index = links.indexOf(active);
+    const lastIndex = barActiveMemory.get(basePath);
+    barActiveMemory.set(basePath, index);
+    const goingBack = lastIndex !== undefined && index < lastIndex;
+
+    const prev = links[index - 1] ?? active;
+    const next = links[index + 1] ?? active;
+    const barLeft = el.getBoundingClientRect().left;
+    const leftOf = (node: HTMLElement) => node.getBoundingClientRect().left - barLeft;
+    const rightOf = (node: HTMLElement) => node.getBoundingClientRect().right - barLeft;
+    const pad = 8;
+    const viewEnd = el.clientWidth - pad;
+
+    let delta = 0;
+    if (goingBack) {
+      if (leftOf(prev) < pad) delta = leftOf(prev) - pad;
+      // never push the current link off the right edge
+      if (rightOf(active) - delta > viewEnd) delta = rightOf(active) - viewEnd;
+    } else {
+      if (rightOf(next) > viewEnd) delta = rightOf(next) - viewEnd;
+      // never push the current link off the left edge
+      if (leftOf(active) - delta < pad) delta = leftOf(active) - pad;
+    }
+    if (Math.abs(delta) < 1) return;
+
+    // Smooth when moving on from a previous page; instant on a fresh visit so there is no long slide
+    el.scrollBy({ left: delta, behavior: hadSavedScroll.current ? "smooth" : "auto" });
+    hadSavedScroll.current = true;
+  }, [pathname, activeId]);
 
   const scrollByAmount = (direction: "left" | "right") => {
     const el = scrollRef.current;
@@ -334,6 +394,7 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba", hideA
                 <Link
                   key={item.id}
                   href={item.href}
+                  data-active={isActive ? "true" : undefined}
                   className="subheader-item"
                   style={{
                     ...commonStyles,
@@ -349,6 +410,7 @@ export default function SubHeader({ subHeaders, courseSlug = "online-mba", hideA
               <button
                 key={item.id}
                 onClick={() => handleClick(item.id)}
+                data-active={isActive ? "true" : undefined}
                 className="subheader-item"
                 style={{
                   ...commonStyles,

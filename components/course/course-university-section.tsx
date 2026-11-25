@@ -276,7 +276,7 @@ export default function CourseUniversitySection({
         </div>
 
         {/* 4 Cards in a Row Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 px-3 sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
           {visibleUniversities.map((university) => {
             const key = university.slug || university.name;
             const isSelected = selected.includes(key);

@@ -520,6 +520,22 @@ export default async function BlogDetailsPage({
           z-index: 20;
         }
 
+        /* Long outlines scroll inside the card, so the whole Table of Contents stays on screen
+           and follows the article (the highlighted heading is kept in view) */
+        .blog-sidebar-col .toc-list {
+          max-height: calc(100vh - 96px - 120px);
+          overflow-y: auto;
+          overflow-x: hidden;
+          overscroll-behavior: contain;
+          /* Still scrolls with the wheel / touchpad; the scrollbars are just hidden */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .blog-sidebar-col .toc-list::-webkit-scrollbar {
+          display: none;
+        }
+
         .sidebar-apply-card {
           background: #ffffff;
           border: 1.5px solid #cbd5e1;

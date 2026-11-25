@@ -6,9 +6,8 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap, Phone, Play, Quote, Star, Video, X } from "lucide-react";
 import { STUDENT_STORIES, type StudentStoryT } from "@/data/student-stories";
 // Opens the Apply Now popup; its form code only loads when the popup is first opened
-import { ApplyNowButton } from "@/components/form/apply-now-modal";
+import { ApplyNowButton, ApplyNowModal } from "@/components/form/apply-now-modal";
 
-const HELPLINE = "18001216201";
 const WHATSAPP = "919873794789";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -136,11 +135,13 @@ function StoryModal({
   index,
   onChange,
   onClose,
+  onTalkToExpert,
 }: {
   stories: StudentStoryT[];
   index: number | null;
   onChange: (index: number) => void;
   onClose: () => void;
+  onTalkToExpert: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const story = index === null ? null : stories[index];
@@ -349,13 +350,15 @@ function StoryModal({
                   <WhatsAppIcon className="h-4 w-4" />
                   WhatsApp
                 </a>
-                <a
-                  href={`tel:${HELPLINE}`}
+                {/* Opens the same Apply Now popup as the section's "Talk to our experts" button */}
+                <button
+                  type="button"
+                  onClick={onTalkToExpert}
                   className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-red-600 px-3 py-2.5 text-[13px] sm:px-5 sm:text-sm font-semibold text-white shadow-md shadow-red-600/25 transition hover:bg-red-700"
                 >
                   <Phone className="h-4 w-4" fill="currentColor" strokeWidth={1.5} />
                   Talk to an Expert
-                </a>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -402,6 +405,13 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
     [current, pageCount],
   );
   const closeModal = useCallback(() => setActive(null), []);
+  // "Talk to an Expert" in the story popup: close the video and open the Apply Now popup
+  const [expertOpen, setExpertOpen] = useState(false);
+  const openExpert = useCallback(() => {
+    setActive(null);
+    setExpertOpen(true);
+  }, []);
+  const closeExpert = useCallback(() => setExpertOpen(false), []);
 
   if (stories.length === 0) return null;
 
@@ -529,7 +539,8 @@ export function StudentStoriesSection({ stories = STUDENT_STORIES }: { stories?:
         </div>
       </div>
 
-      <StoryModal stories={stories} index={active} onChange={setActive} onClose={closeModal} />
+      <StoryModal stories={stories} index={active} onChange={setActive} onClose={closeModal} onTalkToExpert={openExpert} />
+      <ApplyNowModal isOpen={expertOpen} onClose={closeExpert} />
     </section>
   );
 }

@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { OtpProgressButton } from "@/components/auth/otp-progress-button";
+import { useAnimate } from "framer-motion";
 import { indianStates } from "@/data/indian-states";
 import { AIAdvisorModal, type AdvisorAnswers } from "@/components/layout/ai-advisor-modal";
 
@@ -57,6 +59,8 @@ export default function SignupPage() {
   const [otp, setOtp] = useState("");
   const [challengeId, setChallengeId] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpScope, animateOtp] = useAnimate();
 
   // Details state
   const [name, setName] = useState("");
@@ -139,6 +143,7 @@ export default function SignupPage() {
   };
 
   const handleVerifyOtp = async (overrideOtp?: string) => {
+    if (loading || otpVerified) return;
     setError("");
     const code = (overrideOtp || otp).trim();
 
@@ -165,6 +170,10 @@ export default function SignupPage() {
       if (!res.ok || !data.success) {
         throw new Error(data.message || "Invalid OTP code. Please check and try again.");
       }
+
+      // Let the boxes and button settle on their green "Verified" state before moving on
+      setOtpVerified(true);
+      await new Promise((r) => setTimeout(r, 450));
 
       // CRITICAL CHECK: If account was already made and questions already answered, do NOT ask again!
       if ((data.isExistingUser || data.hasProfileDetails) && data.hasProfileDetails && data.hasAdvisorProfile && data.student) {
@@ -194,6 +203,11 @@ export default function SignupPage() {
       setStep("details");
     } catch (err: any) {
       setError(err.message || "Verification failed. Please try again.");
+      // Wrong code: clear the boxes and give them a little shake
+      setOtp("");
+      if (otpScope.current) {
+        animateOtp(otpScope.current, { x: [0, -8, 8, -5, 5, 0] }, { duration: 0.35 });
+      }
     } finally {
       setLoading(false);
     }
@@ -286,14 +300,14 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="relative flex min-h-[calc(100dvh-64px)] flex-col justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-5 pb-24 sm:min-h-screen sm:justify-center sm:px-6 sm:py-12 lg:px-8">
       {/* Decorative ambient background */}
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-red-100/50 rounded-full blur-3xl opacity-70" />
       <div className="pointer-events-none absolute -bottom-40 right-10 w-[400px] h-[300px] bg-amber-100/40 rounded-full blur-3xl opacity-60" />
 
-      {/* Top Logo & Title */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10 px-4">
-        <Link href="/" className="inline-block relative w-36 h-12 mb-3">
+      {/* Top Logo — mobile already shows it in the site header, so only from sm up */}
+      <div className="relative z-10 hidden justify-center px-4 sm:flex">
+        <Link href="/" className="relative block h-12 w-40" aria-label="eCampus home">
           <Image
             src="/image/logo.png"
             alt="eCampus Logo"
@@ -302,24 +316,52 @@ export default function SignupPage() {
             priority
           />
         </Link>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold tracking-wide uppercase mb-2">
-          <Sparkles className="w-3.5 h-3.5" />
-          Join eCampus
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Create your free account
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Discover top online UGC degrees, compare fees, and talk to AI counselors
-        </p>
       </div>
 
       {/* Main Card */}
-      <div className="mt-7 sm:mx-auto sm:w-full sm:max-w-[460px] px-4 relative z-10">
-        <div className="overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-100">
+      <div className="relative z-10 mx-auto w-full max-w-[500px] px-3.5 sm:mt-6 sm:px-4">
+        <div className="overflow-hidden rounded-3xl bg-white shadow-[0_18px_50px_rgba(15,23,42,0.10)] sm:shadow-[0_25px_70px_rgba(15,23,42,0.12)] border border-slate-100">
           <div className="h-1.5 w-full bg-gradient-to-r from-red-600 via-rose-500 to-amber-500" />
 
-          <div className="p-7 sm:p-8">
+          <div className="px-4 py-5 min-[380px]:px-5 sm:p-7">
+            {/* Step heading — centred, same style as the login popup */}
+            <div className="mb-5 flex flex-col items-center text-center sm:mb-6">
+              <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
+                {step === "identifier" && (
+                  <>
+                    <Sparkles className="h-3.5 w-3.5" /> Join eCampus
+                  </>
+                )}
+                {step === "otp" && (
+                  <>
+                    <ShieldCheck className="h-3.5 w-3.5" /> Verify {mode === "mobile" ? "Mobile" : "Email"}
+                  </>
+                )}
+                {step === "details" && (
+                  <>
+                    <GraduationCap className="h-3.5 w-3.5" /> Complete Profile
+                  </>
+                )}
+              </span>
+              <h1 className="text-[22px] font-bold leading-tight tracking-tight text-slate-900 sm:text-[26px]">
+                {step === "identifier" && "Create your free account"}
+                {step === "otp" && "Enter verification code"}
+                {step === "details" && "Almost there!"}
+              </h1>
+              <p className="mx-auto mt-1.5 max-w-[360px] text-[13px] leading-relaxed text-slate-500">
+                {step === "identifier" && "Discover top online UGC degrees, compare fees, and talk to AI counselors."}
+                {step === "otp" && (
+                  <>
+                    We sent a 6-digit code to{" "}
+                    <span className="font-bold text-slate-900">
+                      {mode === "mobile" ? `${countryCode} ${phone}` : email}
+                    </span>
+                  </>
+                )}
+                {step === "details" && "Tell us a little about yourself to personalise your degree recommendations."}
+              </p>
+            </div>
+
             {error && (
               <div className="mb-5 flex items-start gap-2.5 rounded-2xl p-3.5 text-xs bg-red-50 border border-red-200 text-red-700 leading-relaxed">
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -330,20 +372,20 @@ export default function SignupPage() {
             {/* STEP 1: IDENTIFIER INPUT */}
             {step === "identifier" && (
               <>
-                <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl mb-6">
+                <div className="grid grid-cols-2 p-1.5 bg-[#F0F4F8] rounded-2xl mb-6">
                   <button
                     type="button"
                     onClick={() => {
                       setMode("mobile");
                       setError("");
                     }}
-                    className={`flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-xl transition-all ${
+                    className={`flex h-11 items-center justify-center gap-2 text-[13px] font-bold rounded-xl transition-all cursor-pointer ${
                       mode === "mobile"
                         ? "bg-white text-slate-900 shadow-sm"
                         : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    <Smartphone className="w-3.5 h-3.5" />
+                    <Smartphone className={`w-4 h-4 ${mode === "mobile" ? "text-red-600" : "text-slate-500"}`} />
                     Mobile Number
                   </button>
                   <button
@@ -352,13 +394,13 @@ export default function SignupPage() {
                       setMode("email");
                       setError("");
                     }}
-                    className={`flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-xl transition-all ${
+                    className={`flex h-11 items-center justify-center gap-2 text-[13px] font-bold rounded-xl transition-all cursor-pointer ${
                       mode === "email"
                         ? "bg-white text-slate-900 shadow-sm"
                         : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    <Mail className="w-3.5 h-3.5" />
+                    <Mail className={`w-4 h-4 ${mode === "email" ? "text-red-600" : "text-slate-500"}`} />
                     Email
                   </button>
                 </div>
@@ -366,21 +408,27 @@ export default function SignupPage() {
                 <form onSubmit={handleSendOtp} className="space-y-4">
                   {mode === "mobile" ? (
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      <label className="block text-[13px] font-semibold text-slate-800 mb-2">
                         Mobile Number
                       </label>
-                      <div className="flex rounded-2xl border border-slate-200 bg-white shadow-xs focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/15 transition-all overflow-hidden">
-                        <select
-                          value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
-                          className="bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-700 border-r border-slate-200 outline-none cursor-pointer"
-                        >
-                          {countryCodes.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.flag} {c.code}
-                            </option>
-                          ))}
-                        </select>
+                      <div className="relative flex h-[52px] items-center overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-2xs transition-all hover:border-slate-400 focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/10">
+                        {/* Country code: styled label with the native select laid over it (same as the login popup) */}
+                        <div className="relative flex h-full shrink-0 items-center gap-1.5 border-r border-slate-200 px-4 text-slate-800 transition-colors hover:bg-slate-50/70">
+                          <span className="text-[15px] font-bold tracking-tight text-slate-900">{countryCode}</span>
+                          <ChevronDown className="h-4 w-4 text-slate-400" />
+                          <select
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                            aria-label="Country code"
+                            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                          >
+                            {countryCodes.map((c) => (
+                              <option key={c.code} value={c.code}>
+                                {c.flag} {c.code} ({c.name})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                         <input
                           type="tel"
                           inputMode="numeric"
@@ -389,7 +437,7 @@ export default function SignupPage() {
                           onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                           autoFocus
                           required
-                          className="flex-1 px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none"
+                          className="h-full min-w-0 flex-1 !border-0 !bg-transparent px-4 text-base font-medium text-slate-900 !outline-none !shadow-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 focus:!shadow-none placeholder:text-slate-400 placeholder:font-normal"
                         />
                       </div>
                     </div>
@@ -407,7 +455,7 @@ export default function SignupPage() {
                           onChange={(e) => setEmail(e.target.value)}
                           autoFocus
                           required
-                          className="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm placeholder:text-slate-400 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/15 shadow-xs transition-all"
+                          className="w-full h-[52px] pl-10 pr-4 rounded-2xl border border-slate-300 bg-white text-slate-900 text-base placeholder:text-slate-400 outline-none hover:border-slate-400 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 shadow-2xs transition-all"
                         />
                       </div>
                     </div>
@@ -416,7 +464,7 @@ export default function SignupPage() {
                   <Button
                     type="submit"
                     disabled={loading || (mode === "mobile" ? phone.length !== 10 : !email.trim())}
-                    className="w-full h-11 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full h-12 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {loading ? (
                       <>
@@ -436,55 +484,44 @@ export default function SignupPage() {
 
             {/* STEP 2: OTP VERIFICATION */}
             {step === "otp" && (
-              <div className="space-y-5">
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">
-                    Enter the 6-digit verification code sent to
-                  </p>
-                  <p className="text-sm font-bold text-slate-900 mt-0.5">
-                    {mode === "mobile" ? `${countryCode} ${phone}` : email}
-                  </p>
-                </div>
-
-                <div className="flex justify-center">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleVerifyOtp();
+                }}
+                className="space-y-5"
+              >
+                {/* OTP Pin Input — submits itself on the 6th digit (same look as the Login / Sign Up popup) */}
+                <div ref={otpScope} className="flex justify-center py-1">
                   <InputOTP
                     maxLength={6}
                     value={otp}
                     onChange={(val) => {
                       setOtp(val);
+                      if (error) setError("");
                       if (val.length === 6) handleVerifyOtp(val);
                     }}
+                    autoFocus
                   >
-                    <InputOTPGroup className="gap-2">
+                    <InputOTPGroup className="gap-1.5 min-[360px]:gap-2 sm:gap-2.5">
                       {[0, 1, 2, 3, 4, 5].map((idx) => (
                         <InputOTPSlot
                           key={idx}
                           index={idx}
-                          className="h-12 w-11 rounded-xl border border-slate-200 text-lg font-bold text-slate-900 shadow-xs focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                          className={`h-11 w-9 min-[360px]:h-12 min-[360px]:w-10 sm:w-11 rounded-xl border text-lg sm:text-xl font-bold text-slate-900 shadow-xs transition-colors duration-200 first:rounded-xl first:border last:rounded-xl ${
+                            idx < otp.length
+                              ? otpVerified
+                                ? "border-emerald-400 bg-emerald-50"
+                                : "border-red-300 bg-white"
+                              : "border-slate-200 bg-slate-50/60"
+                          }`}
                         />
                       ))}
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
 
-                <Button
-                  type="button"
-                  onClick={() => handleVerifyOtp()}
-                  disabled={loading || otp.length !== 6}
-                  className="w-full h-11 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Verifying…
-                    </>
-                  ) : (
-                    <>
-                      Verify & Continue
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </Button>
+                <OtpProgressButton filled={otp.length} loading={loading} verified={otpVerified} label="Verify & Continue" />
 
                 <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                   <button
@@ -492,6 +529,7 @@ export default function SignupPage() {
                     onClick={() => {
                       setStep("identifier");
                       setOtp("");
+                      setOtpVerified(false);
                       setError("");
                     }}
                     className="text-slate-600 hover:underline flex items-center gap-1"
@@ -509,7 +547,7 @@ export default function SignupPage() {
                     {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
                   </button>
                 </div>
-              </div>
+              </form>
             )}
 
             {/* STEP 3: DETAILS FORM */}

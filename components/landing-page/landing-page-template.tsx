@@ -34,6 +34,8 @@ import { MediaMarquee, type MediaArticle } from "@/components/home/media-marquee
 import LpFeeStructure from "./lp-fee-structure";
 import LpWhyEcampus from "./lp-why-ecampus";
 import { DBA_FEE_PLANS } from "./lp-fee-data";
+import LpMbaFeeStructure from "./lp-mba-fee-structure";
+import { MBA_FEE_PLANS } from "./lp-mba-fee-data";
 
 export interface LandingPageData {
   id?: string;
@@ -152,6 +154,12 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
 
   // Fee structure — DBA page only (static, same data as dba.ecampusapp.com)
   const feePlans = isDba ? DBA_FEE_PLANS : [];
+  // MBA fee structure — only the universities listed in "Top Online MBA Universities", in the same order, with their CMS logos
+  const uniSlug = (s?: string) => (s || "").replace(/^\/?(university|universities)\//i, "").replace(/^\/+|\/+$/g, "");
+  const mbaFeePlans = mbaUniversities.flatMap((u) => {
+    const plan = MBA_FEE_PLANS.find((p) => p.slug === uniSlug(u.slug));
+    return plan ? [{ ...plan, logo: u.logoUrl || plan.logo }] : [];
+  });
   const hasMedia = (isDba || isMba) && (media?.length ?? 0) > 0;
 
   // MBA page: CMS FAQs first, then the course FAQs (no duplicates)
@@ -189,6 +197,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
           mba && { id: "lp-overview", label: "Overview" },
           mba?.details?.specializations?.items?.length && { id: "lp-specialisations", label: "Specialisations" },
           { id: "programs", label: "Universities" },
+          mbaFeePlans.length > 0 && { id: "lp-fees", label: "Fees" },
           mba && { id: "lp-syllabus", label: "Syllabus" },
           data.highlights && { id: "lp-compare", label: "Online vs Distance" },
           mba?.details?.processFlow?.steps?.length && { id: "lp-admission", label: "Admission" },
@@ -297,6 +306,13 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
             description="Secure Your DBA Seat Today at Special Scholarship Rates"
             tone="muted"
           />
+        </div>
+      )}
+
+      {/* MBA: fee structure (one-time / annual / semester) for the universities listed above */}
+      {isMba && mbaFeePlans.length > 0 && (
+        <div id="lp-fees" className="scroll-mt-28">
+          <LpMbaFeeStructure plans={mbaFeePlans} formCourses={formCourses} tone="white" />
         </div>
       )}
 

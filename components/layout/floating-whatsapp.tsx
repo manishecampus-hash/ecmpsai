@@ -15,6 +15,8 @@ export function FloatingWhatsApp({
   const [hasCourseBar, setHasCourseBar] = useState(false);
   const pathname = usePathname();
   const aboveComposer = pathname === "/search" || pathname === "/dashboard/mychat";
+  // No mobile bottom bar on the auth pages, so the button can sit in the corner
+  const isAuthPage = pathname === "/signup" || pathname === "/login" || pathname === "/verify-phone";
 
   useEffect(() => {
     const handleToggle = (e: any) => {
@@ -40,9 +42,11 @@ export function FloatingWhatsApp({
     ? pathname === "/search"
       ? "bottom-[120px] md:bottom-[112px]"
       : "bottom-[196px] md:bottom-[112px]"
-    : hasCourseBar
-      ? "bottom-[88px] md:bottom-6"
-      : "bottom-20 md:bottom-6";
+    : isAuthPage
+      ? "bottom-4 md:bottom-6"
+      : hasCourseBar
+        ? "bottom-[88px] md:bottom-6"
+        : "bottom-20 md:bottom-6";
 
   return (
     <div

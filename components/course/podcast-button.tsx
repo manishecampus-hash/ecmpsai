@@ -22,29 +22,29 @@ export default function PodcastButton({ script, title, image }: { script: string
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="relative isolate flex h-12 w-12 shrink-0">
+    <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+      <span className="relative isolate flex h-10 w-10 shrink-0 sm:h-12 sm:w-12">
         {status === "idle" && (
-          <span aria-hidden className="absolute -inset-2.5 rounded-full bg-red-100 motion-safe:animate-pulse" />
+          <span aria-hidden className="absolute -inset-1.5 rounded-full bg-red-100 motion-safe:animate-pulse sm:-inset-2.5" />
         )}
         <button
           type="button"
           onClick={onMain}
           aria-label={status === "idle" ? "Listen podcast" : status === "playing" ? "Pause podcast" : "Resume podcast"}
-          className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#ee2c3c] text-white shadow-[0_10px_24px_-6px_rgba(238,44,60,0.65)] transition-transform hover:scale-105 active:scale-95"
+          className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#ee2c3c] text-white shadow-[0_10px_24px_-6px_rgba(238,44,60,0.65)] transition-transform hover:scale-105 active:scale-95 sm:h-12 sm:w-12"
         >
           {status === "idle" && (
             <span aria-hidden className="absolute inset-0 rounded-full bg-[#ee2c3c]/40 motion-safe:animate-ping" />
           )}
-          <Icon className="relative h-5 w-5" fill={status === "idle" ? "none" : "currentColor"} />
+          <Icon className="relative h-4 w-4 sm:h-5 sm:w-5" fill={status === "idle" ? "none" : "currentColor"} />
         </button>
       </span>
 
       <div className="min-w-0 leading-tight">
         {status === "idle" ? (
           <>
-            <p className="text-sm font-bold text-slate-900">Listen Podcast</p>
-            <span className="text-xs font-medium text-slate-500">AI audio overview</span>
+            <p className="text-xs font-bold text-slate-900 min-[360px]:whitespace-nowrap sm:text-sm">Listen Podcast</p>
+            <span className="hidden truncate text-[10px] font-medium text-slate-500 min-[360px]:block sm:text-xs">AI audio overview</span>
           </>
         ) : (
           <>
@@ -58,7 +58,7 @@ export default function PodcastButton({ script, title, image }: { script: string
             </button>
             <div className="mt-1 flex items-center gap-2">
               <EqualizerBars playing={status === "playing"} />
-              <span className="h-1 w-20 overflow-hidden rounded-full bg-slate-200">
+              <span className="h-1 w-10 overflow-hidden rounded-full bg-slate-200 min-[400px]:w-16 sm:w-20">
                 <span className="block h-full rounded-full bg-[#ee2c3c] transition-[width] duration-300" style={{ width: `${Math.max(player.progress, 0.03) * 100}%` }} />
               </span>
               <button

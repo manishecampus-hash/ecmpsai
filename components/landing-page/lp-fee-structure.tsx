@@ -30,8 +30,11 @@ const CARD =
 /** "INR 50,000/-*" → "INR 50,000" for the savings ribbon */
 const cleanAmount = (v: string) => v.replace(/\/-|\*/g, "").trim();
 
+/** What the university dropdown needs from a plan — shared by the DBA and MBA fee sections */
+export type SelectableUni = Pick<FeePlan, "id" | "label" | "logo" | "tabNote"> & { immersion?: unknown };
+
 /** University logo (or initial) — used in the dropdown trigger and its options */
-function UniLogo({ plan, size = "md" }: { plan: FeePlan; size?: "sm" | "md" }) {
+function UniLogo({ plan, size = "md" }: { plan: SelectableUni; size?: "sm" | "md" }) {
   const box = size === "md" ? "h-9 w-[64px]" : "h-8 w-[56px]";
   return (
     <span className={`flex shrink-0 items-center justify-center rounded-lg bg-white ${box}`}>
@@ -47,7 +50,7 @@ function UniLogo({ plan, size = "md" }: { plan: FeePlan; size?: "sm" | "md" }) {
   );
 }
 
-function UniNote({ plan }: { plan: FeePlan }) {
+function UniNote({ plan }: { plan: SelectableUni }) {
   if (!plan.tabNote) return null;
   return (
     <span className={`block truncate text-[11px] font-semibold ${plan.immersion ? "text-emerald-600" : "text-slate-500"}`}>
@@ -60,13 +63,13 @@ function UniNote({ plan }: { plan: FeePlan }) {
  * Custom dropdown (the native <select> list can't be styled or show logos).
  * Listbox pattern: arrow keys / Home / End move, Enter or Space selects, Esc or an outside click closes.
  */
-function UniversitySelect({
+export function UniversitySelect({
   plans,
   value,
   onChange,
   label,
 }: {
-  plans: FeePlan[];
+  plans: SelectableUni[];
   value: string;
   onChange: (id: string) => void;
   label: string;

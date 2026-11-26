@@ -246,15 +246,15 @@ export default function CourseHeroSection({
               )}
 
               {(cta1 || podcastScript) && (
-                <motion.div {...rise(0.28)} className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-4 sm:gap-x-6">
+                <motion.div {...rise(0.28)} className="mt-7 flex flex-nowrap items-center gap-x-3 gap-y-4 sm:flex-wrap sm:gap-x-6">
                   {cta1 && (
                     <button
                       type="button"
                       onClick={handleCta1}
-                      className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#ee2c3c] px-5 text-sm sm:px-7 font-bold text-white shadow-[0_12px_24px_-8px_rgba(238,44,60,0.6)] transition hover:bg-[#d92233] active:scale-[0.98]"
+                      className="group inline-flex h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[#ee2c3c] px-3.5 text-[11px] font-bold min-[360px]:px-4 min-[360px]:text-xs text-white shadow-[0_12px_24px_-8px_rgba(238,44,60,0.6)] transition hover:bg-[#d92233] active:scale-[0.98] sm:h-12 sm:gap-2 sm:px-7 sm:text-sm"
                     >
                       {cta1}
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="hidden h-3.5 w-3.5 transition-transform group-hover:translate-x-1 min-[400px]:block sm:h-4 sm:w-4" />
                     </button>
                   )}
                   {podcastScript && <PodcastButton script={podcastScript} title={heading.replace(/\*/g, "").trim()} image={image} />}

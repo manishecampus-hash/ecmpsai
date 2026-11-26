@@ -8,7 +8,7 @@ import { ApplyNowModal } from "@/components/form/apply-now-modal";
 
 /**
  * Site-wide sign-up nudge (mounted in the root layout; never on /dashboard).
- * Opens only once per browser (remembered in localStorage, so not again on refresh / new tabs) — after 15 seconds on a page or when the visitor scrolls past
+ * Opens only once per browser (remembered in localStorage, so not again on refresh / new tabs) — after 20 seconds on a page or when the visitor scrolls past
  * half of it, whichever comes first. Not shown to signed-in users, and it waits while another
  * popup is open.
  * "Sign Up Free" opens the site's existing signup modal; "Talk to a Program Expert" opens the lead form.
@@ -16,7 +16,7 @@ import { ApplyNowModal } from "@/components/form/apply-now-modal";
 
 const SEEN_KEY = "ecampus_scroll_signup_seen";
 const SCROLL_THRESHOLD = 0.5;
-const DELAY_MS = 15000;
+const DELAY_MS = 20000;
 /** Re-check interval while another popup is open */
 const RETRY_MS = 2000;
 

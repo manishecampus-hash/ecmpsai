@@ -41,7 +41,9 @@ export default function BottomNav() {
 
   // Landing pages that use their own floating actions, and the full-screen AI chat, don't show the bottom bar
   // Landing pages (/lp/…) have no menus; the search page has its own composer
-  const hideOnThisPage = pathname?.startsWith("/lp/") || pathname === "/search";
+  // Auth pages (sign up / log in / verify phone) are full forms — the bar would cover the submit button
+  const isAuthPage = pathname === "/signup" || pathname === "/login" || pathname === "/verify-phone";
+  const hideOnThisPage = pathname?.startsWith("/lp/") || pathname === "/search" || isAuthPage;
 
   const aiActive = isActive(aiLink.href);
   const AiIcon = aiLink.icon;

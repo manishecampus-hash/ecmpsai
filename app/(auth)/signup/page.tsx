@@ -13,7 +13,6 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Sparkles,
   User,
   GraduationCap,
   MapPin,
@@ -23,6 +22,7 @@ import {
   ShieldCheck,
   Gift,
   ChevronDown,
+  Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -300,7 +300,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100dvh-64px)] flex-col justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-5 pb-24 sm:min-h-screen sm:justify-center sm:px-6 sm:py-12 lg:px-8">
+    <div className="relative flex min-h-[calc(100dvh-64px)] flex-col justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-5 pb-24 sm:min-h-screen sm:justify-start sm:px-6 sm:pt-6 sm:pb-12 lg:px-8">
       {/* Decorative ambient background */}
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-red-100/50 rounded-full blur-3xl opacity-70" />
       <div className="pointer-events-none absolute -bottom-40 right-10 w-[400px] h-[300px] bg-amber-100/40 rounded-full blur-3xl opacity-60" />
@@ -319,19 +319,37 @@ export default function SignupPage() {
       </div>
 
       {/* Main Card */}
-      <div className="relative z-10 mx-auto w-full max-w-[500px] px-3.5 sm:mt-6 sm:px-4">
+      <div className="relative z-10 mx-auto w-full max-w-[540px] px-3.5 sm:mt-4 sm:px-4">
         <div className="overflow-hidden rounded-3xl bg-white shadow-[0_18px_50px_rgba(15,23,42,0.10)] sm:shadow-[0_25px_70px_rgba(15,23,42,0.12)] border border-slate-100">
           <div className="h-1.5 w-full bg-gradient-to-r from-red-600 via-rose-500 to-amber-500" />
 
           <div className="px-4 py-5 min-[380px]:px-5 sm:p-7">
-            {/* Step heading — centred, same style as the login popup */}
+            {/* Step 1 heading — full "Sign up & get ₹20,000 off" offer banner image */}
+            {step === "identifier" && (
+              <div className="-mx-3 mb-3 min-[380px]:-mx-4 sm:-mx-4 sm:mb-3">
+                <h1 className="sr-only">Sign up and get ₹20,000 off on your online degree</h1>
+                {/* Source image is 1983×793 with ~40px white margin on the left (artwork runs to the
+                    right edge) — trim the left (x 40–1983) and let the banner run into the card padding
+                    so it reads bigger, almost edge to edge on mobile. The empty strip at the bottom is
+                    trimmed too (box = 1943×768 of the image; the image keeps its own height and the box
+                    clips the rest). */}
+                <div className="relative aspect-[1943/768] w-full overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://ecampus-admin-ui.b-cdn.net/ecampus-images/Online%20Degree%20Signup_%20%E2%82%B920%2C000%20Off.png"
+                    alt="Sign up and get up to ₹20,000 off on your online degree. Create your free account to explore top UGC online degrees, compare fees, and get exclusive offers."
+                    className="absolute top-0 h-auto max-w-none select-none"
+                    style={{ left: "-2.06%", width: "102.06%" }}
+                    draggable={false}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Steps 2–3 heading — centred, same style as the login popup */}
+            {step !== "identifier" && (
             <div className="mb-5 flex flex-col items-center text-center sm:mb-6">
               <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
-                {step === "identifier" && (
-                  <>
-                    <Sparkles className="h-3.5 w-3.5" /> Join eCampus
-                  </>
-                )}
                 {step === "otp" && (
                   <>
                     <ShieldCheck className="h-3.5 w-3.5" /> Verify {mode === "mobile" ? "Mobile" : "Email"}
@@ -344,12 +362,10 @@ export default function SignupPage() {
                 )}
               </span>
               <h1 className="text-[22px] font-bold leading-tight tracking-tight text-slate-900 sm:text-[26px]">
-                {step === "identifier" && "Create your free account"}
                 {step === "otp" && "Enter verification code"}
                 {step === "details" && "Almost there!"}
               </h1>
               <p className="mx-auto mt-1.5 max-w-[360px] text-[13px] leading-relaxed text-slate-500">
-                {step === "identifier" && "Discover top online UGC degrees, compare fees, and talk to AI counselors."}
                 {step === "otp" && (
                   <>
                     We sent a 6-digit code to{" "}
@@ -361,6 +377,7 @@ export default function SignupPage() {
                 {step === "details" && "Tell us a little about yourself to personalise your degree recommendations."}
               </p>
             </div>
+            )}
 
             {error && (
               <div className="mb-5 flex items-start gap-2.5 rounded-2xl p-3.5 text-xs bg-red-50 border border-red-200 text-red-700 leading-relaxed">
@@ -464,7 +481,7 @@ export default function SignupPage() {
                   <Button
                     type="submit"
                     disabled={loading || (mode === "mobile" ? phone.length !== 10 : !email.trim())}
-                    className="w-full h-12 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-sm shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="group w-full h-[52px] rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[15px] sm:text-base shadow-[0_12px_26px_-12px_rgba(220,38,38,0.85)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {loading ? (
                       <>
@@ -473,11 +490,21 @@ export default function SignupPage() {
                       </>
                     ) : (
                       <>
-                        Continue with OTP
-                        <ArrowRight className="w-4 h-4" />
+                        Unlock My ₹20,000 Discount
+                        <ArrowRight className="w-[18px] h-[18px] transition-transform group-hover:translate-x-0.5" />
                       </>
                     )}
                   </Button>
+
+                  <div className="space-y-2 pt-0.5 text-center">
+                    <p className="flex items-center justify-center gap-1.5 text-[12.5px] text-slate-600">
+                      <Lock className="h-3.5 w-3.5 text-slate-500" />
+                      Your details are safe &amp; secure with eCampus
+                    </p>
+                    <p className="text-[11px] italic leading-relaxed text-slate-500">
+                      *Discount is subject to university, program, eligibility and applicable offer terms.
+                    </p>
+                  </div>
                 </form>
               </>
             )}
@@ -698,15 +725,7 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <div className="mt-5 text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back to homepage
-          </Link>
-        </div>
+
       </div>
     </div>
   );

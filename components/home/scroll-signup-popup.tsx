@@ -7,7 +7,7 @@ import { ArrowRight, CheckCircle2, Compass, Headset, X } from "lucide-react";
 import { ApplyNowModal } from "@/components/form/apply-now-modal";
 
 /**
- * Site-wide sign-up nudge (mounted in the root layout; never on /dashboard).
+ * Site-wide sign-up nudge (mounted in the root layout; never on /dashboard or the auth pages).
  * Opens only once per browser (remembered in localStorage, so not again on refresh / new tabs) — after 20 seconds on a page or when the visitor scrolls past
  * half of it, whichever comes first. Not shown to signed-in users, and it waits while another
  * popup is open.
@@ -19,6 +19,8 @@ const SCROLL_THRESHOLD = 0.5;
 const DELAY_MS = 20000;
 /** Re-check interval while another popup is open */
 const RETRY_MS = 2000;
+/** Auth pages — the visitor is already signing up / logging in, so no nudge here */
+const HIDDEN_PATHS = ["/login", "/signup", "/verify-phone"];
 
 const POINTS = [
   "Free 1:1 guidance from Program Experts",
@@ -44,7 +46,9 @@ export default function ScrollSignupPopup() {
   const [applyOpen, setApplyOpen] = useState(false);
 
   const pathname = usePathname();
-  const isDashboard = pathname?.startsWith("/dashboard") ?? false;
+  const isDashboard =
+    (pathname?.startsWith("/dashboard") ?? false) ||
+    HIDDEN_PATHS.some((p) => pathname === p || pathname?.startsWith(`${p}/`));
 
   useEffect(() => {
     if (isDashboard) return;

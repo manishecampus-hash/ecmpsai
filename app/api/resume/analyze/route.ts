@@ -222,15 +222,19 @@ export async function POST(req: NextRequest) {
     const { text: extractedText, isPdfFallbackNeeded } =
       await extractResumeText(buffer, file.name, file.type);
 
-    if (!isPdfFallbackNeeded && extractedText.length < 30) {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "Could not extract readable text from this file. Please upload a text-based PDF or DOCX resume.",
-        },
-        { status: 400 }
-      );
+    if (!isPdfFallbackNeeded) {
+      const wordCount = extractedText.split(/\s+/).filter(Boolean).length;
+      if (extractedText.length < 50 || wordCount < 15) {
+        return NextResponse.json(
+          {
+            success: false,
+            isResume: false,
+            message:
+              "This file does not contain enough readable text to be a resume. Please upload a valid PDF or DOCX resume.",
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Fetch real catalog snapshot so AI recommends degrees actually offered on eCampus
@@ -273,6 +277,13 @@ export async function POST(req: NextRequest) {
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     const systemPrompt = `You are an expert eCampus AI Academic & Career Counselor for Indian online/distance higher education.
+
+STEP 1 — STRICT RESUME VALIDATION:
+First, determine whether the uploaded document is actually a candidate's Resume / CV.
+A valid Resume/CV MUST describe an individual person's academic background, skills, projects, certifications, or work experience.
+If the document is an invoice, receipt, university brochure, course syllabus, textbook/notes, article, bank statement, ID card, form, random notes, or anything that is NOT a personal Resume/CV, you MUST set "isResume": false and explain what the document appears to be in "rejectionReason". Do NOT invent or guess qualifications/courses for non-resume documents.
+
+STEP 2 — RESUME ANALYSIS (only when "isResume": true):
 Analyze the candidate's resume carefully — looking at their education, highest qualification, work experience (roles, domain, years), technical/management skills, certifications, and career trajectory.
 
 Available eCampus Degree Catalog:
@@ -286,6 +297,8 @@ Eligibility Rules to enforce strictly:
 
 Return ONLY valid JSON matching this exact schema:
 {
+  "isResume": true,
+  "rejectionReason": "",
   "candidateName": "Full name from resume or 'Candidate'",
   "currentRole": "Most recent job title or 'Student / Fresher'",
   "yearsOfExperience": 2.5,
@@ -339,11 +352,27 @@ Return ONLY valid JSON matching this exact schema:
     });
 
     const rawJson = completion.choices[0]?.message?.content || "{}";
-    let parsed: Partial<ResumeAnalysisResult> = {};
+    let parsed: Partial<ResumeAnalysisResult> & {
+      isResume?: boolean;
+      rejectionReason?: string;
+    } = {};
     try {
       parsed = JSON.parse(rawJson);
     } catch {
       parsed = {};
+    }
+
+    if (parsed.isResume !== true) {
+      return NextResponse.json(
+        {
+          success: false,
+          isResume: false,
+          message:
+            parsed.rejectionReason?.trim() ||
+            "This document does not appear to be a valid resume or CV. Please upload a resume containing your education, skills, and experience.",
+        },
+        { status: 422 }
+      );
     }
 
     const yearsExp =

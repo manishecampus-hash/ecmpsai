@@ -359,7 +359,15 @@ export default function Recommendations({ student: propStudent }: Recommendation
       {/* After the cards: go to the full matcher */}
       <div className="mt-5 flex justify-center">
         <Link
-          href="/dashboard/matcher"
+          href={
+            resumeScan?.analysis?.recommendedDegrees?.length
+              ? `/dashboard/matcher?degrees=${encodeURIComponent(
+                  resumeScan.analysis.recommendedDegrees.join(",")
+                )}&qualification=${encodeURIComponent(
+                  resumeScan.analysis.highestQualification || ""
+                )}`
+              : "/dashboard/matcher"
+          }
           className="group inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-bold text-red-700 transition-colors duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
         >
           View All Matches

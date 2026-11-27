@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Star, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileText, Sparkles, Star, X, Zap } from "lucide-react";
 import UniImage from "@/components/ui/uniImage";
 import AppliedBadge from "./applied-badge";
 import { useAgent } from "./agent/agent-shell";
 import ApplyChoiceModal from "./applications/apply-choice-modal";
 import type { ApplyTarget } from "./applications/applied-store";
 import type { StudentProfile } from "../types";
+import type { ResumeScanPayload } from "./resume-scan/resume-scan-screen";
 import {
   type RecommendationItem,
   FALLBACK_RECOMMENDATIONS_CATALOG,
@@ -18,10 +19,16 @@ interface RecommendationsProps {
   student?: StudentProfile;
 }
 
+type EnrichedRecommendationItem = RecommendationItem & {
+  eligibilityStatus?: string;
+  matchReason?: string;
+};
+
 const toTarget = (r: RecommendationItem): ApplyTarget => ({ university: r.university, program: r.title, image: r.image, fee: r.fee, match: r.matchScore });
 
 export default function Recommendations({ student: propStudent }: RecommendationsProps) {
-  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
+  const [recommendations, setRecommendations] = useState<EnrichedRecommendationItem[]>([]);
+  const [resumeScan, setResumeScan] = useState<ResumeScanPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const agent = useAgent();
   const [applyFor, setApplyFor] = useState<RecommendationItem | null>(null);
@@ -98,6 +105,62 @@ export default function Recommendations({ student: propStudent }: Recommendation
     fetchRecommendations(propStudent);
   }, [fetchRecommendations, propStudent]);
 
+  // Load any saved resume scan results and listen for new scans
+  useEffect(() => {
+    const loadResumeScan = () => {
+      try {
+        const raw = localStorage.getItem("ecampus_resume_analysis");
+        if (raw) {
+          const parsed = JSON.parse(raw) as ResumeScanPayload;
+          if (parsed?.matchedCourses?.length > 0) {
+            setResumeScan(parsed);
+            return;
+          }
+        }
+      } catch {}
+      setResumeScan(null);
+    };
+
+    loadResumeScan();
+    window.addEventListener("ecampus-resume-analyzed", loadResumeScan);
+    return () => {
+      window.removeEventListener("ecampus-resume-analyzed", loadResumeScan);
+    };
+  }, []);
+
+  const clearResumeFilter = () => {
+    try {
+      localStorage.removeItem("ecampus_resume_analysis");
+    } catch {}
+    setResumeScan(null);
+  };
+
+  const displayRecommendations: EnrichedRecommendationItem[] = useMemo(() => {
+    if (resumeScan && resumeScan.matchedCourses.length > 0) {
+      return resumeScan.matchedCourses.slice(0, 4).map((c) => ({
+        id: c.id,
+        image: c.image,
+        match: c.match,
+        matchScore: c.matchScore,
+        university: c.university,
+        rating: c.rating,
+        reviews: c.reviews,
+        applied: c.applied,
+        seed: c.seed,
+        title: c.program,
+        tags: c.tags,
+        fee: c.fee,
+        duration: c.duration,
+        slug: c.slug,
+        eligibilityStatus: c.eligibilityStatus,
+        matchReason: c.matchReason,
+      }));
+    }
+    return recommendations.length > 0
+      ? recommendations
+      : FALLBACK_RECOMMENDATIONS_CATALOG.slice(0, 2);
+  }, [resumeScan, recommendations]);
+
   // Listen for login/signup/advisor updates in real-time
   useEffect(() => {
     const handleAuthChange = () => {
@@ -136,13 +199,31 @@ export default function Recommendations({ student: propStudent }: Recommendation
             AI Degree Recommendations
           </h2>
           <p className="mt-0.5 text-sm text-gray-400">
-            Live alignment calculated from your academic transcript &amp; career target
+            {resumeScan
+              ? "Personalized courses matched from your uploaded resume, experience & eligibility"
+              : "Live alignment calculated from your academic transcript & career target"}
           </p>
         </div>
+        {resumeScan && (
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">
+            <FileText className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="max-w-[220px] truncate">
+              Resume: {resumeScan.fileName} ({resumeScan.analysis.highestQualification})
+            </span>
+            <button
+              type="button"
+              onClick={clearResumeFilter}
+              title="Clear resume recommendations"
+              className="rounded-full p-0.5 text-emerald-700 transition hover:bg-emerald-200/70"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 space-y-5">
-        {loading && recommendations.length === 0 ? (
+        {loading && !resumeScan && recommendations.length === 0 ? (
           <div className="flex animate-pulse flex-col gap-5 rounded-xl border border-gray-100 p-5 sm:flex-row sm:items-center">
             <div className="h-36 w-full flex-shrink-0 rounded-xl bg-gray-200 sm:h-32 sm:w-40" />
             <div className="min-w-0 flex-1 space-y-3">
@@ -164,7 +245,7 @@ export default function Recommendations({ student: propStudent }: Recommendation
             </div>
           </div>
         ) : (
-          (recommendations.length > 0 ? recommendations : FALLBACK_RECOMMENDATIONS_CATALOG.slice(0, 2)).map((rec) => (
+          displayRecommendations.map((rec) => (
             <div
               key={rec.id || rec.university}
               className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_10px_28px_-20px_rgba(15,23,42,0.45)] transition-all duration-200 hover:-translate-y-0.5 hover:border-red-300 hover:shadow-lg hover:shadow-red-100/60 sm:flex-row sm:items-center sm:gap-5 sm:rounded-xl sm:p-5 sm:shadow-none"
@@ -199,6 +280,12 @@ export default function Recommendations({ student: propStudent }: Recommendation
                     {rec.rating}{" "}
                     <span className="text-gray-400">({rec.reviews})</span>
                   </span>
+                  {rec.eligibilityStatus && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {rec.eligibilityStatus}
+                    </span>
+                  )}
                 </div>
 
                 {/* Course name (2 lines max on phones), with the annual fee beside it on phones */}
@@ -214,6 +301,12 @@ export default function Recommendations({ student: propStudent }: Recommendation
                     <span className="rec-fee text-[16px] font-extrabold tracking-tight">{rec.fee}</span>
                   </p>
                 </div>
+
+                {rec.matchReason && (
+                  <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                    {rec.matchReason}
+                  </p>
+                )}
 
                 <div className="mt-2.5 flex flex-wrap gap-1.5 sm:gap-2">
                   {rec.tags.map((tag) => (
@@ -266,7 +359,15 @@ export default function Recommendations({ student: propStudent }: Recommendation
       {/* After the cards: go to the full matcher */}
       <div className="mt-5 flex justify-center">
         <Link
-          href="/dashboard/matcher"
+          href={
+            resumeScan?.analysis?.recommendedDegrees?.length
+              ? `/dashboard/matcher?degrees=${encodeURIComponent(
+                  resumeScan.analysis.recommendedDegrees.join(",")
+                )}&qualification=${encodeURIComponent(
+                  resumeScan.analysis.highestQualification || ""
+                )}`
+              : "/dashboard/matcher"
+          }
           className="group inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-bold text-red-700 transition-colors duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
         >
           View All Matches

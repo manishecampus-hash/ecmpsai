@@ -301,6 +301,83 @@ const DEGREES: Degree[] = [
   "B.Tech",
   "M.Tech",
 ];
+
+function normalizeDegreeToken(raw: string): string {
+  const clean = raw.trim().toLowerCase().replace(/\s+/g, "");
+  const match = DEGREES.find(
+    (d) => d.toLowerCase().replace(/\./g, "") === clean.replace(/\./g, "")
+  );
+  if (match) return match;
+  if (clean.includes("mba")) return "MBA";
+  if (clean.includes("mca")) return "MCA";
+  if (clean.includes("bca")) return "BCA";
+  if (clean.includes("bba")) return "BBA";
+  if (clean.includes("bcom")) return "B.Com";
+  if (clean.includes("mcom")) return "M.Com";
+  if (clean.includes("bsc")) return "B.Sc";
+  if (clean.includes("msc")) return "M.Sc";
+  if (clean.includes("btech")) return "B.Tech";
+  if (clean.includes("mtech")) return "M.Tech";
+  if (clean.includes("dba")) return "DBA";
+  return raw.trim();
+}
+
+interface ResumeOverrideInfo {
+  degrees: string[];
+  qualification?: string;
+  fileName?: string;
+}
+
+function getActiveResumeOverride(): ResumeOverrideInfo | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const degParam = params.get("degrees");
+    const qualParam = params.get("qualification") || undefined;
+
+    let savedResume: any = null;
+    try {
+      const raw = localStorage.getItem("ecampus_resume_analysis");
+      if (raw) savedResume = JSON.parse(raw);
+    } catch {}
+
+    if (degParam) {
+      const list = Array.from(
+        new Set(
+          degParam
+            .split(",")
+            .map((d) => normalizeDegreeToken(d))
+            .filter(Boolean)
+        )
+      );
+      if (list.length > 0) {
+        return {
+          degrees: list,
+          qualification: qualParam || savedResume?.analysis?.highestQualification,
+          fileName: savedResume?.fileName,
+        };
+      }
+    }
+
+    if (savedResume?.analysis?.recommendedDegrees?.length > 0) {
+      const list = Array.from(
+        new Set<string>(
+          savedResume.analysis.recommendedDegrees
+            .map((d: string) => normalizeDegreeToken(d))
+            .filter(Boolean)
+        )
+      );
+      if (list.length > 0) {
+        return {
+          degrees: list,
+          qualification: savedResume.analysis.highestQualification,
+          fileName: savedResume.fileName,
+        };
+      }
+    }
+  } catch {}
+  return null;
+}
 const SPECIALIZATIONS: { id: Specialization; label: string }[] = [
   { id: "AI & ML", label: "Artificial Intelligence & ML" },
   { id: "Data Science", label: "Data Science & Analytics" },
@@ -807,6 +884,7 @@ export default function AIDegreeMatcherPage() {
   const [location, setLocation] = useState("Any Location");
   const [selectedEligibility, setSelectedEligibility] = useState<string | null>(null);
   const [degrees, setDegrees] = useState<Degree[]>([]);
+  const [resumeOverride, setResumeOverride] = useState<ResumeOverrideInfo | null>(null);
   const [specializations, setSpecializations] = useState<Specialization[]>([]);
   const [modes, setModes] = useState<Mode[]>([]);
   const [maxFee, setMaxFee] = useState(MAX_FEE);
@@ -833,14 +911,22 @@ export default function AIDegreeMatcherPage() {
       params.set("coursePreference", "all");
       params.set("limit", "500");
 
-      if (s?.advisorProfile?.coursePreference || s?.course || s?.coursesInterested?.[0]) {
-        params.set(
-          "targetPreference",
-          s.advisorProfile?.coursePreference || s.course || s.coursesInterested?.[0] || ""
-        );
-      }
-      if (s?.advisorProfile?.highestQualification) {
-        params.set("highestQualification", s.advisorProfile.highestQualification);
+      const activeResume = getActiveResumeOverride();
+      if (activeResume && activeResume.degrees.length > 0) {
+        params.set("targetPreference", activeResume.degrees[0]);
+        if (activeResume.qualification) {
+          params.set("highestQualification", activeResume.qualification);
+        }
+      } else {
+        if (s?.advisorProfile?.coursePreference || s?.course || s?.coursesInterested?.[0]) {
+          params.set(
+            "targetPreference",
+            s.advisorProfile?.coursePreference || s.course || s.coursesInterested?.[0] || ""
+          );
+        }
+        if (s?.advisorProfile?.highestQualification) {
+          params.set("highestQualification", s.advisorProfile.highestQualification);
+        }
       }
       if (s?.advisorProfile?.budget) {
         params.set("budget", s.advisorProfile.budget);
@@ -869,6 +955,22 @@ export default function AIDegreeMatcherPage() {
   }, []);
 
   const applyQuestionnaireFilters = useCallback((s?: StudentProfile) => {
+    const activeResume = getActiveResumeOverride();
+    if (activeResume && activeResume.degrees.length > 0) {
+      setResumeOverride(activeResume);
+      setDegrees(activeResume.degrees);
+      setSelectedEligibility(null);
+      setModes([]);
+      setSpecializations([]);
+      setMaxFee(MAX_FEE);
+      setAccreditations([]);
+      setFeatures([]);
+      setSearch("");
+      setLocation("Any Location");
+      return;
+    }
+
+    setResumeOverride(null);
     const initElig = getQuestionnaireEligibility(s);
     setSelectedEligibility(initElig);
 
@@ -898,9 +1000,11 @@ export default function AIDegreeMatcherPage() {
         applyQuestionnaireFilters(currentProfile);
         fetchCourses(currentProfile);
       } catch {
+        applyQuestionnaireFilters();
         fetchCourses();
       }
     } else {
+      applyQuestionnaireFilters();
       fetchCourses();
     }
 
@@ -1452,8 +1556,24 @@ export default function AIDegreeMatcherPage() {
               <div className="flex items-start gap-2.5">
                 <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
                 <div>
-                  <p className="text-sm font-bold text-gray-900">AI Recommended for You</p>
-                  
+                  <p className="text-sm font-bold text-gray-900">
+                    {resumeOverride ? "AI Recommended from Your Resume" : "AI Recommended for You"}
+                  </p>
+                  {resumeOverride && (
+                    <p className="mt-0.5 text-xs text-gray-600">
+                      Showing{" "}
+                      <span className="font-semibold text-red-700">
+                        {resumeOverride.degrees.join(", ")}
+                      </span>{" "}
+                      programs matched to{" "}
+                      {resumeOverride.fileName ? (
+                        <span className="font-medium text-gray-800">{resumeOverride.fileName}</span>
+                      ) : (
+                        "your resume"
+                      )}
+                      {resumeOverride.qualification ? ` (${resumeOverride.qualification})` : ""}
+                    </p>
+                  )}
                 </div>
               </div>
               <button

@@ -17,38 +17,41 @@ import {
   Award,
   BookOpen,
   Wrench,
+  AlertCircle,
+  CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 import { EASE_OUT } from "../motion";
+import type {
+  ResumeAnalysisResult,
+  ResumeMatchedCourse,
+} from "@/app/api/resume/analyze/route";
 
 const SCAN_STEPS = [
   { title: "Reading document structure", detail: "Parsing layout, sections and formatting" },
   { title: "Extracting skills & experience", detail: "Identifying roles, tools and achievements" },
-  { title: "Matching to top online programs", detail: "Comparing against accredited online programs" },
-  { title: "Calculating scholarship eligibility", detail: "Checking merit & need-based waivers" },
+  { title: "Checking degree eligibility", detail: "Evaluating academic qualification & work history" },
+  { title: "Matching to top online programs", detail: "Scoring accredited courses against your profile" },
 ];
 
-// Resume sections "detected" on the preview as the scan progresses (one per step)
 const DETECTED_SECTIONS = [
   { icon: BookOpen, label: "Education" },
   { icon: Briefcase, label: "Experience" },
   { icon: Wrench, label: "Skills" },
-  { icon: Award, label: "Certifications" },
+  { icon: Award, label: "Eligibility" },
 ];
 
-const MATCH_SCORE = 96;
-
-const SCAN_RESULTS = [
-  { icon: GraduationCap, label: "Programs matched", value: "14", tone: "bg-blue-50 text-blue-600" },
-  { icon: IndianRupee, label: "Scholarship unlocked", value: "₹25,000", tone: "bg-emerald-50 text-emerald-600" },
-  { icon: Sparkles, label: "AI Readiness score", value: "94/100", tone: "bg-amber-50 text-amber-600" },
-];
-
-const STEP_INTERVAL_MS = 900;
-const STEP_START_DELAY_MS = 600;
+export interface ResumeScanPayload {
+  fileName: string;
+  analyzedAt: string;
+  analysis: ResumeAnalysisResult;
+  matchedCourses: ResumeMatchedCourse[];
+}
 
 interface ResumeScanScreenProps {
   file: File | null;
   onClose: () => void;
+  onAnalysisComplete?: (payload: ResumeScanPayload) => void;
 }
 
 function formatFileSize(bytes: number) {
@@ -63,7 +66,6 @@ function fileExtension(name?: string) {
 
 /* ---------- Scanning: mock resume page with a sweeping scan beam ---------- */
 function ResumePreview({ doneCount }: { doneCount: number }) {
-  // Skeleton rows grouped into the four sections; a section lights up once its step completes
   const sections = [
     [92, 78, 64],
     [88, 95, 70, 82],
@@ -74,74 +76,70 @@ function ResumePreview({ doneCount }: { doneCount: number }) {
   return (
     <div className="mx-auto w-full max-w-[200px] sm:max-w-[260px]">
       <div className="relative">
-      {/* Back sheet for depth */}
-      <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-2 rounded-2xl bg-white/60 shadow-sm" />
+        <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-2 rounded-2xl bg-white/60 shadow-sm" />
 
-      <div className="relative overflow-hidden rounded-2xl border border-white bg-white p-4 shadow-xl shadow-red-900/10 sm:p-5">
-        {/* Header: avatar + name lines */}
-        <div className="flex items-center gap-3">
-          <span className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-red-100 to-rose-200" />
-          <div className="flex-1 space-y-1.5">
-            <span className="block h-2.5 w-3/4 rounded-full bg-slate-800/80" />
-            <span className="block h-2 w-1/2 rounded-full bg-slate-200" />
+        <div className="relative overflow-hidden rounded-2xl border border-white bg-white p-4 shadow-xl shadow-red-900/10 sm:p-5">
+          <div className="flex items-center gap-3">
+            <span className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-br from-red-100 to-rose-200" />
+            <div className="flex-1 space-y-1.5">
+              <span className="block h-2.5 w-3/4 rounded-full bg-slate-800/80" />
+              <span className="block h-2 w-1/2 rounded-full bg-slate-200" />
+            </div>
           </div>
-        </div>
 
-        <div className="mt-4 space-y-3.5">
-          {sections.map((rows, si) => {
-            const detected = si < doneCount;
-            return (
-              <div
-                key={si}
-                className={`relative rounded-lg p-1.5 transition-colors duration-500 ${
-                  detected ? "bg-red-50/70" : ""
-                }`}
-              >
-                <span
-                  className={`mb-1.5 block h-2 w-16 rounded-full transition-colors duration-500 ${
-                    detected ? "bg-red-400" : "bg-slate-300"
+          <div className="mt-4 space-y-3.5">
+            {sections.map((rows, si) => {
+              const detected = si < doneCount;
+              return (
+                <div
+                  key={si}
+                  className={`relative rounded-lg p-1.5 transition-colors duration-500 ${
+                    detected ? "bg-red-50/70" : ""
                   }`}
-                />
-                <div className="space-y-1">
-                  {rows.map((w, ri) => (
-                    <span
-                      key={ri}
-                      style={{ width: `${w}%` }}
-                      className={`block h-1.5 rounded-full transition-colors duration-500 ${
-                        detected ? "bg-red-200" : "bg-slate-100"
-                      }`}
-                    />
-                  ))}
+                >
+                  <span
+                    className={`mb-1.5 block h-2 w-16 rounded-full transition-colors duration-500 ${
+                      detected ? "bg-red-400" : "bg-slate-300"
+                    }`}
+                  />
+                  <div className="space-y-1">
+                    {rows.map((w, ri) => (
+                      <span
+                        key={ri}
+                        style={{ width: `${w}%` }}
+                        className={`block h-1.5 rounded-full transition-colors duration-500 ${
+                          detected ? "bg-red-200" : "bg-slate-100"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  {detected && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                      className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600"
+                    >
+                      <Check className="h-2.5 w-2.5 text-white" strokeWidth={3.5} />
+                    </motion.span>
+                  )}
                 </div>
-                {detected && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600"
-                  >
-                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3.5} />
-                  </motion.span>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          <motion.div
+            aria-hidden
+            animate={{ top: ["-15%", "100%"] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
+            className="pointer-events-none absolute inset-x-0 h-16"
+          >
+            <div className="h-full bg-gradient-to-b from-transparent via-red-500/15 to-transparent" />
+            <div className="absolute inset-x-0 top-1/2 h-px bg-red-500/70 shadow-[0_0_12px_2px_rgba(239,68,68,0.45)]" />
+          </motion.div>
         </div>
-
-        {/* Scan beam */}
-        <motion.div
-          aria-hidden
-          animate={{ top: ["-15%", "100%"] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
-          className="pointer-events-none absolute inset-x-0 h-16"
-        >
-          <div className="h-full bg-gradient-to-b from-transparent via-red-500/15 to-transparent" />
-          <div className="absolute inset-x-0 top-1/2 h-px bg-red-500/70 shadow-[0_0_12px_2px_rgba(239,68,68,0.45)]" />
-        </motion.div>
-      </div>
       </div>
 
-      {/* Detected section chips */}
       <div className="mt-6 hidden min-h-[64px] flex-wrap justify-center gap-2 sm:flex">
         <AnimatePresence>
           {DETECTED_SECTIONS.slice(0, doneCount).map(({ icon: Icon, label }) => (
@@ -167,8 +165,8 @@ function ScoreRing({ score }: { score: number }) {
   const [shown, setShown] = useState(0);
   useEffect(() => {
     const controls = animate(0, score, {
-      duration: 1.2,
-      delay: 0.2,
+      duration: 1.1,
+      delay: 0.15,
       ease: EASE_OUT,
       onUpdate: (v) => setShown(Math.round(v)),
     });
@@ -177,7 +175,7 @@ function ScoreRing({ score }: { score: number }) {
 
   const r = 52;
   return (
-    <div className="relative h-36 w-36">
+    <div className="relative h-32 w-32 sm:h-36 sm:w-36">
       <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
         <circle cx="60" cy="60" r={r} fill="none" strokeWidth="10" className="stroke-red-100" />
         <motion.circle
@@ -190,7 +188,7 @@ function ScoreRing({ score }: { score: number }) {
           stroke="url(#score-gradient)"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: score / 100 }}
-          transition={{ duration: 1.2, delay: 0.2, ease: EASE_OUT }}
+          transition={{ duration: 1.1, delay: 0.15, ease: EASE_OUT }}
         />
         <defs>
           <linearGradient id="score-gradient" x1="0" y1="0" x2="1" y2="1">
@@ -209,16 +207,21 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProps) {
+export default function ResumeScanScreen({
+  file,
+  onClose,
+  onAnalysisComplete,
+}: ResumeScanScreenProps) {
   const router = useRouter();
   const isOpen = !!file;
-  const [phase, setPhase] = useState<"scanning" | "complete">("scanning");
+  const [phase, setPhase] = useState<"scanning" | "complete" | "error">("scanning");
   const [doneSteps, setDoneSteps] = useState<boolean[]>(SCAN_STEPS.map(() => false));
   const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [scanResult, setScanResult] = useState<ResumeScanPayload | null>(null);
+
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const progressAnim = useRef<ReturnType<typeof animate> | null>(null);
-
-  const totalDuration = (STEP_START_DELAY_MS + SCAN_STEPS.length * STEP_INTERVAL_MS + 500) / 1000;
 
   const clearTimers = () => {
     timers.current.forEach((t) => clearTimeout(t));
@@ -227,35 +230,101 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
   };
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !file) return;
+
+    const controller = new AbortController();
+    let isCancelled = false;
 
     setPhase("scanning");
     setDoneSteps(SCAN_STEPS.map(() => false));
     setProgress(0);
+    setErrorMessage("");
+    setScanResult(null);
 
-    progressAnim.current = animate(0, 100, {
-      duration: totalDuration,
-      ease: "linear",
+    // Animate smoothly up to 88% while AI & DB matching runs
+    progressAnim.current = animate(0, 88, {
+      duration: 3.2,
+      ease: "easeOut",
       onUpdate: (v) => setProgress(Math.round(v)),
     });
 
-    SCAN_STEPS.forEach((_, i) => {
-      const t = setTimeout(
-        () => {
-          setDoneSteps((prev) => {
-            const next = [...prev];
-            next[i] = true;
-            return next;
-          });
-        },
-        STEP_START_DELAY_MS + i * STEP_INTERVAL_MS,
-      );
+    // Advance the first 3 visual steps while the request is in-flight
+    [0, 1, 2].forEach((i) => {
+      const t = setTimeout(() => {
+        if (isCancelled) return;
+        setDoneSteps((prev) => {
+          const next = [...prev];
+          next[i] = true;
+          return next;
+        });
+      }, 650 + i * 850);
       timers.current.push(t);
     });
 
-    timers.current.push(setTimeout(() => setPhase("complete"), totalDuration * 1000));
+    const runAnalysis = async () => {
+      const startedAt = Date.now();
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
 
-    return clearTimers;
+        const res = await fetch("/api/resume/analyze", {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data?.success) {
+          throw new Error(data?.message || "Could not analyze resume.");
+        }
+
+        // Ensure at least ~2.2s of scanning animation so UI feels smooth
+        const elapsed = Date.now() - startedAt;
+        if (elapsed < 2200) {
+          await new Promise((r) => setTimeout(r, 2200 - elapsed));
+        }
+        if (isCancelled) return;
+
+        clearTimers();
+        setDoneSteps(SCAN_STEPS.map(() => true));
+        setProgress(100);
+
+        const payload: ResumeScanPayload = {
+          fileName: data.fileName || file.name,
+          analyzedAt: new Date().toISOString(),
+          analysis: data.analysis,
+          matchedCourses: Array.isArray(data.matchedCourses) ? data.matchedCourses : [],
+        };
+
+        // Persist in localStorage for the dashboard Recommendations & AI Degree Finder
+        try {
+          localStorage.setItem("ecampus_resume_analysis", JSON.stringify(payload));
+          window.dispatchEvent(new Event("ecampus-resume-analyzed"));
+        } catch {}
+
+        setScanResult(payload);
+        onAnalysisComplete?.(payload);
+
+        setTimeout(() => {
+          if (!isCancelled) setPhase("complete");
+        }, 350);
+      } catch (err: any) {
+        if (isCancelled || err?.name === "AbortError") return;
+        clearTimers();
+        setErrorMessage(
+          err?.message || "Something went wrong while scanning your resume."
+        );
+        setPhase("error");
+      }
+    };
+
+    runAnalysis();
+
+    return () => {
+      isCancelled = true;
+      controller.abort();
+      clearTimers();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, file]);
 
@@ -274,15 +343,26 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
     };
   }, [isOpen, onClose]);
 
-  const handleSkip = () => {
-    clearTimers();
-    setDoneSteps(SCAN_STEPS.map(() => true));
-    setProgress(100);
-    setPhase("complete");
-  };
-
   const doneCount = doneSteps.filter(Boolean).length;
   const activeIndex = doneSteps.findIndex((d) => !d);
+  const analysis = scanResult?.analysis;
+  const matchedCourses = scanResult?.matchedCourses || [];
+
+  const goToMatcher = () => {
+    onClose();
+    if (analysis) {
+      const params = new URLSearchParams();
+      if (analysis.recommendedDegrees.length > 0) {
+        params.set("degrees", analysis.recommendedDegrees.join(","));
+      }
+      if (analysis.highestQualification) {
+        params.set("qualification", analysis.highestQualification);
+      }
+      router.push(`/dashboard/matcher?${params.toString()}`);
+    } else {
+      router.push("/dashboard/matcher");
+    }
+  };
 
   return (
     <MotionConfig reducedMotion="user">
@@ -293,7 +373,7 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[85] overflow-y-auto bg-slate-900/30 backdrop-blur-sm"
+            className="fixed inset-0 z-[85] overflow-y-auto bg-slate-900/35 backdrop-blur-sm"
             role="dialog"
             aria-modal="true"
             aria-label="AI resume analysis"
@@ -304,7 +384,7 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                className="relative w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/20"
+                className="relative w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/20"
               >
                 <button
                   type="button"
@@ -322,9 +402,8 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                      className="grid md:grid-cols-[0.95fr_1.05fr]"
+                      className="grid md:grid-cols-[0.9fr_1.1fr]"
                     >
-                      {/* Left: live document preview */}
                       <div className="relative overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-6 pb-7 pt-12 md:px-10 md:py-12">
                         <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-red-200/40 blur-3xl" />
                         <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-rose-200/50 blur-3xl" />
@@ -333,7 +412,6 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                         </div>
                       </div>
 
-                      {/* Right: status + step timeline */}
                       <div className="flex flex-col p-6 sm:p-8 md:p-10">
                         <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-600">
                           <Sparkles className="h-3.5 w-3.5" />
@@ -344,8 +422,8 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                           Analyzing your resume
                         </h1>
                         <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
-                          We&apos;re mapping your skills and experience to the programs and
-                          scholarships you qualify for.
+                          Our AI is extracting your experience, skills, and academic eligibility to
+                          match you with accredited courses.
                         </p>
 
                         {file && (
@@ -361,7 +439,7 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                                 {file.name}
                               </p>
                               <p className="text-xs text-slate-400">
-                                {formatFileSize(file.size)} · Uploaded just now
+                                {formatFileSize(file.size)} · Scanning with AI...
                               </p>
                             </div>
                             <span className="flex-shrink-0 text-sm font-bold tabular-nums text-red-600">
@@ -372,12 +450,11 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
 
                         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-600 transition-[width] duration-100 ease-linear"
+                            className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-600 transition-[width] duration-150 ease-linear"
                             style={{ width: `${progress}%` }}
                           />
                         </div>
 
-                        {/* Step timeline */}
                         <ol className="mt-6 space-y-0">
                           {SCAN_STEPS.map((step, i) => {
                             const done = doneSteps[i];
@@ -443,18 +520,41 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                         <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-5 md:mt-8">
                           <p className="flex items-center gap-1.5 text-xs text-slate-400">
                             <Lock className="h-3.5 w-3.5" />
-                            Encrypted & never shared
+                            Encrypted &amp; never shared
                           </p>
                           <button
                             type="button"
-                            onClick={handleSkip}
+                            onClick={onClose}
                             className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                           >
-                            Skip
-                            <ArrowRight className="h-3 w-3" />
+                            Cancel
                           </button>
                         </div>
                       </div>
+                    </motion.div>
+                  ) : phase === "error" ? (
+                    <motion.div
+                      key="error"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col items-center justify-center px-6 py-14 text-center sm:px-12"
+                    >
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+                        <AlertCircle className="h-7 w-7" />
+                      </div>
+                      <h2 className="mt-4 text-xl font-bold text-slate-900">
+                        Unable to scan resume
+                      </h2>
+                      <p className="mt-2 max-w-md text-sm text-slate-500">
+                        {errorMessage}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-red-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
+                      >
+                        Close &amp; Try Another File
+                      </button>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -462,87 +562,189 @@ export default function ResumeScanScreen({ file, onClose }: ResumeScanScreenProp
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
-                      className="grid md:grid-cols-[0.95fr_1.05fr]"
+                      className="grid md:grid-cols-[0.82fr_1.18fr]"
                     >
-                      {/* Left: score */}
-                      <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-6 pb-8 pt-14 text-center md:px-10 md:py-12">
+                      {/* Left: Score & Extracted Candidate Profile */}
+                      <div className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 px-6 pb-8 pt-12 md:px-8 md:py-10">
                         <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-red-200/40 blur-3xl" />
                         <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-rose-200/50 blur-3xl" />
-                        <div className="relative flex flex-col items-center">
-                          <div className="rounded-full bg-white p-3 shadow-xl shadow-red-900/10">
-                            <ScoreRing score={MATCH_SCORE} />
+
+                        <div className="relative flex flex-col items-center text-center">
+                          <div className="rounded-full bg-white p-2.5 shadow-xl shadow-red-900/10">
+                            <ScoreRing score={analysis?.profileMatchScore || 92} />
                           </div>
-                          <p className="mt-5 text-sm font-bold text-slate-900">Excellent profile match</p>
-                          <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-slate-500">
-                            Your skills and goals align closely with the programs you&apos;re targeting.
+                          <p className="mt-4 text-base font-bold text-slate-900">
+                            {analysis?.candidateName && analysis.candidateName !== "Candidate"
+                              ? `${analysis.candidateName} · Strong Match`
+                              : "Excellent profile match"}
                           </p>
+                          <p className="mt-1 text-xs font-medium text-slate-500">
+                            {analysis?.currentRole} · {analysis?.experienceLabel}
+                          </p>
+                        </div>
+
+                        {/* Extracted Qualification, Eligibility & Skills */}
+                        <div className="relative mt-6 space-y-3 rounded-2xl border border-white/80 bg-white/80 p-4 backdrop-blur-sm">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Detected Qualification
+                            </p>
+                            <p className="mt-0.5 text-xs font-semibold text-slate-800">
+                              {analysis?.qualificationDetail || analysis?.highestQualification}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Eligibility Assessment
+                            </p>
+                            <p className="mt-0.5 text-xs leading-relaxed text-slate-600">
+                              {analysis?.eligibilityAssessment}
+                            </p>
+                          </div>
+
+                          {analysis?.skills && analysis.skills.length > 0 && (
+                            <div>
+                              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                Extracted Skills
+                              </p>
+                              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                {analysis.skills.slice(0, 6).map((skill) => (
+                                  <span
+                                    key={skill}
+                                    className="rounded-full border border-red-100 bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-700"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      {/* Right: summary + actions */}
-                      <div className="flex flex-col p-6 sm:p-8 md:p-10">
+                      {/* Right: Summary + AI Suggested Courses */}
+                      <div className="flex flex-col p-6 sm:p-8">
                         <motion.span
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-600"
                         >
                           <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                          Analysis complete
+                          AI Analysis Complete
                         </motion.span>
 
-                        <h1 className="mt-4 text-2xl font-black tracking-tight text-slate-900 sm:text-[28px] sm:leading-tight">
-                          Your AI Match Report is ready
+                        <h1 className="mt-3 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+                          Courses Matched to Your Resume
                         </h1>
-                        <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
-                          {file?.name ? (
-                            <>
-                              We analyzed <span className="font-semibold text-slate-700">{file.name}</span> and
-                              found strong matches for your profile.
-                            </>
-                          ) : (
-                            "We analyzed your resume and found strong matches for your profile."
-                          )}
+                        <p className="mt-1.5 text-xs leading-relaxed text-slate-500 sm:text-sm">
+                          {analysis?.experienceSummary}
                         </p>
 
-                        <div className="mt-6 space-y-2.5">
-                          {SCAN_RESULTS.map((r, i) => {
-                            const Icon = r.icon;
-                            return (
-                              <motion.div
-                                key={r.label}
-                                initial={{ opacity: 0, x: 12 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.25 + i * 0.08, duration: 0.35, ease: EASE_OUT }}
-                                className="flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm"
-                              >
-                                <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${r.tone}`}>
-                                  <Icon className="h-[18px] w-[18px]" />
-                                </span>
-                                <span className="flex-1 text-sm text-slate-500">{r.label}</span>
-                                <span className="text-base font-bold text-slate-900">{r.value}</span>
-                              </motion.div>
-                            );
-                          })}
+                        {/* Compact Stats Row */}
+                        <div className="mt-4 grid grid-cols-3 gap-2.5">
+                          <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5">
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                              <GraduationCap className="h-3.5 w-3.5 text-blue-600" />
+                              Matched
+                            </div>
+                            <p className="mt-0.5 text-base font-bold text-slate-900">
+                              {matchedCourses.length} Programs
+                            </p>
+                          </div>
+                          <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5">
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                              <IndianRupee className="h-3.5 w-3.5 text-emerald-600" />
+                              Scholarship
+                            </div>
+                            <p className="mt-0.5 truncate text-sm font-bold text-slate-900">
+                              {analysis?.scholarshipEligibility || "Up to ₹25,000"}
+                            </p>
+                          </div>
+                          <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5">
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                              Readiness
+                            </div>
+                            <p className="mt-0.5 text-base font-bold text-slate-900">
+                              {analysis?.aiReadinessScore || 90}/100
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
+                        {/* Recommended Courses List */}
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                              Top AI Suggested Courses ({analysis?.recommendedDegrees.join(", ")})
+                            </p>
+                          </div>
+
+                          <div className="mt-2.5 max-h-[250px] space-y-2.5 overflow-y-auto pr-1">
+                            {matchedCourses.length > 0 ? (
+                              matchedCourses.slice(0, 4).map((course) => (
+                                <div
+                                  key={course.id}
+                                  className="rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm transition hover:border-red-200"
+                                >
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex flex-wrap items-center gap-1.5">
+                                        <span className="text-[11px] font-bold uppercase tracking-wide text-red-600">
+                                          {course.university}
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                          <CheckCircle2 className="h-2.5 w-2.5" />
+                                          {course.eligibilityStatus}
+                                        </span>
+                                      </div>
+                                      <p className="mt-0.5 truncate text-sm font-bold text-slate-900">
+                                        {course.program}
+                                      </p>
+                                      <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-slate-500">
+                                        {course.matchReason}
+                                      </p>
+                                    </div>
+                                    <div className="flex flex-shrink-0 flex-col items-end text-right">
+                                      <span className="rounded-md bg-red-600 px-2 py-0.5 text-[11px] font-bold text-white">
+                                        {course.match}
+                                      </span>
+                                      <span className="mt-1.5 text-xs font-bold text-slate-900">
+                                        {course.fee}
+                                        <span className="font-normal text-slate-400">/yr</span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-500">
+                                Recommended degree tracks:{" "}
+                                <span className="font-semibold text-slate-800">
+                                  {analysis?.recommendedDegrees.join(", ")}
+                                </span>
+                                . Click &ldquo;View All Matches&rdquo; to explore partner universities.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
                           <button
                             type="button"
-                            onClick={() => {
-                              onClose();
-                              router.push("/dashboard/matcher");
-                            }}
-                            className="flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-red-600 px-5 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
+                            onClick={goToMatcher}
+                            className="flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-red-600 px-5 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700 active:scale-[0.98]"
                           >
-                            View My Matches
+                            View All Matches
                             <ArrowRight className="h-4 w-4" />
                           </button>
                           <button
                             type="button"
                             onClick={onClose}
-                            className="flex h-12 items-center justify-center whitespace-nowrap rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+                            className="flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
                           >
-                            Back to Dashboard
+                            Show on Dashboard
+                            <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
                           </button>
                         </div>
                       </div>

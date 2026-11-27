@@ -1414,13 +1414,19 @@ export function Navbar() {
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center">
-                  <Button  
+                  <Button
                     size="sm"
-                    onClick={() => setShowSignupModal(true)}
+                    onClick={() =>
+                      // Landing pages: "Apply Now" opens the page's Apply form popup (handled in DbaGiftButton,
+                      // which sits inside the page's form provider so the popup gets the page's course list)
+                      isLandingPage
+                        ? window.dispatchEvent(new CustomEvent("lp-open-apply"))
+                        : setShowSignupModal(true)
+                    }
                     className="relative group overflow-hidden rounded-full px-5 py-2 text-xs font-bold text-white tracking-wide bg-gradient-to-r from-red-600 via-[#ee2c3c] to-rose-600 hover:from-red-700 hover:via-red-600 hover:to-rose-700 shadow-[0_4px_16px_rgba(238,44,60,0.35)] hover:shadow-[0_6px_22px_rgba(238,44,60,0.5)] border border-red-400/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
                   >
                     <span className="relative z-10 flex items-center gap-1.5">
-                      <span>Sign Up</span>
+                      <span>{isLandingPage ? "Apply Now" : "Sign Up"}</span>
                       <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                     </span>
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />

@@ -39,6 +39,8 @@ interface LandingPageHighlightsProps {
   formCourses?: string[];
   /** Page-specific wording (defaults are the DBA page's) */
   copy?: Partial<HighlightsCopy>;
+  /** Desktop: less space above the title & table so the heading and column titles show on the first screen (DBA) */
+  tight?: boolean;
 }
 
 export interface HighlightsCopy {
@@ -59,7 +61,7 @@ const DEFAULT_COPY: HighlightsCopy = {
 
 const ROW_ICONS = [Bookmark, CheckSquare, Search, CalendarDays, Users, Award, BookOpen];
 
-export function LandingPageHighlights({ highlights, formCourses, copy: copyOverride }: LandingPageHighlightsProps) {
+export function LandingPageHighlights({ highlights, formCourses, copy: copyOverride, tight }: LandingPageHighlightsProps) {
   if (!highlights || !highlights.rows || highlights.rows.length === 0) return null;
   const copy = { ...DEFAULT_COPY, ...(copyOverride || {}) };
 
@@ -81,12 +83,12 @@ export function LandingPageHighlights({ highlights, formCourses, copy: copyOverr
   const at = (col: number, row: number): React.CSSProperties => ({ gridColumn: col, gridRow: row });
 
   return (
-    <LpSection tone="muted">
-      <LpHeading heading={sectionHeading} />
+    <LpSection tone="muted" innerClassName={tight ? "lg:pt-6" : undefined}>
+      <LpHeading heading={sectionHeading} className={tight ? "lg:mb-5" : undefined} />
 
       {/* Desktop: comparison with the DBA column lifted out as a card */}
       <LpReveal className="hidden md:block">
-        <div className="relative mb-5 mt-9 grid rounded-2xl border border-slate-200 bg-white" style={grid}>
+        <div className={`relative mb-5 grid rounded-2xl border border-slate-200 bg-white ${tight ? "mt-9 lg:mt-7" : "mt-9"}`} style={grid}>
           {/* highlighted DBA column */}
           <div
             aria-hidden

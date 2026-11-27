@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { DEFAULT_FORM_COURSES } from "@/data/form-courses";
+import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -134,6 +135,7 @@ export function ApplicationForm({
   badge = "Connect With An Expert",
   submitLabel = "Apply Now",
   submitIcon,
+  compact = false,
 }: {
   onSubmit?: (data: LeadData) => void;
   onBack?: () => void;
@@ -155,11 +157,17 @@ export function ApplicationForm({
   submitLabel?: string;
   /** Icon after the submit text (defaults to an arrow) */
   submitIcon?: React.ReactNode;
+  /**
+   * Desktop (lg+) only, assured / lp looks: shorter fields, tighter spacing and a smaller title,
+   * so a landing-page hero can show the next section on the first screen. Fields & submission are unchanged.
+   */
+  compact?: boolean;
 }) {
   const A = variant === "assured" || variant === "lp";
   const placeholder = coursePlaceholder ?? (courses?.length ? "Choose Specialisation" : "Select Course");
   const isLp = variant === "lp";
-  const ui = {
+  const tight = compact && A;
+  const baseUi = {
     wrapper: A
       ? "relative isolate mx-auto w-full max-w-lg px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-7 lg:pb-5 lg:pt-5"
       : "relative isolate mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-rose-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-7 shadow-sm sm:px-8 sm:py-8",
@@ -191,6 +199,19 @@ export function ApplicationForm({
       : "relative z-10 mt-4 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-center text-xs font-medium text-red-800 sm:text-sm",
     timerStrong: A ? "text-orange-600" : "text-red-700",
   };
+  // Compact (lg+): override only the desktop sizes; phones / tablets keep the regular form
+  const ui = tight
+    ? {
+        ...baseUi,
+        wrapper: cn(baseUi.wrapper, "lg:px-5 lg:pb-3 lg:pt-3.5"),
+        form: cn(baseUi.form, "lg:gap-2 lg:p-3"),
+        fieldSize: cn(baseUi.fieldSize, "lg:h-9 lg:text-[14.5px]"),
+        triggerSize: cn(baseUi.triggerSize, "lg:!h-9"),
+        trigger: cn(baseUi.trigger, "lg:text-[14.5px]"),
+        submit: cn(baseUi.submit, "lg:mt-0 lg:h-10 lg:text-[15px]"),
+        timer: cn(baseUi.timer, "lg:mt-2 lg:min-h-0 lg:py-1.5 lg:text-[13px]"),
+      }
+    : baseUi;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [offerSecondsRemaining, setOfferSecondsRemaining] = useState(OFFER_DURATION_SECONDS);
@@ -370,15 +391,15 @@ export function ApplicationForm({
   return (
     <div className={ui.wrapper}>
       {A ? (
-        <div className="relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4 lg:mb-3">
-          <h2 className="text-[21px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[22px]">
+        <div className={cn("relative z-10 mb-3 flex flex-col items-center gap-2 text-center md:mb-4 lg:mb-3", tight && "lg:mb-2.5 lg:gap-1.5")}>
+          <h2 className={cn("text-[21px] font-extrabold leading-tight tracking-tight text-slate-900 md:text-[22px]", tight && "lg:text-[19px]")}>
             {heading ?? (
               <>
                 Get <span className="text-orange-500">₹10,000*</span> Scholarship
               </>
             )}
           </h2>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 text-[12.5px] font-bold uppercase tracking-wide text-slate-700">
+          <span className={cn("inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 text-[12.5px] font-bold uppercase tracking-wide text-slate-700", tight && "lg:py-1 lg:text-[11.5px]")}>
             <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
             {badge}
           </span>
@@ -500,7 +521,7 @@ export function ApplicationForm({
         {/* Mobile */}
         <div>
           <div
-            className={`__phone-input-wrapper flex ${A ? "h-[44px] md:h-[42px] lg:h-10" : "h-11"} w-full items-center overflow-hidden ${ui.fieldShape} border transition ${ui.phoneFocus} ${
+            className={`__phone-input-wrapper flex ${A ? (tight ? "h-[44px] md:h-[42px] lg:h-9" : "h-[44px] md:h-[42px] lg:h-10") : "h-11"} w-full items-center overflow-hidden ${ui.fieldShape} border transition ${ui.phoneFocus} ${
               errors.mobile
                 ? "border-red-300 bg-red-50"
                 : ui.fieldIdle
@@ -627,7 +648,7 @@ export function ApplicationForm({
           </div>
         )}
 
-        <p className="pt-1 text-center text-xs font-medium text-gray-500">
+        <p className={cn("pt-1 text-center text-xs font-medium text-gray-500", tight && "lg:pt-0")}>
           🔒 Your information is secure with us
         </p>
 

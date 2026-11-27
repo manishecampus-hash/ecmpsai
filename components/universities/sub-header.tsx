@@ -684,7 +684,8 @@ export default function SubHeader({ university, universityName, items, spread, h
           font-size: 0.875rem;
         }
 
-        /* Landing pages on desktop: links fill the bar, aligned with the page content edges */
+        /* Landing pages on desktop: links grouped in the centre with an even, moderate gap
+           (spreading them edge to edge left too much space between them), active link underlined */
         @media (min-width: 1024px) {
           .subheader-spread {
             padding-left: 2rem !important;
@@ -694,14 +695,31 @@ export default function SubHeader({ university, universityName, items, spread, h
             display: none;
           }
           .subheader-spread .subheader-scroll {
-            justify-content: space-between;
+            justify-content: center;
+            gap: 1.25rem !important;
             padding: 0 !important;
           }
-          .subheader-spread .subheader-item:first-child {
-            padding-left: 0 !important;
+          .subheader-spread .subheader-item {
+            position: relative;
+            padding: 0.7rem 0.35rem !important;
           }
-          .subheader-spread .subheader-item:last-child {
-            padding-right: 0 !important;
+          .subheader-spread .subheader-item::after {
+            content: "";
+            position: absolute;
+            left: 0.35rem;
+            right: 0.35rem;
+            bottom: 0.2rem;
+            height: 2.5px;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #dc2626, #f43f5e);
+            transform: scaleX(0);
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+          }
+          .subheader-spread .subheader-item:hover::after {
+            transform: scaleX(0.5);
+          }
+          .subheader-spread .subheader-item[data-active="true"]::after {
+            transform: scaleX(1);
           }
         }
 
@@ -764,6 +782,7 @@ export default function SubHeader({ university, universityName, items, spread, h
                 }}
                 onClick={() => handleClick(item.id)}
                 className="subheader-item"
+                data-active={isActive}
                 style={{
                   flex: "0 0 auto",
                   whiteSpace: "nowrap",

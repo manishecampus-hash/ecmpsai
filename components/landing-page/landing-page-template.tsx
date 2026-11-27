@@ -244,7 +244,8 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
         <LandingPageHero
           hero={hero}
           formCourses={formCourses}
-          aside={isMba || isDba ? <MbaHeroForm courses={formCourses} /> : undefined}
+          aside={isMba || isDba ? <MbaHeroForm courses={formCourses} compact={isDba} /> : undefined}
+          compact={isDba}
         />
       )}
 
@@ -282,7 +283,7 @@ export function LandingPageTemplate({ data, isPreview, mbaCourse, media }: Landi
       {/* 3. Key Highlights / Comparison — shown lower down on the MBA page */}
       {!isMba && data.highlights && (
         <div id="lp-compare" className="scroll-mt-28">
-          <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} />
+          <LandingPageHighlights highlights={data.highlights} formCourses={formCourses} copy={highlightsCopy} tight={isDba} />
         </div>
       )}
 

@@ -353,7 +353,7 @@ export function LpFeeStructure({
           <BrochureButton
             courses={formCourses}
             programName={plan.name}
-            className="lp-fee-cta group/btn relative inline-flex min-h-12 w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_28px_-10px_rgba(239,68,68,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_16px_32px_-10px_rgba(239,68,68,0.7)] active:translate-y-0 sm:min-h-[52px] sm:text-[15px]"
+            className="lp-fee-cta group/btn relative inline-flex min-h-[46px] w-auto items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-7 py-2.5 sm:px-8 text-sm font-bold text-white shadow-[0_12px_28px_-10px_rgba(239,68,68,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_16px_32px_-10px_rgba(239,68,68,0.7)] active:translate-y-0 sm:min-h-12 sm:text-[15px]"
           >
             <Download className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover/btn:translate-y-0.5" />
             Download Brochure

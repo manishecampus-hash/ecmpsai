@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import HighlightedTitle from "./highlighted-title";
+import { cn } from "@/lib/utils";
 
 // Shared frame for every landing-page section: same width, rhythm and heading style.
 // No client JS here, so sections built from these render on the server.
@@ -10,18 +11,21 @@ export function LpSection({
   tone = "white",
   children,
   className = "",
+  innerClassName,
 }: {
   id?: string;
   tone?: "white" | "muted";
   children: React.ReactNode;
   className?: string;
+  /** Extra classes for the inner content box (e.g. a smaller top padding) */
+  innerClassName?: string;
 }) {
   return (
     <section
       id={id}
       className={`relative w-full scroll-mt-20 ${tone === "muted" ? "bg-slate-50" : "bg-white"} ${className}`}
     >
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 font-sans sm:px-6 sm:py-11 lg:px-8">{children}</div>
+      <div className={cn("mx-auto w-full max-w-7xl px-4 py-8 font-sans sm:px-6 sm:py-11 lg:px-8", innerClassName)}>{children}</div>
     </section>
   );
 }
@@ -31,15 +35,18 @@ export function LpHeading({
   description,
   eyebrow,
   descriptionClassName = "text-[15px]",
+  className,
 }: {
   heading: string;
   description?: React.ReactNode;
   eyebrow?: React.ReactNode;
   /** Mobile-only sizing/wrapping for the description (sm and up always use text-base) */
   descriptionClassName?: string;
+  /** Extra classes for the heading block (e.g. a smaller bottom margin) */
+  className?: string;
 }) {
   return (
-    <div className="mx-auto mb-6 max-w-3xl text-center sm:mb-8">
+    <div className={cn("mx-auto mb-6 max-w-3xl text-center sm:mb-8", className)}>
       {eyebrow && (
         <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-700">
           {eyebrow}

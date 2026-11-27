@@ -17,6 +17,8 @@ export function FloatingWhatsApp({
   const aboveComposer = pathname === "/search" || pathname === "/dashboard/mychat";
   // No mobile bottom bar on the auth pages, so the button can sit in the corner
   const isAuthPage = pathname === "/signup" || pathname === "/login" || pathname === "/verify-phone";
+  // Landing pages have no mobile bottom bar either — sit level with the gift button (bottom-left, bottom-5 / sm:bottom-6)
+  const isLandingPage = pathname?.startsWith("/lp/") ?? false;
 
   useEffect(() => {
     const handleToggle = (e: any) => {
@@ -42,6 +44,8 @@ export function FloatingWhatsApp({
     ? pathname === "/search"
       ? "bottom-[120px] md:bottom-[112px]"
       : "bottom-[196px] md:bottom-[112px]"
+    : isLandingPage
+      ? "bottom-5 sm:bottom-6"
     : isAuthPage
       ? "bottom-4 md:bottom-6"
       : hasCourseBar

@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import HighlightedTitle from "./highlighted-title";
 import { ApplyNowButton } from "@/components/form/apply-now-modal";
+import { cn } from "@/lib/utils";
 
 export interface LandingPageHeroData {
   mainHeading: string;
@@ -35,6 +36,11 @@ interface LandingPageHeroProps {
   aside?: React.ReactNode;
   /** Options for the Apply form's course dropdown on this page */
   formCourses?: string[];
+  /**
+   * DBA page: the hero is only as tall as the inline form (no full-screen height, small top/bottom
+   * padding on desktop) and the primary CTA is a normal-width button on mobile instead of full width.
+   */
+  compact?: boolean;
 }
 
 // Backdrop curves (viewBox 1440×600)
@@ -47,8 +53,10 @@ const HERO_LINES = [
 const PRIMARY_CTA =
   "lp-hero-cta group inline-flex min-h-[46px] flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-3 py-2.5 text-[clamp(11.5px,3.2vw,14px)] font-bold text-white shadow-[0_12px_28px_-8px_rgba(239,68,68,0.55)] transition-all duration-200 hover:-translate-y-0.5 hover:from-red-700 hover:to-red-600 hover:shadow-[0_16px_34px_-8px_rgba(239,68,68,0.6)] active:translate-y-0 sm:min-h-[54px] sm:flex-none sm:gap-2.5 sm:px-8 sm:py-3.5 sm:text-base";
 
-export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroProps) {
+export function LandingPageHero({ hero, formCourses, aside, compact }: LandingPageHeroProps) {
   const ctaText = hero.primaryCtaText || "Let's Talk About Your Career Goals";
+  // Compact (DBA): on mobile the CTA sizes to its text instead of stretching across the screen
+  const primaryCta = compact ? cn(PRIMARY_CTA, "flex-none px-6") : PRIMARY_CTA;
   const beforeImg = hero.beforeImage || "/dba/before.png";
   const afterImg = hero.afterImage || "/dba/after.png";
   const beforeLabel = hero.beforeLabel || "BEFORE";
@@ -120,11 +128,16 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 font-sans sm:px-6 lg:px-8">
         <div
           className={`grid items-center gap-7 py-8 sm:gap-10 sm:py-10 lg:grid-cols-12 lg:gap-12 ${
-            aside ? "lg:min-h-[calc(100svh-64px)] lg:py-6" : "lg:py-12"
+            aside
+              ? compact
+                ? "lg:pb-3 lg:pt-4"
+                : "lg:min-h-[calc(100svh-64px)] lg:py-6"
+              : "lg:py-12"
           }`}
         >
           {/* ================= LEFT CONTENT ================= */}
-          <div className="flex flex-col items-start gap-4 lg:col-span-7 lg:gap-5">
+          {/* Compact (DBA): sits near the top of the hero on desktop instead of centred against the form */}
+          <div className={`flex flex-col items-start gap-4 lg:col-span-7 lg:gap-5 ${compact ? "lg:self-start lg:pt-3" : ""}`}>
             {/* Tag / Pre-headline */}
             <div
               className="lp-hero-in inline-flex items-center gap-2 rounded-full border border-red-200/80 bg-white/80 py-1 pl-1 pr-4 text-xs font-bold text-red-600 shadow-[0_6px_18px_-12px_rgba(220,38,38,0.6)] backdrop-blur"
@@ -165,13 +178,13 @@ export function LandingPageHero({ hero, formCourses, aside }: LandingPageHeroPro
                   href={hero.primaryCtaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={PRIMARY_CTA}
+                  className={primaryCta}
                 >
                   <span className="relative">{ctaText}</span>
                   <ArrowRight className="relative h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]" />
                 </a>
               ) : (
-                <ApplyNowButton courses={formCourses} className={PRIMARY_CTA}>
+                <ApplyNowButton courses={formCourses} className={primaryCta}>
                   <span className="relative">{ctaText}</span>
                   <ArrowRight className="relative h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]" />
                 </ApplyNowButton>

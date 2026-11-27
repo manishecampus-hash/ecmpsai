@@ -807,6 +807,19 @@ export default function AIDegreeMatcherPage() {
   const [location, setLocation] = useState("Any Location");
   const [selectedEligibility, setSelectedEligibility] = useState<string | null>(null);
   const [degrees, setDegrees] = useState<Degree[]>([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const degParam = params.get("degrees");
+    if (degParam) {
+      const list = degParam
+        .split(",")
+        .map((d) => d.trim())
+        .filter(Boolean);
+      if (list.length > 0) setDegrees(list);
+    }
+  }, []);
   const [specializations, setSpecializations] = useState<Specialization[]>([]);
   const [modes, setModes] = useState<Mode[]>([]);
   const [maxFee, setMaxFee] = useState(MAX_FEE);

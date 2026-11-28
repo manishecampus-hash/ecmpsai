@@ -51,11 +51,11 @@ export default function BankDetailsCard({
     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-            <Landmark className="h-5 w-5" aria-hidden />
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-800 shadow-sm">
+            <Landmark className="h-[18px] w-[18px]" aria-hidden />
           </span>
           <div className="min-w-0">
-            <h2 className="text-[15px] font-bold text-gray-900">Bank Account for Rewards</h2>
+            <h2 className="text-[15px] font-bold tracking-tight text-gray-900">Bank Account for Rewards</h2>
             <p className="mt-0.5 text-xs text-gray-500">Your referral rewards are paid to this account</p>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function BankDetailsCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
+            className="mt-4 border-t border-gray-100 px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
             <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3.5">
               <FormField
@@ -135,7 +135,7 @@ export default function BankDetailsCard({
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98] disabled:opacity-70"
+                className="inline-flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-gray-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 hover:shadow-md active:scale-[0.98] disabled:opacity-70"
               >
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 {saving ? "Saving…" : "Save Details"}
@@ -152,9 +152,10 @@ export default function BankDetailsCard({
               className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
             >
               {/* Saved account, shown like a bank card */}
-              <div className="flex flex-col gap-4 rounded-xl border border-red-100 bg-red-50/40 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-white text-red-600 shadow-sm ring-1 ring-red-100">
+              <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 via-white to-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full border border-dashed border-gray-200 motion-safe:animate-[spin_40s_linear_infinite]" />
+                <div className="relative flex min-w-0 items-center gap-3">
+                  <span className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gray-900 text-white shadow-md shadow-gray-900/20">
                     <Building2 className="h-5 w-5" aria-hidden />
                   </span>
                   <div className="min-w-0">
@@ -171,7 +172,7 @@ export default function BankDetailsCard({
                   disabled
                   aria-describedby="bank-locked-note"
                   title="Bank details are locked once saved. Contact support to change them."
-                  className="inline-flex flex-shrink-0 cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-400"
+                  className="relative inline-flex flex-shrink-0 cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-400"
                 >
                   <Lock className="h-3.5 w-3.5" aria-hidden />
                   Edit details

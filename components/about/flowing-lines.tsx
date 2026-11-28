@@ -14,8 +14,21 @@ const TONES = {
   inverse: { line: "rgba(255,255,255,0.14)", streak: "rgba(255,255,255,0.75)" },
 };
 
-export default function FlowingLines({ tone = "light", className = "" }: { tone?: keyof typeof TONES; className?: string }) {
+export default function FlowingLines({
+  tone = "light",
+  className = "",
+  lines = LINES,
+  duration = 9,
+}: {
+  tone?: keyof typeof TONES;
+  className?: string;
+  /** Optional custom curves in the 1440×640 viewBox; defaults to the standard set */
+  lines?: string[];
+  /** Seconds for one streak to travel its curve */
+  duration?: number;
+}) {
   const { line, streak } = TONES[tone];
+  const step = duration / Math.max(lines.length, 1);
   return (
     <svg
       aria-hidden
@@ -24,7 +37,7 @@ export default function FlowingLines({ tone = "light", className = "" }: { tone?
       fill="none"
       className={`pointer-events-none absolute inset-0 h-full w-full ${className}`}
     >
-      {LINES.map((d, i) => (
+      {lines.map((d, i) => (
         <g key={d}>
           <path d={d} stroke={line} strokeWidth="1.25" />
           <path
@@ -36,7 +49,7 @@ export default function FlowingLines({ tone = "light", className = "" }: { tone?
             strokeDasharray="90 910"
             strokeDashoffset="1000"
             className="opacity-0 motion-safe:animate-[dash-travel_9s_linear_infinite] motion-safe:opacity-70"
-            style={{ animationDelay: `${i * -3}s` }}
+            style={{ animationDelay: `${i * -step}s`, ...(duration !== 9 && { animationDuration: `${duration}s` }) }}
           />
         </g>
       ))}

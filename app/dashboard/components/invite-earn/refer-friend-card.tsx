@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, CheckCircle2, Eye, EyeOff, Loader2, Mail, MapPin, Phone, Send, User, UserPlus, X } from "lucide-react";
+import { CalendarDays, CheckCircle2, Eye, EyeOff, Loader2, Mail, MapPin, Phone, Plus, Send, User, UserPlus, X } from "lucide-react";
 import SelectField from "@/components/application-flow/select-field";
 import { indianStates } from "@/data/indian-states";
 import CourseMultiSelect from "./course-multi-select";
@@ -37,8 +37,16 @@ const AVATAR_TONES = [
   "bg-emerald-50 text-emerald-700",
   "bg-amber-50 text-amber-700",
   "bg-violet-50 text-violet-700",
-  "bg-rose-50 text-rose-700",
+  "bg-slate-100 text-slate-700",
 ];
+
+type Filter = "all" | "progress" | "enrolled";
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "progress", label: "In progress" },
+  { id: "enrolled", label: "Enrolled" },
+];
+const isEnrolled = (r: Referral) => r.stage >= REFERRAL_STEPS.length - 1;
 
 /** Compact "View / Hide progress" button (sits above the row's full-size click area) */
 function ProgressButton({
@@ -61,11 +69,14 @@ function ProgressButton({
       aria-label={selected ? `Hide progress for ${name}` : `View progress for ${name}`}
       className={`pointer-events-auto relative inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors duration-200 active:scale-95 ${
         selected
-          ? "bg-red-600 text-white hover:bg-red-700"
-          : "border border-gray-200 bg-white text-gray-700 hover:border-red-600 hover:bg-red-600 hover:text-white"
+          ? "bg-gray-900 text-white hover:bg-gray-800"
+          : "border border-gray-200 bg-white text-gray-700 hover:border-gray-900 hover:bg-gray-900 hover:text-white"
       }`}
     >
-      {hint && <span aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500 motion-safe:animate-ping" />}
+      {hint && <span aria-hidden className="absolute -right-1 -top-1 flex h-2.5 w-2.5">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-70 motion-safe:animate-ping" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+        </span>}
       {selected ? <EyeOff className="h-3.5 w-3.5" aria-hidden /> : <Eye className="h-3.5 w-3.5" aria-hidden />}
       {selected ? "Hide progress" : "View progress"}
     </button>
@@ -88,7 +99,14 @@ export default function ReferFriendCard({
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [justInvited, setJustInvited] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>("all");
   const showForm = formOpen || referrals.length === 0;
+  const counts: Record<Filter, number> = {
+    all: referrals.length,
+    progress: referrals.filter((r) => !isEnrolled(r)).length,
+    enrolled: referrals.filter(isEnrolled).length,
+  };
+  const visible = referrals.filter((r) => (filter === "all" ? true : filter === "enrolled" ? isEnrolled(r) : !isEnrolled(r)));
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) => {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -125,11 +143,11 @@ export default function ReferFriendCard({
     <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 sm:pt-5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100">
-            <UserPlus className="h-5 w-5" aria-hidden />
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-800 shadow-sm">
+            <UserPlus className="h-[18px] w-[18px]" aria-hidden />
           </span>
           <div className="min-w-0">
-            <h2 className="text-[15px] font-bold text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
+            <h2 className="text-[15px] font-bold tracking-tight text-gray-900">{showForm ? "Refer a Friend" : "Your Invited Friends"}</h2>
             <p className="mt-0.5 text-xs text-gray-500">
               {showForm
                 ? "Share a friend's details — our counselor will guide them"
@@ -145,9 +163,9 @@ export default function ReferFriendCard({
               setFormOpen(true);
             }}
             aria-label="Invite another friend"
-            className="inline-flex flex-shrink-0 items-center gap-2 rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700 active:scale-[0.98] sm:px-4"
+            className="group inline-flex h-10 flex-shrink-0 items-center gap-2 rounded-xl bg-red-600 px-3 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 hover:shadow-md hover:shadow-red-600/25 active:scale-[0.98] sm:px-4"
           >
-            <UserPlus className="h-4 w-4" aria-hidden />
+            <UserPlus className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" aria-hidden />
             <span className="sm:hidden">Invite</span>
             <span className="hidden sm:inline">Invite another friend</span>
           </button>
@@ -163,7 +181,7 @@ export default function ReferFriendCard({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-            className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
+            className="mt-4 border-t border-gray-100 px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
             <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-4">
               <FormField
@@ -236,7 +254,7 @@ export default function ReferFriendCard({
                     setFormOpen(false);
                     setErrors({});
                   }}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-gray-200 px-5 text-sm font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50"
                 >
                   <X className="h-4 w-4" aria-hidden />
                   Cancel
@@ -245,9 +263,9 @@ export default function ReferFriendCard({
               <button
                 type="submit"
                 disabled={submitting}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-red-50 px-6 py-3 text-sm font-semibold text-red-600 ring-1 ring-red-200 transition-[background-color,color,box-shadow] duration-200 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-600/25 hover:ring-red-600 active:scale-[0.98] disabled:opacity-70 sm:min-w-[200px]"
+                className="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-red-600 px-6 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition-[background-color,box-shadow,transform] duration-200 hover:bg-red-700 hover:shadow-lg hover:shadow-red-600/25 active:scale-[0.98] disabled:opacity-70 sm:min-w-[200px]"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-12 group-hover:translate-x-0.5" aria-hidden />}
+                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:-rotate-12" aria-hidden />}
                 {submitting ? "Submitting…" : "Submit Referral"}
               </button>
             </div>
@@ -260,6 +278,41 @@ export default function ReferFriendCard({
             exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
             className="px-4 pb-4 pt-4 sm:px-5 sm:pb-5"
           >
+            {/* Filter tabs */}
+            <div role="tablist" aria-label="Filter invited friends" className="mb-4 inline-flex max-w-full overflow-x-auto rounded-xl bg-gray-100 p-1">
+              {FILTERS.map((f) => {
+                const active = filter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setFilter(f.id)}
+                    className={`relative inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      active ? "text-gray-900" : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="ie-filter-pill"
+                        transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                        className="absolute inset-0 rounded-lg bg-white shadow-sm ring-1 ring-gray-200/70"
+                      />
+                    )}
+                    <span className="relative">{f.label}</span>
+                    <span
+                      className={`relative rounded-md px-1.5 text-[10.5px] font-bold tabular-nums transition-colors ${
+                        active ? "bg-gray-900 text-white" : "bg-gray-200/80 text-gray-600"
+                      }`}
+                    >
+                      {counts[f.id]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
             <AnimatePresence initial={false}>
               {justInvited && (
                 <motion.div
@@ -289,8 +342,17 @@ export default function ReferFriendCard({
               )}
             </AnimatePresence>
 
+            {visible.length === 0 && (
+              <div className="rounded-xl border border-dashed border-gray-200 px-4 py-8 text-center">
+                <p className="text-sm font-semibold text-gray-800">{filter === "enrolled" ? "No enrolments yet" : "Nothing in progress"}</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  {filter === "enrolled" ? "Friends show up here once their admission is confirmed." : "All your invited friends have enrolled."}
+                </p>
+              </div>
+            )}
+
             <ul className="space-y-2.5">
-              {referrals.map((r, i) => {
+              {visible.map((r, i) => {
                 const selected = r.id === selectedId;
                 const badge = stageBadge(r.stage);
                 return (
@@ -299,10 +361,10 @@ export default function ReferFriendCard({
                     layout="position"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0, transition: { delay: Math.min(i, 5) * 0.05 } }}
-                    className={`group relative overflow-hidden rounded-xl border px-3.5 py-3 transition-[border-color,box-shadow,background-color] duration-200 sm:px-4 ${
+                    className={`group relative overflow-hidden rounded-xl border px-3.5 py-3 transition-[border-color,box-shadow,background-color,transform] duration-200 sm:px-4 ${
                       selected
-                        ? "border-red-200 bg-red-50/50 shadow-[0_10px_24px_-18px_rgba(220,38,38,0.6)]"
-                        : "border-gray-200 bg-white hover:border-red-100 hover:shadow-[0_10px_24px_-20px_rgba(17,24,39,0.45)]"
+                        ? "border-gray-300 bg-gray-50/60 shadow-[0_12px_28px_-20px_rgba(17,24,39,0.5)]"
+                        : "border-gray-200 bg-white hover:-translate-y-px hover:border-gray-300 hover:shadow-[0_12px_28px_-22px_rgba(17,24,39,0.5)]"
                     }`}
                   >
                     {/* The whole row opens this friend's progress; the progress button sits above it */}
@@ -322,15 +384,15 @@ export default function ReferFriendCard({
                     )}
 
                     <div className="pointer-events-none relative flex items-start gap-3">
-                      <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ring-2 ring-white ${AVATAR_TONES[i % AVATAR_TONES.length]}`}>
+                      <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ring-2 ring-white ${AVATAR_TONES[referrals.indexOf(r) % AVATAR_TONES.length]}`}>
                         {initials(r.name)}
                       </span>
 
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <p className="truncate text-[14.5px] font-bold text-gray-900">{r.name}</p>
+                          <p className="truncate text-[14.5px] font-semibold text-gray-900">{r.name}</p>
                           {r.courses.map((c) => (
-                            <span key={c} className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10.5px] font-semibold text-gray-700">
+                            <span key={c} className="rounded-md border border-gray-200 bg-white px-1.5 py-0.5 text-[10.5px] font-semibold text-gray-600">
                               {c}
                             </span>
                           ))}
@@ -367,8 +429,10 @@ export default function ReferFriendCard({
                           initial={{ width: 0 }}
                           animate={{ width: `${(Math.min(r.stage, REFERRAL_STEPS.length) / REFERRAL_STEPS.length) * 100}%` }}
                           transition={{ duration: 0.9, delay: 0.2 + Math.min(i, 5) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                          className="h-full rounded-full bg-gradient-to-r from-red-500 to-rose-400"
-                        />
+                          className="relative h-full overflow-hidden rounded-full bg-red-600"
+                        >
+                          <span className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent motion-safe:animate-[shine_2.6s_ease-in-out_1.4s_infinite]" />
+                        </motion.div>
                       </div>
                       <span className="whitespace-nowrap text-[11px] font-semibold text-gray-500">
                         Step {Math.min(r.stage, REFERRAL_STEPS.length)} of {REFERRAL_STEPS.length}
@@ -401,10 +465,10 @@ export default function ReferFriendCard({
                 setJustInvited(null);
                 setFormOpen(true);
               }}
-              className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-red-300 py-3 text-sm font-semibold text-red-600 transition hover:border-red-400 hover:bg-red-50/50"
+              className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-50 transition group-hover:bg-red-600 group-hover:text-white">
-                <UserPlus className="h-4 w-4" aria-hidden />
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition duration-200 group-hover:rotate-90 group-hover:bg-red-600 group-hover:text-white">
+                <Plus className="h-4 w-4" aria-hidden />
               </span>
               Add or invite more friends
             </button>

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, CheckCircle2, Copy, Gift, Hourglass, IndianRupee, Link2, Trophy, Users } from "lucide-react";
 import FlowingLines from "@/components/about/flowing-lines";
-import { fadeUp } from "../motion";
+import { EASE_OUT, fadeUp } from "../motion";
+import CountUp from "./count-up";
 import { REFERRAL_STEPS, type Referral } from "./referral-store";
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -14,6 +15,14 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// Extra curves for the hero backdrop (1440×640 viewBox), kept in the band the wide, short card actually shows
+const SWEEP_LINES = [
+  "M-40 250 C 260 170, 500 350, 780 270 S 1200 150, 1480 210",
+  "M-40 330 C 280 260, 540 420, 840 330 S 1240 220, 1480 270",
+  "M-40 420 C 320 360, 620 500, 920 400 S 1280 300, 1480 340",
+  "M140 700 C 360 540, 600 470, 860 320 S 1180 140, 1340 -40",
+];
 
 // Top of the dashboard Invite & Earn page: the student's earnings and their code to share (the offer itself is in a popup).
 // Rewards are confirmed by the backend; until it is connected nothing is marked as earned.
@@ -43,27 +52,37 @@ export default function InviteHero({
   };
 
   const completed = referrals.filter((r) => r.stage >= REFERRAL_STEPS.length - 1).length;
-  const stats = [
+  const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
+  const stats: { icon: typeof Users; label: string; value: number; format?: (n: number) => string; tone: string }[] = [
     { icon: Users, label: "Total Referrals", value: referrals.length, tone: "bg-blue-50 text-blue-600" },
     { icon: Hourglass, label: "In Progress", value: referrals.length - completed, tone: "bg-amber-50 text-amber-600" },
     { icon: CheckCircle2, label: "Completed", value: completed, tone: "bg-emerald-50 text-emerald-600" },
-    { icon: Gift, label: "Rewards Earned", value: `₹${rewardsEarned.toLocaleString("en-IN")}`, tone: "bg-violet-50 text-violet-600" },
+    { icon: Gift, label: "Rewards Earned", value: rewardsEarned, format: inr, tone: "bg-violet-50 text-violet-600" },
   ];
 
   return (
     <motion.section
       {...fadeUp()}
       aria-labelledby="earnings-title"
-      className="relative overflow-hidden rounded-[20px] border border-red-100 bg-[#fff5f5] shadow-[0_16px_40px_-30px_rgba(220,38,38,0.45)]"
+      className="relative overflow-hidden rounded-[20px] border border-red-100 bg-gradient-to-br from-[#fffafa] via-[#fff6f6] to-[#ffefef] shadow-[0_16px_40px_-30px_rgba(220,38,38,0.35)]"
     >
       <style>{`
         @keyframes ie-shine { 0% { transform: translateX(-120%) skewX(-20deg) } 60%,100% { transform: translateX(320%) skewX(-20deg) } }
         .ie-shine::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 35%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); animation: ie-shine 3.6s ease-in-out 1s infinite; pointer-events: none; }
-        @media (prefers-reduced-motion: reduce) { .ie-shine::after { animation: none; } }
+        @keyframes ie-drift { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(-24px,16px,0) } }
+        .ie-drift { animation: ie-drift 14s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .ie-shine::after, .ie-drift { animation: none; } }
       `}</style>
 
-      {/* Blush backdrop: flowing lines with travelling streaks and thin rings behind the code card */}
+      {/* Blush backdrop: two layers of flowing lines with travelling streaks, a faint dot grid,
+          one drifting warm glow and thin rings behind the code card */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(239,68,68,0.14)_1px,transparent_1px)] [background-size:18px_18px] [mask-image:linear-gradient(to_bottom_right,black,transparent_55%)]" />
+        <div className="ie-drift absolute -top-24 right-[22%] h-64 w-64 rounded-full bg-red-300/20 blur-3xl" />
+        <div className="ie-drift absolute -bottom-28 left-[8%] h-56 w-56 rounded-full bg-rose-200/30 blur-3xl [animation-delay:-7s]" />
+        {/* Long sweeping curves across the whole card, slower and lighter */}
+        <FlowingLines lines={SWEEP_LINES} duration={13} className="opacity-60 [mask-image:linear-gradient(to_right,transparent,black_25%,black_75%,transparent)]" />
+        {/* The original curves on the right, behind the code card */}
         <FlowingLines className="[mask-image:linear-gradient(to_right,transparent_20%,black_65%)]" />
         <span className="absolute right-[-120px] top-[-80px] h-[380px] w-[380px] rounded-full border border-red-200/70" />
         <span className="absolute right-[-40px] top-[-10px] h-[250px] w-[250px] rounded-full border border-dashed border-red-300/60 motion-safe:animate-[spin_40s_linear_infinite]" />
@@ -73,34 +92,41 @@ export default function InviteHero({
         {/* Earnings: total on top, the four counters below */}
         <div className="min-w-0">
           <div className="flex items-center gap-3.5">
-            <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white shadow-md shadow-red-600/10 ring-1 ring-red-100">
-              <Trophy className="h-7 w-7 text-amber-500 motion-safe:animate-float" aria-hidden />
-            </span>
+            <motion.span
+              initial={{ opacity: 0, scale: 0.7, rotate: -12 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0, transition: { type: "spring", stiffness: 320, damping: 18, delay: 0.1 } }}
+              className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white shadow-[0_10px_24px_-14px_rgba(17,24,39,0.45)] ring-1 ring-gray-200"
+            >
+              <span aria-hidden className="absolute inset-1 rounded-xl bg-gradient-to-br from-amber-50 to-white" />
+              <Trophy className="relative h-7 w-7 text-amber-500 motion-safe:animate-float" aria-hidden />
+            </motion.span>
             <div className="min-w-0">
-              <h2 id="earnings-title" className="text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600">
+              <h2 id="earnings-title" className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">
                 Your Referral Earnings
               </h2>
               <p className="mt-1 flex items-center text-[34px] font-extrabold leading-none tracking-tight text-gray-900 sm:text-[38px]">
                 <IndianRupee className="h-7 w-7 text-red-600" strokeWidth={2.75} aria-hidden />
-                {rewardsEarned.toLocaleString("en-IN")}
+                <CountUp value={rewardsEarned} duration={1.4} delay={0.2} />
               </p>
             </div>
           </div>
 
           <ul className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-            {stats.map(({ icon: Icon, label, value, tone }, i) => (
+            {stats.map(({ icon: Icon, label, value, format, tone }, i) => (
               <motion.li
                 key={label}
                 initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0, transition: { delay: 0.15 + i * 0.08, duration: 0.4 } }}
-                className="group relative flex items-center gap-2.5 overflow-hidden rounded-xl border border-white bg-white/90 px-3 py-2.5 shadow-sm transition hover:-translate-y-0.5 hover:border-red-100 hover:shadow-md"
+                animate={{ opacity: 1, y: 0, transition: { delay: 0.15 + i * 0.08, duration: 0.45, ease: EASE_OUT } }}
+                className="group relative flex items-center gap-2.5 overflow-hidden rounded-xl border border-gray-200/80 bg-white/90 px-3 py-2.5 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-[0_12px_24px_-16px_rgba(17,24,39,0.4)]"
               >
                 <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-red-600 transition-transform duration-300 group-hover:scale-x-100" />
                 <span className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${tone}`}>
                   <Icon className="h-[18px] w-[18px]" aria-hidden />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-lg font-bold leading-none text-gray-900">{value}</span>
+                  <span className="block text-lg font-bold leading-none text-gray-900">
+                    <CountUp value={value} format={format} delay={0.25 + i * 0.08} />
+                  </span>
                   <span className="mt-1 block text-[11px] font-medium leading-tight text-gray-500 sm:text-[11.5px]">{label}</span>
                 </span>
               </motion.li>
@@ -109,15 +135,16 @@ export default function InviteHero({
         </div>
 
         {/* Referral code to share */}
-        <div className="rounded-2xl border border-gray-200 border-t-red-600 bg-white p-4 shadow-[0_20px_45px_-28px_rgba(17,24,39,0.35)] [border-top-width:4px]">
+        <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-[0_20px_45px_-28px_rgba(17,24,39,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_50px_-26px_rgba(17,24,39,0.45)]">
+          <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-gray-900 via-gray-700 to-red-600" />
           <div className="flex items-center justify-between gap-2">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">Your referral code</p>
-            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10.5px] font-bold text-red-600">
-              <Gift className="h-3 w-3" aria-hidden /> Share &amp; earn
+            <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10.5px] font-bold text-gray-700">
+              <Gift className="h-3 w-3 text-red-600" aria-hidden /> Share &amp; earn
             </span>
           </div>
-          <div className="ie-shine relative mt-2.5 flex items-center justify-between gap-2 overflow-hidden rounded-xl border-2 border-dashed border-red-200 bg-red-50/60 py-2 pl-3 pr-2">
-            <span className="min-w-0 truncate font-mono text-lg font-bold tracking-[0.08em] text-red-700">{referralCode}</span>
+          <div className="ie-shine relative mt-2.5 flex items-center justify-between gap-2 overflow-hidden rounded-xl border-2 border-dashed border-gray-200 bg-gray-50/80 py-2 pl-3 pr-2">
+            <span className="min-w-0 truncate font-mono text-lg font-bold tracking-[0.08em] text-gray-900">{referralCode}</span>
             <button
               type="button"
               onClick={() => copy(referralCode, "code")}
@@ -126,13 +153,13 @@ export default function InviteHero({
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
                   key={copied === "code" ? "done" : "copy"}
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   exit={{ opacity: 0, scale: 0.6 }}
                   transition={{ duration: 0.15 }}
                   className="flex"
                 >
-                  {copied === "code" ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied === "code" ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <Copy className="h-3.5 w-3.5" />}
                 </motion.span>
               </AnimatePresence>
               {copied === "code" ? "Copied" : "Copy"}
@@ -143,7 +170,7 @@ export default function InviteHero({
               href={`https://wa.me/?text=${encodeURIComponent(shareMessage)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
             >
               <WhatsAppIcon className="h-4 w-4 text-emerald-600" />
               WhatsApp
@@ -151,9 +178,9 @@ export default function InviteHero({
             <button
               type="button"
               onClick={() => copy(inviteLink, "link")}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
             >
-              {copied === "link" ? <Check className="h-4 w-4 text-emerald-600" /> : <Link2 className="h-4 w-4 text-red-500" />}
+              {copied === "link" ? <Check className="h-4 w-4 text-emerald-600" /> : <Link2 className="h-4 w-4 text-gray-500" />}
               {copied === "link" ? "Copied" : "Copy link"}
             </button>
           </div>

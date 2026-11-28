@@ -42,7 +42,7 @@ function ProgressRing({ value }: { value: number }) {
   return (
     <div className="relative h-[68px] w-[68px] flex-shrink-0">
       <svg viewBox="0 0 64 64" className="h-full w-full -rotate-90" aria-hidden>
-        <circle cx="32" cy="32" r={r} fill="none" stroke="#fee2e2" strokeWidth="6" />
+        <circle cx="32" cy="32" r={r} fill="none" stroke="#f1f5f9" strokeWidth="6" />
         <motion.circle
           cx="32"
           cy="32"
@@ -54,7 +54,7 @@ function ProgressRing({ value }: { value: number }) {
           strokeDasharray={c}
           initial={{ strokeDashoffset: c }}
           animate={{ strokeDashoffset: c * (1 - value) }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-gray-900">
@@ -80,10 +80,13 @@ export default function ReferralStatusCard({
       {/* Header */}
       <div className="flex items-center justify-between gap-3 px-5 pt-5">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-600">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-800 shadow-sm">
             <ListChecks className="h-[18px] w-[18px]" aria-hidden />
           </span>
-          <h2 className="text-base font-bold text-gray-900">Referral Process &amp; Status</h2>
+          <div>
+            <h2 className="text-[15px] font-bold tracking-tight text-gray-900">Referral progress</h2>
+            <p className="text-[11.5px] text-gray-500">Live status of this referral</p>
+          </div>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <span className="whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-600">
@@ -94,7 +97,7 @@ export default function ReferralStatusCard({
               type="button"
               onClick={onClose}
               aria-label="Hide referral progress"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition hover:rotate-90 hover:bg-red-50 hover:text-red-600"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition duration-200 hover:rotate-90 hover:bg-gray-100 hover:text-gray-900"
             >
               <X className="h-4 w-4" />
             </button>
@@ -109,15 +112,15 @@ export default function ReferralStatusCard({
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }}
-          className="mx-5 mt-4 flex items-center gap-4 rounded-2xl border border-red-100 bg-red-50/50 p-3.5"
+          className="mx-5 mt-4 flex items-center gap-4 rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-3.5"
         >
           <ProgressRing value={progress} />
           {selected ? (
             <div className="min-w-0 flex-1">
               <p className="truncate text-[15px] font-bold text-gray-900">{selected.name}</p>
               <p className="mt-0.5 truncate text-xs text-gray-500">{selected.courses.join(" · ")}</p>
-              <p className="mt-2 flex items-start gap-1.5 text-xs font-medium text-red-700">
-                <Sparkles className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden />
+              <p className="mt-2 flex items-start gap-1.5 text-xs font-medium text-gray-700">
+                <Sparkles className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-red-600" aria-hidden />
                 {stage >= total ? "All done — your reward has been paid!" : NEXT_UP[stage]}
               </p>
             </div>
@@ -151,13 +154,13 @@ export default function ReferralStatusCard({
                 <span
                   className={`relative z-10 mt-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl transition-colors ${
                     state === "done"
-                      ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                      ? "bg-gray-900 text-white shadow-md shadow-gray-900/20"
                       : state === "active"
-                        ? "bg-white text-red-600 ring-2 ring-red-500"
+                        ? "bg-white text-red-600 ring-2 ring-red-500 shadow-[0_8px_18px_-10px_rgba(220,38,38,0.55)]"
                         : "bg-gray-50 text-gray-400 ring-1 ring-gray-200"
                   }`}
                 >
-                  {state === "active" && <span aria-hidden className="absolute inset-0 rounded-xl bg-red-400/25 motion-safe:animate-ping" />}
+                  {state === "active" && <span aria-hidden className="absolute inset-0 rounded-xl bg-red-400/20 motion-safe:animate-ping" />}
                   <Icon className="h-[18px] w-[18px]" aria-hidden />
                   {state === "done" && (
                     <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white">
@@ -171,7 +174,7 @@ export default function ReferralStatusCard({
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: i < stage ? 1 : 0 }}
                       transition={{ duration: 0.4, delay: 0.15 + i * 0.12, ease: "easeOut" }}
-                      className="absolute inset-0 origin-top bg-red-600"
+                      className="absolute inset-0 origin-top bg-gray-900"
                     />
                   </span>
                 )}
@@ -180,7 +183,7 @@ export default function ReferralStatusCard({
               {/* Step text */}
               <div
                 className={`my-1.5 min-w-0 flex-1 rounded-xl px-3 py-2.5 transition-colors ${
-                  state === "active" ? "bg-amber-50/60 ring-1 ring-amber-100" : ""
+                  state === "active" ? "bg-gray-50 ring-1 ring-gray-200" : ""
                 }`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
